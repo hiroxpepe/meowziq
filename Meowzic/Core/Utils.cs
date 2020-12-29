@@ -48,6 +48,8 @@ namespace Meowzic.Core {
             return 0;
         }
 
+        // TODO: 5音を取り出すメソッド
+
         /// <summary>
         /// そのキーのルートコードのモードスケール ノートを返す
         /// </summary>

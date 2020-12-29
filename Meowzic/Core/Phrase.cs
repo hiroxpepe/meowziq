@@ -11,15 +11,12 @@ namespace Meowzic.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        protected int beat; // 拍数 ⇒ 4 で 4/4 の 1小節
-
         protected List<Note> noteList;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
-        public Phrase(int beat) {
-            this.beat = beat; // これは必要ない？
+        public Phrase() {
             noteList = new List<Note>();
         }
 
@@ -30,13 +27,17 @@ namespace Meowzic.Core {
             noteList.Add(note);
         }
 
-        public void Build(int position, Key key, Part pattern) {
-            onBuild(position, key, pattern);
+        public void Build(int position, Key key, Span span) {
+            onBuild(position, key, span);
+        }
+
+        public List<Note> GetAllNote() {
+            return noteList;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // protected Methods [verb]
 
-        abstract protected void onBuild(int position, Key key, Part pattern);
+        abstract protected void onBuild(int position, Key key, Span span);
     }
 }

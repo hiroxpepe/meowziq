@@ -3,13 +3,13 @@ using Meowzic.Core;
 using Meowzic.Phrase;
 
 namespace Meowzic.Player {
-    public class BassPlayer : Core.Player {
+    public class SequencePlayer : Core.Player {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
-        public BassPlayer(Song song, int midiCh, int programNum) : base(song, midiCh, programNum) {
-            this.phraseList.Add(new RootBass8BeatPhrase());
+        public SequencePlayer(Song song, int midiCh, int programNum) : base(song, midiCh, programNum) {
+            this.phraseList.Add(new RandomSequencePhrase());
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
