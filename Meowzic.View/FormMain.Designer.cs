@@ -1,5 +1,5 @@
 ﻿namespace Meowzic.View {
-    partial class Form1 {
+    partial class FormMain {
         /// <summary>
         /// 必要なデザイナー変数です。
         /// </summary>
@@ -23,30 +23,30 @@
         /// コード エディターで変更しないでください。
         /// </summary>
         private void InitializeComponent() {
-            this.sequence1 = new Sanford.Multimedia.Midi.Sequence();
-            this.sequencer1 = new Sanford.Multimedia.Midi.Sequencer();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.sequence = new Sanford.Multimedia.Midi.Sequence();
+            this.sequencer = new Sanford.Multimedia.Midi.Sequencer();
+            this.textBoxBeat = new System.Windows.Forms.TextBox();
             this.buttonPlay = new System.Windows.Forms.Button();
             this.buttonStop = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // sequence1
+            // sequence
             // 
-            this.sequence1.Format = 1;
+            this.sequence.Format = 1;
             // 
-            // sequencer1
+            // sequencer
             // 
-            this.sequencer1.Position = 0;
-            this.sequencer1.Sequence = this.sequence1;
-            this.sequencer1.ChannelMessagePlayed += new System.EventHandler<Sanford.Multimedia.Midi.ChannelMessageEventArgs>(this.HandleChannelMessagePlayed);
+            this.sequencer.Position = 0;
+            this.sequencer.Sequence = this.sequence;
+            this.sequencer.ChannelMessagePlayed += new System.EventHandler<Sanford.Multimedia.Midi.ChannelMessageEventArgs>(this.handleChannelMessagePlayed);
             // 
-            // textBox1
+            // textBoxBeat
             // 
-            this.textBox1.Location = new System.Drawing.Point(12, 71);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 22);
-            this.textBox1.TabIndex = 0;
-            this.textBox1.Text = "0";
+            this.textBoxBeat.Location = new System.Drawing.Point(12, 71);
+            this.textBoxBeat.Name = "textBoxBeat";
+            this.textBoxBeat.Size = new System.Drawing.Size(100, 22);
+            this.textBoxBeat.TabIndex = 0;
+            this.textBoxBeat.Text = "0";
             // 
             // buttonPlay
             // 
@@ -68,15 +68,15 @@
             this.buttonStop.UseVisualStyleBackColor = true;
             this.buttonStop.Click += new System.EventHandler(this.buttonStop_Click);
             // 
-            // Form1
+            // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(310, 120);
             this.Controls.Add(this.buttonStop);
             this.Controls.Add(this.buttonPlay);
-            this.Controls.Add(this.textBox1);
-            this.Name = "Form1";
+            this.Controls.Add(this.textBoxBeat);
+            this.Name = "FormMain";
             this.Text = "Form1";
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -85,9 +85,9 @@
 
         #endregion
 
-        private Sanford.Multimedia.Midi.Sequence sequence1;
-        private Sanford.Multimedia.Midi.Sequencer sequencer1;
-        private System.Windows.Forms.TextBox textBox1;
+        private Sanford.Multimedia.Midi.Sequence sequence;
+        private Sanford.Multimedia.Midi.Sequencer sequencer;
+        private System.Windows.Forms.TextBox textBoxBeat;
         private System.Windows.Forms.Button buttonPlay;
         private System.Windows.Forms.Button buttonStop;
     }
