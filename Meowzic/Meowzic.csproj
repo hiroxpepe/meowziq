@@ -58,12 +58,16 @@
     <Compile Include="Message.cs" />
     <Compile Include="Midi.cs" />
     <Compile Include="Core\Note.cs" />
-    <Compile Include="Core\Part.cs" />
+    <Compile Include="Core\Span.cs" />
     <Compile Include="Core\Phrase.cs" />
     <Compile Include="Core\Player.cs" />
     <Compile Include="Core\Song.cs" />
     <Compile Include="Core\Utils.cs" />
+    <Compile Include="Phrase\SequencePhrase.cs" />
     <Compile Include="Phrase\BassPhrase.cs" />
+    <Compile Include="Phrase\DrumPhrase.cs" />
+    <Compile Include="Player\SequencePlayer.cs" />
+    <Compile Include="Player\DrumPlayer.cs" />
     <Compile Include="Player\BassPlayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -20,20 +20,47 @@ namespace Meowzic.Core {
 
         Song song;
 
-        List<Phrase> phraseList;
+        int midiCh; // 暫定
+
+        int programNum; // 暫定
+
+        protected List<Phrase> phraseList;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
-        public Player(Song song) {
+        public Player(Song song, int midiCh, int programNum) {
             this.song = song;
+            this.midiCh = midiCh;
+            this.programNum = programNum;
+            this.phraseList = new List<Phrase>();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
 
         // 全ての Phrase を Build する
+        public void Build(Message message) {
+            message.Apply(midiCh, programNum); // 音色変更
+            int _position = 0;
+            List<Span> _spanList = song.GetAllSpan();
+            foreach (Span _span in _spanList) {
+                foreach (Phrase _phrase in phraseList) {
+                    _phrase.Build(_position, song.Key, _span);
+                    List<Note> _noteList = _phrase.GetAllNote();
+                    foreach (Note _note in _noteList) {
+                        message.Apply(midiCh, _note); // message に適用
+                    }
+                    _noteList.Clear();
+                }
+                int _tick = _span.Beat * 480;
+                _position += _tick; // スパンの長さ分ポジションを移動する
+            }
+        }
 
+        /// <summary>
+        /// TBA
+        /// </summary>
         public void Play() {
             onPlay();
         }
@@ -42,6 +69,5 @@ namespace Meowzic.Core {
         // protected Methods [verb]
 
         abstract protected void onPlay();
-
     }
 }

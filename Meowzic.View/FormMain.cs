@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Sanford.Multimedia.Midi;
 
 using Meowzic.Core;
+using Meowzic.Player;
 
 namespace Meowzic.View {
     public partial class FormMain : Form {
@@ -26,26 +27,17 @@ namespace Meowzic.View {
 
             // MIDIデバイス準備
             midi = new Midi();
-
-            // ソングを作成
-            song = new Song(Key.A, Mode.Aeo);
-            song.Add(new Part(4, Degree.I));
-            song.Add(new Part(4, Degree.IV));
-            song.Add(new Part(4, Degree.VII));
-            song.Add(new Part(4, Degree.I));
-
-            // プレイヤーが build するべき
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // EventHandler
 
         /// <summary>
-        /// MEMO: メッセージ送信のタイミングは独自実装出来るのでは？
+        /// TODO: メッセージ送信のタイミングは独自実装出来るのでは？
         /// </summary>
         void handleChannelMessagePlayed(object sender, ChannelMessageEventArgs e) {
-            midi.outDevice.Send(e.Message);
-
+            // NOTE: default.midi のメッセージはスルーする  midi.OutDevice.Send(e.Message);
+            // MEMO: 30 tick単位でしか呼ばれていない
             if (this.Visible) {
                 this.Invoke((MethodInvoker) (
                     () => textBoxBeat.Text = ((sequencer.Position / 480) + 1).ToString() // 0開始 ではなく 1開始として表示
@@ -54,7 +46,7 @@ namespace Meowzic.View {
                 List<ChannelMessage> _list = message.GetBy(sequencer.Position);
                 if (_list != null) {
                     _list.ForEach(message => {
-                        midi.outDevice.Send(message); // MIDIデバイスにメッセージを追加送信
+                        midi.OutDevice.Send(message); // MIDIデバイスにメッセージを追加送信
                     });
                 }
             }
@@ -62,7 +54,7 @@ namespace Meowzic.View {
 
         void buttonPlay_Click(object sender, EventArgs e) {
             try {
-                createMessage(song);
+                buildSong();
                 sequence.Load("default.mid");
                 sequencer.Position = 0;
                 sequencer.Start();
@@ -74,6 +66,7 @@ namespace Meowzic.View {
         void buttonStop_Click(object sender, EventArgs e) {
             try {
                 sequencer.Stop();
+                allSoundOff();
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
@@ -83,11 +76,51 @@ namespace Meowzic.View {
         // private Methods [verb]
 
         /// <summary>
-        /// メッセージストリームを作成します
+        /// ソングを作成
         /// </summary>
-        void createMessage(Song song) {
-            message = new Message(song);
+        void buildSong() {
+            song = new Song(Key.A, Mode.Mix);
+            song.Add(new Span(4, Degree.I));
+            song.Add(new Span(4, Degree.IV));
+            song.Add(new Span(4, Degree.VII));
+            song.Add(new Span(4, Degree.I));
+
+            song.Add(new Span(4, Degree.I));
+            song.Add(new Span(4, Degree.IV));
+            song.Add(new Span(4, Degree.VII));
+            song.Add(new Span(4, Degree.I));
+
+            song.Add(new Span(4, Degree.I));
+            song.Add(new Span(4, Degree.IV));
+            song.Add(new Span(4, Degree.VII));
+            song.Add(new Span(4, Degree.I));
+
+            song.Add(new Span(4, Degree.I));
+            song.Add(new Span(4, Degree.IV));
+            song.Add(new Span(4, Degree.VII));
+            song.Add(new Span(4, Degree.I));
+
+            // 暫定
+            message = new Message();
+
+            // プレイヤーが build するべき
+            var _drums = new DrumPlayer(song, 9, 0);
+            _drums.Build(message);
+
+            var _bass = new BassPlayer(song, 0, 38);
+            _bass.Build(message);
+
+            var _sequence = new SequencePlayer(song, 1, 81);
+            _sequence.Build(message);
         }
 
+        /// <summary>
+        /// オールサウンドオフ
+        /// </summary>
+        void allSoundOff() {
+            for (int i = 0; i < 16; i++) {
+                midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, i, 120));
+            }
+        }
     }
 }

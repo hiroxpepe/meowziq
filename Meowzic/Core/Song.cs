@@ -17,13 +17,13 @@ namespace Meowzic.Core {
 
         Mode mode; // キー全体の旋法
 
-        List<Part> partList; // このキーでの度数がどれくらいの長さどの旋法で演奏されるか
+        List<Span> spanList; // このキーでの度数がどれくらいの長さどの旋法で演奏されるか
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
         public Song(Key key, Mode mode) {
-            this.partList = new List<Part>(); // TODO: 順番付き？
+            this.spanList = new List<Span>(); // TODO: 順番付き？
             this.key = key;
             this.mode = mode;
         }
@@ -38,20 +38,20 @@ namespace Meowzic.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
 
-        public void Add(Part part) {
-            if (part.Mode == Mode.Undefined) {
-                part.Mode = mode; // song の旋法を設定
+        public void Add(Span span) {
+            if (span.Mode == Mode.Undefined) {
+                span.Mode = mode; // song の旋法を設定
             }
-            partList.Add(part);
+            spanList.Add(span);
+        }
+
+        public List<Span> GetAllSpan() {
+            return spanList;
         }
 
         // TODO
         public Song Repeat(int count) {
             return this;
-        }
-
-        public List<Part> GetAllPart() {
-            return partList;
         }
     }
 }

@@ -2,10 +2,8 @@
 using Meowzic.Core;
 
 namespace Meowzic.Phrase {
-
     // フレーズはキー、スケールは外部から与えられる
-
-    // ここに Duran Duran で聴いたことのあるフレーズを集めていく！
+    // ここに聴いたことのあるフレーズを集めていく！
     // テキスト編集で作曲
 
     // [****|****|****|****] とかテキストをパターンに変換 : ノートON と ノートOFF
@@ -30,15 +28,15 @@ namespace Meowzic.Phrase {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
-        public RootBass8BeatPhrase(int beat) : base(beat) {
+        public RootBass8BeatPhrase() {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // protected Methods [verb]
 
-        override protected void onBuild(int position, Key key, Part part) {
-            int _8BeatCount = part.Beat * 2; // 8ビート
-            int _note = Utils.GetRootNote(key, part.Degree, part.Mode);
+        override protected void onBuild(int position, Key key, Span span) {
+            int _8BeatCount = span.Beat * 2; // 8ビート
+            int _note = Utils.GetRootNote(key, span.Degree, span.Mode);
             for (int i = 0; i < _8BeatCount; i++) {
                 Add(new Note(position + (240 * i), (_note - 24), 240, 127)); // gate最大、velo最大
             }

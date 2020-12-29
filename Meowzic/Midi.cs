@@ -10,7 +10,7 @@ namespace Meowzic {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        OutputDevice _outDevice;
+        OutputDevice outDevice;
 
         int outDeviceID = 0;
 
@@ -18,15 +18,15 @@ namespace Meowzic {
         // Constructor
 
         public Midi() {
-            _outDevice = new OutputDevice(outDeviceID);
+            this.outDevice = new OutputDevice(outDeviceID);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjectives] 
 
-        public OutputDevice outDevice {
+        public OutputDevice OutDevice {
             get {
-                return _outDevice;
+                return outDevice;
             }
         }
     }

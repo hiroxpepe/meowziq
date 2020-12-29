@@ -3,7 +3,7 @@ namespace Meowzic.Core {
     /// <summary>
     /// コードトラック
     /// </summary>
-    public class Part {
+    public class Span {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
@@ -17,13 +17,13 @@ namespace Meowzic.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
-        public Part(int beat, Degree degree) {
+        public Span(int beat, Degree degree) {
             this.beat = beat;
             this.degree = degree;
             this.mode = Mode.Undefined;
         }
 
-        public Part(int beat, Degree degree, Mode mode) {
+        public Span(int beat, Degree degree, Mode mode) {
             this.beat = beat;
             this.degree = degree;
             this.mode = mode;

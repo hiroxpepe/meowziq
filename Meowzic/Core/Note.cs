@@ -8,7 +8,7 @@ namespace Meowzic.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        int tick; // TICK ※相対値
+        int tick; // TICK ※絶対値
 
         int num; // NOTE番号
 
