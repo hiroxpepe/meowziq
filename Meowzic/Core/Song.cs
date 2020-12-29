@@ -2,22 +2,28 @@
 using System.Collections.Generic;
 
 namespace Meowzic.Core {
+    /// <summary>
+    /// ソングとはキーとそのタイミングでの旋法を表現する
+    ///     + バンドのコード譜のような概念
+    /// メロディも知見である
+    ///     + 多彩なフレーズを駆使するプレイヤーを育てていく仕組み
+    /// </summary>
     public class Song {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        Key key; // キー ※ひとまず転調ではなく旋法の切り替えを実装する
+        Key key; // キー ※ひとまず転調ではなく旋法の切り替えを実装する TODO: 転調キーを変えて再計算
 
-        Mode mode; // 旋法
+        Mode mode; // キー全体の旋法
 
-        List<Pattern> patternList;
+        List<Part> partList; // このキーでの度数がどれくらいの長さどの旋法で演奏されるか
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
         public Song(Key key, Mode mode) {
-            this.patternList = new List<Pattern>();
+            this.partList = new List<Part>(); // TODO: 順番付き？
             this.key = key;
             this.mode = mode;
         }
@@ -32,16 +38,20 @@ namespace Meowzic.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
 
-        public void AddPattern(Pattern pattern) {
-            if (pattern.Mode == Mode.Undefined) {
-                pattern.Mode = mode; // song の旋法を設定
+        public void Add(Part part) {
+            if (part.Mode == Mode.Undefined) {
+                part.Mode = mode; // song の旋法を設定
             }
-            patternList.Add(pattern);
+            partList.Add(part);
         }
 
-        public List<Pattern> GetPattern() {
-            return patternList;
+        // TODO
+        public Song Repeat(int count) {
+            return this;
         }
 
+        public List<Part> GetAllPart() {
+            return partList;
+        }
     }
 }

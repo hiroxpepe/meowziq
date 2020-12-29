@@ -1,41 +1,43 @@
 ﻿
 namespace Meowzic.Core {
-    public class Pattern {
-        // コードトラックが必要？
+    /// <summary>
+    /// コードトラック
+    /// </summary>
+    public class Part {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        int bar; // 小節数
+        int beat; // 拍数
 
-        Chord chord; // コード
+        Degree degree; // コード ? この言い方はおかしいかも 度数と旋法で決まるはず
 
         Mode mode; // 旋法
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
-        public Pattern(int bar, Chord chord) {
-            this.bar = bar;
-            this.chord = chord;
+        public Part(int beat, Degree degree) {
+            this.beat = beat;
+            this.degree = degree;
             this.mode = Mode.Undefined;
         }
 
-        public Pattern(int bar, Chord chord, Mode mode) {
-            this.bar = bar;
-            this.chord = chord;
+        public Part(int beat, Degree degree, Mode mode) {
+            this.beat = beat;
+            this.degree = degree;
             this.mode = mode;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjectives] 
 
-        public int Bar {
-            get => bar;
+        public int Beat {
+            get => beat;
         }
 
-        public Chord Chord {
-            get => chord;
+        public Degree Degree {
+            get => degree;
         }
 
         public Mode Mode {
@@ -45,7 +47,5 @@ namespace Meowzic.Core {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
-
     }
-
 }
