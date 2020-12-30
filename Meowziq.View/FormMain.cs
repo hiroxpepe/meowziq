@@ -79,26 +79,20 @@ namespace Meowziq.View {
         /// ソングを作成
         /// </summary>
         void buildSong() {
-            song = new Song(Key.A, Mode.Mix);
-            song.Add(new Span(4, Degree.I));
-            song.Add(new Span(4, Degree.IV));
-            song.Add(new Span(4, Degree.VII));
-            song.Add(new Span(4, Degree.I));
 
-            song.Add(new Span(4, Degree.I));
-            song.Add(new Span(4, Degree.IV));
-            song.Add(new Span(4, Degree.VII));
-            song.Add(new Span(4, Degree.I));
+            // 4小節のパターン
+            var _patt1 = new Pattern(new List<Meas>() {
+                new Meas(new List<Span>() { new Span(4, Degree.I) }),
+                new Meas(new List<Span>() { new Span(4, Degree.IV) }),
+                new Meas(new List<Span>() { new Span(4, Degree.VII) }),
+                new Meas(new List<Span>() { new Span(4, Degree.I) })
+            });
 
-            song.Add(new Span(4, Degree.I));
-            song.Add(new Span(4, Degree.IV));
-            song.Add(new Span(4, Degree.VII));
-            song.Add(new Span(4, Degree.I));
-
-            song.Add(new Span(4, Degree.I));
-            song.Add(new Span(4, Degree.IV));
-            song.Add(new Span(4, Degree.VII));
-            song.Add(new Span(4, Degree.I));
+            song = new Song(Key.A, Mode.Dor);
+            song.Add(_patt1);
+            song.Add(_patt1);
+            song.Add(_patt1);
+            song.Add(_patt1);
 
             // 暫定
             message = new Message();
@@ -107,10 +101,10 @@ namespace Meowziq.View {
             var _drums = new DrumPlayer(song, 9, 0);
             _drums.Build(message);
 
-            var _bass = new BassPlayer(song, 0, 38);
+            var _bass = new BassPlayer(song, MidiChannel.ch1, Instrument.Synth_Bass_1); // Synth Bass 1
             _bass.Build(message);
 
-            var _sequence = new SequencePlayer(song, 1, 81);
+            var _sequence = new SequencePlayer(song, MidiChannel.ch2, Instrument.Lead_1_square); // Lead 1 (square)
             _sequence.Build(message);
         }
 

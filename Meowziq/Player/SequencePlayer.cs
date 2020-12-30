@@ -12,6 +12,10 @@ namespace Meowziq.Player {
             this.phraseList.Add(new RandomSequencePhrase());
         }
 
+        public SequencePlayer(Song song, MidiChannel midiCh, Instrument programNum) : base(song, midiCh, programNum) {
+            this.phraseList.Add(new RandomSequencePhrase());
+        }
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // protected Methods [verb]
 

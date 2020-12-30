@@ -10,6 +10,8 @@ namespace Meowziq.Core {
     /// </summary>
     public class Song {
 
+        // 音楽理論を知らない人が曲を作ることを楽しめる仕組みを作る
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
@@ -19,11 +21,14 @@ namespace Meowziq.Core {
 
         List<Span> spanList; // このキーでの度数がどれくらいの長さどの旋法で演奏されるか
 
+        List<Pattern> patternList;
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
         public Song(Key key, Mode mode) {
             this.spanList = new List<Span>(); // TODO: 順番付き？
+            this.patternList = new List<Pattern>();
             this.key = key;
             this.mode = mode;
         }
@@ -38,6 +43,10 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
 
+        public void Add(Pattern pattern) {
+            patternList.Add(pattern);
+        }
+
         public void Add(Span span) {
             if (span.Mode == Mode.Undefined) {
                 span.Mode = mode; // song の旋法を設定
@@ -46,10 +55,25 @@ namespace Meowziq.Core {
         }
 
         public List<Span> GetAllSpan() {
-            return spanList;
+            List<Span> _newSpanList = new List<Span>();
+            foreach (var _pattern in patternList) {
+                var _measList = _pattern.GetAllMeas();
+                foreach (var _meas in _measList) {
+                    var _spanList = _meas.GetAllSpan();
+                    foreach (var _span in _spanList) {
+                        if (_span.Mode == Mode.Undefined) {
+                            _span.Mode = mode; // song の旋法を設定
+                        }
+                        _newSpanList.Add(_span);
+                    }
+                }
+            }
+            return _newSpanList;
         }
 
-        // TODO
+        /// <summary>
+        /// TBA
+        /// </summary>
         public Song Repeat(int count) {
             return this;
         }

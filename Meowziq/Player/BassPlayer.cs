@@ -12,6 +12,10 @@ namespace Meowziq.Player {
             this.phraseList.Add(new RootBass8BeatPhrase());
         }
 
+        public BassPlayer(Song song, MidiChannel midiCh, Instrument programNum) : base(song, midiCh, programNum) {
+            this.phraseList.Add(new RootBass8BeatPhrase());
+        }
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // protected Methods [verb]
 
