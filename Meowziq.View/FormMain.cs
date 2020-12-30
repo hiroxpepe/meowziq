@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using Sanford.Multimedia.Midi;
 
-using Meowzic.Core;
-using Meowzic.Player;
+using Meowziq.Core;
+using Meowziq.Player;
 
-namespace Meowzic.View {
+namespace Meowziq.View {
     public partial class FormMain : Form {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

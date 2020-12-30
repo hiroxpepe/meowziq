@@ -1,5 +1,5 @@
 ﻿
-namespace Meowzic.Core {
+namespace Meowziq.Core {
     /// <summary>
     /// ChannelMessage に変換される
     /// </summary>

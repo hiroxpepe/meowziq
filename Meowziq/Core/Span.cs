@@ -1,5 +1,5 @@
 ﻿
-namespace Meowzic.Core {
+namespace Meowziq.Core {
     /// <summary>
     /// コードトラック
     /// </summary>

@@ -1,7 +1,7 @@
 ﻿
-using Meowzic.Core;
+using Meowziq.Core;
 
-namespace Meowzic.Phrase {
+namespace Meowziq.Phrase {
     // フレーズはキー、スケールは外部から与えられる
     // ここに聴いたことのあるフレーズを集めていく！
     // テキスト編集で作曲

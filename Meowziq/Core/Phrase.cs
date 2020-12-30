@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Meowzic.Core {
+namespace Meowziq.Core {
     /// <summary>
     /// フレーズはキー、スケールを外部から与えられる
     ///     + プリセットフレーズ

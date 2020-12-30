@@ -7,8 +7,8 @@
     <ProjectGuid>{73E21602-E5FB-46BD-8FBC-C18E72E79089}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Meowzic</RootNamespace>
-    <AssemblyName>Meowzic.lib</AssemblyName>
+    <RootNamespace>Meowziq</RootNamespace>
+    <AssemblyName>Meowziq.lib</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
