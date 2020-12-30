@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{5365817E-0BC2-4444-BFFB-30EC3577D510}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Meowzic.View</RootNamespace>
-    <AssemblyName>Meowzic.View</AssemblyName>
+    <RootNamespace>Meowziq.View</RootNamespace>
+    <AssemblyName>Meowziq.View</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -92,9 +92,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Meowzic\Meowzic.csproj">
+    <ProjectReference Include="..\Meowziq\Meowziq.csproj">
       <Project>{73e21602-e5fb-46bd-8fbc-c18e72e79089}</Project>
-      <Name>Meowzic</Name>
+      <Name>Meowziq</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

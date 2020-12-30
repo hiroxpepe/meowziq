@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using Sanford.Multimedia.Midi;
 
-using Meowzic.Core;
+using Meowziq.Core;
 
-namespace Meowzic {
+namespace Meowziq {
     /// <summary>
     /// Sanford.Multimedia.Midi を使用した Message クラス
     /// </summary>

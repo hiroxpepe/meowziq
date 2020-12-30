@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Meowzic.View.Properties {
+namespace Meowziq.View.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

@@ -1,7 +1,7 @@
 ﻿
 using System.Collections.Generic;
 
-namespace Meowzic.Core {
+namespace Meowziq.Core {
     /// <summary>
     /// ソングとはキーとそのタイミングでの旋法を表現する
     ///     + バンドのコード譜のような概念

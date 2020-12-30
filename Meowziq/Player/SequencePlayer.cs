@@ -1,15 +1,15 @@
 ﻿
-using Meowzic.Core;
-using Meowzic.Phrase;
+using Meowziq.Core;
+using Meowziq.Phrase;
 
-namespace Meowzic.Player {
-    public class BassPlayer : Core.Player {
+namespace Meowziq.Player {
+    public class SequencePlayer : Core.Player {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
-        public BassPlayer(Song song, int midiCh, int programNum) : base(song, midiCh, programNum) {
-            this.phraseList.Add(new RootBass8BeatPhrase());
+        public SequencePlayer(Song song, int midiCh, int programNum) : base(song, midiCh, programNum) {
+            this.phraseList.Add(new RandomSequencePhrase());
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

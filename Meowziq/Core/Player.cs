@@ -1,7 +1,7 @@
 ﻿
 using System.Collections.Generic;
 
-namespace Meowzic.Core {
+namespace Meowziq.Core {
     /// <summary>
     /// プレイヤー
     /// + 曲(ソング)を知っている

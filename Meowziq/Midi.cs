@@ -1,7 +1,7 @@
 ﻿
 using Sanford.Multimedia.Midi;
 
-namespace Meowzic {
+namespace Meowziq {
     /// <summary>
     /// Sanford.Multimedia.Midi を使用した MIDI クラス
     /// </summary>
@@ -18,6 +18,8 @@ namespace Meowzic {
         // Constructor
 
         public Midi() {
+
+            //var tmp = OutputDevice.GetDeviceCapabilities(2);
             this.outDevice = new OutputDevice(outDeviceID);
         }
 

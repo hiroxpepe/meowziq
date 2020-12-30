@@ -1,9 +1,9 @@
 ﻿
 using System.Collections.Generic;
 
-using Meowzic.Core;
+using Meowziq.Core;
 
-namespace Meowzic.Phrase {
+namespace Meowziq.Phrase {
     /// <summary>
     /// 文字列からフレーズ生成
     /// </summary>

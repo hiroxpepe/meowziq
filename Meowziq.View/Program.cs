@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace Meowzic.View {
+namespace Meowziq.View {
     static class Program {
         /// <summary>
         /// アプリケーションのメイン エントリ ポイントです。

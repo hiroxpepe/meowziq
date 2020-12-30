@@ -1,7 +1,7 @@
 ﻿
 using System.Collections.Generic;
 
-namespace Meowzic.Core {
+namespace Meowziq.Core {
     /// <summary>
     /// PAさんクラス
     ///     + ボリューム調整、パン、ミュートとか

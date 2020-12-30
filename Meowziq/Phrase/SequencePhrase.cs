@@ -1,7 +1,7 @@
 ﻿
-using Meowzic.Core;
+using Meowziq.Core;
 
-namespace Meowzic.Phrase {
+namespace Meowziq.Phrase {
 
     public class RandomSequencePhrase : Core.Phrase {
 
@@ -18,7 +18,7 @@ namespace Meowzic.Phrase {
             int _16BeatCount = span.Beat * 4; // 16ビート
             for (int i = 0; i < _16BeatCount; i++) {
                 int _note = Utils.GetNote(key, span.Degree, span.Mode, Arpeggio.Random, i); // 16の倍数
-                Add(new Note(position + (120 * i), _note, 60, 127)); // gate 短め
+                Add(new Note(position + (120 * i), _note, 30, 127)); // gate 短め
             }
         }
     }
