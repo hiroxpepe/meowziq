@@ -36,6 +36,13 @@ namespace Meowziq.Core {
             this.phraseList = new List<Phrase>();
         }
 
+        public Player(Song song, MidiChannel midiCh, Instrument programNum) {
+            this.song = song;
+            this.midiCh = (int) midiCh;
+            this.programNum = (int) programNum;
+            this.phraseList = new List<Phrase>();
+        }
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
 

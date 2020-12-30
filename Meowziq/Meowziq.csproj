@@ -55,10 +55,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Mixer.cs" />
+    <Compile Include="Core\Pattern.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Midi.cs" />
     <Compile Include="Core\Note.cs" />
-    <Compile Include="Core\Span.cs" />
     <Compile Include="Core\Phrase.cs" />
     <Compile Include="Core\Player.cs" />
     <Compile Include="Core\Song.cs" />
