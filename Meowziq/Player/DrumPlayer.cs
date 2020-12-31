@@ -8,7 +8,7 @@ namespace Meowziq.Player {
         // protected Methods [verb]
 
         override protected void preBuild() {
-            this.phraseList.Add(new TextDrumPhrase());
+            phraseList.Add(new TextDrumPhrase());
         }
 
         override protected void onPlay() {

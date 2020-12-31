@@ -63,9 +63,11 @@
     <Compile Include="Core\Player.cs" />
     <Compile Include="Core\Song.cs" />
     <Compile Include="Core\Utils.cs" />
+    <Compile Include="Phrase\PadPhrase.cs" />
     <Compile Include="Phrase\SequencePhrase.cs" />
     <Compile Include="Phrase\BassPhrase.cs" />
     <Compile Include="Phrase\DrumPhrase.cs" />
+    <Compile Include="Player\PadPlayer.cs" />
     <Compile Include="Player\SequencePlayer.cs" />
     <Compile Include="Player\DrumPlayer.cs" />
     <Compile Include="Player\BassPlayer.cs" />

@@ -125,6 +125,12 @@ namespace Meowziq.View {
             _sequence.MidiCh = MidiChannel.ch2;
             _sequence.Program = Instrument.Lead_1_square;
             _sequence.Build(message);
+
+            var _pad = new PadPlayer();
+            _pad.Song = song;
+            _pad.MidiCh = MidiChannel.ch3;
+            _pad.Program = Instrument.Pad_3_polysynth;
+            _pad.Build(message);
         }
 
         /// <summary>
