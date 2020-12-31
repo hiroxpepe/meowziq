@@ -11,6 +11,8 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
+        string name;
+
         List<Meas> measList;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -19,10 +21,11 @@ namespace Meowziq.Core {
         /// <summary>
         /// コンストラクタだけが作成する唯一の方法
         /// </summary>
-        public Pattern(List<Meas> measList) {
+        public Pattern(string name, List<Meas> measList) {
             if (measList.Count > 16) {
                 throw new System.ArgumentException("measure counts are until 16."); // 1パターンは16小節まで
             }
+            this.name = name;
             this.measList = measList;
         }
 
@@ -30,6 +33,10 @@ namespace Meowziq.Core {
         // Properties [noun, adjectives] 
 
         // TODO: 位置を返すカーソルが必要？
+
+        public string Name {
+            get => name;
+        }
 
         /// <summary>
         /// パターンの拍数
