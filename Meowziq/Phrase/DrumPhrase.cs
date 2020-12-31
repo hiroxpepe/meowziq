@@ -26,21 +26,5 @@ namespace Meowziq.Phrase {
             applyDrumNote(position, pattern.BeatCount, _d3, Percussion.Electric_Snare);
             applyDrumNote(position, pattern.BeatCount, _d4, Percussion.Electric_Bass_Drum);
         }
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // private Methods [verb]
-
-        private void applyDrumNote(int position, int beatCount, string target, Percussion noteNum) {
-            int _index = 0;
-            foreach (bool? _value in convertToBool(filter(target))) {
-                if (_index > beatCount * 4) {
-                    return; // Pattern の長さを超えたら終了 FIXME: 長さに足りない時？ エラー? リピート？
-                }
-                if (_value == true) {
-                    Add(new Note(position + (120 * _index), (int) noteNum, 120, 127));
-                }
-                _index++; // 16beatを進める
-            }
-        }
     }
 }
