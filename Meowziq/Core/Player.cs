@@ -27,20 +27,21 @@ namespace Meowziq.Core {
         protected List<Phrase> phraseList;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Constructor
+        // Properties [noun, adjectives] 
 
-        public Player(Song song, int midiCh, int programNum) {
-            this.song = song;
-            this.midiCh = midiCh;
-            this.programNum = programNum;
-            this.phraseList = new List<Phrase>();
+        public Song Song {
+            set {
+                song = value;
+                phraseList = new List<Phrase>();
+            }
         }
 
-        public Player(Song song, MidiChannel midiCh, Instrument programNum) {
-            this.song = song;
-            this.midiCh = (int) midiCh;
-            this.programNum = (int) programNum;
-            this.phraseList = new List<Phrase>();
+        public MidiChannel MidiCh {
+            set => midiCh = (int) value;
+        }
+
+        public Instrument Program {
+            set => programNum = (int) value;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -52,6 +53,9 @@ namespace Meowziq.Core {
         /// Build する場所で内容を変える
         /// </summary>
         public void Build(Message message) {
+            // フレーズ読み込み
+            preBuild();
+
             // 音色変更
             message.Apply(midiCh, programNum); 
             
@@ -82,6 +86,8 @@ namespace Meowziq.Core {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // abstract protected Methods [verb]
+
+        abstract protected void preBuild();
 
         abstract protected void onPlay();
     }
