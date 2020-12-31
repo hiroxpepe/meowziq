@@ -8,7 +8,7 @@ namespace Meowziq.Player {
         // protected Methods [verb]
 
         override protected void preBuild() {
-            this.phraseList.Add(new RandomSequencePhrase());
+            phraseList.Add(new RandomSequencePhrase());
         }
 
         override protected void onPlay() {

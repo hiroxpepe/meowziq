@@ -10,23 +10,14 @@ namespace Meowziq.Phrase {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // protected Methods [verb]
 
-        // パターン(4小節)をスパン(キー・度数・旋法)を踏まえて処理するには？
-
         override protected void onBuildByPattern(int position, Key key, Pattern pattern) {
-            // テンプレートを1スパンづつ翻訳していく
 
             // 1パターン4小節(16拍)と分かってる書き方
             string _d0 = "[----|----|----|----][----|----|----|----][----|----|----|----][----|----|----|--x-]";
-            string _d1 = "[xxxx|xxxx|xxxx|xx--][xxxx|xxxx|xxxx|xx--][xxxx|xxxx|xxxx|xx--][xxxx|xxxx|xxxx|xx--]";
+            string _d1 = "[x-x-|x-x-|x-x-|x---][x-x-|x-x-|x-x-|x---][xxxx|xxxx|xxxx|xx--][xxxx|xxxx|xxxx|xx--]";
             string _d2 = "[----|----|----|--x-][----|----|----|--x-][----|----|----|--x-][----|----|----|--x-]";
             string _d3 = "[----|x---|----|x---][----|x---|----|x---][----|x---|----|x---][----|x---|----|x---]";
             string _d4 = "[x---|---x|x---|----][x---|---x|x---|----][x---|---x|x---|----][x---|---x|x---|----]";
-
-            // コード low, mid, high, highhigh?
-            //string _mid1 = "[x>>>|>>>>|----|----]";
-            //string _mid3 = "[x>>>|>>>>|----|----]";
-            //string _mid5 = "[x>>>|>>>>|----|----]";
-            //string _mid7 = "[x>>>|>>>>|----|----]";
 
             // Note 生成
             applyDrumNote(position, pattern.BeatCount, _d0, Percussion.Crash_Cymbal_1);
