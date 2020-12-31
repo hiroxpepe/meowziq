@@ -84,7 +84,7 @@ namespace Meowziq.View {
         void buildSong() {
 
             // 4小節のパターン
-            var _patt1 = new Pattern(new List<Meas>() {
+            var _verse1 = new Pattern("verse1", new List<Meas>() {
                 new Meas(new List<Span>() { new Span(4, Degree.I, Mode.Dor) }),
                 new Meas(new List<Span>() { new Span(4, Degree.IV, Mode.Mix) }),
                 new Meas(new List<Span>() { new Span(4, Degree.VI) }),
@@ -101,20 +101,20 @@ namespace Meowziq.View {
             //});
 
             song = new Song(Key.B, Mode.Aeo);
-            song.Add(_patt1);
-            song.Add(_patt1);
+            song.Add(_verse1);
+            song.Add(_verse1);
             //song.Add(_patt2);
             //song.Add(_patt2);
-            song.Add(_patt1);
-            song.Add(_patt1);
+            song.Add(_verse1);
+            song.Add(_verse1);
             //song.Add(_patt2);
             //song.Add(_patt2);
-            song.Add(_patt1);
-            song.Add(_patt1);
+            song.Add(_verse1);
+            song.Add(_verse1);
             //song.Add(_patt2);
             //song.Add(_patt2);
-            song.Add(_patt1);
-            song.Add(_patt1);
+            song.Add(_verse1);
+            song.Add(_verse1);
 
             // 暫定
             message = new Message();
