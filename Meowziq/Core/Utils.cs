@@ -12,6 +12,33 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]
 
+        /// <summary>
+        /// 自動的に旋法を決定する場合
+        /// </summary>
+        public static int GetNoteWithAutoMode(Key key, Degree degree, Mode keyMode, int index) {
+            // 曲のキーの度数と旋法から度数のルート音を取得
+            int _rootOfDegree = chordRootNote(key, degree, keyMode); // FIXME: 曲の旋法？
+
+            // キーの旋法と度数から旋法に対応したその度数の旋法を取得
+            var _autoMode = modeForDegree(keyMode, degree);
+
+            // そのルート音の旋法スケールを取得
+            int[] _modeScale = modeScale(toKey(_rootOfDegree), _autoMode);
+            return _modeScale[index - 1]; // 0基底
+        }
+
+        /// <summary>
+        /// Span の旋法を適用する場合
+        /// </summary>
+        public static int GetNoteWithSpanMode(Key key, Degree degree, Mode keyMode, Mode spanMode, int index) {
+            // 曲のキーの度数と旋法から度数のルート音を取得
+            int _rootOfDegree = chordRootNote(key, degree, keyMode); // FIXME: 曲の旋法？
+
+            // そのルート音の旋法スケールを取得※Span に設定した旋法を使用
+            int[] _modeScale = modeScale(toKey(_rootOfDegree), spanMode);
+            return _modeScale[index - 1]; // 0基底
+        }
+
         public static int GetRootNote(Key key) {
             return (int) key;
         }
@@ -55,7 +82,7 @@ namespace Meowziq.Core {
         /// </summary>
         static int arpeggioAsModeScaleIn3(Key key, Degree degree, Mode mode, Arpeggio arpeggio, int beatCount = 0) {
             int _ret;
-            int[] _scale = chordNote3(key, degree, mode); // 3音
+            int[] _scale = note3(key, degree, mode); // 3音
             switch (arpeggio) {
                 case Arpeggio.Random:
                     _ret = random.Next(0, 3);
@@ -105,7 +132,7 @@ namespace Meowziq.Core {
             return _scale[(int) degree];
         }
 
-        static int[] chordNote3(Key key, Degree degree, Mode mode) {
+        static int[] note3(Key key, Degree degree, Mode mode) {
             int[] _modeScale = modeScale(key, mode);
             int[] _note3 = new int[3]; // コード構成音の3音を抽出
             switch (degree) {
@@ -150,59 +177,135 @@ namespace Meowziq.Core {
             return _note3;
         }
 
-        static int[] chordNote4(Key key, Degree degree, Mode mode) {
+        static int[] note4(Key key, Degree degree, Mode mode) {
             int[] _modeScale = modeScale(key, mode);
-            int[] _codeNote4 = new int[4]; // コード構成音の4音を抽出
+            int[] _note4 = new int[4]; // コード構成音の4音を抽出
             switch (degree) {
                 case Degree.I:
-                    _codeNote4[0] = _modeScale[1 - 1];
-                    _codeNote4[1] = _modeScale[3 - 1];
-                    _codeNote4[2] = _modeScale[5 - 1];
-                    _codeNote4[3] = _modeScale[7 - 1];
+                    _note4[0] = _modeScale[1 - 1];
+                    _note4[1] = _modeScale[3 - 1];
+                    _note4[2] = _modeScale[5 - 1];
+                    _note4[3] = _modeScale[7 - 1];
                     break;
                 case Degree.II:
-                    _codeNote4[0] = _modeScale[2 - 1];
-                    _codeNote4[1] = _modeScale[4 - 1];
-                    _codeNote4[2] = _modeScale[6 - 1];
-                    _codeNote4[3] = _modeScale[1 - 1];
+                    _note4[0] = _modeScale[2 - 1];
+                    _note4[1] = _modeScale[4 - 1];
+                    _note4[2] = _modeScale[6 - 1];
+                    _note4[3] = _modeScale[1 - 1];
                     break;
                 case Degree.III:
-                    _codeNote4[0] = _modeScale[3 - 1];
-                    _codeNote4[1] = _modeScale[5 - 1];
-                    _codeNote4[2] = _modeScale[7 - 1];
-                    _codeNote4[3] = _modeScale[2 - 1];
+                    _note4[0] = _modeScale[3 - 1];
+                    _note4[1] = _modeScale[5 - 1];
+                    _note4[2] = _modeScale[7 - 1];
+                    _note4[3] = _modeScale[2 - 1];
                     break;
                 case Degree.IV:
-                    _codeNote4[0] = _modeScale[4 - 1];
-                    _codeNote4[1] = _modeScale[6 - 1];
-                    _codeNote4[2] = _modeScale[1 - 1];
-                    _codeNote4[3] = _modeScale[3 - 1];
+                    _note4[0] = _modeScale[4 - 1];
+                    _note4[1] = _modeScale[6 - 1];
+                    _note4[2] = _modeScale[1 - 1];
+                    _note4[3] = _modeScale[3 - 1];
                     break;
                 case Degree.V:
-                    _codeNote4[0] = _modeScale[5 - 1];
-                    _codeNote4[1] = _modeScale[7 - 1];
-                    _codeNote4[2] = _modeScale[2 - 1];
-                    _codeNote4[3] = _modeScale[4 - 1];
+                    _note4[0] = _modeScale[5 - 1];
+                    _note4[1] = _modeScale[7 - 1];
+                    _note4[2] = _modeScale[2 - 1];
+                    _note4[3] = _modeScale[4 - 1];
                     break;
                 case Degree.VI:
-                    _codeNote4[0] = _modeScale[6 - 1];
-                    _codeNote4[1] = _modeScale[1 - 1];
-                    _codeNote4[2] = _modeScale[3 - 1];
-                    _codeNote4[3] = _modeScale[5 - 1];
+                    _note4[0] = _modeScale[6 - 1];
+                    _note4[1] = _modeScale[1 - 1];
+                    _note4[2] = _modeScale[3 - 1];
+                    _note4[3] = _modeScale[5 - 1];
                     break;
                 case Degree.VII:
-                    _codeNote4[0] = _modeScale[7 - 1];
-                    _codeNote4[1] = _modeScale[2 - 1];
-                    _codeNote4[2] = _modeScale[4 - 1];
-                    _codeNote4[3] = _modeScale[6 - 1];
+                    _note4[0] = _modeScale[7 - 1];
+                    _note4[1] = _modeScale[2 - 1];
+                    _note4[2] = _modeScale[4 - 1];
+                    _note4[3] = _modeScale[6 - 1];
                     break;
                 default:
                     break;
             }
-            return _codeNote4;
+            return _note4;
         }
 
-        // 7モードのペンタトニック
+        // TODO: 7モードのペンタトニック
+
+        /// <summary>
+        /// MEMO: 有効？
+        /// </summary>
+        static int[] note7(Key key, Degree degree, Mode mode) {
+            int[] _modeScale = modeScale(key, mode);
+            int[] _note7 = new int[7]; // コード構成音の4音を抽出
+            switch (degree) {
+                case Degree.I:
+                    _note7[0] = _modeScale[1 - 1];
+                    _note7[1] = _modeScale[3 - 1];
+                    _note7[2] = _modeScale[5 - 1];
+                    _note7[3] = _modeScale[7 - 1];
+                    _note7[4] = _modeScale[2 - 1];
+                    _note7[5] = _modeScale[4 - 1];
+                    _note7[6] = _modeScale[6 - 1];
+                    break;
+                case Degree.II:
+                    _note7[0] = _modeScale[2 - 1];
+                    _note7[1] = _modeScale[4 - 1];
+                    _note7[2] = _modeScale[6 - 1];
+                    _note7[3] = _modeScale[1 - 1];
+                    _note7[4] = _modeScale[3 - 1];
+                    _note7[5] = _modeScale[5 - 1];
+                    _note7[6] = _modeScale[7 - 1];
+                    break;
+                case Degree.III:
+                    _note7[0] = _modeScale[3 - 1];
+                    _note7[1] = _modeScale[5 - 1];
+                    _note7[2] = _modeScale[7 - 1];
+                    _note7[3] = _modeScale[2 - 1];
+                    _note7[4] = _modeScale[4 - 1];
+                    _note7[5] = _modeScale[6 - 1];
+                    _note7[6] = _modeScale[1 - 1];
+                    break;
+                case Degree.IV:
+                    _note7[0] = _modeScale[4 - 1];
+                    _note7[1] = _modeScale[6 - 1];
+                    _note7[2] = _modeScale[1 - 1];
+                    _note7[3] = _modeScale[3 - 1];
+                    _note7[4] = _modeScale[5 - 1];
+                    _note7[5] = _modeScale[7 - 1];
+                    _note7[6] = _modeScale[2 - 1];
+                    break;
+                case Degree.V:
+                    _note7[0] = _modeScale[5 - 1];
+                    _note7[1] = _modeScale[7 - 1];
+                    _note7[2] = _modeScale[2 - 1];
+                    _note7[3] = _modeScale[4 - 1];
+                    _note7[4] = _modeScale[6 - 1];
+                    _note7[5] = _modeScale[1 - 1];
+                    _note7[6] = _modeScale[3 - 1];
+                    break;
+                case Degree.VI:
+                    _note7[0] = _modeScale[6 - 1];
+                    _note7[1] = _modeScale[1 - 1];
+                    _note7[2] = _modeScale[3 - 1];
+                    _note7[3] = _modeScale[5 - 1];
+                    _note7[4] = _modeScale[7 - 1];
+                    _note7[5] = _modeScale[2 - 1];
+                    _note7[6] = _modeScale[4 - 1];
+                    break;
+                case Degree.VII:
+                    _note7[0] = _modeScale[7 - 1];
+                    _note7[1] = _modeScale[2 - 1];
+                    _note7[2] = _modeScale[4 - 1];
+                    _note7[3] = _modeScale[6 - 1];
+                    _note7[4] = _modeScale[1 - 1];
+                    _note7[5] = _modeScale[3 - 1];
+                    _note7[6] = _modeScale[5 - 1];
+                    break;
+                default:
+                    break;
+            }
+            return _note7;
+        }
 
         /// <summary>
         /// 該当キーのモードスケールを返します。
@@ -279,6 +382,165 @@ namespace Meowziq.Core {
             }
             return _scale;
         }
+
+        // キーの旋法と度数から旋法に対応したその度数の旋法を取得
+        static Mode modeForDegree(Mode keyMode, Degree degree) {
+            if (keyMode == Mode.Lyd) {
+                switch (degree) {
+                    case Degree.I:
+                        return Mode.Lyd;
+                    case Degree.II:
+                        return Mode.Mix;
+                    case Degree.III:
+                        return Mode.Aeo;
+                    case Degree.IV:
+                        return Mode.Loc;
+                    case Degree.V:
+                        return Mode.Ion;
+                    case Degree.VI:
+                        return Mode.Dor;
+                    case Degree.VII:
+                        return Mode.Phr;
+                }
+            } else if (keyMode == Mode.Ion) {
+                switch (degree) {
+                    case Degree.I:
+                        return Mode.Ion;
+                    case Degree.II:
+                        return Mode.Dor;
+                    case Degree.III:
+                        return Mode.Phr;
+                    case Degree.IV:
+                        return Mode.Lyd;
+                    case Degree.V:
+                        return Mode.Mix;
+                    case Degree.VI:
+                        return Mode.Aeo;
+                    case Degree.VII:
+                        return Mode.Loc;
+                }
+            } else if (keyMode == Mode.Mix) {
+                switch (degree) {
+                    case Degree.I:
+                        return Mode.Mix;
+                    case Degree.II:
+                        return Mode.Aeo;
+                    case Degree.III:
+                        return Mode.Loc;
+                    case Degree.IV:
+                        return Mode.Ion;
+                    case Degree.V:
+                        return Mode.Dor;
+                    case Degree.VI:
+                        return Mode.Phr;
+                    case Degree.VII:
+                        return Mode.Lyd;
+                }
+            } else if (keyMode == Mode.Dor) {
+                switch (degree) {
+                    case Degree.I:
+                        return Mode.Dor;
+                    case Degree.II:
+                        return Mode.Phr;
+                    case Degree.III:
+                        return Mode.Lyd;
+                    case Degree.IV:
+                        return Mode.Mix;
+                    case Degree.V:
+                        return Mode.Aeo;
+                    case Degree.VI:
+                        return Mode.Loc;
+                    case Degree.VII:
+                        return Mode.Ion;
+                }
+            } else if (keyMode == Mode.Aeo) {
+                switch (degree) {
+                    case Degree.I:
+                        return Mode.Aeo;
+                    case Degree.II:
+                        return Mode.Loc;
+                    case Degree.III:
+                        return Mode.Ion;
+                    case Degree.IV:
+                        return Mode.Dor;
+                    case Degree.V:
+                        return Mode.Phr;
+                    case Degree.VI:
+                        return Mode.Lyd;
+                    case Degree.VII:
+                        return Mode.Mix;
+                }
+            } else if (keyMode == Mode.Phr) {
+                switch (degree) {
+                    case Degree.I:
+                        return Mode.Phr;
+                    case Degree.II:
+                        return Mode.Lyd;
+                    case Degree.III:
+                        return Mode.Mix;
+                    case Degree.IV:
+                        return Mode.Aeo;
+                    case Degree.V:
+                        return Mode.Loc;
+                    case Degree.VI:
+                        return Mode.Ion;
+                    case Degree.VII:
+                        return Mode.Dor;
+                }
+            } else if (keyMode == Mode.Loc) {
+                switch (degree) {
+                    case Degree.I:
+                        return Mode.Loc;
+                    case Degree.II:
+                        return Mode.Ion;
+                    case Degree.III:
+                        return Mode.Dor;
+                    case Degree.IV:
+                        return Mode.Phr;
+                    case Degree.V:
+                        return Mode.Lyd;
+                    case Degree.VI:
+                        return Mode.Mix;
+                    case Degree.VII:
+                        return Mode.Aeo;
+                }
+            }
+            return Mode.Undefined;
+        }
+
+        static Key toKey(int note) {
+            if (note > 75) {
+                note -= 12; // オクターブ調節
+            }
+            switch (note) {
+                case 64:
+                    return Key.E;
+                case 65:
+                    return Key.F;
+                case 66:
+                    return Key.Gb;
+                case 67:
+                    return Key.G;
+                case 68:
+                    return Key.Ab;
+                case 69:
+                    return Key.A;
+                case 70:
+                    return Key.Bb;
+                case 71:
+                    return Key.B;
+                case 72:
+                    return Key.C;
+                case 73:
+                    return Key.Db;
+                case 74:
+                    return Key.D;
+                case 75:
+                    return Key.Eb;
+                default:
+                    return Key.Undefined;
+            }
+        }
     }
 
     public enum PatternType {
@@ -305,7 +567,8 @@ namespace Meowziq.Core {
         C = 72,
         Db = 73,
         D = 74,
-        Eb = 74,
+        Eb = 75,
+        Undefined = -1,
     }
 
     public enum Mode {
@@ -316,7 +579,7 @@ namespace Meowziq.Core {
         Aeo = 4,
         Phr = 5,
         Loc = 6,
-        Undefined = 99,
+        Undefined = -1,
     }
 
     public enum Degree {
@@ -480,6 +743,56 @@ namespace Meowziq.Core {
         Helicopter = 125,
         Applause = 126,
         Gunshot = 127,
+    }
+
+    public enum Percussion {
+        Acoustic_Bass_Drum = 35,
+        Electric_Bass_Drum = 36,
+        Side_Stick = 37,
+        Acoustic_Snare = 38,
+        Hand_Clap = 39,
+        Electric_Snare = 40,
+        Low_Floor_Tom = 41,
+        Closed_Hi_hat = 42,
+        High_Floor_Tom = 43,
+        Pedal_Hi_hat = 44,
+        Low_Tom = 45,
+        Open_Hi_hat = 46,
+        Low_Mid_Tom = 47,
+        Hi_Mid_Tom = 48,
+        Crash_Cymbal_1 = 49,
+        High_Tom = 50,
+        Ride_Cymbal_1 = 51,
+        Chinese_Cymbal = 52,
+        Ride_Bell = 53,
+        Tambourine = 54,
+        Splash_Cymbal = 55,
+        Cowbell = 56,
+        Crash_Cymbal_2 = 57,
+        Vibra_Slap = 58,
+        Ride_Cymbal_2 = 59,
+        High_Bongo = 60,
+        Low_Bongo = 61,
+        Mute_High_Conga = 62,
+        Open_High_Conga = 63,
+        Low_Conga = 64,
+        High_Timbale = 65,
+        Low_Timbale = 66,
+        High_Agogo = 67,
+        Low_Agogo = 68,
+        Cabasa = 69,
+        Maracas = 70,
+        Short_Whistle = 71,
+        Long_Whistle = 72,
+        Short_Guiro = 73,
+        Long_Guiro = 74,
+        Claves = 75,
+        High_Woodblock = 76,
+        Low_Woodblock = 77,
+        Mute_Cuica = 78,
+        Open_Cuica = 79,
+        Mute_Triangle = 80,
+        Open_Triangle = 81,
     }
 
     public enum MidiChannel {

@@ -47,6 +47,9 @@ namespace Meowziq.View {
                 if (_list != null) {
                     _list.ForEach(message => {
                         midi.OutDevice.Send(message); // MIDIデバイスにメッセージを追加送信
+                        if (message.MidiChannel != 9) {
+                            pianoControl.Send(message); // ドラム以外はピアノロールに表示
+                        }
                     });
                 }
             }
@@ -82,13 +85,21 @@ namespace Meowziq.View {
 
             // 4小節のパターン
             var _patt1 = new Pattern(new List<Meas>() {
-                new Meas(new List<Span>() { new Span(4, Degree.I) }),
-                new Meas(new List<Span>() { new Span(4, Degree.IV) }),
-                new Meas(new List<Span>() { new Span(4, Degree.VII) }),
-                new Meas(new List<Span>() { new Span(4, Degree.I) })
+                new Meas(new List<Span>() { new Span(4, Degree.I, Mode.Mix) }),
+                new Meas(new List<Span>() { new Span(4, Degree.IV, Mode.Mix) }),
+                new Meas(new List<Span>() { new Span(4, Degree.VI) }),
+                new Meas(new List<Span>() { new Span(4, Degree.VII) })
             });
 
-            song = new Song(Key.A, Mode.Dor);
+            song = new Song(Key.C, Mode.Aeo);
+            song.Add(_patt1);
+            song.Add(_patt1);
+            song.Add(_patt1);
+            song.Add(_patt1);
+            song.Add(_patt1);
+            song.Add(_patt1);
+            song.Add(_patt1);
+            song.Add(_patt1);
             song.Add(_patt1);
             song.Add(_patt1);
             song.Add(_patt1);

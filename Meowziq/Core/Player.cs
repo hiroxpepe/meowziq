@@ -47,21 +47,29 @@ namespace Meowziq.Core {
         // public Methods [verb]
 
         // 全ての Phrase を Build する
+
+        /// <summary>
+        /// Build する場所で内容を変える
+        /// </summary>
         public void Build(Message message) {
-            message.Apply(midiCh, programNum); // 音色変更
+            // 音色変更
+            message.Apply(midiCh, programNum); 
+            
+            // 全ての Pattern の Note を MIDI データ化する
             int _position = 0;
-            List<Span> _spanList = song.GetAllSpan();
-            foreach (Span _span in _spanList) {
+            foreach (Pattern _pattern in song.AllPattern) {
+                // Player の全ての Phrase を処理
+                // TODO: Player 内でどの Phrase で演るか判断が必要
                 foreach (Phrase _phrase in phraseList) {
-                    _phrase.Build(_position, song.Key, _span);
-                    List<Note> _noteList = _phrase.GetAllNote();
+                    _phrase.BuildByPattern(_position, song.Key, _pattern);
+                    List<Note> _noteList = _phrase.AllNote;
                     foreach (Note _note in _noteList) {
                         message.Apply(midiCh, _note); // message に適用
                     }
-                    _noteList.Clear();
+                    _noteList.Clear(); // 必要
                 }
-                int _tick = _span.Beat * 480;
-                _position += _tick; // スパンの長さ分ポジションを移動する
+                int _tick = _pattern.BeatCount * 480;
+                _position += _tick; // Pattern の長さ分ポジションを移動する
             }
         }
 
@@ -73,7 +81,7 @@ namespace Meowziq.Core {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // protected Methods [verb]
+        // abstract protected Methods [verb]
 
         abstract protected void onPlay();
     }

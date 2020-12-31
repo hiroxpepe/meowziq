@@ -9,11 +9,11 @@ namespace Meowziq.Player {
         // Constructor
 
         public BassPlayer(Song song, int midiCh, int programNum) : base(song, midiCh, programNum) {
-            this.phraseList.Add(new RootBass8BeatPhrase());
+            this.phraseList.Add(new TextBassPhrase());
         }
 
         public BassPlayer(Song song, MidiChannel midiCh, Instrument programNum) : base(song, midiCh, programNum) {
-            this.phraseList.Add(new RootBass8BeatPhrase());
+            this.phraseList.Add(new TextBassPhrase());
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
