@@ -109,13 +109,21 @@ namespace Meowziq.View {
             message = new Message();
 
             // プレイヤーが build するべき
-            var _drums = new DrumPlayer(song, 9, 0);
+            var _drums = new DrumPlayer();
+            _drums.Song = song;
+            _drums.MidiCh = MidiChannel.ch10;
             _drums.Build(message);
 
-            var _bass = new BassPlayer(song, MidiChannel.ch1, Instrument.Synth_Bass_1); // Synth Bass 1
+            var _bass = new BassPlayer();
+            _bass.Song = song;
+            _bass.MidiCh = MidiChannel.ch1;
+            _bass.Program = Instrument.Synth_Bass_1;
             _bass.Build(message);
 
-            var _sequence = new SequencePlayer(song, MidiChannel.ch2, Instrument.Lead_1_square); // Lead 1 (square)
+            var _sequence = new SequencePlayer();
+            _sequence.Song = song;
+            _sequence.MidiCh = MidiChannel.ch2;
+            _sequence.Program = Instrument.Lead_1_square;
             _sequence.Build(message);
         }
 

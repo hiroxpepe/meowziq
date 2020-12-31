@@ -1,6 +1,4 @@
 ﻿
-using System.Collections.Generic;
-
 using Meowziq.Core;
 
 namespace Meowziq.Phrase {
