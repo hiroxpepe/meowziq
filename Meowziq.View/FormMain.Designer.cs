@@ -28,6 +28,7 @@
             this.textBoxBeat = new System.Windows.Forms.TextBox();
             this.buttonPlay = new System.Windows.Forms.Button();
             this.buttonStop = new System.Windows.Forms.Button();
+            this.pianoControl = new Sanford.Multimedia.Midi.UI.PianoControl();
             this.SuspendLayout();
             // 
             // sequence
@@ -42,17 +43,19 @@
             // 
             // textBoxBeat
             // 
-            this.textBoxBeat.Location = new System.Drawing.Point(12, 71);
+            this.textBoxBeat.Location = new System.Drawing.Point(9, 57);
+            this.textBoxBeat.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxBeat.Name = "textBoxBeat";
-            this.textBoxBeat.Size = new System.Drawing.Size(100, 22);
+            this.textBoxBeat.Size = new System.Drawing.Size(76, 19);
             this.textBoxBeat.TabIndex = 0;
             this.textBoxBeat.Text = "0";
             // 
             // buttonPlay
             // 
-            this.buttonPlay.Location = new System.Drawing.Point(12, 23);
+            this.buttonPlay.Location = new System.Drawing.Point(9, 18);
+            this.buttonPlay.Margin = new System.Windows.Forms.Padding(2);
             this.buttonPlay.Name = "buttonPlay";
-            this.buttonPlay.Size = new System.Drawing.Size(100, 29);
+            this.buttonPlay.Size = new System.Drawing.Size(75, 23);
             this.buttonPlay.TabIndex = 1;
             this.buttonPlay.Text = "play";
             this.buttonPlay.UseVisualStyleBackColor = true;
@@ -60,22 +63,37 @@
             // 
             // buttonStop
             // 
-            this.buttonStop.Location = new System.Drawing.Point(136, 23);
+            this.buttonStop.Location = new System.Drawing.Point(102, 18);
+            this.buttonStop.Margin = new System.Windows.Forms.Padding(2);
             this.buttonStop.Name = "buttonStop";
-            this.buttonStop.Size = new System.Drawing.Size(100, 29);
+            this.buttonStop.Size = new System.Drawing.Size(75, 23);
             this.buttonStop.TabIndex = 2;
             this.buttonStop.Text = "stop";
             this.buttonStop.UseVisualStyleBackColor = true;
             this.buttonStop.Click += new System.EventHandler(this.buttonStop_Click);
             // 
+            // pianoControl
+            // 
+            this.pianoControl.HighNoteID = 109;
+            this.pianoControl.Location = new System.Drawing.Point(8, 198);
+            this.pianoControl.LowNoteID = 21;
+            this.pianoControl.Margin = new System.Windows.Forms.Padding(2);
+            this.pianoControl.Name = "pianoControl";
+            this.pianoControl.NoteOnColor = System.Drawing.Color.SkyBlue;
+            this.pianoControl.Size = new System.Drawing.Size(712, 77);
+            this.pianoControl.TabIndex = 3;
+            this.pianoControl.Text = "pianoControl";
+            // 
             // FormMain
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(310, 120);
+            this.ClientSize = new System.Drawing.Size(727, 286);
+            this.Controls.Add(this.pianoControl);
             this.Controls.Add(this.buttonStop);
             this.Controls.Add(this.buttonPlay);
             this.Controls.Add(this.textBoxBeat);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "FormMain";
             this.Text = "Form1";
             this.ResumeLayout(false);
@@ -87,6 +105,7 @@
 
         private Sanford.Multimedia.Midi.Sequence sequence;
         private Sanford.Multimedia.Midi.Sequencer sequencer;
+        private Sanford.Multimedia.Midi.UI.PianoControl pianoControl;
         private System.Windows.Forms.TextBox textBoxBeat;
         private System.Windows.Forms.Button buttonPlay;
         private System.Windows.Forms.Button buttonStop;

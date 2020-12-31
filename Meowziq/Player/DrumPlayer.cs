@@ -9,7 +9,7 @@ namespace Meowziq.Player {
         // Constructor
 
         public DrumPlayer(Song song, int midiCh, int programNum) : base(song, midiCh, programNum) {
-            this.phraseList.Add(new TextPhrase());
+            this.phraseList.Add(new TextDrumPhrase());
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

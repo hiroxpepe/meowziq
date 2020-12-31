@@ -20,17 +20,39 @@ namespace Meowziq.Core {
         /// コンストラクタだけが作成する唯一の方法
         /// </summary>
         public Pattern(List<Meas> measList) {
-            if (measList.Count > 12) {
-                throw new System.ArgumentException("measure counts are until 12."); // 1パターンは12小節まで
+            if (measList.Count > 16) {
+                throw new System.ArgumentException("measure counts are until 16."); // 1パターンは16小節まで
             }
             this.measList = measList;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Methods [verb]
+        // Properties [noun, adjectives] 
 
-        public List<Meas> GetAllMeas() {
-            return measList;
+        // TODO: 位置を返すカーソルが必要？
+
+        /// <summary>
+        /// パターンの拍数
+        /// </summary>
+        public int BeatCount {
+            // FIXME: 1小節を4拍として計算
+            get => measList.Count * 4;
+        }
+
+        public List<Meas> AllMeas {
+            get => measList;
+        }
+
+        public List<Span> AllSpan {
+            get {
+                List<Span> _spanList = new List<Span>();
+                foreach (var _meas in measList) {
+                    foreach (var _span in _meas.AllSpan) {
+                        _spanList.Add(_span);
+                    }
+                }
+                return _spanList;
+            }
         }
     }
 
@@ -51,22 +73,29 @@ namespace Meowziq.Core {
         /// コンストラクタだけが作成する唯一の方法
         /// </summary>
         public Meas(List<Span> spanList) {
-            int _beatCount = 0;
+            int _totalBeatCount = 0;
             foreach (var _span in spanList) {
-                _beatCount += _span.Beat; // 拍を集計する
+                _totalBeatCount += _span.Beat; // 拍を集計する
             }
-            if (_beatCount < 4 || _beatCount > 4) {
+            if (_totalBeatCount < 4 || _totalBeatCount > 4) {
                 // FIXME: 3拍子とかは？
                 throw new System.ArgumentException("beat counts needs 4."); // 1小節に足りない or 超過している
             }
-            this.spanList = spanList;
+            // Span を分解して個別する
+            this.spanList = new List<Span>();
+            foreach (var _span in spanList) {
+                var _beatCount = _span.Beat;
+                for (var _i = 0; _i < _beatCount; _i++) {
+                    this.spanList.Add(new Span(1, _span.Degree, _span.Mode));
+                }
+            }
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Methods [verb]
+        // Properties [noun, adjectives] 
 
-        public List<Span> GetAllSpan() {
-            return spanList;
+        public List<Span> AllSpan {
+            get => spanList;
         }
     }
 
@@ -83,6 +112,8 @@ namespace Meowziq.Core {
         Degree degree; // キーに対する度数
 
         Mode mode; // 旋法
+
+        Mode keyMode; // キー(曲)の旋法
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
@@ -113,6 +144,11 @@ namespace Meowziq.Core {
         public Mode Mode {
             get => mode;
             set => mode = value;
+        }
+
+        public Mode KeyMode {
+            get => keyMode;
+            set => keyMode = value;
         }
     }
 }

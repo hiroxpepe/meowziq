@@ -17,58 +17,49 @@ namespace Meowziq.Core {
 
         Key key; // キー ※ひとまず転調ではなく旋法の切り替えを実装する TODO: 転調キーを変えて再計算
 
-        Mode mode; // キー全体の旋法
-
-        List<Span> spanList; // このキーでの度数がどれくらいの長さどの旋法で演奏されるか
+        Mode keyMode; // キー全体の旋法
 
         List<Pattern> patternList;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
-        public Song(Key key, Mode mode) {
-            this.spanList = new List<Span>(); // TODO: 順番付き？
-            this.patternList = new List<Pattern>();
+        public Song(Key key, Mode keyMode) {
             this.key = key;
-            this.mode = mode;
+            this.keyMode = keyMode;
+            this.patternList = new List<Pattern>();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjectives] 
 
+        /// <summary>
+        /// 曲のキー
+        /// </summary>
         public Key Key {
             get => key;
+        }
+
+        /// <summary>
+        /// 全ての Pattern
+        /// </summary>
+        public List<Pattern> AllPattern {
+            get => patternList;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
 
         public void Add(Pattern pattern) {
-            patternList.Add(pattern);
-        }
-
-        public void Add(Span span) {
-            if (span.Mode == Mode.Undefined) {
-                span.Mode = mode; // song の旋法を設定
-            }
-            spanList.Add(span);
-        }
-
-        public List<Span> GetAllSpan() {
-            List<Span> _newSpanList = new List<Span>();
-            foreach (var _pattern in patternList) {
-                var _measList = _pattern.GetAllMeas();
-                foreach (var _meas in _measList) {
-                    var _spanList = _meas.GetAllSpan();
-                    foreach (var _span in _spanList) {
-                        if (_span.Mode == Mode.Undefined) {
-                            _span.Mode = mode; // song の旋法を設定
-                        }
-                        _newSpanList.Add(_span);
+            foreach (var _meas in pattern.AllMeas) {
+                foreach (var _span in _meas.AllSpan) {
+                    if (_span.Mode == Mode.Undefined) {
+                        _span.Mode = keyMode; // 設定がない場合 song の旋法を設定
                     }
+                    _span.KeyMode = keyMode; // こちらはもれなく設定 // FIXME: 曲の旋法を変える時
                 }
             }
-            return _newSpanList;
+            patternList.Add(pattern);
         }
 
         /// <summary>

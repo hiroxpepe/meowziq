@@ -7,71 +7,51 @@ namespace Meowziq.Phrase {
     /// <summary>
     /// 文字列からフレーズ生成
     /// </summary>
-    public class TextPhrase : Core.Phrase {
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Constructor
-
-        public TextPhrase() {
-        }
+    public class TextDrumPhrase : Core.Phrase {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // protected Methods [verb]
 
-        override protected void onBuild(int position, Key key, Span span) {
-            // position 基点の絶対値で tick 生成
-            // span.Beat の長さ分の note データを生成 TODO: 余りは？
+        // パターン(4小節)をスパン(キー・度数・旋法)を踏まえて処理するには？
 
-            string _kick   = "[x---|---x|x---|---x]";
-            string _snare  = "[----|x---|----|x---]";
-            string _hiHatO = "[xxxx|xxxx|xxxx|xxxx]";
+        override protected void onBuildByPattern(int position, Key key, Pattern pattern) {
+            // テンプレートを1スパンづつ翻訳していく
 
-            int i = 0;
-            foreach (bool? _d1 in convert(filter(_kick))) {
-                int _kickNote = 36;
-                if (_d1 == true) {
-                    Add(new Note(position + (120 * i), _kickNote, 120, 127));
-                }
-                i++;
-            }
-            i = 0;
-            foreach (bool? _d2 in convert(filter(_snare))) {
-                int _snareNote = 38;
-                if (_d2 == true) {
-                    Add(new Note(position + (120 * i), _snareNote, 120, 127));
-                }
-                i++;
-            }
-            i = 0;
-            foreach (bool? _d3 in convert(filter(_hiHatO))) {
-                int _hiHatONote = 42;
-                if (_d3 == true) {
-                    Add(new Note(position + (120 * i), _hiHatONote, 120, 127));
-                }
-                i++;
-            }
+            // 1パターン4小節(16拍)と分かってる書き方
+            string _d0 = "[----|----|----|----][----|----|----|----][----|----|----|----][----|----|----|--x-]";
+            string _d1 = "[xxxx|xxxx|xxxx|xx--][xxxx|xxxx|xxxx|xx--][xxxx|xxxx|xxxx|xx--][xxxx|xxxx|xxxx|xx--]";
+            string _d2 = "[----|----|----|--x-][----|----|----|--x-][----|----|----|--x-][----|----|----|--x-]";
+            string _d3 = "[----|x---|----|x---][----|x---|----|x---][----|x---|----|x---][----|x---|----|x---]";
+            string _d4 = "[x---|---x|x---|----][x---|---x|x---|----][x---|---x|x---|----][x---|---x|x---|----]";
+
+            // コード low, mid, high, highhigh?
+            //string _mid1 = "[x>>>|>>>>|----|----]";
+            //string _mid3 = "[x>>>|>>>>|----|----]";
+            //string _mid5 = "[x>>>|>>>>|----|----]";
+            //string _mid7 = "[x>>>|>>>>|----|----]";
+
+            // Note 生成
+            applyDrumNote(position, pattern.BeatCount, _d0, Percussion.Crash_Cymbal_1);
+            applyDrumNote(position, pattern.BeatCount, _d1, Percussion.Closed_Hi_hat);
+            applyDrumNote(position, pattern.BeatCount, _d2, Percussion.Open_Hi_hat);
+            applyDrumNote(position, pattern.BeatCount, _d3, Percussion.Electric_Snare);
+            applyDrumNote(position, pattern.BeatCount, _d4, Percussion.Electric_Bass_Drum);
         }
 
-        static string filter(string target) {
-            // 不要文字削除
-            return target.Replace("|", "").Replace("[", "").Replace("]", "");
-        }
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private Methods [verb]
 
-        static List<bool?> convert(string target) {
-            // on, off, null スイッチ
-            List<bool?> _list = new List<bool?>();
-            // 文字列を並列に変換
-            char[] _charArray = target.ToCharArray();
-            // 文字列を判定
-            foreach (char _char in _charArray) {
-                if (_char.Equals('x')) {
-                    _list.Add(true);
+        private void applyDrumNote(int position, int beatCount, string target, Percussion noteNum) {
+            int _index = 0;
+            foreach (bool? _value in convertToBool(filter(target))) {
+                if (_index > beatCount * 4) {
+                    return; // Pattern の長さを超えたら終了 FIXME: 長さに足りない時？ エラー? リピート？
                 }
-                else if (_char.Equals('-')) {
-                    _list.Add(null);
+                if (_value == true) {
+                    Add(new Note(position + (120 * _index), (int) noteNum, 120, 127));
                 }
+                _index++; // 16beatを進める
             }
-            return _list;
         }
     }
 }
