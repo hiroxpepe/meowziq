@@ -91,28 +91,21 @@ namespace Meowziq.View {
                 new Meas(new List<Span>() { new Span(4, Degree.VII) })
             });
 
-            //var _patt2 = new Pattern(new List<Meas>() {
-            //    new Meas(new List<Span>() { new Span(4, Degree.VI) }),
-            //    new Meas(new List<Span>() { new Span(4, Degree.VI) }),
-            //    new Meas(new List<Span>() { new Span(4, Degree.III) }),
-            //    new Meas(new List<Span>() { new Span(4, Degree.III) }),
-            //    new Meas(new List<Span>() { new Span(4, Degree.IV, Mode.Mix) }),
-            //    new Meas(new List<Span>() { new Span(4, Degree.IV, Mode.Mix) })
-            //});
-
             song = new Song(Key.B, Mode.Aeo);
             song.Add(_verse1);
             song.Add(_verse1);
-            //song.Add(_patt2);
-            //song.Add(_patt2);
             song.Add(_verse1);
             song.Add(_verse1);
-            //song.Add(_patt2);
-            //song.Add(_patt2);
             song.Add(_verse1);
             song.Add(_verse1);
-            //song.Add(_patt2);
-            //song.Add(_patt2);
+            song.Add(_verse1);
+            song.Add(_verse1);
+            song.Add(_verse1);
+            song.Add(_verse1);
+            song.Add(_verse1);
+            song.Add(_verse1);
+            song.Add(_verse1);
+            song.Add(_verse1);
             song.Add(_verse1);
             song.Add(_verse1);
 
