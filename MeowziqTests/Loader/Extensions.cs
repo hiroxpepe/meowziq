@@ -6,8 +6,8 @@ namespace Meowziq.Loader {
     /// テスト用拡張メソッド
     /// </summary>
     public static class Extensions {
-        public static bool validateValue(this PhraseLoader clazz, string target) {
-            return (bool) new PrivateObject(clazz).Invoke("validateValue", target);
+        public static string validateValue(this PhraseLoader clazz, string target) {
+            return (string) new PrivateObject(clazz).Invoke("validateValue", target);
         }
     }
 }

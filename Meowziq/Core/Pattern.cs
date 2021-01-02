@@ -129,12 +129,14 @@ namespace Meowziq.Core {
             this.beat = beat;
             this.degree = degree;
             this.mode = Mode.Undefined;
+            this.keyMode = Mode.Undefined;
         }
 
         public Span(int beat, Degree degree, Mode mode) {
             this.beat = beat;
             this.degree = degree;
             this.mode = mode;
+            this.keyMode = Mode.Undefined;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

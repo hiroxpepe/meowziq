@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using Sanford.Multimedia.Midi;
 
 using Meowziq.Core;
-using Meowziq.Player;
+using Meowziq.Loader;
 
 namespace Meowziq.View {
     public partial class FormMain : Form {
@@ -58,7 +58,7 @@ namespace Meowziq.View {
         void buttonPlay_Click(object sender, EventArgs e) {
             try {
                 buildSong();
-                sequence.Load("default.mid");
+                sequence.Load("./data/default.mid");
                 sequencer.Position = 0;
                 sequencer.Start();
             } catch (Exception ex) {
@@ -82,63 +82,30 @@ namespace Meowziq.View {
         /// ソングを作成
         /// </summary>
         void buildSong() {
-
-            // 4小節のパターン
-            var _verse1 = new Pattern("verse1", new List<Meas>() {
-                new Meas(new List<Span>() { new Span(4, Degree.I, Mode.Dor) }),
-                new Meas(new List<Span>() { new Span(4, Degree.IV, Mode.Mix) }),
-                new Meas(new List<Span>() { new Span(4, Degree.VI) }),
-                new Meas(new List<Span>() { new Span(4, Degree.VII) })
-            });
-
-            song = new Song(Key.B, Mode.Aeo);
-            song.Add(_verse1);
-            song.Add(_verse1);
-            song.Add(_verse1);
-            song.Add(_verse1);
-            song.Add(_verse1);
-            song.Add(_verse1);
-            song.Add(_verse1);
-            song.Add(_verse1);
-            song.Add(_verse1);
-            song.Add(_verse1);
-            song.Add(_verse1);
-            song.Add(_verse1);
-            song.Add(_verse1);
-            song.Add(_verse1);
-            song.Add(_verse1);
-            song.Add(_verse1);
-
-            // 暫定
+            // Message 生成
             message = new Message();
 
-            // プレイヤーが build するべき
-            var _drums = new DrumPlayer {
-                Song = song,
-                MidiCh = MidiChannel.ch10
-            };
-            _drums.Build(message);
+            // Pattern をロード
+            var _patternLoader = new PatternLoader(@"./data/pattern.jsonc");
+            var _patternList = _patternLoader.BuildPatternList();
 
-            var _bass = new BassPlayer {
-                Song = song,
-                MidiCh = MidiChannel.ch1,
-                Program = Instrument.Synth_Bass_1
-            };
-            _bass.Build(message);
+            // Song をロード
+            var _songLoader = new SongLoader(@"./data/song.jsonc");
+            _songLoader.PatternList = _patternList; // Song に Pattern のリストを渡す
+            song = _songLoader.BuildSong();
 
-            var _sequence = new SequencePlayer {
-                Song = song,
-                MidiCh = MidiChannel.ch2,
-                Program = Instrument.Lead_1_square
-            };
-            _sequence.Build(message);
+            // Phrase をロード
+            var _phraseLoader = new PhraseLoader(@"./data/phrase.jsonc");
+            var _phraseList = _phraseLoader.BuildPhraseList();
 
-            var _pad = new PadPlayer {
-                Song = song,
-                MidiCh = MidiChannel.ch3,
-                Program = Instrument.Pad_3_polysynth
-            };
-            _pad.Build(message);
+            // Player をロード
+            var _playerLoader = new PlayerLoader(@"./data/player.jsonc");
+            _playerLoader.PhraseList = _phraseList; // PlayerLoader に Phrase のリストを渡す
+            var _playerList = _playerLoader.BuildPlayerList();
+            foreach (var _player in _playerList) {
+                _player.Song = song; // Song データを設定
+                _player.Build(message); // MIDI データを構築
+            }
         }
 
         /// <summary>

@@ -8,10 +8,18 @@ namespace Meowziq.Core {
     ///     + プリセットフレーズ
     ///     + ユーザーがフレーズを拡張出来る
     /// </summary>
-    abstract public class Phrase {
+    public class Phrase {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
+
+        string type;
+
+        string name;
+
+        string noteText;
+
+        Data data;
 
         protected List<Note> noteList;
 
@@ -19,11 +27,30 @@ namespace Meowziq.Core {
         // Constructor
 
         public Phrase() {
+            data = new Data(); // json から詰められるデータ
             noteList = new List<Note>();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjectives] 
+
+        public string Type {
+            get => type;
+            set => type = value;
+        }
+
+        public string Name {
+            set => name = value;
+        }
+
+        public string NoteText {
+            set => noteText = value;
+        }
+
+        public Data DataValue {
+            get => data;
+            set => data = value;
+        }
 
         /// <summary>
         /// 全ての Note
@@ -125,9 +152,58 @@ namespace Meowziq.Core {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // abstract protected Methods [verb]
+        // protected Methods [verb]
 
-        abstract protected void onBuildByPattern(int position, Key key, Pattern pattern);
+        protected void onBuildByPattern(int position, Key key, Pattern pattern) {
+            // パターンの名前が違えば何もしない
+            if (!name.Equals(pattern.Name)) {
+                return;
+            }
+            // FIXME: Type で分離 ⇒ 処理のパターン決め込みで良い：プラグイン拡張出来るように
+            if (type.Equals("drum")) {
+                for (var _i = 0; _i < data.NoteTextArray.Length; _i++) {
+                    var _text = data.NoteTextArray[_i];
+                    applyDrumNote(position, pattern.BeatCount, _text, data.PercussionArray[_i]);
+                }
+            }
+            if (type.Equals("pad")) {
+                for (var _i = 0; _i < data.NoteTextArray.Length; _i++) {
+                    var _text = data.NoteTextArray[_i];
+                    applyMonoNote(position, pattern.BeatCount, key, pattern.AllSpan, _text);
+                }
+            }
+            if (type.Equals("bass")) {
+                var _text = noteText;
+                applyMonoNote(position, pattern.BeatCount, key, pattern.AllSpan, _text, -24);
+            }
+            if (type.Equals("seque")) {
+                int _16beatCount = pattern.BeatCount * 4; // この Pattern の16beatの数
+                int _indexCount = 0; // 16beatで1拍をカウントする用
+                int _spanIndex = 0; // Span リストの添え字
+                for (var _i = 0; _i < _16beatCount; _i++) {
+                    if (_indexCount == 4) { // 16beatが4回進んだ時(1拍)
+                        _indexCount = 0; // カウンタリセット
+                        _spanIndex++; // Span の index値
+                    }
+                    var _span = pattern.AllSpan[_spanIndex];
+                    int _note = Utils.GetNote(key, _span.Degree, _span.Mode, Arpeggio.Random, _i); // 16の倍数
+                    Add(new Note(position + (120 * _i), _note, 30, 127)); // gate 短め
+                    _indexCount++; // Span 用のカウンタも進める
+                }
+            }
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // inner Classes
+
+        public class Data {
+            public Percussion[] PercussionArray {
+                get; set;
+            }
+            public string[] NoteTextArray {
+                get; set;
+            }
+        }
 
     }
 }
