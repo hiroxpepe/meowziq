@@ -21,7 +21,7 @@ namespace Meowziq.Core {
 
         Data data;
 
-        protected List<Note> noteList;
+        List<Note> noteList;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
@@ -66,8 +66,11 @@ namespace Meowziq.Core {
             noteList.Add(note);
         }
 
-        public void BuildByPattern(int position, Key key, Pattern pattern) {
-            onBuildByPattern(position, key, pattern);
+        /// <summary>
+        /// Player オブジェクトから呼ばれます
+        /// </summary>
+        public void Build(int position, Key key, Pattern pattern) {
+            onBuild(position, key, pattern);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -154,7 +157,10 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // protected Methods [verb]
 
-        protected void onBuildByPattern(int position, Key key, Pattern pattern) {
+        /// <summary>
+        /// TODO: パターンとフレーズの長さが一致しているかどうか
+        /// </summary>
+        protected void onBuild(int position, Key key, Pattern pattern) {
             // パターンの名前が違えば何もしない
             if (!name.Equals(pattern.Name)) {
                 return;
@@ -204,6 +210,5 @@ namespace Meowziq.Core {
                 get; set;
             }
         }
-
     }
 }
