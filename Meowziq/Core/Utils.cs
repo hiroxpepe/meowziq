@@ -39,22 +39,9 @@ namespace Meowziq.Core {
             return _modeScale[index - 1]; // 0基底
         }
 
-        public static int GetRootNote(Key key) {
-            return (int) key;
-        }
-
-        public static int GetRootNote(Key key, Degree degree, Mode mode) {
-            return chordRootNote(key, degree, mode);
-        }
-
-        public static int GetNote(Key key, Mode mode, Arpeggio arpeggio) {
-            return arpeggioAsModeScale(key, mode, arpeggio);
-        }
-
-        public static int GetNote(Key key, Degree degree, Mode mode, Arpeggio arpeggio) {
-            return arpeggioAsModeScaleIn3(key, degree, mode, arpeggio);
-        }
-
+        /// <summary>
+        /// FIXME: テキスト設定からランダムアルぺジエーター:数値 0 がランダム
+        /// </summary>
         public static int GetNote(Key key, Degree degree, Mode mode, Arpeggio arpeggio, int beatCount) {
             return arpeggioAsModeScaleIn3(key, degree, mode, arpeggio, beatCount);
         }
@@ -1034,6 +1021,9 @@ namespace Meowziq.Core {
             }
         }
     }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // public Enums [noun]
 
     public enum PatternType {
         Intro,

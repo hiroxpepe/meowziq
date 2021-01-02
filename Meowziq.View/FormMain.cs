@@ -112,8 +112,8 @@ namespace Meowziq.View {
         /// オールサウンドオフ
         /// </summary>
         void allSoundOff() {
-            for (int i = 0; i < 16; i++) {
-                midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, i, 120));
+            for (int _i = 0; _i < 16; _i++) {
+                midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, _i, 120));
             }
         }
     }

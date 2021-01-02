@@ -20,13 +20,13 @@ namespace Meowziq.Core {
 
         Song song;
 
-        int midiCh; // 暫定
+        int midiCh;
 
-        int programNum; // 暫定
+        int programNum;
 
         string type;
 
-        protected List<Phrase> phraseList;
+        List<Phrase> phraseList;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
@@ -67,19 +67,14 @@ namespace Meowziq.Core {
         /// MIDI ノートを生成します
         /// </summary>
         public void Build(Message message) {
-            // フレーズ読み込み
-            //preBuild();
-
             // 音色変更
             message.Apply(midiCh, programNum); 
             
             // 全ての Pattern の Note を MIDI データ化する
             int _position = 0;
             foreach (Pattern _pattern in song.AllPattern) {
-                // Player の全ての Phrase を処理
-                // TODO: Player 内でどの Phrase で演るか判断が必要
                 foreach (Phrase _phrase in phraseList) {
-                    _phrase.BuildByPattern(_position, song.Key, _pattern);
+                    _phrase.Build(_position, song.Key, _pattern); // Note データを作成
                     List<Note> _noteList = _phrase.AllNote;
                     foreach (Note _note in _noteList) {
                         message.Apply(midiCh, _note); // message に適用
