@@ -86,20 +86,20 @@ namespace Meowziq.View {
             message = new Message();
 
             // Pattern をロード
-            var _patternLoader = new PatternLoader(@"./data/pattern.jsonc");
+            var _patternLoader = new PatternLoader(@"./data/pattern.json");
             var _patternList = _patternLoader.BuildPatternList();
 
             // Song をロード
-            var _songLoader = new SongLoader(@"./data/song.jsonc");
+            var _songLoader = new SongLoader(@"./data/song.json");
             _songLoader.PatternList = _patternList; // Song に Pattern のリストを渡す
             song = _songLoader.BuildSong();
 
             // Phrase をロード
-            var _phraseLoader = new PhraseLoader(@"./data/phrase.jsonc");
+            var _phraseLoader = new PhraseLoader(@"./data/phrase.json");
             var _phraseList = _phraseLoader.BuildPhraseList();
 
             // Player をロード
-            var _playerLoader = new PlayerLoader(@"./data/player.jsonc");
+            var _playerLoader = new PlayerLoader(@"./data/player.json");
             _playerLoader.PhraseList = _phraseList; // PlayerLoader に Phrase のリストを渡す
             var _playerList = _playerLoader.BuildPlayerList();
             foreach (var _player in _playerList) {
