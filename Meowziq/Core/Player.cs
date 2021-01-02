@@ -13,7 +13,7 @@ namespace Meowziq.Core {
     ///     + 演奏する楽器について責任を持つ
     /// + ライブラリは知りたくない
     /// </summary>
-    abstract public class Player {
+    public class Player {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
@@ -24,16 +24,22 @@ namespace Meowziq.Core {
 
         int programNum; // 暫定
 
+        string type;
+
         protected List<Phrase> phraseList;
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Constructor
+
+        public Player() {
+            phraseList = new List<Phrase>();
+        }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjectives] 
 
         public Song Song {
-            set {
-                song = value;
-                phraseList = new List<Phrase>();
-            }
+            set => song = value;
         }
 
         public MidiChannel MidiCh {
@@ -44,17 +50,25 @@ namespace Meowziq.Core {
             set => programNum = (int) value;
         }
 
+        public string Type {
+            get => type;
+            set => type = value;
+        }
+
+        public List<Phrase> PhraseList {
+            get => phraseList;
+            set => phraseList = value;
+        }
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
 
-        // 全ての Phrase を Build する
-
         /// <summary>
-        /// Build する場所で内容を変える
+        /// MIDI ノートを生成します
         /// </summary>
         public void Build(Message message) {
             // フレーズ読み込み
-            preBuild();
+            //preBuild();
 
             // 音色変更
             message.Apply(midiCh, programNum); 
@@ -76,19 +90,5 @@ namespace Meowziq.Core {
                 _position += _tick; // Pattern の長さ分ポジションを移動する
             }
         }
-
-        /// <summary>
-        /// TBA
-        /// </summary>
-        public void Play() {
-            onPlay();
-        }
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // abstract protected Methods [verb]
-
-        abstract protected void preBuild();
-
-        abstract protected void onPlay();
     }
 }

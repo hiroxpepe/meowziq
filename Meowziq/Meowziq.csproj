@@ -56,6 +56,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Loader\PlayerLoader.cs" />
+    <Compile Include="Loader\SongLoader.cs" />
+    <Compile Include="Loader\PatternLoader.cs" />
     <Compile Include="Loader\PhraseLoader.cs" />
     <Compile Include="Core\Mixer.cs" />
     <Compile Include="Core\Pattern.cs" />
@@ -66,14 +69,6 @@
     <Compile Include="Core\Player.cs" />
     <Compile Include="Core\Song.cs" />
     <Compile Include="Core\Utils.cs" />
-    <Compile Include="Phrase\PadPhrase.cs" />
-    <Compile Include="Phrase\SequencePhrase.cs" />
-    <Compile Include="Phrase\BassPhrase.cs" />
-    <Compile Include="Phrase\DrumPhrase.cs" />
-    <Compile Include="Player\PadPlayer.cs" />
-    <Compile Include="Player\SequencePlayer.cs" />
-    <Compile Include="Player\DrumPlayer.cs" />
-    <Compile Include="Player\BassPlayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

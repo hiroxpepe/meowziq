@@ -57,6 +57,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Loader\Extensions.cs" />
+    <Compile Include="Loader\PatternLoaderTests.cs" />
     <Compile Include="Loader\PhraseLoaderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
