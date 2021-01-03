@@ -16,7 +16,7 @@ namespace Meowziq.Loader {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        string targetPath; // song.jsonc への PATH 文字列
+        string targetPath; // song.json への PATH 文字列
 
         SongData songData;
 
@@ -46,10 +46,10 @@ namespace Meowziq.Loader {
         public Core.Song BuildSong() {
             loadJson(); // json のデータをオブジェクトにデシリアライズ
             var _song = new Core.Song(
-                Utils.ToKey(songData.song.key),
-                Utils.ToMode(songData.song.mode)
+                Utils.ToKey(songData.Song.Key),
+                Utils.ToMode(songData.Song.Mode)
             );
-            foreach (var _patternName in songData.song.pattern) {
+            foreach (var _patternName in songData.Song.Pattern) {
                 _song.Add(searchPattern(_patternName)); // Pattern 追加
             }
             return _song;
@@ -79,32 +79,32 @@ namespace Meowziq.Loader {
         // MEMO: 編集: JSON をクラスとして張り付ける
         [DataContract]
         class SongData {
-            [DataMember]
-            public Song song {
+            [DataMember(Name = "song")]
+            public Song Song {
                 get; set;
             }
         }
 
         [DataContract]
         class Song {
-            [DataMember]
-            public string name {
+            [DataMember(Name = "name")]
+            public string Name {
                 get; set;
             }
-            [DataMember]
-            public string tempo {
+            [DataMember(Name = "tempo")]
+            public string Tempo {
                 get; set;
             }
-            [DataMember]
-            public string key {
+            [DataMember(Name = "key")]
+            public string Key {
                 get; set;
             }
-            [DataMember]
-            public string mode {
+            [DataMember(Name = "mode")]
+            public string Mode {
                 get; set;
             }
-            [DataMember]
-            public string[] pattern {
+            [DataMember(Name = "pattern")]
+            public string[] Pattern {
                 get; set;
             }
         }

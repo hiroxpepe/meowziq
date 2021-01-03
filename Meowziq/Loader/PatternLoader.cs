@@ -16,7 +16,7 @@ namespace Meowziq.Loader {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        string targetPath; // pattern.jsonc への PATH 文字列
+        string targetPath; // pattern.json への PATH 文字列
 
         PatternData patternData;
 
@@ -37,7 +37,7 @@ namespace Meowziq.Loader {
         public List<Core.Pattern> BuildPatternList() {
             loadJson(); // json のデータをオブジェクトにデシリアライズ
             List<Core.Pattern> _resultList = new List<Core.Pattern>();
-            foreach (var _patternDao in patternData.pattern) {
+            foreach (var _patternDao in patternData.Pattern) {
                 _resultList.Add(convertPattern(_patternDao)); // json のデータを変換
             }
             return _resultList;
@@ -47,8 +47,8 @@ namespace Meowziq.Loader {
         // private Methods [verb]
 
         Core.Pattern convertPattern(Pattern patternDao) {
-            List<Core.Meas> _measList = convertMeasList(patternDao.data);
-            var _pattern = new Core.Pattern(patternDao.name, _measList);
+            List<Core.Meas> _measList = convertMeasList(patternDao.Data);
+            var _pattern = new Core.Pattern(patternDao.Name, _measList);
             return _pattern;
         }
 
@@ -123,20 +123,20 @@ namespace Meowziq.Loader {
         // MEMO: 編集: JSON をクラスとして張り付ける
         [DataContract]
         class PatternData {
-            [DataMember]
-            public Pattern[] pattern {
+            [DataMember(Name = "pattern")]
+            public Pattern[] Pattern {
                 get; set;
             }
         }
 
         [DataContract]
         class Pattern {
-            [DataMember]
-            public string name {
+            [DataMember(Name = "name")]
+            public string Name {
                 get; set;
             }
-            [DataMember]
-            public string data {
+            [DataMember(Name = "data")]
+            public string Data {
                 get; set;
             }
         }

@@ -16,7 +16,7 @@ namespace Meowziq.Loader {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        string targetPath; // phrase.jsonc への PATH 文字列
+        string targetPath; // phrase.json への PATH 文字列
 
         PhraseData phraseData;
 
@@ -37,7 +37,7 @@ namespace Meowziq.Loader {
         public List<Core.Phrase> BuildPhraseList() {
             loadJson(); // json のデータをオブジェクトにデシリアライズ
             List<Core.Phrase> _resultList = new List<Core.Phrase>();
-            foreach (var _phraseDao in phraseData.phrase) {
+            foreach (var _phraseDao in phraseData.Phrase) {
                 _resultList.Add(convertPhrase(_phraseDao)); // json のデータを変換
             }
             return _resultList;
@@ -48,16 +48,16 @@ namespace Meowziq.Loader {
 
         Core.Phrase convertPhrase(Phrase phraseDao) {
             var _phrase = new Core.Phrase();
-            _phrase.Type = phraseDao.type;
-            _phrase.Name = phraseDao.name;
-            _phrase.NoteText = validateValue(phraseDao.note);
-            if (phraseDao.data != null) { // 複合データがある場合
-                _phrase.DataValue.NoteTextArray = phraseDao.data.note
+            _phrase.Type = phraseDao.Type;
+            _phrase.Name = phraseDao.Name;
+            _phrase.NoteText = validateValue(phraseDao.Note);
+            if (phraseDao.Data != null) { // 複合データがある場合
+                _phrase.DataValue.NoteTextArray = phraseDao.Data.Note
                     .Select(x => validateValue(x)).ToArray();
-                if (phraseDao.data.inst != null) { // ドラム用音名データがある場合
-                    Percussion[] _percussionArray = new Percussion[phraseDao.data.inst.Length];
+                if (phraseDao.Data.Inst != null) { // ドラム用音名データがある場合
+                    Percussion[] _percussionArray = new Percussion[phraseDao.Data.Inst.Length];
                     var _i = 0;
-                    foreach (var _inst in phraseDao.data.inst) {
+                    foreach (var _inst in phraseDao.Data.Inst) {
                         _percussionArray[_i++] = Utils.ToPercussion(_inst);
                     }
                     _phrase.DataValue.PercussionArray = _percussionArray;
@@ -103,40 +103,40 @@ namespace Meowziq.Loader {
         // MEMO: 編集: JSON をクラスとして張り付ける
         [DataContract]
         class PhraseData {
-            [DataMember]
-            public Phrase[] phrase {
+            [DataMember(Name = "phrase")]
+            public Phrase[] Phrase {
                 get; set;
             }
         }
 
         [DataContract]
         class Phrase {
-            [DataMember]
-            public string type {
+            [DataMember(Name = "type")]
+            public string Type {
                 get; set;
             }
-            [DataMember]
-            public string name {
+            [DataMember(Name = "name")]
+            public string Name {
                 get; set;
             }
-            [DataMember]
-            public Data data {
+            [DataMember(Name = "data")]
+            public Data Data {
                 get; set;
             }
-            [DataMember]
-            public string note {
+            [DataMember(Name = "note")]
+            public string Note {
                 get; set;
             }
         }
 
         [DataContract]
         class Data {
-            [DataMember]
-            public string[] inst {
+            [DataMember(Name = "inst")]
+            public string[] Inst {
                 get; set;
             }
-            [DataMember]
-            public string[] note {
+            [DataMember(Name = "note")]
+            public string[] Note {
                 get; set;
             }
         }
