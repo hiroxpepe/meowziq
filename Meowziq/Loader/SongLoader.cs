@@ -23,18 +23,18 @@ namespace Meowziq.Loader {
         List<Core.Pattern> patternList;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Properties [noun, adjectives] 
-
-        public List<Core.Pattern> PatternList {
-            set => patternList = value;
-        }
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
         public SongLoader(string targetPath) {
             this.targetPath = targetPath;
-            songData = new SongData();
+            this.songData = new SongData();
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Properties [noun, adjectives] 
+
+        public List<Core.Pattern> PatternList {
+            set => patternList = value;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

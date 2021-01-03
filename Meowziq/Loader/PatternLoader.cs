@@ -25,7 +25,7 @@ namespace Meowziq.Loader {
 
         public PatternLoader(string targetPath) {
             this.targetPath = targetPath;
-            patternData = new PatternData();
+            this.patternData = new PatternData();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
