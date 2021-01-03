@@ -49,10 +49,19 @@ namespace Meowziq.Loader {
                 Utils.ToKey(songData.Song.Key),
                 Utils.ToMode(songData.Song.Mode)
             );
+            _song.Name = songData.Song.Name; // FIXME: コンストラクタに含める
             foreach (var _patternName in songData.Song.Pattern) {
                 _song.Add(searchPattern(_patternName)); // Pattern 追加
             }
             return _song;
+        }
+
+        /// <summary>
+        /// Song の名前だけを返します
+        /// </summary>
+        public string GetSongName() {
+            loadJson(); // json のデータをオブジェクトにデシリアライズ
+            return songData.Song.Name;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

@@ -19,6 +19,8 @@ namespace Meowziq.Core {
 
         Mode keyMode; // キー全体の旋法
 
+        string name;
+
         List<Pattern> patternList;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -45,6 +47,14 @@ namespace Meowziq.Core {
         /// </summary>
         public List<Pattern> AllPattern {
             get => patternList;
+        }
+
+        /// <summary>
+        /// 曲の名前
+        /// </summary>
+        public string Name {
+            get => name;
+            set => name = value;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
