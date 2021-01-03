@@ -10,3 +10,6 @@
     + [Application specifications (JP)](/Document/app_spec_JP.md)
     + [Data specifications (JP)](/Document/data_spec_JP.md)
 
+## License
+It's released under [GNU General Public License v2.0](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
+
