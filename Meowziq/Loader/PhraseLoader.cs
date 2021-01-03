@@ -24,7 +24,6 @@ namespace Meowziq.Loader {
         // Constructor
 
         public PhraseLoader(string targetPath) {
-            //validateValue(target); // TODO: バリデート実行
             this.targetPath = targetPath;
         }
 

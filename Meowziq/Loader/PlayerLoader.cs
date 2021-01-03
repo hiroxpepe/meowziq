@@ -22,18 +22,18 @@ namespace Meowziq.Loader {
         List<Core.Phrase> phraseList; // 誰に何を渡すか
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Properties [noun, adjectives] 
-
-        public List<Core.Phrase> PhraseList {
-            set => phraseList = value;
-        }
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
         public PlayerLoader(string targetPath) {
             this.targetPath = targetPath;
-            playerData = new PlayerData();
+            this.playerData = new PlayerData();
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Properties [noun, adjectives] 
+
+        public List<Core.Phrase> PhraseList {
+            set => phraseList = value;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

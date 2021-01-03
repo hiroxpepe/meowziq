@@ -18,8 +18,6 @@ namespace Meowziq {
         // Constructor
 
         public Midi() {
-
-            //var tmp = OutputDevice.GetDeviceCapabilities(2);
             this.outDevice = new OutputDevice(outDeviceID);
         }
 
