@@ -51,6 +51,7 @@
             this.sequencer.Position = 0;
             this.sequencer.Sequence = this.sequence;
             this.sequencer.ChannelMessagePlayed += new System.EventHandler<Sanford.Multimedia.Midi.ChannelMessageEventArgs>(this.handleChannelMessagePlayed);
+            this.sequencer.Stopped += new System.EventHandler<Sanford.Multimedia.Midi.StoppedEventArgs>(this.handleStopped);
             // 
             // textBoxBeat
             // 
@@ -92,7 +93,7 @@
             // pianoControl
             // 
             this.pianoControl.HighNoteID = 109;
-            this.pianoControl.Location = new System.Drawing.Point(9, 198);
+            this.pianoControl.Location = new System.Drawing.Point(10, 198);
             this.pianoControl.LowNoteID = 21;
             this.pianoControl.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.pianoControl.Name = "pianoControl";
@@ -131,7 +132,7 @@
             this.labelTitle.AutoSize = true;
             this.labelTitle.Font = new System.Drawing.Font("Impact", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelTitle.ForeColor = System.Drawing.Color.Gold;
-            this.labelTitle.Location = new System.Drawing.Point(614, 26);
+            this.labelTitle.Location = new System.Drawing.Point(610, 36);
             this.labelTitle.Name = "labelTitle";
             this.labelTitle.Size = new System.Drawing.Size(110, 34);
             this.labelTitle.TabIndex = 6;
@@ -142,7 +143,7 @@
             this.labelSubTitle.AutoSize = true;
             this.labelSubTitle.Font = new System.Drawing.Font("Impact", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelSubTitle.ForeColor = System.Drawing.Color.Gold;
-            this.labelSubTitle.Location = new System.Drawing.Point(620, 11);
+            this.labelSubTitle.Location = new System.Drawing.Point(616, 21);
             this.labelSubTitle.Name = "labelSubTitle";
             this.labelSubTitle.Size = new System.Drawing.Size(92, 16);
             this.labelSubTitle.TabIndex = 7;
@@ -153,7 +154,7 @@
             this.labelVersion.AutoSize = true;
             this.labelVersion.Font = new System.Drawing.Font("Impact", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelVersion.ForeColor = System.Drawing.Color.Gold;
-            this.labelVersion.Location = new System.Drawing.Point(665, 60);
+            this.labelVersion.Location = new System.Drawing.Point(661, 70);
             this.labelVersion.Name = "labelVersion";
             this.labelVersion.Size = new System.Drawing.Size(47, 16);
             this.labelVersion.TabIndex = 8;

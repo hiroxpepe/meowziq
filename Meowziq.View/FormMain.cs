@@ -22,6 +22,8 @@ namespace Meowziq.View {
 
         string targetDir;
 
+        bool stopping = false;
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
@@ -40,6 +42,9 @@ namespace Meowziq.View {
         /// </summary>
         void handleChannelMessagePlayed(object sender, ChannelMessageEventArgs e) {
             // NOTE: default.midi のメッセージはスルーする  midi.OutDevice.Send(e.Message);
+            if (stopping) {
+                return;
+            }
             // MEMO: 30 tick単位でしか呼ばれていない
             if (this.Visible) {
                 var _beat = ((sequencer.Position / 480) + 1).ToString(); // 0開始 ではなく 1開始として表示
@@ -57,6 +62,14 @@ namespace Meowziq.View {
                     });
                 }
             }
+        }
+
+        private void handleStopped(object sender, StoppedEventArgs e) {
+            foreach (ChannelMessage message in e.Messages) {
+                midi.OutDevice.Send(message);
+                pianoControl.Send(message);
+            }
+            allSoundOff();
         }
 
         /// <summary>
@@ -83,12 +96,13 @@ namespace Meowziq.View {
         /// </summary>
         void buttonStop_Click(object sender, EventArgs e) {
             try {
+                stopping = true;
                 sequencer.Stop();
                 sequence.Clear();
-                allSoundOff();
                 labelPlay.ForeColor = Color.DimGray;
                 textBoxBeat.Text = "0";
                 textBoxMeas.Text = "0";
+                stopping = false;
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
@@ -155,13 +169,19 @@ namespace Meowziq.View {
         /// <summary>
         /// オールサウンドオフ
         /// </summary>
-        void allSoundOff() {
+        async void allSoundOff() {
             // FIXME: 停止出来ないバグ
-            Invoke((MethodInvoker) (() => {
-                for (int _i = 0; _i < 16; _i++) {
-                    midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, _i, 120));
-                }
-            }));
+            for (int _i = 0; _i < 16; _i++) {
+                midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, _i, 120));
+            }
+            await System.Threading.Tasks.Task.Delay(240);
+            for (int _i = 0; _i < 16; _i++) {
+                midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, _i, 120));
+            }
+            await System.Threading.Tasks.Task.Delay(480);
+            for (int _i = 0; _i < 16; _i++) {
+                midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, _i, 120));
+            }
         }
     }
 }
