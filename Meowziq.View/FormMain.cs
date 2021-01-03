@@ -43,9 +43,9 @@ namespace Meowziq.View {
             // MEMO: 30 tick単位でしか呼ばれていない
             if (this.Visible) {
                 var _beat = ((sequencer.Position / 480) + 1).ToString(); // 0開始 ではなく 1開始として表示
-                this.Invoke((MethodInvoker) (() => textBoxBeat.Text = _beat));
+                Invoke((MethodInvoker) (() => textBoxBeat.Text = _beat));
                 var _meas = ((int.Parse(_beat) - 1) / 4 + 1).ToString();
-                this.Invoke((MethodInvoker) (() => textBoxMeas.Text = _meas));
+                Invoke((MethodInvoker) (() => textBoxMeas.Text = _meas));
 
                 List<ChannelMessage> _list = message.GetBy(sequencer.Position);
                 if (_list != null) {
@@ -84,6 +84,7 @@ namespace Meowziq.View {
         void buttonStop_Click(object sender, EventArgs e) {
             try {
                 sequencer.Stop();
+                sequence.Clear();
                 allSoundOff();
                 labelPlay.ForeColor = Color.DimGray;
                 textBoxBeat.Text = "0";
@@ -155,9 +156,12 @@ namespace Meowziq.View {
         /// オールサウンドオフ
         /// </summary>
         void allSoundOff() {
-            for (int _i = 0; _i < 16; _i++) {
-                midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, _i, 120));
-            }
+            // FIXME: 停止出来ないバグ
+            Invoke((MethodInvoker) (() => {
+                for (int _i = 0; _i < 16; _i++) {
+                    midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, _i, 120));
+                }
+            }));
         }
     }
 }
