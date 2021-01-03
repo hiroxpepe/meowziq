@@ -15,7 +15,7 @@ namespace Meowziq.Loader {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        string targetPath; // player.jsonc への PATH 文字列
+        string targetPath; // player.json への PATH 文字列
 
         PlayerData playerData;
 
@@ -45,7 +45,7 @@ namespace Meowziq.Loader {
         public List<Core.Player> BuildPlayerList() {
             loadJson(); // json のデータをオブジェクトにデシリアライズ
             List<Core.Player> _resultList = new List<Core.Player>();
-            foreach (var _playerDao in playerData.player) {
+            foreach (var _playerDao in playerData.Player) {
                 _resultList.Add(convertPlayer(_playerDao)); // json のデータを変換
             }
             return _resultList;
@@ -56,11 +56,11 @@ namespace Meowziq.Loader {
 
         Core.Player convertPlayer(Player playerDao) {
             var _player = new Core.Player();
-            _player.MidiCh = Utils.ToMidiChannel(playerDao.midi);
-            if (playerDao.inst != null) {
-                _player.Program = Utils.ToInstrument(playerDao.inst);
+            _player.MidiCh = Utils.ToMidiChannel(playerDao.Midi);
+            if (playerDao.Inst != null) {
+                _player.Program = Utils.ToInstrument(playerDao.Inst);
             }
-            _player.Type = playerDao.type;
+            _player.Type = playerDao.Type;
             // Player と Phrase の type が一致したら
             foreach (var _phrase in phraseList) {
                 if (_player.Type.Equals(_phrase.Type)) {
@@ -83,24 +83,24 @@ namespace Meowziq.Loader {
         // MEMO: 編集: JSON をクラスとして張り付ける
         [DataContract]
         public class PlayerData {
-            [DataMember]
-            public Player[] player {
+            [DataMember(Name = "player")]
+            public Player[] Player {
                 get; set;
             }
         }
 
         [DataContract]
         public class Player {
-            [DataMember]
-            public string type {
+            [DataMember(Name = "type")]
+            public string Type {
                 get; set;
             }
-            [DataMember]
-            public string midi {
+            [DataMember(Name = "midi")]
+            public string Midi {
                 get; set;
             }
-            [DataMember]
-            public string inst {
+            [DataMember(Name = "inst")]
+            public string Inst {
                 get; set;
             }
         }
