@@ -175,7 +175,8 @@ namespace Meowziq.Core {
             if (type.Equals("pad")) {
                 for (var _i = 0; _i < data.NoteTextArray.Length; _i++) {
                     var _text = data.NoteTextArray[_i];
-                    applyMonoNote(position, pattern.BeatCount, key, pattern.AllSpan, _text);
+                    var _interval = (data.NoteOctArray[_i] * 12);
+                    applyMonoNote(position, pattern.BeatCount, key, pattern.AllSpan, _text, _interval);
                 }
             }
             if (type.Equals("bass")) {
@@ -203,11 +204,46 @@ namespace Meowziq.Core {
         // inner Classes
 
         public class Data {
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // Fields
+
+            Percussion[] percussionArray;
+
+            string[] noteTextArray;
+
+            int[] noteOctArray;
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // Properties [noun, adjectives] 
+
             public Percussion[] PercussionArray {
-                get; set;
+                get => percussionArray;
+                set => percussionArray = value;
             }
+
             public string[] NoteTextArray {
-                get; set;
+                get => noteTextArray;
+                set => noteTextArray = value;
+            }
+
+            public int[] NoteOctArray {
+                get => noteOctArray;
+                set {
+                    if (noteTextArray == null) {
+                        throw new System.ArgumentException("must set noteTextArray.");
+                    }
+                    if (value == null) {
+                        noteOctArray = new int[noteTextArray.Length];
+                        for (var _i = 0; _i < noteTextArray.Length; _i++) {
+                            noteOctArray[_i] = 0; // オクターブの設定を自動生成
+                        }
+                    } else if (value.Length != noteTextArray.Length) {
+                        throw new System.ArgumentException("noteOctArray must be same count as noteTextArray.");
+                    } else {
+                        noteOctArray = value;
+                    }
+                }
             }
         }
     }
