@@ -227,7 +227,7 @@
 + player.json の内容
     |No|項目|内容|
     |:--|:--|:--|
-    |1|type|Player の種類を指定します、※現在、drum、bass、pad、seque　に対応します (TODO:)|
+    |1|type|Player の種類を指定します、※現在、drum、bass、pad、seque に対応します (TODO:)|
     |2|midi|Player の MIDIチャンネルを指定します、drum は9を指定します|
     |3|inst|Player の楽器を記述します、※記述方法については後述します|
 + Player の記述例
