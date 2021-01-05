@@ -46,7 +46,11 @@ namespace Meowziq.Core {
             set => midiCh = (int) value;
         }
 
-        public Instrument Program {
+        public Instrument Instrument {
+            set => programNum = (int) value;
+        }
+
+        public DrumKit DrumKit {
             set => programNum = (int) value;
         }
 

@@ -437,6 +437,31 @@ namespace Meowziq.Core {
             }
         }
 
+        public static DrumKit ToDrumKit(string target) {
+            switch (target) {
+                case "Standard":
+                    return DrumKit.Standard;
+                case "Room":
+                    return DrumKit.Room;
+                case "Power":
+                    return DrumKit.Power;
+                case "Electronic":
+                    return DrumKit.Electronic;
+                case "Analog":
+                    return DrumKit.Analog;
+                case "Jazz":
+                    return DrumKit.Jazz;
+                case "Brush":
+                    return DrumKit.Brush;
+                case "Orchestra":
+                    return DrumKit.Orchestra;
+                case "SFX":
+                    return DrumKit.SFX;
+                default:
+                    throw new System.ArgumentException("not drum kit.");
+            }
+        }
+
         public static Percussion ToPercussion(string target) {
             switch (target) {
                 case "Acoustic_Bass_Drum":
@@ -987,35 +1012,39 @@ namespace Meowziq.Core {
             return Mode.Undefined;
         }
 
+        // MEMO: 展開コードでキーボードの範囲(ゾーン)を指定するのはどうか
+        // TODO: クローズドボイシングでルートのコードのソーンに追従する展開形を自動計算
+
         static Key toKey(int note) {
             if (note > 75) {
                 note -= 12; // オクターブ調節
             }
             switch (note) {
-                case 64:
-                    return Key.E;
-                case 65:
-                    return Key.F;
-                case 66:
-                    return Key.Gb;
-                case 67:
-                    return Key.G;
-                case 68:
-                    return Key.Ab;
-                case 69:
-                    return Key.A;
-                case 70:
-                    return Key.Bb;
-                case 71:
-                    return Key.B;
-                case 72:
-                    return Key.C;
-                case 73:
-                    return Key.Db;
-                case 74:
-                    return Key.D;
+                // MEMO: E を最低音とする
                 case 75:
                     return Key.Eb;
+                case 74:
+                    return Key.D;
+                case 73:
+                    return Key.Db;
+                case 72:
+                    return Key.C;
+                case 71:
+                    return Key.B;
+                case 70:
+                    return Key.Bb;
+                case 69:
+                    return Key.A;
+                case 68:
+                    return Key.Ab;
+                case 67:
+                    return Key.G;
+                case 66:
+                    return Key.Gb;
+                case 65:
+                    return Key.F;
+                case 64:
+                    return Key.E;
                 default:
                     return Key.Undefined;
             }
@@ -1038,18 +1067,19 @@ namespace Meowziq.Core {
     }
 
     public enum Key {
-        E = 64,
-        F = 65,
-        Gb = 66,
-        G = 67,
-        Ab = 68,
-        A = 69,
-        Bb = 70,
-        B = 71,
-        C = 72,
-        Db = 73,
-        D = 74,
+        // MEMO: E を最低音とする
         Eb = 75,
+        D = 74,
+        Db = 73,
+        C = 72,
+        B = 71,
+        Bb = 70,
+        A = 69,
+        Ab = 68,
+        G = 67,
+        Gb = 66,
+        F = 65,
+        E = 64,
         Undefined = -1,
     }
 
@@ -1226,6 +1256,18 @@ namespace Meowziq.Core {
         Helicopter = 125,
         Applause = 126,
         Gunshot = 127,
+    }
+
+    public enum DrumKit {
+        Standard = 0,
+        Room = 8,
+        Power = 16,
+        Electronic = 24,
+        Analog = 25,
+        Jazz = 32,
+        Brush = 40,
+        Orchestra = 48,
+        SFX = 56,
     }
 
     public enum Percussion {

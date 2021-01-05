@@ -57,8 +57,10 @@ namespace Meowziq.Loader {
         Core.Player convertPlayer(Player playerDao) {
             var _player = new Core.Player();
             _player.MidiCh = Utils.ToMidiChannel(playerDao.Midi);
-            if (playerDao.Inst != null) {
-                _player.Program = Utils.ToInstrument(playerDao.Inst);
+            if (int.Parse(playerDao.Midi) == 9) { // FIXME: 9ch 以外のドラムを可能にする
+                _player.DrumKit = Utils.ToDrumKit(playerDao.Inst); // FIXME: 設定が違う場合
+            } else {
+                _player.Instrument = Utils.ToInstrument(playerDao.Inst); // FIXME: 設定が違う場合
             }
             _player.Type = playerDao.Type;
             // Player と Phrase の type が一致したら

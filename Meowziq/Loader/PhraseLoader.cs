@@ -53,6 +53,7 @@ namespace Meowziq.Loader {
             if (phraseDao.Data != null) { // 複合データがある場合
                 _phrase.DataValue.NoteTextArray = phraseDao.Data.Note
                     .Select(x => validateValue(x)).ToArray();
+                _phrase.DataValue.NoteOctArray = phraseDao.Data.Oct;
                 if (phraseDao.Data.Inst != null) { // ドラム用音名データがある場合
                     Percussion[] _percussionArray = new Percussion[phraseDao.Data.Inst.Length];
                     var _i = 0;
@@ -136,6 +137,10 @@ namespace Meowziq.Loader {
             }
             [DataMember(Name = "note")]
             public string[] Note {
+                get; set;
+            }
+            [DataMember(Name = "oct")]
+            public int[] Oct {
                 get; set;
             }
         }
