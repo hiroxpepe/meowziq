@@ -76,6 +76,49 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // protected Methods [verb]
 
+        /// <summary>
+        /// TODO: パターンとフレーズの長さが一致しているかどうか
+        /// </summary>
+        protected void onBuild(int position, Key key, Pattern pattern) {
+            // パターンの名前が違えば何もしない
+            if (!name.Equals(pattern.Name)) {
+                return;
+            }
+            // FIXME: Type で分離 ⇒ 処理のパターン決め込みで良い：プラグイン拡張出来るように
+            if (type.Equals("drum")) {
+                for (var _i = 0; _i < data.NoteTextArray.Length; _i++) {
+                    var _text = data.NoteTextArray[_i];
+                    applyDrumNote(position, pattern.BeatCount, _text, data.PercussionArray[_i]);
+                }
+            }
+            if (type.Equals("pad")) {
+                for (var _i = 0; _i < data.NoteTextArray.Length; _i++) {
+                    var _text = data.NoteTextArray[_i];
+                    var _interval = (data.NoteOctArray[_i] * 12);
+                    applyMonoNote(position, pattern.BeatCount, key, pattern.AllSpan, _text, _interval);
+                }
+            }
+            if (type.Equals("bass")) {
+                var _text = noteText;
+                applyMonoNote(position, pattern.BeatCount, key, pattern.AllSpan, _text, -24);
+            }
+            if (type.Equals("seque")) {
+                int _16beatCount = pattern.BeatCount * 4; // この Pattern の16beatの数
+                int _indexCount = 0; // 16beatで1拍をカウントする用
+                int _spanIndex = 0; // Span リストの添え字
+                for (var _i = 0; _i < _16beatCount; _i++) {
+                    if (_indexCount == 4) { // 16beatが4回進んだ時(1拍)
+                        _indexCount = 0; // カウンタリセット
+                        _spanIndex++; // Span の index値
+                    }
+                    var _span = pattern.AllSpan[_spanIndex];
+                    int _note = Utils.GetNote(key, _span.Degree, _span.Mode, Arpeggio.Random, _i); // 16の倍数
+                    Add(new Note(position + (120 * _i), _note, 30, 127)); // gate 短め
+                    _indexCount++; // Span 用のカウンタも進める
+                }
+            }
+        }
+
         protected void applyMonoNote(int position, int beatCount, Key key, List<Span> spanList, string target, int interval = 0) {
             int _index = 0; // 16beatのindex
             int _indexCount = 0; // 16beatで1拍をカウントする用
@@ -155,59 +198,49 @@ namespace Meowziq.Core {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // protected Methods [verb]
-
-        /// <summary>
-        /// TODO: パターンとフレーズの長さが一致しているかどうか
-        /// </summary>
-        protected void onBuild(int position, Key key, Pattern pattern) {
-            // パターンの名前が違えば何もしない
-            if (!name.Equals(pattern.Name)) {
-                return;
-            }
-            // FIXME: Type で分離 ⇒ 処理のパターン決め込みで良い：プラグイン拡張出来るように
-            if (type.Equals("drum")) {
-                for (var _i = 0; _i < data.NoteTextArray.Length; _i++) {
-                    var _text = data.NoteTextArray[_i];
-                    applyDrumNote(position, pattern.BeatCount, _text, data.PercussionArray[_i]);
-                }
-            }
-            if (type.Equals("pad")) {
-                for (var _i = 0; _i < data.NoteTextArray.Length; _i++) {
-                    var _text = data.NoteTextArray[_i];
-                    applyMonoNote(position, pattern.BeatCount, key, pattern.AllSpan, _text);
-                }
-            }
-            if (type.Equals("bass")) {
-                var _text = noteText;
-                applyMonoNote(position, pattern.BeatCount, key, pattern.AllSpan, _text, -24);
-            }
-            if (type.Equals("seque")) {
-                int _16beatCount = pattern.BeatCount * 4; // この Pattern の16beatの数
-                int _indexCount = 0; // 16beatで1拍をカウントする用
-                int _spanIndex = 0; // Span リストの添え字
-                for (var _i = 0; _i < _16beatCount; _i++) {
-                    if (_indexCount == 4) { // 16beatが4回進んだ時(1拍)
-                        _indexCount = 0; // カウンタリセット
-                        _spanIndex++; // Span の index値
-                    }
-                    var _span = pattern.AllSpan[_spanIndex];
-                    int _note = Utils.GetNote(key, _span.Degree, _span.Mode, Arpeggio.Random, _i); // 16の倍数
-                    Add(new Note(position + (120 * _i), _note, 30, 127)); // gate 短め
-                    _indexCount++; // Span 用のカウンタも進める
-                }
-            }
-        }
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
         // inner Classes
 
         public class Data {
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // Fields
+
+            Percussion[] percussionArray;
+
+            string[] noteTextArray;
+
+            int[] noteOctArray;
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // Properties [noun, adjectives] 
+
             public Percussion[] PercussionArray {
-                get; set;
+                get => percussionArray;
+                set => percussionArray = value;
             }
+
             public string[] NoteTextArray {
-                get; set;
+                get => noteTextArray;
+                set => noteTextArray = value;
+            }
+
+            public int[] NoteOctArray {
+                get => noteOctArray;
+                set {
+                    if (noteTextArray == null) {
+                        throw new System.ArgumentException("must set noteTextArray.");
+                    }
+                    if (value == null) {
+                        noteOctArray = new int[noteTextArray.Length];
+                        for (var _i = 0; _i < noteTextArray.Length; _i++) {
+                            noteOctArray[_i] = 0; // オクターブの設定を自動生成
+                        }
+                    } else if (value.Length != noteTextArray.Length) {
+                        throw new System.ArgumentException("noteOctArray must be same count as noteTextArray.");
+                    } else {
+                        noteOctArray = value;
+                    }
+                }
             }
         }
     }
