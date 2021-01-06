@@ -37,8 +37,8 @@ namespace Meowziq.Loader {
         public List<Core.Phrase> BuildPhraseList() {
             loadJson(); // json のデータをオブジェクトにデシリアライズ
             var _resultList = new List<Core.Phrase>();
-            foreach (var _phraseDao in phraseData.Phrase) {
-                _resultList.Add(convertPhrase(_phraseDao)); // json のデータを変換
+            foreach (var _phrase in phraseData.Phrase) {
+                _resultList.Add(convertPhrase(_phrase)); // json のデータを変換
             }
             return _resultList;
         }
@@ -46,19 +46,19 @@ namespace Meowziq.Loader {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private Methods [verb]
 
-        Core.Phrase convertPhrase(Phrase phraseDao) {
+        Core.Phrase convertPhrase(Phrase phrase) {
             var _phrase = new Core.Phrase();
-            _phrase.Type = phraseDao.Type;
-            _phrase.Name = phraseDao.Name;
-            _phrase.NoteText = validateValue(phraseDao.Note);
-            if (phraseDao.Data != null) { // 複合データがある場合
-                _phrase.Data.NoteTextArray = phraseDao.Data.Note
+            _phrase.Type = phrase.Type;
+            _phrase.Name = phrase.Name;
+            _phrase.NoteText = validateValue(phrase.Note);
+            if (phrase.Data != null) { // 複合データがある場合
+                _phrase.Data.NoteTextArray = phrase.Data.Note
                     .Select(x => validateValue(x)).ToArray();
-                _phrase.Data.NoteOctArray = phraseDao.Data.Oct;
-                if (phraseDao.Data.Inst != null) { // ドラム用音名データがある場合
-                    var _percussionArray = new Percussion[phraseDao.Data.Inst.Length];
+                _phrase.Data.NoteOctArray = phrase.Data.Oct;
+                if (phrase.Data.Inst != null) { // ドラム用音名データがある場合
+                    var _percussionArray = new Percussion[phrase.Data.Inst.Length];
                     var _i = 0;
-                    foreach (var _inst in phraseDao.Data.Inst) {
+                    foreach (var _inst in phrase.Data.Inst) {
                         _percussionArray[_i++] = Utils.ToPercussion(_inst);
                     }
                     _phrase.Data.PercussionArray = _percussionArray;

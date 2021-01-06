@@ -21,7 +21,7 @@ namespace Meowziq.Loader {
 
         SongData songData;
 
-        List<Core.Pattern> patternList;
+        List<Pattern> patternList;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
@@ -34,7 +34,7 @@ namespace Meowziq.Loader {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjectives] 
 
-        public List<Core.Pattern> PatternList {
+        public List<Pattern> PatternList {
             set => patternList = value;
         }
 
@@ -68,7 +68,7 @@ namespace Meowziq.Loader {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private Methods [verb]
 
-        Core.Pattern searchPattern(string patternName) {
+        Pattern searchPattern(string patternName) {
             try {
                 return patternList.Where(x => x.Name.Equals(patternName)).First(); // MEMO: 名前が一致した最初の要素
             } catch (Exception e) {
