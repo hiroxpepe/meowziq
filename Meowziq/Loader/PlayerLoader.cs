@@ -44,7 +44,7 @@ namespace Meowziq.Loader {
         /// </summary>
         public List<Core.Player> BuildPlayerList() {
             loadJson(); // json のデータをオブジェクトにデシリアライズ
-            List<Core.Player> _resultList = new List<Core.Player>();
+            var _resultList = new List<Core.Player>();
             foreach (var _playerDao in playerData.Player) {
                 _resultList.Add(convertPlayer(_playerDao)); // json のデータを変換
             }

@@ -35,7 +35,7 @@ namespace Meowziq.Loader {
         /// </summary>
         public List<Core.Phrase> BuildPhraseList() {
             loadJson(); // json のデータをオブジェクトにデシリアライズ
-            List<Core.Phrase> _resultList = new List<Core.Phrase>();
+            var _resultList = new List<Core.Phrase>();
             foreach (var _phraseDao in phraseData.Phrase) {
                 _resultList.Add(convertPhrase(_phraseDao)); // json のデータを変換
             }
@@ -55,7 +55,7 @@ namespace Meowziq.Loader {
                     .Select(x => validateValue(x)).ToArray();
                 _phrase.DataValue.NoteOctArray = phraseDao.Data.Oct;
                 if (phraseDao.Data.Inst != null) { // ドラム用音名データがある場合
-                    Percussion[] _percussionArray = new Percussion[phraseDao.Data.Inst.Length];
+                    var _percussionArray = new Percussion[phraseDao.Data.Inst.Length];
                     var _i = 0;
                     foreach (var _inst in phraseDao.Data.Inst) {
                         _percussionArray[_i++] = Utils.ToPercussion(_inst);

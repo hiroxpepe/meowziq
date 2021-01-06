@@ -52,7 +52,7 @@ namespace Meowziq.View {
                 var _meas = ((int.Parse(_beat) - 1) / 4 + 1).ToString();
                 Invoke((MethodInvoker) (() => textBoxMeas.Text = _meas));
 
-                List<ChannelMessage> _list = message.GetBy(sequencer.Position);
+                var _list = message.GetBy(sequencer.Position);
                 if (_list != null) {
                     _list.ForEach(message => {
                         midi.OutDevice.Send(message); // MIDIデバイスにメッセージを追加送信

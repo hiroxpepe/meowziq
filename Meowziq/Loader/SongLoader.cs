@@ -46,10 +46,10 @@ namespace Meowziq.Loader {
         public Core.Song BuildSong() {
             loadJson(); // json のデータをオブジェクトにデシリアライズ
             var _song = new Core.Song(
+                songData.Song.Name,
                 Utils.ToKey(songData.Song.Key),
                 Utils.ToMode(songData.Song.Mode)
             );
-            _song.Name = songData.Song.Name; // FIXME: コンストラクタに含める
             foreach (var _patternName in songData.Song.Pattern) {
                 _song.Add(searchPattern(_patternName)); // Pattern 追加
             }
