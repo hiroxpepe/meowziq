@@ -52,8 +52,7 @@ namespace Meowziq.Loader {
             _phrase.Name = phrase.Name;
             _phrase.NoteText = validateValue(phrase.Note);
             if (phrase.Data != null) { // 複合データがある場合
-                _phrase.Data.NoteTextArray = phrase.Data.Note
-                    .Select(x => validateValue(x)).ToArray();
+                _phrase.Data.NoteTextArray = phrase.Data.Note.Select(x => validateValue(x)).ToArray();
                 _phrase.Data.NoteOctArray = phrase.Data.Oct;
                 if (phrase.Data.Inst != null) { // ドラム用音名データがある場合
                     var _percussionArray = new Percussion[phrase.Data.Inst.Length];

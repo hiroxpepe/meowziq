@@ -1054,18 +1054,6 @@ namespace Meowziq.Core {
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // public Enums [noun]
 
-    public enum PatternType {
-        Intro,
-        Verse,
-        Bridge,
-        Chorus,
-        Break,
-        Hook,
-        Interlude,
-        Solo,
-        Outro,
-    }
-
     public enum Key {
         // MEMO: E を最低音とする
         Eb = 75,
