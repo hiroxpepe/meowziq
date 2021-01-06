@@ -20,7 +20,7 @@ namespace Meowziq.Core {
             int _rootOfDegree = chordRootNote(key, degree, keyMode); // FIXME: 曲の旋法？
 
             // キーの旋法と度数から旋法に対応したその度数の旋法を取得
-            var _autoMode = modeForDegree(keyMode, degree);
+            Mode _autoMode = modeForDegree(keyMode, degree);
 
             // そのルート音の旋法スケールを取得
             int[] _modeScale = modeScale(toKey(_rootOfDegree), _autoMode);

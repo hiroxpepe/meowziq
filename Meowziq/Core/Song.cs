@@ -3,10 +3,8 @@ using System.Collections.Generic;
 
 namespace Meowziq.Core {
     /// <summary>
-    /// ソングとはキーとそのタイミングでの旋法を表現する
-    ///     + バンドのコード譜のような概念
-    /// メロディも知見である
-    ///     + 多彩なフレーズを駆使するプレイヤーを育てていく仕組み
+    /// Song クラス
+    ///     + Pattern のオブジェクトのリストを管理する
     /// </summary>
     public class Song {
 
@@ -26,7 +24,8 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
-        public Song(Key key, Mode keyMode) {
+        public Song(string name, Key key, Mode keyMode) {
+            this.name = name;
             this.key = key;
             this.keyMode = keyMode;
             this.patternList = new List<Pattern>();
@@ -34,6 +33,13 @@ namespace Meowziq.Core {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjectives] 
+
+        /// <summary>
+        /// 曲の名前
+        /// </summary>
+        public string Name {
+            get => name;
+        }
 
         /// <summary>
         /// 曲のキー
@@ -47,14 +53,6 @@ namespace Meowziq.Core {
         /// </summary>
         public List<Pattern> AllPattern {
             get => patternList;
-        }
-
-        /// <summary>
-        /// 曲の名前
-        /// </summary>
-        public string Name {
-            get => name;
-            set => name = value;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

@@ -3,15 +3,9 @@ using System.Collections.Generic;
 
 namespace Meowziq.Core {
     /// <summary>
-    /// プレイヤー
-    /// + 曲(ソング)を知っている
-    /// + 自分の知識でフレーズを繰り出す
-    ///     + フレーズの引き出しが沢山あれば曲をこなしていける
-    ///     + ヴァース、コーラスなど曲のパートに合わせて演奏を変化させてくる
-    ///     + 他のプレイヤーの演奏を参考にしながら演奏を修正してくる
-    /// + 音色変更やエフェクトのタイミングも知っている
-    ///     + 演奏する楽器について責任を持つ
-    /// + ライブラリは知りたくない
+    /// Player クラス
+    ///     + Phrase オブジェクトのリストを管理
+    ///     + MIDIノートを生成する
     /// </summary>
     public class Player {
 
@@ -75,17 +69,18 @@ namespace Meowziq.Core {
             message.Apply(midiCh, programNum); 
             
             // 全ての Pattern の Note を MIDI データ化する
-            int _position = 0;
+            var _position = 0;
+            // MEMO: リアルタイム演奏を考える場合、1小節前に全て決まっている必要がある
             foreach (Pattern _pattern in song.AllPattern) {
                 foreach (Phrase _phrase in phraseList) {
                     _phrase.Build(_position, song.Key, _pattern); // Note データを作成
-                    List<Note> _noteList = _phrase.AllNote;
+                    var _noteList = _phrase.AllNote;
                     foreach (Note _note in _noteList) {
                         message.Apply(midiCh, _note); // message に適用
                     }
                     _noteList.Clear(); // 必要
                 }
-                int _tick = _pattern.BeatCount * 480;
+                var _tick = _pattern.BeatCount * 480;
                 _position += _tick; // Pattern の長さ分ポジションを移動する
             }
         }

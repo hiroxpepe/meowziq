@@ -4,9 +4,9 @@ using System.Text.RegularExpressions;
 
 namespace Meowziq.Core {
     /// <summary>
-    /// フレーズはキー、スケールを外部から与えられる
-    ///     + プリセットフレーズ
-    ///     + ユーザーがフレーズを拡張出来る
+    /// Phrase クラス
+    ///     + キーと旋法は外部から与えられる
+    ///     + Note オブジェクトのリストを管理する
     /// </summary>
     public class Phrase {
 
@@ -27,8 +27,8 @@ namespace Meowziq.Core {
         // Constructor
 
         public Phrase() {
-            data = new Data(); // json から詰められるデータ
-            noteList = new List<Note>();
+            this.data = new Data(); // json から詰められるデータ
+            this.noteList = new List<Note>();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -61,10 +61,6 @@ namespace Meowziq.Core {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
-
-        public void Add(Note note) {
-            noteList.Add(note);
-        }
 
         /// <summary>
         /// Player オブジェクトから呼ばれます
@@ -103,26 +99,26 @@ namespace Meowziq.Core {
                 applyMonoNote(position, pattern.BeatCount, key, pattern.AllSpan, _text, -24);
             }
             if (type.Equals("seque")) {
-                int _16beatCount = pattern.BeatCount * 4; // この Pattern の16beatの数
-                int _indexCount = 0; // 16beatで1拍をカウントする用
-                int _spanIndex = 0; // Span リストの添え字
+                var _16beatCount = pattern.BeatCount * 4; // この Pattern の16beatの数
+                var _indexCount = 0; // 16beatで1拍をカウントする用
+                var _spanIndex = 0; // Span リストの添え字
                 for (var _i = 0; _i < _16beatCount; _i++) {
                     if (_indexCount == 4) { // 16beatが4回進んだ時(1拍)
                         _indexCount = 0; // カウンタリセット
                         _spanIndex++; // Span の index値
                     }
                     var _span = pattern.AllSpan[_spanIndex];
-                    int _note = Utils.GetNote(key, _span.Degree, _span.Mode, Arpeggio.Random, _i); // 16の倍数
-                    Add(new Note(position + (120 * _i), _note, 30, 127)); // gate 短め
+                    var _note = Utils.GetNote(key, _span.Degree, _span.Mode, Arpeggio.Random, _i); // 16の倍数
+                    add(new Note(position + (120 * _i), _note, 30, 127)); // gate 短め
                     _indexCount++; // Span 用のカウンタも進める
                 }
             }
         }
 
         protected void applyMonoNote(int position, int beatCount, Key key, List<Span> spanList, string target, int interval = 0) {
-            int _index = 0; // 16beatのindex
-            int _indexCount = 0; // 16beatで1拍をカウントする用
-            int _spanIndex = 0; // Span リストの添え字
+            var _index = 0; // 16beatのindex
+            var _indexCount = 0; // 16beatで1拍をカウントする用
+            var _spanIndex = 0; // Span リストの添え字
             var _valueArray = filter(target).ToCharArray();
             foreach (var _value in _valueArray) {
                 if (_index > beatCount * 4) {
@@ -144,8 +140,8 @@ namespace Meowziq.Core {
                         _noteNum = Utils.GetNoteWithSpanMode(key, _span.Degree, _span.KeyMode, _span.Mode, int.Parse(_value.ToString()));
                     }
                     // この音の音価を調査する
-                    int _gateCount = 0;
-                    int _all16beatcount = (beatCount * 4);
+                    var _gateCount = 0;
+                    var _all16beatcount = (beatCount * 4);
                     for (var _i = _index + 1; _i < _all16beatcount; _i++) {
                         var _search = _valueArray[_i];
                         if (_search.Equals('>')) {
@@ -156,7 +152,7 @@ namespace Meowziq.Core {
                         }
                     }
                     var _gate = 120 * (_gateCount + 1);
-                    Add(new Note(position + (120 * _index), (int) _noteNum + interval, _gate, 127)); // +1 は数値分
+                    add(new Note(position + (120 * _index), (int) _noteNum + interval, _gate, 127)); // +1 は数値分
                 }
                 _index++; // 16beatを進める
                 _indexCount++; // Span 用のカウンタも進める
@@ -164,16 +160,20 @@ namespace Meowziq.Core {
         }
 
         protected void applyDrumNote(int position, int beatCount, string target, Percussion noteNum) {
-            int _index = 0;
+            var _index = 0;
             foreach (bool? _value in convertToBool(filter(target))) {
                 if (_index > beatCount * 4) {
                     return; // Pattern の長さを超えたら終了 FIXME: 長さに足りない時？ エラー? リピート？
                 }
                 if (_value == true) {
-                    Add(new Note(position + (120 * _index), (int) noteNum, 120, 127));
+                    add(new Note(position + (120 * _index), (int) noteNum, 120, 127));
                 }
                 _index++; // 16beatを進める
             }
+        }
+
+        protected void add(Note note) {
+            noteList.Add(note);
         }
 
         protected static string filter(string target) {
@@ -183,9 +183,9 @@ namespace Meowziq.Core {
 
         protected static List<bool?> convertToBool(string target) {
             // on, off, null スイッチ
-            List<bool?> _list = new List<bool?>();
+            var _list = new List<bool?>();
             // 文字列を並列に変換
-            char[] _charArray = target.ToCharArray();
+            var _charArray = target.ToCharArray();
             // 文字列を判定
             foreach (char _char in _charArray) {
                 if (_char.Equals('x')) {

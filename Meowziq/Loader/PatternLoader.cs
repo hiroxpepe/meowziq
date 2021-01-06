@@ -36,7 +36,7 @@ namespace Meowziq.Loader {
         /// </summary>
         public List<Core.Pattern> BuildPatternList() {
             loadJson(); // json のデータをオブジェクトにデシリアライズ
-            List<Core.Pattern> _resultList = new List<Core.Pattern>();
+            var _resultList = new List<Core.Pattern>();
             foreach (var _patternDao in patternData.Pattern) {
                 _resultList.Add(convertPattern(_patternDao)); // json のデータを変換
             }
@@ -47,7 +47,7 @@ namespace Meowziq.Loader {
         // private Methods [verb]
 
         Core.Pattern convertPattern(Pattern patternDao) {
-            List<Core.Meas> _measList = convertMeasList(patternDao.Data);
+            var _measList = convertMeasList(patternDao.Data);
             var _pattern = new Core.Pattern(patternDao.Name, _measList);
             return _pattern;
         }
@@ -58,10 +58,10 @@ namespace Meowziq.Loader {
                 .Split('@') // 小節で切り分ける
                 .Select(x => x.Replace("[","").Replace("]","")).ToArray(); // 不要文字削除
             // Meas リストに変換
-            List<Core.Meas> _measList = new List<Core.Meas>();
+            var _measList = new List<Core.Meas>();
             foreach (var _measString in _measStringArray) {
                 // Span リストに変換
-                List<Core.Span> _spanList = convertSpanList(_measString);
+                var _spanList = convertSpanList(_measString);
                 // Meas を作成して追加
                 _measList.Add(new Core.Meas(_spanList));
             }
@@ -78,7 +78,7 @@ namespace Meowziq.Loader {
                 .ToArray();
 
             // 1小節4拍しかないので決め打ち
-            List<Core.Span> _spanList = new List<Core.Span>();
+            var _spanList = new List<Core.Span>();
             // 4拍全部 "I | | | "
             if (_beatArray[1].Equals(" ") && _beatArray[2].Equals(" ") && _beatArray[3].Equals(" ")) {
                 _spanList.Add(convertSpan(4, _beatArray[0])); // 1拍目

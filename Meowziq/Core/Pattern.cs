@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 namespace Meowziq.Core {
     /// <summary>
-    /// パターンを表すクラス
-    ///     + 通常数小節単位で構成される
+    /// Pattern クラス
+    ///     + Meas オブジェクトのリストを管理する
     /// </summary>
     public class Pattern {
 
@@ -64,7 +64,9 @@ namespace Meowziq.Core {
     }
 
     /// <summary>
-    /// 小節を表すクラス
+    /// Meas クラス
+    ///     + 小節を表すクラス
+    ///     + Span オブジェクトのリストを管理する
     /// </summary>
     public class Meas {
 
@@ -80,7 +82,7 @@ namespace Meowziq.Core {
         /// コンストラクタだけが作成する唯一の方法
         /// </summary>
         public Meas(List<Span> spanList) {
-            int _totalBeatCount = 0;
+            var _totalBeatCount = 0;
             foreach (var _span in spanList) {
                 _totalBeatCount += _span.Beat; // 拍を集計する
             }
@@ -107,7 +109,8 @@ namespace Meowziq.Core {
     }
 
     /// <summary>
-    /// 旋法が続く期間を表すクラス
+    /// Span クラス
+    ///     + 旋法が続く期間を表すクラス
     /// </summary>
     public class Span {
 

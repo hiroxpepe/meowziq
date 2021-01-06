@@ -51,7 +51,7 @@ namespace Meowziq {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private Methods [verb]
 
-        public void add(int tick, ChannelMessage channelMessage) {
+        void add(int tick, ChannelMessage channelMessage) {
             if (!item.ContainsKey(tick)) {
                 List<ChannelMessage> _newList = new List<ChannelMessage>();
                 _newList.Add(channelMessage);
