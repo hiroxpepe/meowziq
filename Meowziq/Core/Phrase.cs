@@ -47,7 +47,7 @@ namespace Meowziq.Core {
             set => noteText = value;
         }
 
-        public Data DataValue {
+        public Data Data {
             get => data;
             set => data = value;
         }
@@ -199,47 +199,50 @@ namespace Meowziq.Core {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // inner Classes
+    }
 
-        public class Data {
+    /// <summary>
+    /// Data クラス
+    /// </summary>
+    public class Data {
 
-            ///////////////////////////////////////////////////////////////////////////////////////////
-            // Fields
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Fields
 
-            Percussion[] percussionArray;
+        Percussion[] percussionArray;
 
-            string[] noteTextArray;
+        string[] noteTextArray;
 
-            int[] noteOctArray;
+        int[] noteOctArray;
 
-            ///////////////////////////////////////////////////////////////////////////////////////////
-            // Properties [noun, adjectives] 
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Properties [noun, adjectives] 
 
-            public Percussion[] PercussionArray {
-                get => percussionArray;
-                set => percussionArray = value;
-            }
+        public Percussion[] PercussionArray {
+            get => percussionArray;
+            set => percussionArray = value;
+        }
 
-            public string[] NoteTextArray {
-                get => noteTextArray;
-                set => noteTextArray = value;
-            }
+        public string[] NoteTextArray {
+            get => noteTextArray;
+            set => noteTextArray = value;
+        }
 
-            public int[] NoteOctArray {
-                get => noteOctArray;
-                set {
-                    if (noteTextArray == null) {
-                        throw new System.ArgumentException("must set noteTextArray.");
+        public int[] NoteOctArray {
+            get => noteOctArray;
+            set {
+                if (noteTextArray == null) {
+                    throw new System.ArgumentException("must set noteTextArray.");
+                }
+                if (value == null) {
+                    noteOctArray = new int[noteTextArray.Length];
+                    for (var _i = 0; _i < noteTextArray.Length; _i++) {
+                        noteOctArray[_i] = 0; // オクターブの設定を自動生成
                     }
-                    if (value == null) {
-                        noteOctArray = new int[noteTextArray.Length];
-                        for (var _i = 0; _i < noteTextArray.Length; _i++) {
-                            noteOctArray[_i] = 0; // オクターブの設定を自動生成
-                        }
-                    } else if (value.Length != noteTextArray.Length) {
-                        throw new System.ArgumentException("noteOctArray must be same count as noteTextArray.");
-                    } else {
-                        noteOctArray = value;
-                    }
+                } else if (value.Length != noteTextArray.Length) {
+                    throw new System.ArgumentException("noteOctArray must be same count as noteTextArray.");
+                } else {
+                    noteOctArray = value;
                 }
             }
         }

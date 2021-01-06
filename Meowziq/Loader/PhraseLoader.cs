@@ -51,16 +51,16 @@ namespace Meowziq.Loader {
             _phrase.Name = phraseDao.Name;
             _phrase.NoteText = validateValue(phraseDao.Note);
             if (phraseDao.Data != null) { // 複合データがある場合
-                _phrase.DataValue.NoteTextArray = phraseDao.Data.Note
+                _phrase.Data.NoteTextArray = phraseDao.Data.Note
                     .Select(x => validateValue(x)).ToArray();
-                _phrase.DataValue.NoteOctArray = phraseDao.Data.Oct;
+                _phrase.Data.NoteOctArray = phraseDao.Data.Oct;
                 if (phraseDao.Data.Inst != null) { // ドラム用音名データがある場合
                     var _percussionArray = new Percussion[phraseDao.Data.Inst.Length];
                     var _i = 0;
                     foreach (var _inst in phraseDao.Data.Inst) {
                         _percussionArray[_i++] = Utils.ToPercussion(_inst);
                     }
-                    _phrase.DataValue.PercussionArray = _percussionArray;
+                    _phrase.Data.PercussionArray = _percussionArray;
                 }
             }
             return _phrase;
