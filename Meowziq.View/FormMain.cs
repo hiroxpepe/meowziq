@@ -1,7 +1,7 @@
 ﻿
 using System;
-using System.Collections.Generic;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sanford.Multimedia.Midi;
 
@@ -64,7 +64,7 @@ namespace Meowziq.View {
             }
         }
 
-        private void handleStopped(object sender, StoppedEventArgs e) {
+        void handleStopped(object sender, StoppedEventArgs e) {
             foreach (ChannelMessage message in e.Messages) {
                 midi.OutDevice.Send(message);
                 pianoControl.Send(message);
@@ -111,9 +111,9 @@ namespace Meowziq.View {
         /// <summary>
         /// データをロードします
         /// </summary>
-        private void buttonLoad_Click(object sender, EventArgs e) {
+        void buttonLoad_Click(object sender, EventArgs e) {
             try {
-                folderBrowserDialog.SelectedPath = System.AppDomain.CurrentDomain.BaseDirectory;
+                folderBrowserDialog.SelectedPath = AppDomain.CurrentDomain.BaseDirectory;
                 var _dr = folderBrowserDialog.ShowDialog();
                 if (_dr == DialogResult.OK) {
                     targetDir = folderBrowserDialog.SelectedPath;
@@ -174,11 +174,11 @@ namespace Meowziq.View {
             for (int _i = 0; _i < 16; _i++) {
                 midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, _i, 120));
             }
-            await System.Threading.Tasks.Task.Delay(240);
+            await Task.Delay(240);
             for (int _i = 0; _i < 16; _i++) {
                 midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, _i, 120));
             }
-            await System.Threading.Tasks.Task.Delay(480);
+            await Task.Delay(480);
             for (int _i = 0; _i < 16; _i++) {
                 midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, _i, 120));
             }

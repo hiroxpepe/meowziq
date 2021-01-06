@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -70,8 +71,8 @@ namespace Meowziq.Loader {
         Core.Pattern searchPattern(string patternName) {
             try {
                 return patternList.Where(x => x.Name.Equals(patternName)).First(); // MEMO: 名前が一致した最初の要素
-            } catch (System.Exception e) {
-                throw new System.ArgumentException("undefined pattern.");
+            } catch (Exception e) {
+                throw new ArgumentException("undefined pattern.");
             }
         }
 
