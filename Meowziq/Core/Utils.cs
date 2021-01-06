@@ -73,7 +73,7 @@ namespace Meowziq.Core {
                 case "eb":
                     return Key.Eb;
                 default:
-                    throw new System.ArgumentException("not key.");
+                    throw new ArgumentException("not key.");
             }
         }
 
@@ -94,7 +94,7 @@ namespace Meowziq.Core {
                 case "VII":
                     return Degree.VII;
                 default:
-                    throw new System.ArgumentException("not degree.");
+                    throw new ArgumentException("not degree.");
             }
         }
 
@@ -115,7 +115,7 @@ namespace Meowziq.Core {
                 case "loc":
                     return Mode.Loc;
                 default:
-                    throw new System.ArgumentException("not mode.");
+                    throw new ArgumentException("not mode.");
             }
         }
 
@@ -154,7 +154,7 @@ namespace Meowziq.Core {
                 case "15":
                     return MidiChannel.ch16;
                 default:
-                    throw new System.ArgumentException("not midi ch.");
+                    throw new ArgumentException("not midi ch.");
             }
         }
 
@@ -433,7 +433,7 @@ namespace Meowziq.Core {
                 case "Gunshot":
                     return Instrument.Gunshot;
                 default:
-                    throw new System.ArgumentException("not instrument.");
+                    throw new ArgumentException("not instrument.");
             }
         }
 
@@ -458,7 +458,7 @@ namespace Meowziq.Core {
                 case "SFX":
                     return DrumKit.SFX;
                 default:
-                    throw new System.ArgumentException("not drum kit.");
+                    throw new ArgumentException("not drum kit.");
             }
         }
 
@@ -559,7 +559,7 @@ namespace Meowziq.Core {
                 case "Open_Triangle":
                     return Percussion.Open_Triangle;
                 default:
-                    throw new System.ArgumentException("not percussion.");
+                    throw new ArgumentException("not percussion.");
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 
 namespace Meowziq.Core {
@@ -23,7 +24,7 @@ namespace Meowziq.Core {
         /// </summary>
         public Pattern(string name, List<Meas> measList) {
             if (measList.Count > 16) {
-                throw new System.ArgumentException("measure counts are until 16."); // 1パターンは16小節まで
+                throw new ArgumentException("measure counts are until 16."); // 1パターンは16小節まで
             }
             this.name = name;
             this.measList = measList;
@@ -88,7 +89,7 @@ namespace Meowziq.Core {
             }
             if (_totalBeatCount < 4 || _totalBeatCount > 4) {
                 // FIXME: 3拍子とかは？
-                throw new System.ArgumentException("beat counts needs 4."); // 1小節に足りない or 超過している
+                throw new ArgumentException("beat counts needs 4."); // 1小節に足りない or 超過している
             }
             // Span を分解して個別する
             this.spanList = new List<Span>();

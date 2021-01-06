@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -196,9 +197,6 @@ namespace Meowziq.Core {
             }
             return _list;
         }
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // inner Classes
     }
 
     /// <summary>
@@ -232,7 +230,7 @@ namespace Meowziq.Core {
             get => noteOctArray;
             set {
                 if (noteTextArray == null) {
-                    throw new System.ArgumentException("must set noteTextArray.");
+                    throw new ArgumentException("must set noteTextArray.");
                 }
                 if (value == null) {
                     noteOctArray = new int[noteTextArray.Length];
@@ -240,7 +238,7 @@ namespace Meowziq.Core {
                         noteOctArray[_i] = 0; // オクターブの設定を自動生成
                     }
                 } else if (value.Length != noteTextArray.Length) {
-                    throw new System.ArgumentException("noteOctArray must be same count as noteTextArray.");
+                    throw new ArgumentException("noteOctArray must be same count as noteTextArray.");
                 } else {
                     noteOctArray = value;
                 }

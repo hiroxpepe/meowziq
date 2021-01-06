@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -84,7 +85,7 @@ namespace Meowziq.Loader {
                 .ToArray();
             // そのデータがあれば例外を投げる
             if (_array1.Length != 0) {
-                throw new System.FormatException("data count must be 4.");
+                throw new FormatException("data count must be 4.");
             }
             // バリデーションOKなら元々の文字列を返す
             return target;

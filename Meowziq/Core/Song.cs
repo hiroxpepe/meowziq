@@ -69,12 +69,5 @@ namespace Meowziq.Core {
             }
             patternList.Add(pattern);
         }
-
-        /// <summary>
-        /// TBA
-        /// </summary>
-        public Song Repeat(int count) {
-            return this;
-        }
     }
 }

@@ -17,12 +17,6 @@ namespace Meowziq {
         Dictionary<int, List<ChannelMessage>> item = new Dictionary<int, List<ChannelMessage>>();
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Constructor
-
-        public Message() {
-        }
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
 
         public List<ChannelMessage> GetBy(int tick) {
