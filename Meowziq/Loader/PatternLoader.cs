@@ -37,8 +37,8 @@ namespace Meowziq.Loader {
         public List<Core.Pattern> BuildPatternList() {
             loadJson(); // json のデータをオブジェクトにデシリアライズ
             var _resultList = new List<Core.Pattern>();
-            foreach (var _patternDao in patternData.Pattern) {
-                _resultList.Add(convertPattern(_patternDao)); // json のデータを変換
+            foreach (var _pattern in patternData.Pattern) {
+                _resultList.Add(convertPattern(_pattern)); // json のデータを変換
             }
             return _resultList;
         }
@@ -46,29 +46,29 @@ namespace Meowziq.Loader {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private Methods [verb]
 
-        Core.Pattern convertPattern(Pattern patternDao) {
-            var _measList = convertMeasList(patternDao.Data);
-            var _pattern = new Core.Pattern(patternDao.Name, _measList);
+        Core.Pattern convertPattern(Pattern pattern) {
+            var _measList = convertMeasList(pattern.Data);
+            var _pattern = new Core.Pattern(pattern.Name, _measList);
             return _pattern;
         }
 
-        List<Core.Meas> convertMeasList(string patternString) {
+        List<Meas> convertMeasList(string patternString) {
             // 小節に切り出す "[I:Aeo| | | ][IV| | | ][I| | | ][IV| | | ]"
             var _measStringArray = patternString.Replace("][", "@")  // まず "][" を "@" に置き換え
                 .Split('@') // 小節で切り分ける
                 .Select(x => x.Replace("[","").Replace("]","")).ToArray(); // 不要文字削除
             // Meas リストに変換
-            var _measList = new List<Core.Meas>();
+            var _measList = new List<Meas>();
             foreach (var _measString in _measStringArray) {
                 // Span リストに変換
                 var _spanList = convertSpanList(_measString);
                 // Meas を作成して追加
-                _measList.Add(new Core.Meas(_spanList));
+                _measList.Add(new Meas(_spanList));
             }
             return _measList;
         }
 
-        List<Core.Span> convertSpanList(string measString) {
+        List<Span> convertSpanList(string measString) {
             // Span に切り出す "I:Aeo | | | "
             var _beatArray = measString.Split('|')
                 .Select(x => x.Replace("     ", " ")) // 5空白を1空白に置き換え
@@ -78,7 +78,7 @@ namespace Meowziq.Loader {
                 .ToArray();
 
             // 1小節4拍しかないので決め打ち
-            var _spanList = new List<Core.Span>();
+            var _spanList = new List<Span>();
             // 4拍全部 "I | | | "
             if (_beatArray[1].Equals(" ") && _beatArray[2].Equals(" ") && _beatArray[3].Equals(" ")) {
                 _spanList.Add(convertSpan(4, _beatArray[0])); // 1拍目
@@ -101,12 +101,12 @@ namespace Meowziq.Loader {
             return _spanList;
         }
 
-        Core.Span convertSpan(int beat, string beatString) {
+        Span convertSpan(int beat, string beatString) {
             var _part = beatString.Split(':'); // ':' で分割
             if (_part.Length == 1) {
-                return new Core.Span(beat, Utils.ToDegree(_part[0].Trim()));
+                return new Span(beat, Utils.ToDegree(_part[0].Trim()));
             } else {
-                return new Core.Span(beat, Utils.ToDegree(_part[0].Trim()), Utils.ToMode(_part[1].Trim())); // 旋法指定あり
+                return new Span(beat, Utils.ToDegree(_part[0].Trim()), Utils.ToMode(_part[1].Trim())); // 旋法指定あり
             }
         }
 

@@ -19,7 +19,7 @@ namespace Meowziq.Loader {
 
         PlayerData playerData;
 
-        List<Core.Phrase> phraseList; // 誰に何を渡すか
+        List<Phrase> phraseList; // 誰に何を渡すか
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
@@ -32,7 +32,7 @@ namespace Meowziq.Loader {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjectives] 
 
-        public List<Core.Phrase> PhraseList {
+        public List<Phrase> PhraseList {
             set => phraseList = value;
         }
 
@@ -45,8 +45,8 @@ namespace Meowziq.Loader {
         public List<Core.Player> BuildPlayerList() {
             loadJson(); // json のデータをオブジェクトにデシリアライズ
             var _resultList = new List<Core.Player>();
-            foreach (var _playerDao in playerData.Player) {
-                _resultList.Add(convertPlayer(_playerDao)); // json のデータを変換
+            foreach (var _player in playerData.Player) {
+                _resultList.Add(convertPlayer(_player)); // json のデータを変換
             }
             return _resultList;
         }
@@ -54,15 +54,15 @@ namespace Meowziq.Loader {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private Methods [verb]
 
-        Core.Player convertPlayer(Player playerDao) {
+        Core.Player convertPlayer(Player player) {
             var _player = new Core.Player();
-            _player.MidiCh = Utils.ToMidiChannel(playerDao.Midi);
-            if (int.Parse(playerDao.Midi) == 9) { // FIXME: 9ch 以外のドラムを可能にする
-                _player.DrumKit = Utils.ToDrumKit(playerDao.Inst); // FIXME: 設定が違う場合
+            _player.MidiCh = Utils.ToMidiChannel(player.Midi);
+            if (int.Parse(player.Midi) == 9) { // FIXME: 9ch 以外のドラムを可能にする
+                _player.DrumKit = Utils.ToDrumKit(player.Inst); // FIXME: 設定が違う場合
             } else {
-                _player.Instrument = Utils.ToInstrument(playerDao.Inst); // FIXME: 設定が違う場合
+                _player.Instrument = Utils.ToInstrument(player.Inst); // FIXME: 設定が違う場合
             }
-            _player.Type = playerDao.Type;
+            _player.Type = player.Type;
             // Player と Phrase の type が一致したら
             foreach (var _phrase in phraseList) {
                 if (_player.Type.Equals(_phrase.Type)) {
