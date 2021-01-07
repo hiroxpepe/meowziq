@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Drawing;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sanford.Multimedia.Midi;
@@ -21,6 +22,8 @@ namespace Meowziq.View {
         Song song;
 
         string targetDir;
+
+        bool playing = false;
 
         bool stopping = false;
 
@@ -65,10 +68,7 @@ namespace Meowziq.View {
         }
 
         void handleStopped(object sender, StoppedEventArgs e) {
-            foreach (ChannelMessage message in e.Messages) {
-                midi.OutDevice.Send(message);
-                pianoControl.Send(message);
-            }
+            // NOTE: default.midi のメッセージはなし
             allSoundOff();
         }
 
@@ -81,11 +81,15 @@ namespace Meowziq.View {
                     MessageBox.Show("please load the song.", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     return;
                 }
+                if (playing || stopping) {
+                    return;
+                }
                 buildSong();
                 sequence.Load("./data/default.mid");
                 sequencer.Position = 0;
                 sequencer.Start();
                 labelPlay.ForeColor = Color.Lime;
+                playing = true;
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
@@ -96,13 +100,15 @@ namespace Meowziq.View {
         /// </summary>
         void buttonStop_Click(object sender, EventArgs e) {
             try {
+                if (stopping) {
+                    return;
+                }
                 stopping = true;
                 sequencer.Stop();
                 sequence.Clear();
                 labelPlay.ForeColor = Color.DimGray;
                 textBoxBeat.Text = "0";
                 textBoxMeas.Text = "0";
-                stopping = false;
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
@@ -170,18 +176,15 @@ namespace Meowziq.View {
         /// オールサウンドオフ
         /// </summary>
         async void allSoundOff() {
-            // FIXME: 停止出来ないバグ
-            for (int _i = 0; _i < 16; _i++) {
-                midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, _i, 120));
-            }
-            await Task.Delay(240);
-            for (int _i = 0; _i < 16; _i++) {
-                midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, _i, 120));
-            }
-            await Task.Delay(480);
-            for (int _i = 0; _i < 16; _i++) {
-                midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, _i, 120));
-            }
+            // FIXME: ノートOFF出来ずハングするバグ
+            await Task.Run(() => {
+                for (int _i = 0; _i < 16; _i++) {
+                    midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, _i, 120));
+                    Thread.Sleep(24);
+                }
+                stopping = false;
+                playing = false;
+            });
         }
     }
 }
