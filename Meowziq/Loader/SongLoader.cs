@@ -19,8 +19,6 @@ namespace Meowziq.Loader {
 
         string targetPath; // song.json への PATH 文字列
 
-        SongData songData;
-
         List<Pattern> patternList;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -28,7 +26,6 @@ namespace Meowziq.Loader {
 
         public SongLoader(string targetPath) {
             this.targetPath = targetPath;
-            this.songData = new SongData();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -45,13 +42,13 @@ namespace Meowziq.Loader {
         /// Song を作成します
         /// </summary>
         public Core.Song BuildSong() {
-            loadJson(); // json のデータをオブジェクトにデシリアライズ
+            var _songData = loadJson();
             var _song = new Core.Song(
-                songData.Song.Name,
-                Utils.ToKey(songData.Song.Key),
-                Utils.ToMode(songData.Song.Mode)
+                _songData.Song.Name,
+                Key.Extension.Parse(_songData.Song.Key), //Utils.ToKey(_songData.Song.Key),
+                Utils.ToMode(_songData.Song.Mode)
             );
-            foreach (var _patternName in songData.Song.Pattern) {
+            foreach (var _patternName in _songData.Song.Pattern) {
                 _song.Add(searchPattern(_patternName)); // Pattern 追加
             }
             return _song;
@@ -61,8 +58,8 @@ namespace Meowziq.Loader {
         /// Song の名前だけを返します
         /// </summary>
         public string GetSongName() {
-            loadJson(); // json のデータをオブジェクトにデシリアライズ
-            return songData.Song.Name;
+            var _songData = loadJson();
+            return _songData.Song.Name;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -76,10 +73,10 @@ namespace Meowziq.Loader {
             }
         }
 
-        void loadJson() {
+        SongData loadJson() {
             using (var _stream = new FileStream(targetPath, FileMode.Open)) {
                 var _serializer = new DataContractJsonSerializer(typeof(SongData));
-                songData = (SongData) _serializer.ReadObject(_stream);
+                return (SongData) _serializer.ReadObject(_stream);
             }
         }
 

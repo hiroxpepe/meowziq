@@ -23,9 +23,11 @@ namespace Meowziq.View {
 
         string targetDir;
 
-        bool playing = false;
+        static bool playing = false;
 
-        bool stopping = false;
+        static bool stopping = false;
+
+        static object locked = new object();
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
@@ -54,7 +56,7 @@ namespace Meowziq.View {
                 Invoke((MethodInvoker) (() => textBoxBeat.Text = _beat));
                 var _meas = ((int.Parse(_beat) - 1) / 4 + 1).ToString();
                 Invoke((MethodInvoker) (() => textBoxMeas.Text = _meas));
-
+                // メッセージのリストを取得
                 var _list = message.GetBy(sequencer.Position);
                 if (_list != null) {
                     _list.ForEach(message => {
@@ -84,12 +86,14 @@ namespace Meowziq.View {
                 if (playing || stopping) {
                     return;
                 }
-                buildSong();
-                sequence.Load("./data/default.mid");
-                sequencer.Position = 0;
-                sequencer.Start();
-                labelPlay.ForeColor = Color.Lime;
-                playing = true;
+                lock (locked) {
+                    buildSong();
+                    sequence.Load("./data/default.mid");
+                    sequencer.Position = 0;
+                    sequencer.Start();
+                    labelPlay.ForeColor = Color.Lime;
+                    playing = true;
+                }
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
@@ -103,12 +107,14 @@ namespace Meowziq.View {
                 if (stopping) {
                     return;
                 }
-                stopping = true;
-                sequencer.Stop();
-                sequence.Clear();
-                labelPlay.ForeColor = Color.DimGray;
-                textBoxBeat.Text = "0";
-                textBoxMeas.Text = "0";
+                lock (locked) {
+                    stopping = true;
+                    sequencer.Stop();
+                    sequence.Clear();
+                    labelPlay.ForeColor = Color.DimGray;
+                    textBoxBeat.Text = "0";
+                    textBoxMeas.Text = "0";
+                }
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }

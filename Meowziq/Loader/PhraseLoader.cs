@@ -19,8 +19,6 @@ namespace Meowziq.Loader {
 
         string targetPath; // phrase.json への PATH 文字列
 
-        PhraseData phraseData;
-
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
@@ -35,9 +33,8 @@ namespace Meowziq.Loader {
         /// Phrase のリストを作成します
         /// </summary>
         public List<Core.Phrase> BuildPhraseList() {
-            loadJson(); // json のデータをオブジェクトにデシリアライズ
             var _resultList = new List<Core.Phrase>();
-            foreach (var _phrase in phraseData.Phrase) {
+            foreach (var _phrase in loadJson().Phrase) {
                 _resultList.Add(convertPhrase(_phrase)); // json のデータを変換
             }
             return _resultList;
@@ -90,10 +87,10 @@ namespace Meowziq.Loader {
             return target;
         }
 
-        void loadJson() {
+        PhraseData loadJson() {
             using (var _stream = new FileStream(targetPath, FileMode.Open)) {
                 var _serializer = new DataContractJsonSerializer(typeof(PhraseData));
-                phraseData = (PhraseData) _serializer.ReadObject(_stream);
+                return (PhraseData) _serializer.ReadObject(_stream);
             }
         }
 
