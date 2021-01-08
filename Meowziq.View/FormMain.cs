@@ -131,22 +131,22 @@ namespace Meowziq.View {
         string buildSong(string targetDir) {
 
             // Pattern をロード
-            var _patternList = PatternLoader.BuildPatternList($"{targetDir}/pattern.json");
+            var _patternList = PatternLoader.Build($"{targetDir}/pattern.json");
 
             // Song をロード
             SongLoader.PatternList = _patternList; // Song に Pattern のリストを渡す
-            var _song = SongLoader.BuildSong($"{targetDir}/song.json");
+            var _song = SongLoader.Build($"{targetDir}/song.json");
 
             // Phrase をロード
-            var _phraseList = PhraseLoader.BuildPhraseList($"{targetDir}/phrase.json");
+            var _phraseList = PhraseLoader.Build($"{targetDir}/phrase.json");
 
             // Player をロード
             PlayerLoader.PhraseList = _phraseList; // PlayerLoader に Phrase のリストを渡す
-            var _playerList = PlayerLoader.BuildPlayerList($"{targetDir}/player.json");
-            foreach (var _player in _playerList) {
-                _player.Song = _song; // Song データを設定
-                _player.Build(); // MIDI データを構築
-            }
+            var _playerList = PlayerLoader.Build($"{targetDir}/player.json");
+            _playerList.ForEach(player => {
+                player.Song = _song; // Song データを設定
+                player.Build(); // MIDI データを構築
+            });
 
             // Song の名前を返す
             return _song.Name;

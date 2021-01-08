@@ -19,7 +19,7 @@ namespace Meowziq.Loader {
         /// <summary>
         /// Pattern のリストを作成します
         /// </summary>
-        public static List<Core.Pattern> BuildPatternList(string targetPath) {
+        public static List<Core.Pattern> Build(string targetPath) {
             var _resultList = new List<Core.Pattern>();
             foreach (var _pattern in loadJson(targetPath).Pattern) {
                 _resultList.Add(convertPattern(_pattern)); // json のデータを変換
