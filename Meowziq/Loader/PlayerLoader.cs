@@ -30,7 +30,7 @@ namespace Meowziq.Loader {
         /// <summary>
         /// Player のリストを作成します
         /// </summary>
-        public static List<Core.Player> BuildPlayerList(string targetPath) {
+        public static List<Core.Player> Build(string targetPath) {
             var _resultList = new List<Core.Player>();
             foreach (var _player in loadJson(targetPath).Player) {
                 _resultList.Add(convertPlayer(_player)); // json のデータを変換

@@ -32,11 +32,11 @@ namespace Meowziq.Loader {
         /// <summary>
         /// Song を作成します
         /// </summary>
-        public static Core.Song BuildSong(string targetPath) {
+        public static Core.Song Build(string targetPath) {
             var _songData = loadJson(targetPath);
             var _song = new Core.Song(
                 _songData.Song.Name,
-                Key.Extension.Parse(_songData.Song.Key), //Utils.ToKey(_songData.Song.Key),
+                Key.Extension.Parse(_songData.Song.Key),
                 Utils.ToMode(_songData.Song.Mode)
             );
             foreach (var _patternName in _songData.Song.Pattern) {

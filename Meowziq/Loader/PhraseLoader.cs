@@ -20,7 +20,7 @@ namespace Meowziq.Loader {
         /// <summary>
         /// Phrase のリストを作成します
         /// </summary>
-        public static List<Core.Phrase> BuildPhraseList(string targetPath) {
+        public static List<Core.Phrase> Build(string targetPath) {
             var _resultList = new List<Core.Phrase>();
             foreach (var _phrase in loadJson(targetPath).Phrase) {
                 _resultList.Add(convertPhrase(_phrase)); // json のデータを変換
