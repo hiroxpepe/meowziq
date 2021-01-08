@@ -8,27 +8,19 @@ namespace Meowziq {
     /// <summary>
     /// Sanford.Multimedia.Midi を使用した Message クラス
     /// </summary>
-    public class Message {
+    public static class Message {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Fields
+        // static Fields
 
-        Dictionary<int, List<ChannelMessage>> item; // Tick 毎の メッセージのリスト
+        static Dictionary<int, List<ChannelMessage>> item = new Dictionary<int, List<ChannelMessage>>(); // Tick 毎の メッセージのリスト
 
-        HashSet<int> hashset; // カーソル役
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Constructor
-
-        public Message() {
-            item = new Dictionary<int, List<ChannelMessage>>();
-            hashset = new HashSet<int>();
-        }
+        static HashSet<int> hashset = new HashSet<int>(); // カーソル役
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Methods [verb]
+        // public static Methods [verb]
 
-        public List<ChannelMessage> GetBy(int tick) {
+        public static List<ChannelMessage> GetBy(int tick) {
             tick = tick - 1; // -1 が必要
             if (!hashset.Add(tick)) {
                 return null; // 既に処理した tick
@@ -39,7 +31,7 @@ namespace Meowziq {
             return null;
         }
 
-        public void Apply(int midiCh, Note note) {
+        public static void Apply(int midiCh, Note note) {
             add(note.Tick, new ChannelMessage(ChannelCommand.NoteOn, midiCh, note.Num, 127)); // ノートON
             add(note.Tick + note.Gate, new ChannelMessage(ChannelCommand.NoteOff, midiCh, note.Num, 0)); // ノートOFF
         }
@@ -47,21 +39,21 @@ namespace Meowziq {
         /// <summary>
         /// TODO: バンクセレクト
         /// </summary>
-        public void Apply(int midiCh, int programNum) {
+        public static void Apply(int midiCh, int programNum) {
             add(0, new ChannelMessage(ChannelCommand.ProgramChange, midiCh, programNum, 127)); // プログラムチェンジ
         }
 
         /// <summary>
         /// カーソルクリア
         /// </summary>
-        public void Reset() {
+        public static void Reset() {
             hashset.Clear();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // private Methods [verb]
+        // private static Methods [verb]
 
-        void add(int tick, ChannelMessage channelMessage) {
+        static void add(int tick, ChannelMessage channelMessage) {
             if (!item.ContainsKey(tick)) {
                 var _newList = new List<ChannelMessage>();
                 _newList.Add(channelMessage);

@@ -1,12 +1,10 @@
 ﻿
 using System;
 using System.Drawing;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sanford.Multimedia.Midi;
 
-using Meowziq.Core;
 using Meowziq.Loader;
 
 namespace Meowziq.View {
@@ -16,8 +14,6 @@ namespace Meowziq.View {
         // Fields
 
         Midi midi;
-
-        Message message;
 
         static bool playing = false;
 
@@ -55,7 +51,7 @@ namespace Meowziq.View {
                 var _meas = ((int.Parse(_beat) - 1) / 4 + 1).ToString();
                 Invoke((MethodInvoker) (() => textBoxMeas.Text = _meas));
                 // メッセージのリストを取得
-                var _list = message.GetBy(sequencer.Position);
+                var _list = Message.GetBy(sequencer.Position);
                 if (_list != null) {
                     _list.ForEach(message => {
                         midi.OutDevice.Send(message); // MIDIデバイスにメッセージを追加送信
@@ -81,7 +77,7 @@ namespace Meowziq.View {
                     return;
                 }
                 lock (locked) {
-                    message.Reset();
+                    Message.Reset();
                     sequence.Load("./data/default.mid");
                     sequencer.Position = 0;
                     sequencer.Start();
@@ -133,8 +129,6 @@ namespace Meowziq.View {
         /// ソングを作成
         /// </summary>
         string buildSong(string targetDir) {
-            // Message 生成
-            message = new Message();
 
             // Pattern をロード
             var _patternList = PatternLoader.BuildPatternList($"{targetDir}/pattern.json");
@@ -151,7 +145,7 @@ namespace Meowziq.View {
             var _playerList = PlayerLoader.BuildPlayerList($"{targetDir}/player.json");
             foreach (var _player in _playerList) {
                 _player.Song = _song; // Song データを設定
-                _player.Build(message); // MIDI データを構築
+                _player.Build(); // MIDI データを構築
             }
 
             // Song の名前を返す
@@ -164,8 +158,7 @@ namespace Meowziq.View {
         async void allSoundOff() {
             // FIXME: ノートOFF出来ずハングするバグ
             await Task.Run(() => {
-                for (int _i = 0; _i < 9; _i++) {
-                    //Thread.Sleep(24);
+                for (int _i = 0; _i < 15; _i++) {
                     midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, _i, 120));
                 }
                 stopping = false;
