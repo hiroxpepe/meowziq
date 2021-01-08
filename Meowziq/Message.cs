@@ -13,18 +13,28 @@ namespace Meowziq {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        // Tick 毎の メッセージのリスト
-        Dictionary<int, List<ChannelMessage>> item = new Dictionary<int, List<ChannelMessage>>();
+        Dictionary<int, List<ChannelMessage>> item; // Tick 毎の メッセージのリスト
+
+        HashSet<int> hashset; // カーソル役
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Constructor
+
+        public Message() {
+            item = new Dictionary<int, List<ChannelMessage>>();
+            hashset = new HashSet<int>();
+        }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
 
         public List<ChannelMessage> GetBy(int tick) {
             tick = tick - 1; // -1 が必要
+            if (!hashset.Add(tick)) {
+                return null; // 既に処理した tick
+            }
             if (item.ContainsKey(tick)) { // その tick が存在するかどうか
-                var _returnList = item[tick];
-                item.Remove(tick); // 重複回避の為、削除
-                return _returnList;
+                return item[tick];
             }
             return null;
         }
@@ -39,6 +49,13 @@ namespace Meowziq {
         /// </summary>
         public void Apply(int midiCh, int programNum) {
             add(0, new ChannelMessage(ChannelCommand.ProgramChange, midiCh, programNum, 127)); // プログラムチェンジ
+        }
+
+        /// <summary>
+        /// カーソルクリア
+        /// </summary>
+        public void Reset() {
+            hashset.Clear();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

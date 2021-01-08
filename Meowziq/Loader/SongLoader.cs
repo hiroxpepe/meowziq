@@ -12,37 +12,28 @@ namespace Meowziq.Loader {
     /// <summary>
     /// Song のローダークラス
     /// </summary>
-    public class SongLoader {
+    public static class SongLoader {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Fields
+        // static Fields
 
-        string targetPath; // song.json への PATH 文字列
-
-        List<Pattern> patternList;
+        static List<Pattern> patternList;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Constructor
+        // static Properties [noun, adjectives] 
 
-        public SongLoader(string targetPath) {
-            this.targetPath = targetPath;
-        }
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Properties [noun, adjectives] 
-
-        public List<Pattern> PatternList {
+        public static List<Pattern> PatternList {
             set => patternList = value;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Methods [verb]
+        // public static Methods [verb]
 
         /// <summary>
         /// Song を作成します
         /// </summary>
-        public Core.Song BuildSong() {
-            var _songData = loadJson();
+        public static Core.Song BuildSong(string targetPath) {
+            var _songData = loadJson(targetPath);
             var _song = new Core.Song(
                 _songData.Song.Name,
                 Key.Extension.Parse(_songData.Song.Key), //Utils.ToKey(_songData.Song.Key),
@@ -54,18 +45,10 @@ namespace Meowziq.Loader {
             return _song;
         }
 
-        /// <summary>
-        /// Song の名前だけを返します
-        /// </summary>
-        public string GetSongName() {
-            var _songData = loadJson();
-            return _songData.Song.Name;
-        }
-
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // private Methods [verb]
+        // private static Methods [verb]
 
-        Pattern searchPattern(string patternName) {
+        static Pattern searchPattern(string patternName) {
             try {
                 return patternList.Where(x => x.Name.Equals(patternName)).First(); // MEMO: 名前が一致した最初の要素
             } catch (Exception e) {
@@ -73,7 +56,7 @@ namespace Meowziq.Loader {
             }
         }
 
-        SongData loadJson() {
+        static SongData loadJson(string targetPath) {
             using (var _stream = new FileStream(targetPath, FileMode.Open)) {
                 var _serializer = new DataContractJsonSerializer(typeof(SongData));
                 return (SongData) _serializer.ReadObject(_stream);

@@ -10,47 +10,38 @@ namespace Meowziq.Loader {
     /// <summary>
     /// Player のローダークラス
     /// </summary>
-    public class PlayerLoader {
+    public static class PlayerLoader {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Fields
+        // static Fields
 
-        string targetPath; // player.json への PATH 文字列
-
-        List<Phrase> phraseList; // 誰に何を渡すか
+        static List<Phrase> phraseList; // 誰に何を渡すか
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Constructor
+        // static Properties [noun, adjectives] 
 
-        public PlayerLoader(string targetPath) {
-            this.targetPath = targetPath;
-        }
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Properties [noun, adjectives] 
-
-        public List<Phrase> PhraseList {
+        public static List<Phrase> PhraseList {
             set => phraseList = value;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Methods [verb]
+        // public static Methods [verb]
 
         /// <summary>
         /// Player のリストを作成します
         /// </summary>
-        public List<Core.Player> BuildPlayerList() {
+        public static List<Core.Player> BuildPlayerList(string targetPath) {
             var _resultList = new List<Core.Player>();
-            foreach (var _player in loadJson().Player) {
+            foreach (var _player in loadJson(targetPath).Player) {
                 _resultList.Add(convertPlayer(_player)); // json のデータを変換
             }
             return _resultList;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // private Methods [verb]
+        // private static Methods [verb]
 
-        Core.Player convertPlayer(Player player) {
+        static Core.Player convertPlayer(Player player) {
             var _player = new Core.Player();
             _player.MidiCh = Utils.ToMidiChannel(player.Midi);
             if (int.Parse(player.Midi) == 9) { // FIXME: 9ch 以外のドラムを可能にする
@@ -68,7 +59,7 @@ namespace Meowziq.Loader {
             return _player;
         }
 
-        PlayerData loadJson() {
+        static PlayerData loadJson(string targetPath) {
             using (var _stream = new FileStream(targetPath, FileMode.Open)) {
                 var _serializer = new DataContractJsonSerializer(typeof(PlayerData));
                 return (PlayerData) _serializer.ReadObject(_stream);
