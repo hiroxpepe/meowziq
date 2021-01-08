@@ -12,38 +12,26 @@ namespace Meowziq.Loader {
     /// <summary>
     /// Phrase のローダークラス
     /// </summary>
-    public class PhraseLoader {
+    public static class PhraseLoader {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Fields
-
-        string targetPath; // phrase.json への PATH 文字列
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Constructor
-
-        public PhraseLoader(string targetPath) {
-            this.targetPath = targetPath;
-        }
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Methods [verb]
+        // public static Methods [verb]
 
         /// <summary>
         /// Phrase のリストを作成します
         /// </summary>
-        public List<Core.Phrase> BuildPhraseList() {
+        public static List<Core.Phrase> BuildPhraseList(string targetPath) {
             var _resultList = new List<Core.Phrase>();
-            foreach (var _phrase in loadJson().Phrase) {
+            foreach (var _phrase in loadJson(targetPath).Phrase) {
                 _resultList.Add(convertPhrase(_phrase)); // json のデータを変換
             }
             return _resultList;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // private Methods [verb]
+        // private static Methods [verb]
 
-        Core.Phrase convertPhrase(Phrase phrase) {
+        static Core.Phrase convertPhrase(Phrase phrase) {
             var _phrase = new Core.Phrase();
             _phrase.Type = phrase.Type;
             _phrase.Name = phrase.Name;
@@ -66,7 +54,7 @@ namespace Meowziq.Loader {
         /// <summary>
         /// TODO: 使用可能な文字
         /// </summary>
-        string validateValue(string target) {
+        static string validateValue(string target) {
             if (target == null) {
                 return target; // 値がなければそのまま返す FIXME:
             }
@@ -87,7 +75,7 @@ namespace Meowziq.Loader {
             return target;
         }
 
-        PhraseData loadJson() {
+        static PhraseData loadJson(string targetPath) {
             using (var _stream = new FileStream(targetPath, FileMode.Open)) {
                 var _serializer = new DataContractJsonSerializer(typeof(PhraseData));
                 return (PhraseData) _serializer.ReadObject(_stream);

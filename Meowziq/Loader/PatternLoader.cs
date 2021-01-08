@@ -11,44 +11,32 @@ namespace Meowziq.Loader {
     /// <summary>
     /// Pattern のローダークラス
     /// </summary>
-    public class PatternLoader {
+    public static class PatternLoader {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Fields
-
-        string targetPath; // pattern.json への PATH 文字列
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Constructor
-
-        public PatternLoader(string targetPath) {
-            this.targetPath = targetPath;
-        }
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Methods [verb]
+        // public static Methods [verb]
 
         /// <summary>
         /// Pattern のリストを作成します
         /// </summary>
-        public List<Core.Pattern> BuildPatternList() {
+        public static List<Core.Pattern> BuildPatternList(string targetPath) {
             var _resultList = new List<Core.Pattern>();
-            foreach (var _pattern in loadJson().Pattern) {
+            foreach (var _pattern in loadJson(targetPath).Pattern) {
                 _resultList.Add(convertPattern(_pattern)); // json のデータを変換
             }
             return _resultList;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // private Methods [verb]
+        // private static Methods [verb]
 
-        Core.Pattern convertPattern(Pattern pattern) {
+        static Core.Pattern convertPattern(Pattern pattern) {
             var _measList = convertMeasList(pattern.Data);
             var _pattern = new Core.Pattern(pattern.Name, _measList);
             return _pattern;
         }
 
-        List<Meas> convertMeasList(string patternString) {
+        static List<Meas> convertMeasList(string patternString) {
             // 小節に切り出す "[I:Aeo| | | ][IV| | | ][I| | | ][IV| | | ]"
             var _measStringArray = patternString.Replace("][", "@")  // まず "][" を "@" に置き換え
                 .Split('@') // 小節で切り分ける
@@ -64,7 +52,7 @@ namespace Meowziq.Loader {
             return _measList;
         }
 
-        List<Span> convertSpanList(string measString) {
+        static List<Span> convertSpanList(string measString) {
             // Span に切り出す "I:Aeo | | | "
             var _beatArray = measString.Split('|')
                 .Select(x => x.Replace("     ", " ")) // 5空白を1空白に置き換え
@@ -97,7 +85,7 @@ namespace Meowziq.Loader {
             return _spanList;
         }
 
-        Span convertSpan(int beat, string beatString) {
+        static Span convertSpan(int beat, string beatString) {
             var _part = beatString.Split(':'); // ':' で分割
             if (_part.Length == 1) {
                 return new Span(beat, Utils.ToDegree(_part[0].Trim()));
@@ -106,7 +94,7 @@ namespace Meowziq.Loader {
             }
         }
 
-        PatternData loadJson() {
+        static PatternData loadJson(string targetPath) {
             using (var _stream = new FileStream(targetPath, FileMode.Open)) {
                 var _serializer = new DataContractJsonSerializer(typeof(PatternData));
                 return (PatternData) _serializer.ReadObject(_stream);

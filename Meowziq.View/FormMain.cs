@@ -19,11 +19,9 @@ namespace Meowziq.View {
 
         Message message;
 
-        Song song;
-
-        string targetDir;
-
         static bool playing = false;
+
+        static bool played = false;
 
         static bool stopping = false;
 
@@ -66,12 +64,8 @@ namespace Meowziq.View {
                         }
                     });
                 }
+                played = true;
             }
-        }
-
-        void handleStopped(object sender, StoppedEventArgs e) {
-            // NOTE: default.midi のメッセージはなし
-            allSoundOff();
         }
 
         /// <summary>
@@ -87,12 +81,13 @@ namespace Meowziq.View {
                     return;
                 }
                 lock (locked) {
-                    buildSong();
+                    message.Reset();
                     sequence.Load("./data/default.mid");
                     sequencer.Position = 0;
                     sequencer.Start();
                     labelPlay.ForeColor = Color.Lime;
                     playing = true;
+                    played = false;
                 }
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
@@ -104,16 +99,12 @@ namespace Meowziq.View {
         /// </summary>
         void buttonStop_Click(object sender, EventArgs e) {
             try {
-                if (stopping) {
+                if (stopping || !played) {
                     return;
                 }
                 lock (locked) {
                     stopping = true;
-                    sequencer.Stop();
-                    sequence.Clear();
-                    labelPlay.ForeColor = Color.DimGray;
-                    textBoxBeat.Text = "0";
-                    textBoxMeas.Text = "0";
+                    allSoundOff();
                 }
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
@@ -128,8 +119,7 @@ namespace Meowziq.View {
                 folderBrowserDialog.SelectedPath = AppDomain.CurrentDomain.BaseDirectory;
                 var _dr = folderBrowserDialog.ShowDialog();
                 if (_dr == DialogResult.OK) {
-                    targetDir = folderBrowserDialog.SelectedPath;
-                    loadSongName();
+                    textBoxSongName.Text = buildSong(folderBrowserDialog.SelectedPath);
                 }
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
@@ -142,40 +132,30 @@ namespace Meowziq.View {
         /// <summary>
         /// ソングを作成
         /// </summary>
-        void buildSong() {
+        string buildSong(string targetDir) {
             // Message 生成
             message = new Message();
 
             // Pattern をロード
-            var _patternLoader = new PatternLoader($"{targetDir}/pattern.json");
-            var _patternList = _patternLoader.BuildPatternList();
+            var _patternList = PatternLoader.BuildPatternList($"{targetDir}/pattern.json");
 
             // Song をロード
-            var _songLoader = new SongLoader($"{targetDir}/song.json");
-            _songLoader.PatternList = _patternList; // Song に Pattern のリストを渡す
-            song = _songLoader.BuildSong();
+            SongLoader.PatternList = _patternList; // Song に Pattern のリストを渡す
+            var _song = SongLoader.BuildSong($"{targetDir}/song.json");
 
             // Phrase をロード
-            var _phraseLoader = new PhraseLoader($"{targetDir}/phrase.json");
-            var _phraseList = _phraseLoader.BuildPhraseList();
+            var _phraseList = PhraseLoader.BuildPhraseList($"{targetDir}/phrase.json");
 
             // Player をロード
-            var _playerLoader = new PlayerLoader($"{targetDir}/player.json");
-            _playerLoader.PhraseList = _phraseList; // PlayerLoader に Phrase のリストを渡す
-            var _playerList = _playerLoader.BuildPlayerList();
+            PlayerLoader.PhraseList = _phraseList; // PlayerLoader に Phrase のリストを渡す
+            var _playerList = PlayerLoader.BuildPlayerList($"{targetDir}/player.json");
             foreach (var _player in _playerList) {
-                _player.Song = song; // Song データを設定
+                _player.Song = _song; // Song データを設定
                 _player.Build(message); // MIDI データを構築
             }
-        }
 
-        /// <summary>
-        /// ソングの名前を読み込みます
-        /// </summary>
-        void loadSongName() {
-            // Song を一時的にロード
-            var _songLoader = new SongLoader($"{targetDir}/song.json");
-            textBoxSongName.Text = _songLoader.GetSongName();
+            // Song の名前を返す
+            return _song.Name;
         }
 
         /// <summary>
@@ -184,12 +164,16 @@ namespace Meowziq.View {
         async void allSoundOff() {
             // FIXME: ノートOFF出来ずハングするバグ
             await Task.Run(() => {
-                for (int _i = 0; _i < 16; _i++) {
+                for (int _i = 0; _i < 9; _i++) {
+                    //Thread.Sleep(24);
                     midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, _i, 120));
-                    Thread.Sleep(24);
                 }
                 stopping = false;
                 playing = false;
+                sequencer.Stop();
+                Invoke((MethodInvoker) (() => labelPlay.ForeColor = Color.DimGray));
+                Invoke((MethodInvoker) (() => textBoxBeat.Text = "0"));
+                Invoke((MethodInvoker) (() => textBoxMeas.Text = "0"));
             });
         }
     }
