@@ -12,7 +12,7 @@ namespace Meowziq {
 
         OutputDevice outDevice;
 
-        int outDeviceID = 0;
+        int outDeviceID = 0; // TODO: 選択出来るように
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor

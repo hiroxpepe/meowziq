@@ -64,9 +64,9 @@ namespace Meowziq.Core {
         /// <summary>
         /// MIDI ノートを生成します
         /// </summary>
-        public void Build(Message message) {
+        public void Build() {
             // 音色変更
-            message.Apply(midiCh, programNum); 
+            Message.Apply(midiCh, programNum); 
             
             // 全ての Pattern の Note を MIDI データ化する
             var _position = 0;
@@ -76,7 +76,7 @@ namespace Meowziq.Core {
                     _phrase.Build(_position, song.Key, _pattern); // Note データを作成
                     var _noteList = _phrase.AllNote;
                     foreach (Note _note in _noteList) {
-                        message.Apply(midiCh, _note); // message に適用
+                        Message.Apply(midiCh, _note); // message に適用
                     }
                     _noteList.Clear(); // 必要
                 }
