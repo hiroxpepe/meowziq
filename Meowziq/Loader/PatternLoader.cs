@@ -18,14 +18,11 @@ namespace Meowziq.Loader {
 
         string targetPath; // pattern.json への PATH 文字列
 
-        PatternData patternData;
-
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
         public PatternLoader(string targetPath) {
             this.targetPath = targetPath;
-            this.patternData = new PatternData();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -35,9 +32,8 @@ namespace Meowziq.Loader {
         /// Pattern のリストを作成します
         /// </summary>
         public List<Core.Pattern> BuildPatternList() {
-            loadJson(); // json のデータをオブジェクトにデシリアライズ
             var _resultList = new List<Core.Pattern>();
-            foreach (var _pattern in patternData.Pattern) {
+            foreach (var _pattern in loadJson().Pattern) {
                 _resultList.Add(convertPattern(_pattern)); // json のデータを変換
             }
             return _resultList;
@@ -110,10 +106,10 @@ namespace Meowziq.Loader {
             }
         }
 
-        void loadJson() {
+        PatternData loadJson() {
             using (var _stream = new FileStream(targetPath, FileMode.Open)) {
                 var _serializer = new DataContractJsonSerializer(typeof(PatternData));
-                patternData = (PatternData) _serializer.ReadObject(_stream);
+                return (PatternData) _serializer.ReadObject(_stream);
             }
         }
 

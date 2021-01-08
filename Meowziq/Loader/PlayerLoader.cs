@@ -17,8 +17,6 @@ namespace Meowziq.Loader {
 
         string targetPath; // player.json への PATH 文字列
 
-        PlayerData playerData;
-
         List<Phrase> phraseList; // 誰に何を渡すか
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -26,7 +24,6 @@ namespace Meowziq.Loader {
 
         public PlayerLoader(string targetPath) {
             this.targetPath = targetPath;
-            this.playerData = new PlayerData();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -43,9 +40,8 @@ namespace Meowziq.Loader {
         /// Player のリストを作成します
         /// </summary>
         public List<Core.Player> BuildPlayerList() {
-            loadJson(); // json のデータをオブジェクトにデシリアライズ
             var _resultList = new List<Core.Player>();
-            foreach (var _player in playerData.Player) {
+            foreach (var _player in loadJson().Player) {
                 _resultList.Add(convertPlayer(_player)); // json のデータを変換
             }
             return _resultList;
@@ -72,10 +68,10 @@ namespace Meowziq.Loader {
             return _player;
         }
 
-        void loadJson() {
+        PlayerData loadJson() {
             using (var _stream = new FileStream(targetPath, FileMode.Open)) {
                 var _serializer = new DataContractJsonSerializer(typeof(PlayerData));
-                playerData = (PlayerData) _serializer.ReadObject(_stream);
+                return (PlayerData) _serializer.ReadObject(_stream);
             }
         }
 

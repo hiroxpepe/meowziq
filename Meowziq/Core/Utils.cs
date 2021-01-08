@@ -1069,6 +1069,7 @@ namespace Meowziq.Core {
         F = 65,
         E = 64,
         Undefined = -1,
+        Extension = -128,
     }
 
     public enum Mode {

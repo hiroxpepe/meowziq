@@ -46,29 +46,32 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Loader\PlayerLoader.cs" />
-    <Compile Include="Loader\SongLoader.cs" />
-    <Compile Include="Loader\PatternLoader.cs" />
-    <Compile Include="Loader\PhraseLoader.cs" />
+    <Compile Include="Core\Extensions.cs" />
     <Compile Include="Core\Mixer.cs" />
-    <Compile Include="Core\Pattern.cs" />
-    <Compile Include="Message.cs" />
-    <Compile Include="Midi.cs" />
     <Compile Include="Core\Note.cs" />
+    <Compile Include="Core\Pattern.cs" />
     <Compile Include="Core\Phrase.cs" />
     <Compile Include="Core\Player.cs" />
     <Compile Include="Core\Song.cs" />
     <Compile Include="Core\Utils.cs" />
+    <Compile Include="Loader\PlayerLoader.cs" />
+    <Compile Include="Loader\SongLoader.cs" />
+    <Compile Include="Loader\PatternLoader.cs" />
+    <Compile Include="Loader\PhraseLoader.cs" />
+
+    <Compile Include="Message.cs" />
+    <Compile Include="Midi.cs" />
+
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
