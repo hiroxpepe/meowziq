@@ -6,6 +6,14 @@ namespace Meowziq {
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // public Enums [noun]
 
+    public enum Tick {
+        Of4Beat = 480,
+        Of8Beat = 240,
+        Of16Beat = 120,
+        Of32Beat = 60,
+        Of64Beat = 30,
+    }
+
     public enum Key {
         Eb = 75,
         D = 74,
@@ -287,6 +295,10 @@ namespace Meowziq {
     }
 
     public static class Extensions {
+
+        public static int Int32(this Tick self) {
+            return (int) self;
+        }
 
         public static Key Parse(this Key self, string target) {
             switch (target.ToLower()) {
