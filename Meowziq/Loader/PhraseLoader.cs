@@ -22,7 +22,7 @@ namespace Meowziq.Loader {
         /// </summary>
         public static List<Core.Phrase> Build(string targetPath) {
             // Core.Phrase のリストに変換
-            return loadJson(targetPath).Phrase.Select(x => convertPhrase(x)).ToList();
+            return loadJson(targetPath).PhraseArray.Select(x => convertPhrase(x)).ToList();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -34,10 +34,10 @@ namespace Meowziq.Loader {
             _phrase.Name = phrase.Name;
             _phrase.NoteText = validateValue(phrase.Note);
             if (phrase.Data != null) { // 複合データがある場合
-                _phrase.Data.NoteTextArray = phrase.Data.Note.Select(x => validateValue(x)).ToArray();
-                _phrase.Data.NoteOctArray = phrase.Data.Oct;
-                if (phrase.Data.Inst != null) { // ドラム用音名データがある場合
-                    _phrase.Data.PercussionArray = phrase.Data.Inst.Select(x => Percussion.Enum.Parse(x)).ToArray();
+                _phrase.Data.NoteTextArray = phrase.Data.NoteArray.Select(x => validateValue(x)).ToArray();
+                _phrase.Data.OctArray = phrase.Data.OctArray;
+                if (phrase.Data.InstArray != null) { // ドラム用音名データがある場合
+                    _phrase.Data.PercussionArray = phrase.Data.InstArray.Select(x => Percussion.Enum.Parse(x)).ToArray();
                 }
             }
             return _phrase;
@@ -80,7 +80,7 @@ namespace Meowziq.Loader {
         [DataContract]
         class Json {
             [DataMember(Name = "phrase")]
-            public Phrase[] Phrase {
+            public Phrase[] PhraseArray {
                 get; set;
             }
         }
@@ -103,20 +103,40 @@ namespace Meowziq.Loader {
             public string Note {
                 get; set;
             }
+            [DataMember(Name = "chord")]
+            public string Chord {
+                get; set;
+            }
+            [DataMember(Name = "pre")]
+            public string Pre {
+                get; set;
+            }
+            [DataMember(Name = "post")]
+            public string Post {
+                get; set;
+            }
         }
 
         [DataContract]
         class Data {
             [DataMember(Name = "inst")]
-            public string[] Inst {
+            public string[] InstArray {
                 get; set;
             }
             [DataMember(Name = "note")]
-            public string[] Note {
+            public string[] NoteArray {
                 get; set;
             }
             [DataMember(Name = "oct")]
-            public int[] Oct {
+            public int[] OctArray {
+                get; set;
+            }
+            [DataMember(Name = "pre")]
+            public string[] PreArray {
+                get; set;
+            }
+            [DataMember(Name = "post")]
+            public string[] PostArray {
                 get; set;
             }
         }

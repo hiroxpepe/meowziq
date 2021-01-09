@@ -37,7 +37,7 @@ namespace Meowziq.Loader {
                 throw new ArgumentException("need phraseList.");
             }
             // Core.Player のリストに変換
-            return loadJson(targetPath).Player.Select(x => convertPlayer(x)).ToList();
+            return loadJson(targetPath).PlayerArray.Select(x => convertPlayer(x)).ToList();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -69,7 +69,7 @@ namespace Meowziq.Loader {
         [DataContract]
         public class Json {
             [DataMember(Name = "player")]
-            public Player[] Player {
+            public Player[] PlayerArray {
                 get; set;
             }
         }
