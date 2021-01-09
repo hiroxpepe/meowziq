@@ -110,7 +110,7 @@ namespace Meowziq.Core {
                         _spanIndex++; // Span の index値
                     }
                     var _span = pattern.AllSpan[_spanIndex];
-                    var _note = Utils.GetNote(key, _span.Degree, _span.Mode, Arpeggio.Random, _i); // 16の倍数
+                    var _note = Utils.GetRandomNote(key, _span.Degree, _span.Mode); // 16の倍数
                     add(new Note(position + (120 * _i), _note, 30, 127)); // gate 短め
                     _indexCount++; // Span 用のカウンタも進める
                 }

@@ -56,19 +56,18 @@ namespace Meowziq.Loader {
             return _player;
         }
 
-        static PlayerJson loadJson(string targetPath) {
+        static Json loadJson(string targetPath) {
             using (var _stream = new FileStream(targetPath, FileMode.Open)) {
-                var _serializer = new DataContractJsonSerializer(typeof(PlayerJson));
-                return (PlayerJson) _serializer.ReadObject(_stream);
+                var _serializer = new DataContractJsonSerializer(typeof(Json));
+                return (Json) _serializer.ReadObject(_stream);
             }
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // inner Classes
 
-        // MEMO: 編集: JSON をクラスとして張り付ける
         [DataContract]
-        public class PlayerJson {
+        public class Json {
             [DataMember(Name = "player")]
             public Player[] Player {
                 get; set;
