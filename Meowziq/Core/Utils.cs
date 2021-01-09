@@ -41,10 +41,10 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// FIXME: テキスト設定からランダムアルぺジエーター:数値 0 がランダム
+        /// FIXME: テキスト設定からランダムアルぺジエーター
         /// </summary>
-        public static int GetNote(Key key, Degree degree, Mode mode, Arpeggio arpeggio, int beatCount) {
-            return arpeggioAsModeScaleIn3(key, degree, mode, arpeggio, beatCount);
+        public static int GetRandomNote(Key key, Degree degree, Mode mode) {
+            return arpeggioAsModeScaleIn3(key, degree, mode);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -53,14 +53,10 @@ namespace Meowziq.Core {
         /// <summary>
         /// コード関係なく、そのキー、モードのスケール ノートを返す
         /// </summary>
-        static int arpeggioAsModeScale(Key key, Mode mode, Arpeggio arpeggio) {
+        static int arpeggioAsModeScale(Key key, Mode mode) {
             int[] _scale = modeScale(key, mode);
-            if (arpeggio == Arpeggio.Random) {
-                int _ret = random.Next(0, 7);
-                return _scale[_ret]; // 0 から 6
-            }
-            // TODO: Up, Down
-            return 0;
+            int _ret = random.Next(0, 7);
+            return _scale[_ret]; // 0 から 6
         }
 
         // TODO: 5音を取り出すメソッド
@@ -68,51 +64,11 @@ namespace Meowziq.Core {
         /// <summary>
         /// そのキーのルートコードのモードスケール ノートを返す
         /// </summary>
-        static int arpeggioAsModeScaleIn3(Key key, Degree degree, Mode mode, Arpeggio arpeggio, int beatCount = 0) {
+        static int arpeggioAsModeScaleIn3(Key key, Degree degree, Mode mode) {
             int _ret;
             int[] _scale = note3(key, degree, mode); // 3音
-            switch (arpeggio) {
-                case Arpeggio.Random:
-                    _ret = random.Next(0, 3);
-                    return _scale[_ret]; // 0 から 2
-                case Arpeggio.Up:
-                    _ret = upNoteIn3(beatCount); // 3音から音階上昇
-                    return _scale[_ret];
-                default:
-                    break;
-            }
-            // TODO: Up, Down
-            return 0;
-        }
-
-        static int upNoteIn3(int beatCount) {
-            if (beatCount > 15) {
-                beatCount = beatCount % 16;
-            }
-            switch (beatCount) {
-                case 0:
-                case 3:
-                case 6:
-                case 9:
-                case 12:
-                case 15:
-                    return 0;
-                case 1:
-                case 4:
-                case 7:
-                case 10:
-                case 13:
-                    return 1;
-                case 2:
-                case 5:
-                case 8:
-                case 11:
-                case 14:
-                    return 2;
-                default:
-                    break;
-            }
-            return 0;
+            _ret = random.Next(0, 3);
+            return _scale[_ret]; // 0 から 2
         }
 
         static int chordRootNote(Key key, Degree degree, Mode mode) {
@@ -580,12 +536,6 @@ namespace Meowziq.Core {
         Undefined = -1,
         // for Extension Method
         Enum = -128,
-    }
-
-    public enum Arpeggio { // TODO: 削除する
-        Up,
-        Down,
-        Random,
     }
 
     public enum Instrument {

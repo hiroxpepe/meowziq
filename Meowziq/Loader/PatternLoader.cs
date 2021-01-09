@@ -83,19 +83,18 @@ namespace Meowziq.Loader {
             }
         }
 
-        static PatternJson loadJson(string targetPath) {
+        static Json loadJson(string targetPath) {
             using (var _stream = new FileStream(targetPath, FileMode.Open)) {
-                var _serializer = new DataContractJsonSerializer(typeof(PatternJson));
-                return (PatternJson) _serializer.ReadObject(_stream);
+                var _serializer = new DataContractJsonSerializer(typeof(Json));
+                return (Json) _serializer.ReadObject(_stream);
             }
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // inner Classes
 
-        // MEMO: 編集: JSON をクラスとして張り付ける
         [DataContract]
-        class PatternJson {
+        class Json {
             [DataMember(Name = "pattern")]
             public Pattern[] Pattern {
                 get; set;
