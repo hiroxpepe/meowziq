@@ -2,6 +2,7 @@
 using System;
 
 namespace Meowziq.Core {
+
     public class Utils {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -44,523 +45,6 @@ namespace Meowziq.Core {
         /// </summary>
         public static int GetNote(Key key, Degree degree, Mode mode, Arpeggio arpeggio, int beatCount) {
             return arpeggioAsModeScaleIn3(key, degree, mode, arpeggio, beatCount);
-        }
-
-        public static Key ToKey(string target) {
-            switch (target.ToLower()) {
-                case "e":
-                    return Key.E;
-                case "f":
-                    return Key.F;
-                case "gb":
-                    return Key.Gb;
-                case "g":
-                    return Key.G;
-                case "ab":
-                    return Key.Ab;
-                case "a":
-                    return Key.A;
-                case "bb":
-                    return Key.Bb;
-                case "b":
-                    return Key.B;
-                case "c":
-                    return Key.C;
-                case "db":
-                    return Key.Db;
-                case "d":
-                    return Key.D;
-                case "eb":
-                    return Key.Eb;
-                default:
-                    throw new ArgumentException("not key.");
-            }
-        }
-
-        public static Degree ToDegree(string target) {
-            switch (target) {
-                case "I":
-                    return Degree.I;
-                case "II":
-                    return Degree.II;
-                case "III":
-                    return Degree.III;
-                case "IV":
-                    return Degree.IV;
-                case "V":
-                    return Degree.V;
-                case "VI":
-                    return Degree.VI;
-                case "VII":
-                    return Degree.VII;
-                default:
-                    throw new ArgumentException("not degree.");
-            }
-        }
-
-        public static Mode ToMode(string target) {
-            switch (target.ToLower()) {
-                case "lyd":
-                    return Mode.Lyd;
-                case "ion":
-                    return Mode.Ion;
-                case "mix":
-                    return Mode.Mix;
-                case "dor":
-                    return Mode.Dor;
-                case "aeo":
-                    return Mode.Aeo;
-                case "phr":
-                    return Mode.Phr;
-                case "loc":
-                    return Mode.Loc;
-                default:
-                    throw new ArgumentException("not mode.");
-            }
-        }
-
-        public static MidiChannel ToMidiChannel(string target) {
-            switch (target) {
-                case "0":
-                    return MidiChannel.ch1;
-                case "1":
-                    return MidiChannel.ch2;
-                case "2":
-                    return MidiChannel.ch3;
-                case "3":
-                    return MidiChannel.ch4;
-                case "4":
-                    return MidiChannel.ch5;
-                case "5":
-                    return MidiChannel.ch6;
-                case "6":
-                    return MidiChannel.ch7;
-                case "7":
-                    return MidiChannel.ch8;
-                case "8":
-                    return MidiChannel.ch9;
-                case "9":
-                    return MidiChannel.ch10;
-                case "10":
-                    return MidiChannel.ch11;
-                case "11":
-                    return MidiChannel.ch12;
-                case "12":
-                    return MidiChannel.ch13;
-                case "13":
-                    return MidiChannel.ch14;
-                case "14":
-                    return MidiChannel.ch15;
-                case "15":
-                    return MidiChannel.ch16;
-                default:
-                    throw new ArgumentException("not midi ch.");
-            }
-        }
-
-        public static Instrument ToInstrument(string target) {
-            switch (target) {
-                // Piano
-                case "Acoustic_Grand_Piano":
-                    return Instrument.Acoustic_Grand_Piano;
-                case "Bright_Acoustic_Piano":
-                    return Instrument.Bright_Acoustic_Piano;
-                case "Electric_Grand_Piano":
-                    return Instrument.Electric_Grand_Piano;
-                case "Honky_tonk_Piano":
-                    return Instrument.Honky_tonk_Piano;
-                case "Electric_Piano_1":
-                    return Instrument.Electric_Piano_1;
-                case "Electric_Piano_2":
-                    return Instrument.Electric_Piano_2;
-                case "Harpsichord":
-                    return Instrument.Harpsichord;
-                case "Clavi":
-                    return Instrument.Clavi;
-                // Chromatic Percussion
-                case "Celesta":
-                    return Instrument.Celesta;
-                case "Glockenspiel":
-                    return Instrument.Glockenspiel;
-                case "Music_Box":
-                    return Instrument.Music_Box;
-                case "Vibraphone":
-                    return Instrument.Vibraphone;
-                case "Marimba":
-                    return Instrument.Marimba;
-                case "Xylophone":
-                    return Instrument.Xylophone;
-                case "Tubular_Bells":
-                    return Instrument.Tubular_Bells;
-                case "Dulcimer":
-                    return Instrument.Dulcimer;
-                // Organ
-                case "Drawbar_Organ":
-                    return Instrument.Drawbar_Organ;
-                case "Percussive_Organ":
-                    return Instrument.Percussive_Organ;
-                case "Rock_Organ":
-                    return Instrument.Rock_Organ;
-                case "Church_Organ":
-                    return Instrument.Church_Organ;
-                case "Reed_Organ":
-                    return Instrument.Reed_Organ;
-                case "Accordion":
-                    return Instrument.Accordion;
-                case "Harmonica":
-                    return Instrument.Harmonica;
-                case "Tango_Accordion":
-                    return Instrument.Tango_Accordion;
-                // Guitar
-                case "Acoustic_Guitar_nylon":
-                    return Instrument.Acoustic_Guitar_nylon;
-                case "Acoustic_Guitar_steel":
-                    return Instrument.Acoustic_Guitar_steel;
-                case "Electric_Guitar_jazz":
-                    return Instrument.Electric_Guitar_jazz;
-                case "Electric_Guitar_clean":
-                    return Instrument.Electric_Guitar_clean;
-                case "Electric_Guitar_muted":
-                    return Instrument.Electric_Guitar_muted;
-                case "Overdriven_Guitar":
-                    return Instrument.Overdriven_Guitar;
-                case "Distortion_Guitar":
-                    return Instrument.Distortion_Guitar;
-                case "Guitar_Harmonics":
-                    return Instrument.Guitar_Harmonics;
-                // Bass
-                case "Acoustic_Bass":
-                    return Instrument.Acoustic_Bass;
-                case "Electric_Bass_finger":
-                    return Instrument.Electric_Bass_finger;
-                case "Electric_Bass_pick":
-                    return Instrument.Electric_Bass_pick;
-                case "Fretless_Bass":
-                    return Instrument.Fretless_Bass;
-                case "Slap_Bass_1":
-                    return Instrument.Slap_Bass_1;
-                case "Slap_Bass_2":
-                    return Instrument.Slap_Bass_2;
-                case "Synth_Bass_1":
-                    return Instrument.Synth_Bass_1;
-                case "Synth_Bass_2":
-                    return Instrument.Synth_Bass_2;
-                // Strings
-                case "Violin":
-                    return Instrument.Violin;
-                case "Viola":
-                    return Instrument.Viola;
-                case "Cello":
-                    return Instrument.Cello;
-                case "Contrabass":
-                    return Instrument.Contrabass;
-                case "Tremolo_Strings":
-                    return Instrument.Tremolo_Strings;
-                case "Pizzicato_Strings":
-                    return Instrument.Pizzicato_Strings;
-                case "Orchestral_Harp":
-                    return Instrument.Orchestral_Harp;
-                case "Timpani":
-                    return Instrument.Timpani;
-                // Ensemble
-                case "String_Ensemble_1":
-                    return Instrument.String_Ensemble_1;
-                case "String_Ensemble_2":
-                    return Instrument.String_Ensemble_2;
-                case "Synth_Strings_1":
-                    return Instrument.Synth_Strings_1;
-                case "Synth_Strings_2":
-                    return Instrument.Synth_Strings_2;
-                case "Choir_Aahs":
-                    return Instrument.Choir_Aahs;
-                case "Voice_Oohs":
-                    return Instrument.Voice_Oohs;
-                case "Synth_Voice":
-                    return Instrument.Synth_Voice;
-                case "Orchestra_Hit":
-                    return Instrument.Orchestra_Hit;
-                // Brass
-                case "Trumpet":
-                    return Instrument.Trumpet;
-                case "Trombone":
-                    return Instrument.Trombone;
-                case "Tuba":
-                    return Instrument.Tuba;
-                case "Muted_Trumpet":
-                    return Instrument.Muted_Trumpet;
-                case "French_Horn":
-                    return Instrument.French_Horn;
-                case "Brass_Section":
-                    return Instrument.Brass_Section;
-                case "Synth_Brass_1":
-                    return Instrument.Synth_Brass_1;
-                case "Synth_Brass_2":
-                    return Instrument.Synth_Brass_2;
-                // Reed
-                case "Soprano_Sax":
-                    return Instrument.Soprano_Sax;
-                case "Alto_Sax":
-                    return Instrument.Alto_Sax;
-                case "Tenor_Sax":
-                    return Instrument.Tenor_Sax;
-                case "Baritone_Sax":
-                    return Instrument.Baritone_Sax;
-                case "Oboe":
-                    return Instrument.Oboe;
-                case "English_Horn":
-                    return Instrument.English_Horn;
-                case "Bassoon":
-                    return Instrument.Bassoon;
-                case "Clarinet":
-                    return Instrument.Clarinet;
-                // Pipe
-                case "Piccolo":
-                    return Instrument.Piccolo;
-                case "Flute":
-                    return Instrument.Flute;
-                case "Recorder":
-                    return Instrument.Recorder;
-                case "Pan_Flute":
-                    return Instrument.Pan_Flute;
-                case "Blown_bottle":
-                    return Instrument.Blown_bottle;
-                case "Shakuhachi":
-                    return Instrument.Shakuhachi;
-                case "Whistle":
-                    return Instrument.Whistle;
-                case "Ocarina":
-                    return Instrument.Ocarina;
-                // Synth Lead
-                case "Lead_1_square":
-                    return Instrument.Lead_1_square;
-                case "Lead_2_sawtooth":
-                    return Instrument.Lead_2_sawtooth;
-                case "Lead_3_calliope":
-                    return Instrument.Lead_3_calliope;
-                case "Lead_4_chiff":
-                    return Instrument.Lead_4_chiff;
-                case "Lead_5_charang":
-                    return Instrument.Lead_5_charang;
-                case "Lead_6_voice":
-                    return Instrument.Lead_6_voice;
-                case "Lead_7_fifths":
-                    return Instrument.Lead_7_fifths;
-                case "Lead_8_bass_and_lead":
-                    return Instrument.Lead_8_bass_and_lead;
-                // Synth Pad
-                case "Pad_1_new_age":
-                    return Instrument.Pad_1_new_age;
-                case "Pad_2_warm":
-                    return Instrument.Pad_2_warm;
-                case "Pad_3_polysynth":
-                    return Instrument.Pad_3_polysynth;
-                case "Pad_4_choir":
-                    return Instrument.Pad_4_choir;
-                case "Pad_5_bowed":
-                    return Instrument.Pad_5_bowed;
-                case "Pad_6_metallic":
-                    return Instrument.Pad_6_metallic;
-                case "Pad_7_halo":
-                    return Instrument.Pad_7_halo;
-                case "Pad_8_sweep":
-                    return Instrument.Pad_8_sweep;
-                // Synth Effects
-                case "FX_1_rain":
-                    return Instrument.FX_1_rain;
-                case "FX_2_soundtrack":
-                    return Instrument.FX_2_soundtrack;
-                case "FX_3_crystal":
-                    return Instrument.FX_3_crystal;
-                case "FX_4_atmosphere":
-                    return Instrument.FX_4_atmosphere;
-                case "FX_5_brightness":
-                    return Instrument.FX_5_brightness;
-                case "FX_6_goblins":
-                    return Instrument.FX_6_goblins;
-                case "FX_7_echoes":
-                    return Instrument.FX_7_echoes;
-                case "FX_8_sci_fi":
-                    return Instrument.FX_8_sci_fi;
-                // Ethnic
-                case "Sitar":
-                    return Instrument.Sitar;
-                case "Banjo":
-                    return Instrument.Banjo;
-                case "Shamisen":
-                    return Instrument.Shamisen;
-                case "Koto":
-                    return Instrument.Koto;
-                case "Kalimba":
-                    return Instrument.Kalimba;
-                case "Bag_pipe":
-                    return Instrument.Bag_pipe;
-                case "Fiddle":
-                    return Instrument.Fiddle;
-                case "Shanai":
-                    return Instrument.Shanai;
-                // Percussive
-                case "Tinkle_Bell":
-                    return Instrument.Tinkle_Bell;
-                case "Agogo":
-                    return Instrument.Agogo;
-                case "Steel_Drums":
-                    return Instrument.Steel_Drums;
-                case "Woodblock":
-                    return Instrument.Woodblock;
-                case "Taiko_Drum":
-                    return Instrument.Taiko_Drum;
-                case "Melodic_Tom":
-                    return Instrument.Melodic_Tom;
-                case "Synth_Drum":
-                    return Instrument.Synth_Drum;
-                case "Reverse_Cymbal":
-                    return Instrument.Reverse_Cymbal;
-                // Sound effect
-                case "Guitar_Fret_Noise":
-                    return Instrument.Guitar_Fret_Noise;
-                case "Breath_Noise":
-                    return Instrument.Breath_Noise;
-                case "Seashore":
-                    return Instrument.Seashore;
-                case "Bird_Tweet":
-                    return Instrument.Bird_Tweet;
-                case "Telephone_Ring":
-                    return Instrument.Telephone_Ring;
-                case "Helicopter":
-                    return Instrument.Helicopter;
-                case "Applause":
-                    return Instrument.Applause;
-                case "Gunshot":
-                    return Instrument.Gunshot;
-                default:
-                    throw new ArgumentException("not instrument.");
-            }
-        }
-
-        public static DrumKit ToDrumKit(string target) {
-            switch (target) {
-                case "Standard":
-                    return DrumKit.Standard;
-                case "Room":
-                    return DrumKit.Room;
-                case "Power":
-                    return DrumKit.Power;
-                case "Electronic":
-                    return DrumKit.Electronic;
-                case "Analog":
-                    return DrumKit.Analog;
-                case "Jazz":
-                    return DrumKit.Jazz;
-                case "Brush":
-                    return DrumKit.Brush;
-                case "Orchestra":
-                    return DrumKit.Orchestra;
-                case "SFX":
-                    return DrumKit.SFX;
-                default:
-                    throw new ArgumentException("not drum kit.");
-            }
-        }
-
-        public static Percussion ToPercussion(string target) {
-            switch (target) {
-                case "Acoustic_Bass_Drum":
-                    return Percussion.Acoustic_Bass_Drum;
-                case "Electric_Bass_Drum":
-                    return Percussion.Electric_Bass_Drum;
-                case "Side_Stick":
-                    return Percussion.Side_Stick;
-                case "Acoustic_Snare":
-                    return Percussion.Acoustic_Snare;
-                case "Hand_Clap":
-                    return Percussion.Hand_Clap;
-                case "Electric_Snare":
-                    return Percussion.Electric_Snare;
-                case "Low_Floor_Tom":
-                    return Percussion.Low_Floor_Tom;
-                case "Closed_Hi_hat":
-                    return Percussion.Closed_Hi_hat;
-                case "High_Floor_Tom":
-                    return Percussion.High_Floor_Tom;
-                case "Pedal_Hi_hat":
-                    return Percussion.Pedal_Hi_hat;
-                case "Low_Tom":
-                    return Percussion.Low_Tom;
-                case "Open_Hi_hat":
-                    return Percussion.Open_Hi_hat;
-                case "Low_Mid_Tom":
-                    return Percussion.Low_Mid_Tom;
-                case "Hi_Mid_Tom":
-                    return Percussion.Hi_Mid_Tom;
-                case "Crash_Cymbal_1":
-                    return Percussion.Crash_Cymbal_1;
-                case "High_Tom":
-                    return Percussion.High_Tom;
-                case "Ride_Cymbal_1":
-                    return Percussion.Ride_Cymbal_1;
-                case "Chinese_Cymbal":
-                    return Percussion.Chinese_Cymbal;
-                case "Ride_Bell":
-                    return Percussion.Ride_Bell;
-                case "Tambourine":
-                    return Percussion.Tambourine;
-                case "Splash_Cymbal":
-                    return Percussion.Splash_Cymbal;
-                case "Cowbell":
-                    return Percussion.Cowbell;
-                case "Crash_Cymbal_2":
-                    return Percussion.Crash_Cymbal_2;
-                case "Vibra_Slap":
-                    return Percussion.Vibra_Slap;
-                case "Ride_Cymbal_2":
-                    return Percussion.Ride_Cymbal_2;
-                case "High_Bongo":
-                    return Percussion.High_Bongo;
-                case "Low_Bongo":
-                    return Percussion.Low_Bongo;
-                case "Mute_High_Conga":
-                    return Percussion.Mute_High_Conga;
-                case "Open_High_Conga":
-                    return Percussion.Open_High_Conga;
-                case "Low_Conga":
-                    return Percussion.Low_Conga;
-                case "High_Timbale":
-                    return Percussion.High_Timbale;
-                case "Low_Timbale":
-                    return Percussion.Low_Timbale;
-                case "High_Agogo":
-                    return Percussion.High_Agogo;
-                case "Low_Agogo":
-                    return Percussion.Low_Agogo;
-                case "Cabasa":
-                    return Percussion.Cabasa;
-                case "Maracas":
-                    return Percussion.Maracas;
-                case "Short_Whistle":
-                    return Percussion.Short_Whistle;
-                case "Long_Whistle":
-                    return Percussion.Long_Whistle;
-                case "Short_Guiro":
-                    return Percussion.Short_Guiro;
-                case "Long_Guiro":
-                    return Percussion.Long_Guiro;
-                case "Claves":
-                    return Percussion.Claves;
-                case "High_Woodblock":
-                    return Percussion.High_Woodblock;
-                case "Low_Woodblock":
-                    return Percussion.Low_Woodblock;
-                case "Mute_Cuica":
-                    return Percussion.Mute_Cuica;
-                case "Open_Cuica":
-                    return Percussion.Open_Cuica;
-                case "Mute_Triangle":
-                    return Percussion.Mute_Triangle;
-                case "Open_Triangle":
-                    return Percussion.Open_Triangle;
-                default:
-                    throw new ArgumentException("not percussion.");
-            }
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -1055,7 +539,6 @@ namespace Meowziq.Core {
     // public Enums [noun]
 
     public enum Key {
-        // MEMO: E を最低音とする
         Eb = 75,
         D = 74,
         Db = 73,
@@ -1067,21 +550,10 @@ namespace Meowziq.Core {
         G = 67,
         Gb = 66,
         F = 65,
-        E = 64,
+        E = 64, // MEMO: E を最低音とする
         Undefined = -1,
-        Extension = -128,
-    }
-
-    public enum Mode {
-        Lyd = 0,
-        Ion = 1,
-        Mix = 2,
-        Dor = 3,
-        Aeo = 4,
-        Phr = 5,
-        Loc = 6,
-        Undefined = -1,
-        Extension = -128,
+        // for Extension Method
+        Enum = -128,
     }
 
     public enum Degree {
@@ -1093,9 +565,24 @@ namespace Meowziq.Core {
         VI = 5,
         VII = 6,
         Undefined = -1,
+        // for Extension Method
+        Enum = -128,
     }
 
-    public enum Arpeggio {
+    public enum Mode {
+        Lyd = 0,
+        Ion = 1,
+        Mix = 2,
+        Dor = 3,
+        Aeo = 4,
+        Phr = 5,
+        Loc = 6,
+        Undefined = -1,
+        // for Extension Method
+        Enum = -128,
+    }
+
+    public enum Arpeggio { // TODO: 削除する
         Up,
         Down,
         Random,
@@ -1246,6 +733,8 @@ namespace Meowziq.Core {
         Helicopter = 125,
         Applause = 126,
         Gunshot = 127,
+        // for Extension Method
+        Enum = -128,
     }
 
     public enum DrumKit {
@@ -1258,6 +747,8 @@ namespace Meowziq.Core {
         Brush = 40,
         Orchestra = 48,
         SFX = 56,
+        // for Extension Method
+        Enum = -128,
     }
 
     public enum Percussion {
@@ -1308,6 +799,8 @@ namespace Meowziq.Core {
         Open_Cuica = 79,
         Mute_Triangle = 80,
         Open_Triangle = 81,
+        // for Extension Method
+        Enum = -128,
     }
 
     public enum MidiChannel {
@@ -1327,5 +820,7 @@ namespace Meowziq.Core {
         ch14 = 13,
         ch15 = 14,
         ch16 = 15,
+        // for Extension Method
+        Enum = -128,
     }
 }

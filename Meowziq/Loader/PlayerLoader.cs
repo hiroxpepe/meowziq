@@ -45,11 +45,11 @@ namespace Meowziq.Loader {
 
         static Core.Player convertPlayer(Player player) {
             var _player = new Core.Player();
-            _player.MidiCh = Utils.ToMidiChannel(player.Midi);
+            _player.MidiCh = MidiChannel.Enum.Parse(player.Midi);
             if (int.Parse(player.Midi) == 9) { // FIXME: 10ch 以外のドラムを可能にする
-                _player.DrumKit = Utils.ToDrumKit(player.Inst); // FIXME: 設定が違う場合
+                _player.DrumKit = DrumKit.Enum.Parse(player.Inst); // FIXME: 設定が違う場合
             } else {
-                _player.Instrument = Utils.ToInstrument(player.Inst); // FIXME: 設定が違う場合
+                _player.Instrument = Instrument.Enum.Parse(player.Inst); // FIXME: 設定が違う場合
             }
             _player.Type = player.Type;
             _player.PhraseList = phraseList.Where(x => x.Type.Equals(_player.Type)).ToList(); // Player と Phrase の type が一致したら
