@@ -1,5 +1,6 @@
 ﻿
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Meowziq.Core {
     /// <summary>
@@ -22,11 +23,11 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
-        public Song(string name, Key key, Mode keyMode) {
+        public Song(string name, Key key, Mode keyMode, List<Pattern> patternList) {
             this.name = name;
             this.key = key;
             this.keyMode = keyMode;
-            this.patternList = new List<Pattern>();
+            this.patternList = patternList.Select(x => checkeMode(x)).ToList();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -54,18 +55,17 @@ namespace Meowziq.Core {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Methods [verb]
+        // private Methods [verb]
 
-        public void Add(Pattern pattern) {
-            foreach (var _meas in pattern.AllMeas) {
-                foreach (var _span in _meas.AllSpan) {
-                    if (_span.Mode == Mode.Undefined) {
-                        _span.Mode = keyMode; // 設定がない場合 song の旋法を設定
-                    }
-                    _span.KeyMode = keyMode; // こちらはもれなく設定 // FIXME: 曲の旋法を変える時
-                }
-            }
-            patternList.Add(pattern);
+        /// <summary>
+        /// 旋法の設定があるか確認
+        /// </summary>
+        Pattern checkeMode(Pattern pattern) {
+            pattern.AllMeas.ForEach(x => {
+                x.AllSpan.Where(_x => _x.Mode == Mode.Undefined).Select(y => y.Mode = keyMode).ToList(); // 設定がない場合 song の旋法を設定
+                x.AllSpan.ForEach(_x => _x.KeyMode = keyMode); // こちらはもれなく設定 // FIXME: 曲の旋法を変える時
+            });
+            return pattern;
         }
     }
 }

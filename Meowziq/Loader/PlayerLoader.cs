@@ -1,6 +1,8 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 
@@ -31,11 +33,11 @@ namespace Meowziq.Loader {
         /// Player のリストを作成します
         /// </summary>
         public static List<Core.Player> Build(string targetPath) {
-            var _resultList = new List<Core.Player>();
-            foreach (var _player in loadJson(targetPath).Player) {
-                _resultList.Add(convertPlayer(_player)); // json のデータを変換
+            if (phraseList == null) {
+                throw new ArgumentException("need phraseList.");
             }
-            return _resultList;
+            // Core.Player のリストに変換
+            return loadJson(targetPath).Player.Select(x => convertPlayer(x)).ToList();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -44,25 +46,20 @@ namespace Meowziq.Loader {
         static Core.Player convertPlayer(Player player) {
             var _player = new Core.Player();
             _player.MidiCh = Utils.ToMidiChannel(player.Midi);
-            if (int.Parse(player.Midi) == 9) { // FIXME: 9ch 以外のドラムを可能にする
+            if (int.Parse(player.Midi) == 9) { // FIXME: 10ch 以外のドラムを可能にする
                 _player.DrumKit = Utils.ToDrumKit(player.Inst); // FIXME: 設定が違う場合
             } else {
                 _player.Instrument = Utils.ToInstrument(player.Inst); // FIXME: 設定が違う場合
             }
             _player.Type = player.Type;
-            // Player と Phrase の type が一致したら
-            foreach (var _phrase in phraseList) {
-                if (_player.Type.Equals(_phrase.Type)) {
-                    _player.PhraseList.Add(_phrase); // Phrase フレーズを渡す
-                }
-            }
+            _player.PhraseList = phraseList.Where(x => x.Type.Equals(_player.Type)).ToList(); // Player と Phrase の type が一致したら
             return _player;
         }
 
-        static PlayerData loadJson(string targetPath) {
+        static PlayerJson loadJson(string targetPath) {
             using (var _stream = new FileStream(targetPath, FileMode.Open)) {
-                var _serializer = new DataContractJsonSerializer(typeof(PlayerData));
-                return (PlayerData) _serializer.ReadObject(_stream);
+                var _serializer = new DataContractJsonSerializer(typeof(PlayerJson));
+                return (PlayerJson) _serializer.ReadObject(_stream);
             }
         }
 
@@ -71,7 +68,7 @@ namespace Meowziq.Loader {
 
         // MEMO: 編集: JSON をクラスとして張り付ける
         [DataContract]
-        public class PlayerData {
+        public class PlayerJson {
             [DataMember(Name = "player")]
             public Player[] Player {
                 get; set;
