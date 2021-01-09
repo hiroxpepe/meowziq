@@ -33,16 +33,16 @@ namespace Meowziq.Loader {
         /// Song を作成します
         /// </summary>
         public static Core.Song Build(string targetPath) {
-            var _songData = loadJson(targetPath);
-            var _song = new Core.Song(
-                _songData.Song.Name,
-                Key.Extension.Parse(_songData.Song.Key),
-                Utils.ToMode(_songData.Song.Mode)
-            );
-            foreach (var _patternName in _songData.Song.Pattern) {
-                _song.Add(searchPattern(_patternName)); // Pattern 追加
+            if (patternList == null) {
+                throw new ArgumentException("need patternList.");
             }
-            return _song;
+            var _song = loadJson(targetPath).Song;
+            return new Core.Song(
+                _song.Name,
+                Key.Extension.Parse(_song.Key),
+                Mode.Extension.Parse(_song.Mode),
+                _song.Pattern.Select(x => searchPattern(x)).ToList() // 名前で探す
+            );
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -56,10 +56,10 @@ namespace Meowziq.Loader {
             }
         }
 
-        static SongData loadJson(string targetPath) {
+        static SongJson loadJson(string targetPath) {
             using (var _stream = new FileStream(targetPath, FileMode.Open)) {
-                var _serializer = new DataContractJsonSerializer(typeof(SongData));
-                return (SongData) _serializer.ReadObject(_stream);
+                var _serializer = new DataContractJsonSerializer(typeof(SongJson));
+                return (SongJson) _serializer.ReadObject(_stream);
             }
         }
 
@@ -68,7 +68,7 @@ namespace Meowziq.Loader {
 
         // MEMO: 編集: JSON をクラスとして張り付ける
         [DataContract]
-        class SongData {
+        class SongJson {
             [DataMember(Name = "song")]
             public Song Song {
                 get; set;

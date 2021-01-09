@@ -1081,6 +1081,7 @@ namespace Meowziq.Core {
         Phr = 5,
         Loc = 6,
         Undefined = -1,
+        Extension = -128,
     }
 
     public enum Degree {

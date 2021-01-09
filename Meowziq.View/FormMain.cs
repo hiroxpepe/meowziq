@@ -53,10 +53,10 @@ namespace Meowziq.View {
                 // メッセージのリストを取得
                 var _list = Message.GetBy(sequencer.Position);
                 if (_list != null) {
-                    _list.ForEach(message => {
-                        midi.OutDevice.Send(message); // MIDIデバイスにメッセージを追加送信
-                        if (message.MidiChannel != 9) {
-                            pianoControl.Send(message); // ドラム以外はピアノロールに表示
+                    _list.ForEach(x => {
+                        midi.OutDevice.Send(x); // MIDIデバイスにメッセージを追加送信
+                        if (x.MidiChannel != 9) {
+                            pianoControl.Send(x); // ドラム以外はピアノロールに表示
                         }
                     });
                 }
@@ -130,22 +130,15 @@ namespace Meowziq.View {
         /// </summary>
         string buildSong(string targetDir) {
 
-            // Pattern をロード
-            var _patternList = PatternLoader.Build($"{targetDir}/pattern.json");
-
-            // Song をロード
-            SongLoader.PatternList = _patternList; // Song に Pattern のリストを渡す
+            // Pattern と Song をロード
+            SongLoader.PatternList = PatternLoader.Build($"{targetDir}/pattern.json");
             var _song = SongLoader.Build($"{targetDir}/song.json");
 
-            // Phrase をロード
-            var _phraseList = PhraseLoader.Build($"{targetDir}/phrase.json");
-
-            // Player をロード
-            PlayerLoader.PhraseList = _phraseList; // PlayerLoader に Phrase のリストを渡す
-            var _playerList = PlayerLoader.Build($"{targetDir}/player.json");
-            _playerList.ForEach(player => {
-                player.Song = _song; // Song データを設定
-                player.Build(); // MIDI データを構築
+            // Phrase と Player をロード
+            PlayerLoader.PhraseList = PhraseLoader.Build($"{targetDir}/phrase.json");
+            PlayerLoader.Build($"{targetDir}/player.json").ForEach(x => {
+                x.Song = _song; // Song データを設定
+                x.Build(); // MIDI データを構築
             });
 
             // Song の名前を返す
@@ -156,7 +149,6 @@ namespace Meowziq.View {
         /// オールサウンドオフ
         /// </summary>
         async void allSoundOff() {
-            // FIXME: ノートOFF出来ずハングするバグ
             await Task.Run(() => {
                 for (int _i = 0; _i < 15; _i++) {
                     midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, _i, 120));

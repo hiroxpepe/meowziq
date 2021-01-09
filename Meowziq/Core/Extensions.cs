@@ -35,5 +35,27 @@ namespace Meowziq.Core {
                     throw new ArgumentException("not key.");
             }
         }
+
+        public static Mode Parse(this Mode mode, string target) {
+            switch (target.ToLower()) {
+                case "lyd":
+                    return Mode.Lyd;
+                case "ion":
+                    return Mode.Ion;
+                case "mix":
+                    return Mode.Mix;
+                case "dor":
+                    return Mode.Dor;
+                case "aeo":
+                    return Mode.Aeo;
+                case "phr":
+                    return Mode.Phr;
+                case "loc":
+                    return Mode.Loc;
+                default:
+                    throw new ArgumentException("not mode.");
+            }
+        }
+
     }
 }

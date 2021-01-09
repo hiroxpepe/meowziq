@@ -20,36 +20,25 @@ namespace Meowziq.Loader {
         /// Pattern のリストを作成します
         /// </summary>
         public static List<Core.Pattern> Build(string targetPath) {
-            var _resultList = new List<Core.Pattern>();
-            foreach (var _pattern in loadJson(targetPath).Pattern) {
-                _resultList.Add(convertPattern(_pattern)); // json のデータを変換
-            }
-            return _resultList;
+            // Core.Pattern のリストに変換
+            return loadJson(targetPath).Pattern.Select(x => convertPattern(x)).ToList();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private static Methods [verb]
 
         static Core.Pattern convertPattern(Pattern pattern) {
-            var _measList = convertMeasList(pattern.Data);
-            var _pattern = new Core.Pattern(pattern.Name, _measList);
-            return _pattern;
+            // Core.Pattern に変換
+            return new Core.Pattern(pattern.Name, convertMeasList(pattern.Data));
         }
 
         static List<Meas> convertMeasList(string patternString) {
             // 小節に切り出す "[I:Aeo| | | ][IV| | | ][I| | | ][IV| | | ]"
             var _measStringArray = patternString.Replace("][", "@")  // まず "][" を "@" に置き換え
                 .Split('@') // 小節で切り分ける
-                .Select(x => x.Replace("[","").Replace("]","")).ToArray(); // 不要文字削除
-            // Meas リストに変換
-            var _measList = new List<Meas>();
-            foreach (var _measString in _measStringArray) {
-                // Span リストに変換
-                var _spanList = convertSpanList(_measString);
-                // Meas を作成して追加
-                _measList.Add(new Meas(_spanList));
-            }
-            return _measList;
+                .Select(x => x.Replace("[", "").Replace("]", "")).ToArray(); // 不要文字削除
+            // Span リストに変換してから Meas を作成してリストに変換
+            return _measStringArray.Select(x => new Meas(convertSpanList(x))).ToList();
         }
 
         static List<Span> convertSpanList(string measString) {
@@ -94,10 +83,10 @@ namespace Meowziq.Loader {
             }
         }
 
-        static PatternData loadJson(string targetPath) {
+        static PatternJson loadJson(string targetPath) {
             using (var _stream = new FileStream(targetPath, FileMode.Open)) {
-                var _serializer = new DataContractJsonSerializer(typeof(PatternData));
-                return (PatternData) _serializer.ReadObject(_stream);
+                var _serializer = new DataContractJsonSerializer(typeof(PatternJson));
+                return (PatternJson) _serializer.ReadObject(_stream);
             }
         }
 
@@ -106,7 +95,7 @@ namespace Meowziq.Loader {
 
         // MEMO: 編集: JSON をクラスとして張り付ける
         [DataContract]
-        class PatternData {
+        class PatternJson {
             [DataMember(Name = "pattern")]
             public Pattern[] Pattern {
                 get; set;

@@ -21,11 +21,8 @@ namespace Meowziq.Loader {
         /// Phrase のリストを作成します
         /// </summary>
         public static List<Core.Phrase> Build(string targetPath) {
-            var _resultList = new List<Core.Phrase>();
-            foreach (var _phrase in loadJson(targetPath).Phrase) {
-                _resultList.Add(convertPhrase(_phrase)); // json のデータを変換
-            }
-            return _resultList;
+            // Core.Phrase のリストに変換
+            return loadJson(targetPath).Phrase.Select(x => convertPhrase(x)).ToList();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -40,12 +37,7 @@ namespace Meowziq.Loader {
                 _phrase.Data.NoteTextArray = phrase.Data.Note.Select(x => validateValue(x)).ToArray();
                 _phrase.Data.NoteOctArray = phrase.Data.Oct;
                 if (phrase.Data.Inst != null) { // ドラム用音名データがある場合
-                    var _percussionArray = new Percussion[phrase.Data.Inst.Length];
-                    var _i = 0;
-                    foreach (var _inst in phrase.Data.Inst) {
-                        _percussionArray[_i++] = Utils.ToPercussion(_inst);
-                    }
-                    _phrase.Data.PercussionArray = _percussionArray;
+                    _phrase.Data.PercussionArray = phrase.Data.Inst.Select(x => Utils.ToPercussion(x)).ToArray();
                 }
             }
             return _phrase;
@@ -75,10 +67,10 @@ namespace Meowziq.Loader {
             return target;
         }
 
-        static PhraseData loadJson(string targetPath) {
+        static PhraseJson loadJson(string targetPath) {
             using (var _stream = new FileStream(targetPath, FileMode.Open)) {
-                var _serializer = new DataContractJsonSerializer(typeof(PhraseData));
-                return (PhraseData) _serializer.ReadObject(_stream);
+                var _serializer = new DataContractJsonSerializer(typeof(PhraseJson));
+                return (PhraseJson) _serializer.ReadObject(_stream);
             }
         }
 
@@ -87,7 +79,7 @@ namespace Meowziq.Loader {
 
         // MEMO: 編集: JSON をクラスとして張り付ける
         [DataContract]
-        class PhraseData {
+        class PhraseJson {
             [DataMember(Name = "phrase")]
             public Phrase[] Phrase {
                 get; set;
