@@ -77,9 +77,9 @@ namespace Meowziq.Loader {
         static Span convertSpan(int beat, string beatString) {
             var _part = beatString.Split(':'); // ':' で分割
             if (_part.Length == 1) {
-                return new Span(beat, Utils.ToDegree(_part[0].Trim()));
+                return new Span(beat, Degree.Enum.Parse(_part[0].Trim()));
             } else {
-                return new Span(beat, Utils.ToDegree(_part[0].Trim()), Utils.ToMode(_part[1].Trim())); // 旋法指定あり
+                return new Span(beat, Degree.Enum.Parse(_part[0].Trim()), Mode.Enum.Parse(_part[1].Trim())); // 旋法指定あり
             }
         }
 

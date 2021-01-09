@@ -37,7 +37,7 @@ namespace Meowziq.Loader {
                 _phrase.Data.NoteTextArray = phrase.Data.Note.Select(x => validateValue(x)).ToArray();
                 _phrase.Data.NoteOctArray = phrase.Data.Oct;
                 if (phrase.Data.Inst != null) { // ドラム用音名データがある場合
-                    _phrase.Data.PercussionArray = phrase.Data.Inst.Select(x => Utils.ToPercussion(x)).ToArray();
+                    _phrase.Data.PercussionArray = phrase.Data.Inst.Select(x => Percussion.Enum.Parse(x)).ToArray();
                 }
             }
             return _phrase;

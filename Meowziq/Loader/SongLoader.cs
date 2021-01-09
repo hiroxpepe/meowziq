@@ -39,8 +39,8 @@ namespace Meowziq.Loader {
             var _song = loadJson(targetPath).Song;
             return new Core.Song(
                 _song.Name,
-                Key.Extension.Parse(_song.Key),
-                Mode.Extension.Parse(_song.Mode),
+                Key.Enum.Parse(_song.Key),
+                Mode.Enum.Parse(_song.Mode),
                 _song.Pattern.Select(x => searchPattern(x)).ToList() // 名前で探す
             );
         }
