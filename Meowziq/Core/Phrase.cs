@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Meowziq.Core {
@@ -178,23 +179,19 @@ namespace Meowziq.Core {
         }
 
         protected static string filter(string target) {
-            // 不要文字削除
-            return target.Replace("|", "").Replace("[", "").Replace("]", "");
+            return target.Replace("|", "").Replace("[", "").Replace("]", ""); // 不要文字削除
         }
 
         protected static List<bool?> convertToBool(string target) {
-            // on, off, null スイッチ
+            // on, null スイッチ
             var _list = new List<bool?>();
-            // 文字列を並列に変換
-            var _charArray = target.ToCharArray();
-            // 文字列を判定
-            foreach (char _char in _charArray) {
-                if (_char.Equals('x')) {
+            target.ToList().ForEach(x => {
+                if (x.Equals('x')) {
                     _list.Add(true);
-                } else if (_char.Equals('-')) {
+                } else if (x.Equals('-')) {
                     _list.Add(null);
                 }
-            }
+            });
             return _list;
         }
     }
@@ -234,9 +231,7 @@ namespace Meowziq.Core {
                 }
                 if (value == null) {
                     noteOctArray = new int[noteTextArray.Length];
-                    for (var _i = 0; _i < noteTextArray.Length; _i++) {
-                        noteOctArray[_i] = 0; // オクターブの設定を自動生成
-                    }
+                    noteOctArray.Select(x => x = 0); // オクターブの設定を自動生成
                 } else if (value.Length != noteTextArray.Length) {
                     throw new ArgumentException("noteOctArray must be same count as noteTextArray.");
                 } else {

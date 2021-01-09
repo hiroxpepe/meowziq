@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Meowziq.Core {
     /// <summary>
@@ -33,34 +34,30 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjectives] 
 
-        // TODO: 位置を返すカーソルが必要？
-
         public string Name {
             get => name;
         }
 
         /// <summary>
-        /// パターンの拍数
+        /// パターンの拍数を返す
         /// </summary>
         public int BeatCount {
             // FIXME: 1小節を4拍として計算
             get => measList.Count * 4;
         }
 
+        /// <summary>
+        /// Meas のリストを返す
+        /// </summary>
         public List<Meas> AllMeas {
             get => measList;
         }
 
+        /// <summary>
+        /// Span のリストを返す
+        /// </summary>
         public List<Span> AllSpan {
-            get {
-                List<Span> _spanList = new List<Span>();
-                foreach (var _meas in measList) {
-                    foreach (var _span in _meas.AllSpan) {
-                        _spanList.Add(_span);
-                    }
-                }
-                return _spanList;
-            }
+            get => measList.SelectMany(x => x.AllSpan).Select(x => x).ToList();
         }
     }
 
@@ -84,26 +81,26 @@ namespace Meowziq.Core {
         /// </summary>
         public Meas(List<Span> spanList) {
             var _totalBeatCount = 0;
-            foreach (var _span in spanList) {
-                _totalBeatCount += _span.Beat; // 拍を集計する
-            }
+            spanList.ForEach(x => _totalBeatCount += x.Beat); // 拍を集計する
             if (_totalBeatCount < 4 || _totalBeatCount > 4) {
                 // FIXME: 3拍子とかは？
                 throw new ArgumentException("beat counts needs 4."); // 1小節に足りない or 超過している
             }
-            // Span を分解して個別する
+            // Span を分解して個別にする
             this.spanList = new List<Span>();
-            foreach (var _span in spanList) {
-                var _beatCount = _span.Beat;
-                for (var _i = 0; _i < _beatCount; _i++) {
-                    this.spanList.Add(new Span(1, _span.Degree, _span.Mode));
+            spanList.ForEach(x => {
+                for (var _i = 0; _i < x.Beat; _i++) {
+                    this.spanList.Add(new Span(1, x.Degree, x.Mode));
                 }
-            }
+            });
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjectives] 
 
+        /// <summary>
+        /// Span のリストを返す
+        /// </summary>
         public List<Span> AllSpan {
             get => spanList;
         }
