@@ -63,15 +63,14 @@
     <Compile Include="Core\Phrase.cs" />
     <Compile Include="Core\Player.cs" />
     <Compile Include="Core\Song.cs" />
-    <Compile Include="Core\Utils.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="Message.cs" />
+    <Compile Include="Midi.cs" />
     <Compile Include="Loader\PlayerLoader.cs" />
     <Compile Include="Loader\SongLoader.cs" />
     <Compile Include="Loader\PatternLoader.cs" />
     <Compile Include="Loader\PhraseLoader.cs" />
-
-    <Compile Include="Message.cs" />
-    <Compile Include="Midi.cs" />
-
+    <Compile Include="Utils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
