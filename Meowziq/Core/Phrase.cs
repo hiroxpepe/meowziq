@@ -21,6 +21,12 @@ namespace Meowziq.Core {
 
         string noteText;
 
+        string chordText;
+
+        string pre;
+
+        string post;
+
         Data data;
 
         List<Note> noteList;
@@ -47,6 +53,18 @@ namespace Meowziq.Core {
 
         public string NoteText {
             set => noteText = value;
+        }
+
+        public string ChordText {
+            set => chordText = value;
+        }
+
+        public string Pre {
+            set => pre = value;
+        }
+
+        public string Post {
+            set => post = value;
         }
 
         public Data Data {
@@ -90,10 +108,14 @@ namespace Meowziq.Core {
                 }
             }
             if (type.Equals("pad")) {
-                for (var _i = 0; _i < data.NoteTextArray.Length; _i++) {
-                    var _text = data.NoteTextArray[_i];
-                    var _interval = (data.NoteOctArray[_i] * 12);
-                    applyMonoNote(position, pattern.BeatCount, key, pattern.AllSpan, _text, _interval);
+                if (data.NoteTextArray != null) { // TODO: 分岐を何とかする
+                    for (var _i = 0; _i < data.NoteTextArray.Length; _i++) {
+                        var _text = data.NoteTextArray[_i];
+                        var _interval = (data.OctArray[_i] * 12);
+                        applyMonoNote(position, pattern.BeatCount, key, pattern.AllSpan, _text, _interval);
+                    }
+                } else if (chordText != null) {
+
                 }
             }
             if (type.Equals("bass")) {
@@ -101,37 +123,37 @@ namespace Meowziq.Core {
                 applyMonoNote(position, pattern.BeatCount, key, pattern.AllSpan, _text, -24);
             }
             if (type.Equals("seque")) {
-                var _16beatCount = pattern.BeatCount * 4; // この Pattern の16beatの数
-                var _indexCount = 0; // 16beatで1拍をカウントする用
-                var _spanIndex = 0; // Span リストの添え字
-                for (var _i = 0; _i < _16beatCount; _i++) {
-                    if (_indexCount == 4) { // 16beatが4回進んだ時(1拍)
-                        _indexCount = 0; // カウンタリセット
-                        _spanIndex++; // Span の index値
+                var _all16beatCount = pattern.BeatCount * 4; // この Pattern の16beatの数
+                var _spanIdxCount = 0; // 16beatで1拍をカウントする用
+                var _spanIdx = 0; // Span リストの添え字
+                for (var _16beatIdx = 0; _16beatIdx < _all16beatCount; _16beatIdx++) {
+                    if (_spanIdxCount == 4) { // 16beatが4回進んだ時(1拍)
+                        _spanIdxCount = 0; // カウンタリセット
+                        _spanIdx++; // Span のindex値をインクリメント
                     }
-                    var _span = pattern.AllSpan[_spanIndex];
+                    var _span = pattern.AllSpan[_spanIdx];
                     var _note = Utils.GetRandomNote(key, _span.Degree, _span.Mode); // 16の倍数
-                    add(new Note(position + (120 * _i), _note, 30, 127)); // gate 短め
-                    _indexCount++; // Span 用のカウンタも進める
+                    add(new Note(position + (120 * _16beatIdx), _note, 30, 127)); // gate 短め
+                    _spanIdxCount++; // Span 用のカウンタも進める
                 }
             }
         }
 
         protected void applyMonoNote(int position, int beatCount, Key key, List<Span> spanList, string target, int interval = 0) {
-            var _index = 0; // 16beatのindex
-            var _indexCount = 0; // 16beatで1拍をカウントする用
-            var _spanIndex = 0; // Span リストの添え字
+            var _16beatIdx = 0; // 16beatのindex
+            var _spanIdxCount = 0; // 16beatで1拍をカウントする用
+            var _spanIdx = 0; // Span リストの添え字
             var _valueArray = filter(target).ToCharArray();
             foreach (var _value in _valueArray) {
-                if (_index > beatCount * 4) {
-                    return; // Pattern の長さを超えたら終了 FIXME: 長さに足りない時？ エラー? リピート？
+                if (_16beatIdx > beatCount * 4) {
+                    return; // Pattern の長さを超えたら終了
                 }
-                if (_indexCount == 4) { // 16beatが4回進んだ時(1拍)
-                    _indexCount = 0; // カウンタリセット
-                    _spanIndex++; // Span の index値
+                if (_spanIdxCount == 4) { // 16beatが4回進んだ時(1拍)
+                    _spanIdxCount = 0; // カウンタリセット
+                    _spanIdx++; // Span のindex値をインクリメント
                 }
-                if (Regex.IsMatch(_value.ToString(), @"^[1-7]+$")) { // 度数の数値がある時
-                    var _span = spanList[_spanIndex];
+                if (Regex.IsMatch(_value.ToString(), @"^[1-7]+$")) { // 1～7まで度数の数値がある時
+                    var _span = spanList[_spanIdx];
                     int _noteNum;
                     // 曲の旋法と Span の旋法が同じ場合は自動旋法
                     if (_span.KeyMode == _span.Mode) {
@@ -143,34 +165,34 @@ namespace Meowziq.Core {
                     }
                     // この音の音価を調査する
                     var _gateCount = 0;
-                    var _all16beatcount = (beatCount * 4);
-                    for (var _i = _index + 1; _i < _all16beatcount; _i++) {
+                    var _all16beatCount = (beatCount * 4); // このパターンの16beatの数
+                    for (var _i = _16beatIdx + 1; _i < _all16beatCount; _i++) { // +1 は数値文字の分
                         var _search = _valueArray[_i];
                         if (_search.Equals('>')) {
-                            _gateCount++; // 16beat分伸ばす
+                            _gateCount++; // 16beat分長さを伸ばす
                         }
                         if (!_search.Equals('>')) {
                             break; // '>' が途切れたら終了
                         }
                     }
-                    var _gate = 120 * (_gateCount + 1);
-                    add(new Note(position + (120 * _index), (int) _noteNum + interval, _gate, 127)); // +1 は数値分
+                    var _gate = 120 * (_gateCount + 1); // 音の長さ：+1 は数値文字の分
+                    add(new Note(position + (120 * _16beatIdx), (int) _noteNum + interval, _gate, 127));
                 }
-                _index++; // 16beatを進める
-                _indexCount++; // Span 用のカウンタも進める
+                _16beatIdx++; // 16beatを進める
+                _spanIdxCount++; // Span 用のカウンタも進める
             }
         }
 
         protected void applyDrumNote(int position, int beatCount, string target, Percussion noteNum) {
-            var _index = 0;
+            var _16beatIdx = 0;
             foreach (bool? _value in convertToBool(filter(target))) {
-                if (_index > beatCount * 4) {
-                    return; // Pattern の長さを超えたら終了 FIXME: 長さに足りない時？ エラー? リピート？
+                if (_16beatIdx > beatCount * 4) {
+                    return; // Pattern の長さを超えたら終了
                 }
                 if (_value == true) {
-                    add(new Note(position + (120 * _index), (int) noteNum, 120, 127));
+                    add(new Note(position + (120 * _16beatIdx), (int) noteNum, 120, 127));
                 }
-                _index++; // 16beatを進める
+                _16beatIdx++; // 16beatを進める
             }
         }
 
@@ -208,35 +230,94 @@ namespace Meowziq.Core {
 
         string[] noteTextArray;
 
-        int[] noteOctArray;
+        int[] octArray;
+
+        string[] preArray;
+
+        string[] postArray;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjectives] 
 
+        /// <summary>
+        /// Percussion の音色設定
+        /// </summary>
         public Percussion[] PercussionArray {
             get => percussionArray;
             set => percussionArray = value;
         }
 
+        /// <summary>
+        /// Note テキストの配列
+        /// </summary>
         public string[] NoteTextArray {
             get => noteTextArray;
             set => noteTextArray = value;
         }
 
-        public int[] NoteOctArray {
-            get => noteOctArray;
+        /// <summary>
+        /// Note テキストのオクターブ設定
+        /// </summary>
+        public int[] OctArray {
+            get => octArray;
             set {
-                if (noteTextArray == null) {
-                    throw new ArgumentException("must set noteTextArray.");
-                }
+                checkValue();
                 if (value == null) {
-                    noteOctArray = new int[noteTextArray.Length];
-                    noteOctArray.Select(x => x = 0); // オクターブの設定を自動生成
+                    octArray = new int[noteTextArray.Length];
+                    octArray.Select(x => x = 0); // オクターブの設定を自動生成
                 } else if (value.Length != noteTextArray.Length) {
                     throw new ArgumentException("noteOctArray must be same count as noteTextArray.");
                 } else {
-                    noteOctArray = value;
+                    // TODO: バリデーション
+                    octArray = value;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Note テキストの前方音価設定
+        /// </summary>
+        public string[] PreArray {
+            get => preArray;
+            set {
+                checkValue();
+                if (value == null) {
+                    preArray = new string[noteTextArray.Length];
+                    preArray.Select(x => x = "-"); // 初期設定を自動生成
+                } else if (value.Length != noteTextArray.Length) {
+                    throw new ArgumentException("preArray must be same count as noteTextArray.");
+                } else {
+                    // TODO: バリデーション
+                    preArray = value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Note テキストの後方音価設定
+        /// </summary>
+        public string[] PostArray {
+            get => postArray;
+            set {
+                checkValue();
+                if (value == null) {
+                    postArray = new string[noteTextArray.Length];
+                    postArray.Select(x => x = "-"); // 初期設定を自動生成
+                } else if (value.Length != noteTextArray.Length) {
+                    throw new ArgumentException("postArray must be same count as noteTextArray.");
+                } else {
+                    // TODO: バリデーション
+                    postArray = value;
+                }
+            }
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private Methods [verb]
+
+        void checkValue() {
+            if (noteTextArray == null) {
+                throw new ArgumentException("must set noteTextArray.");
             }
         }
     }

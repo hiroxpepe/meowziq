@@ -21,7 +21,7 @@ namespace Meowziq.Loader {
         /// </summary>
         public static List<Core.Pattern> Build(string targetPath) {
             // Core.Pattern のリストに変換
-            return loadJson(targetPath).Pattern.Select(x => convertPattern(x)).ToList();
+            return loadJson(targetPath).PatternArray.Select(x => convertPattern(x)).ToList();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -96,7 +96,7 @@ namespace Meowziq.Loader {
         [DataContract]
         class Json {
             [DataMember(Name = "pattern")]
-            public Pattern[] Pattern {
+            public Pattern[] PatternArray {
                 get; set;
             }
         }

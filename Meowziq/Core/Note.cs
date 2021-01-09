@@ -45,4 +45,17 @@ namespace Meowziq.Core {
             get => velo;
         }
     }
+
+    /// <summary>
+    /// Note の配列を持つ
+    /// </summary>
+    public class Chord {
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Fields
+
+        Note[] noteArray;
+
+        // キーのコードと自分を比較して自動展開
+    }
 }
