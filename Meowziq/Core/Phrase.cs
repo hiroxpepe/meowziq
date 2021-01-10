@@ -78,8 +78,9 @@ namespace Meowziq.Core {
         /// </summary>
         public List<Note> AllNote {
             get {
-                // TODO: 最適化する
-                optimize();
+                if (!type.ToLower().Contains("drum")) { // ドラム以外
+                    optimize(); // 最適化する
+                }
                 return noteList;
             }
         }
@@ -119,7 +120,9 @@ namespace Meowziq.Core {
             if (type.Equals("drum")) {
                 for (var _idx = 0; _idx < data.NoteTextArray.Length; _idx++) {
                     var _noteText = data.NoteTextArray[_idx];
-                    applyDrumNote(position, pattern.BeatCount, _noteText, data.PercussionArray[_idx]);
+                    var _pre = data.PreArray[_idx];
+                    var _post = data.PostArray[_idx];
+                    applyDrumNote(position, pattern.BeatCount, _noteText, data.PercussionArray[_idx], _pre);
                 }
             }
             if (type.Equals("pad")) {
@@ -211,7 +214,7 @@ namespace Meowziq.Core {
                     if (_prePosition != 0) {
                         add(new Note((_prePosition + position) + (Tick.Of16beat.Int32() * _16beatIdx), (int) _noteNum + interval, _gate, 127, true)); // 優先ノート
                     } else {
-                        add(new Note((_prePosition + position) + (Tick.Of16beat.Int32() * _16beatIdx), (int) _noteNum + interval, _gate, 127));
+                        add(new Note(position + (Tick.Of16beat.Int32() * _16beatIdx), (int) _noteNum + interval, _gate, 127));
                     }
                 }
                 _16beatIdx++; // 16beatを進める
@@ -219,14 +222,32 @@ namespace Meowziq.Core {
             }
         }
 
-        protected void applyDrumNote(int position, int beatCount, string noteText, Percussion noteNum) {
+        protected void applyDrumNote(int position, int beatCount, string noteText, Percussion noteNum, string pre = null) {
             var _16beatIdx = 0;
+            var _preArray = pre == null ? null : filter(pre).ToCharArray(); // TODO: バリデート
             foreach (bool? _note in convertToBool(filter(noteText))) {
                 if (_16beatIdx > beatCount * 4) {
                     return; // Pattern の長さを超えたら終了
                 }
                 if (_note == true) {
-                    add(new Note(position + (Tick.Of16beat.Int32() * _16beatIdx), (int) noteNum, 120, 127));
+                    // シンコペーション
+                    var _gateCount = 0;
+                    var _prePosition = 0;
+                    if (_preArray != null) {
+                        var _pre = _preArray[_16beatIdx];
+                        if (Regex.IsMatch(_pre.ToString(), @"^[1-2]+$")) { // 120 * 2 tick まで ⇒ 16分・8分音符のシンコぺのみ
+                            var _preInt = int.Parse(_pre.ToString());
+                            _gateCount += _preInt; // pre の数値を音価に加算
+                            _prePosition = -(Tick.Of16beat.Int32() * _preInt); // pre の数値 * 16beat分前にする
+                        }
+                    }
+                    var _gate = Tick.Of16beat.Int32() * (_gateCount + 1); // 音の長さ：+1 は数値文字の分
+                    // シンコぺがある場合は優先発音フラグON
+                    if (_prePosition != 0) {
+                        add(new Note((_prePosition + position) + (Tick.Of16beat.Int32() * _16beatIdx), (int) noteNum, _gate, 127, true));
+                    } else {
+                        add(new Note(position + (Tick.Of16beat.Int32() * _16beatIdx), (int) noteNum, 120, 127));
+                    }
                 }
                 _16beatIdx++; // 16beatを進める
             }
