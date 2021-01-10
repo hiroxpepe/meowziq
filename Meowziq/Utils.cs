@@ -14,27 +14,26 @@ namespace Meowziq {
         // public static Methods [verb]
 
         /// <summary>
-        /// 自動的に旋法を決定する場合
+        /// 1～7の Phrase ノート記法から Note No を取得します
+        /// ※自動的に旋法を決定する場合
         /// </summary>
         public static int GetNoteWithAutoMode(Key key, Degree degree, Mode keyMode, int index) {
             // 曲のキーの度数と旋法から度数のルート音を取得
-            int _rootOfDegree = chordRootNote(key, degree, keyMode); // FIXME: 曲の旋法？
-
+            int _rootOfDegree = noteRoot(key, degree, keyMode); // FIXME: 曲の旋法？
             // キーの旋法と度数から旋法に対応したその度数の旋法を取得
             Mode _autoMode = modeForDegree(keyMode, degree);
-
             // そのルート音の旋法スケールを取得
             int[] _modeScale = modeScale(toKey(_rootOfDegree), _autoMode);
             return _modeScale[index - 1]; // 0基底
         }
 
         /// <summary>
-        /// Span の旋法を適用する場合
+        /// 1～7の Phrase ノート記法から Note No を取得します
+        /// ※Span の旋法を適用する場合
         /// </summary>
         public static int GetNoteWithSpanMode(Key key, Degree degree, Mode keyMode, Mode spanMode, int index) {
             // 曲のキーの度数と旋法から度数のルート音を取得
-            int _rootOfDegree = chordRootNote(key, degree, keyMode); // FIXME: 曲の旋法？
-
+            int _rootOfDegree = noteRoot(key, degree, keyMode); // FIXME: 曲の旋法？
             // そのルート音の旋法スケールを取得※Span に設定した旋法を使用
             int[] _modeScale = modeScale(toKey(_rootOfDegree), spanMode);
             return _modeScale[index - 1]; // 0基底
@@ -44,36 +43,15 @@ namespace Meowziq {
         /// FIXME: テキスト設定からランダムアルぺジエーター
         /// </summary>
         public static int GetRandomNote(Key key, Degree degree, Mode mode) {
-            return arpeggioAsModeScaleIn3(key, degree, mode);
+            return randomArpeggioFromModeScaleOf3Note(key, degree, mode);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private static Methods [verb]
 
-        /// <summary>
-        /// コード関係なく、そのキー、モードのスケール ノートを返す
-        /// </summary>
-        static int arpeggioAsModeScale(Key key, Mode mode) {
-            int[] _scale = modeScale(key, mode);
-            int _ret = random.Next(0, 7);
-            return _scale[_ret]; // 0 から 6
-        }
-
-        // TODO: 5音を取り出すメソッド
-
-        /// <summary>
-        /// そのキーのルートコードのモードスケール ノートを返す
-        /// </summary>
-        static int arpeggioAsModeScaleIn3(Key key, Degree degree, Mode mode) {
-            int _ret;
-            int[] _scale = note3(key, degree, mode); // 3音
-            _ret = random.Next(0, 3);
-            return _scale[_ret]; // 0 から 2
-        }
-
-        static int chordRootNote(Key key, Degree degree, Mode mode) {
-            int[] _scale = modeScale(key, mode);
-            return _scale[(int) degree];
+        static int noteRoot(Key key, Degree degree, Mode mode) {
+            int[] _modeScale = modeScale(key, mode);
+            return _modeScale[(int) degree];
         }
 
         static int[] note3(Key key, Degree degree, Mode mode) {
@@ -173,6 +151,7 @@ namespace Meowziq {
             return _note4;
         }
 
+        // TODO: 5音を取り出すメソッド
         // TODO: 7モードのペンタトニック
 
         /// <summary>
@@ -180,7 +159,7 @@ namespace Meowziq {
         /// </summary>
         static int[] note7(Key key, Degree degree, Mode mode) {
             int[] _modeScale = modeScale(key, mode);
-            int[] _note7 = new int[7]; // コード構成音の4音を抽出
+            int[] _note7 = new int[7]; // コード構成音の7音を抽出
             switch (degree) {
                 case Degree.I:
                     _note7[0] = _modeScale[1 - 1];
@@ -252,7 +231,7 @@ namespace Meowziq {
         }
 
         /// <summary>
-        /// 該当キーのモードスケールを返します。
+        /// キーと旋法からモードスケールを返します
         /// </summary>
         static int[] modeScale(Key key, Mode mode) {
             int _root = (int) key;
@@ -327,7 +306,9 @@ namespace Meowziq {
             return _scale;
         }
 
-        // キーの旋法と度数から旋法に対応したその度数の旋法を取得
+        /// <summary>
+        /// キーの旋法と度数から旋法に対応したその度数の旋法を返します
+        /// </summary>
         static Mode modeForDegree(Mode keyMode, Degree degree) {
             if (keyMode == Mode.Lyd) {
                 switch (degree) {
@@ -452,10 +433,29 @@ namespace Meowziq {
             return Mode.Undefined;
         }
 
+        /// <summary>
+        /// コード関係なく、そのキー、モードのスケール ノートを返す
+        /// </summary>
+        static int randomArpeggioFromModeScale(Key key, Mode mode) {
+            int[] _scale = modeScale(key, mode);
+            int _ret = random.Next(0, 7);
+            return _scale[_ret]; // 0 から 6
+        }
+
+        /// <summary>
+        /// そのキーのルートコードのモードスケール ノートを返す
+        /// </summary>
+        static int randomArpeggioFromModeScaleOf3Note(Key key, Degree degree, Mode mode) {
+            int _ret;
+            int[] _scale = note3(key, degree, mode); // 3音
+            _ret = random.Next(0, 3);
+            return _scale[_ret]; // 0 から 2
+        }
+
         // MEMO: 展開コードでキーボードの範囲(ゾーン)を指定するのはどうか
         // TODO: クローズドボイシングでルートのコードのソーンに追従する展開形を自動計算
 
-        static Key toKey(int note) {
+        static Key toKey(int note) { // TODO: 拡張メソッド
             if (note > 75) {
                 note -= 12; // オクターブ調節
             }
