@@ -115,10 +115,6 @@ namespace Meowziq.Core {
         /// TODO: パターンとフレーズの長さが一致しているかどうか
         /// </summary>
         protected void onBuild(int position, Key key, Pattern pattern) {
-            // パターンの名前が違えば何もしない
-            if (!name.Equals(pattern.Name)) {
-                return;
-            }
             // FIXME: Type で分離 ⇒ 処理のパターン決め込みで良い：プラグイン拡張出来るように
             if (type.Equals("drum")) {
                 for (var _idx = 0; _idx < data.NoteTextArray.Length; _idx++) {
@@ -131,7 +127,9 @@ namespace Meowziq.Core {
                     for (var _idx = 0; _idx < data.NoteTextArray.Length; _idx++) {
                         var _noteText = data.NoteTextArray[_idx];
                         var _interval = (data.OctArray[_idx] * 12); // オクターブ設定からインターバル作成
-                        applyMonoNote(position, pattern.BeatCount, key, pattern.AllSpan, _noteText, _interval);
+                        var _pre = data.PreArray[_idx];
+                        var _post = data.PostArray[_idx];
+                        applyMonoNote(position, pattern.BeatCount, key, pattern.AllSpan, _noteText, _interval, _pre, _post);
                     }
                 } else if (chordText != null) {
 
@@ -209,10 +207,8 @@ namespace Meowziq.Core {
                     if (_postArray != null) {
                     }
                     var _gate = Tick.Of16beat.Int32() * (_gateCount + 1); // 音の長さ：+1 は数値文字の分
-                    // シンコぺがある時は直前に1回だけそのchの音を停止する
+                    // シンコぺがある場合は優先発音フラグON
                     if (_prePosition != 0) {
-                        // MEMO: chord の場合1回だけにする
-                        add(new Note((_prePosition + position) + (Tick.Of16beat.Int32() * _16beatIdx), 0, 0, 0, true)); // allNoteOff
                         add(new Note((_prePosition + position) + (Tick.Of16beat.Int32() * _16beatIdx), (int) _noteNum + interval, _gate, 127, true)); // 優先ノート
                     } else {
                         add(new Note((_prePosition + position) + (Tick.Of16beat.Int32() * _16beatIdx), (int) _noteNum + interval, _gate, 127));
