@@ -121,25 +121,22 @@ namespace Meowziq.Core {
                 for (var _idx = 0; _idx < data.NoteTextArray.Length; _idx++) {
                     var _noteText = data.NoteTextArray[_idx];
                     var _pre = data.PreArray[_idx];
-                    var _post = data.PostArray[_idx];
                     applyDrumNote(position, pattern.BeatCount, _noteText, data.PercussionArray[_idx], _pre);
                 }
             }
             if (type.Equals("pad")) {
-                if (data.NoteTextArray != null) { // TODO: 分岐を何とかする
-                    for (var _idx = 0; _idx < data.NoteTextArray.Length; _idx++) {
-                        var _noteText = data.NoteTextArray[_idx];
-                        var _interval = (data.OctArray[_idx] * 12); // オクターブ設定からインターバル作成
-                        var _pre = data.PreArray[_idx];
-                        var _post = data.PostArray[_idx];
-                        applyMonoNote(position, pattern.BeatCount, key, pattern.AllSpan, _noteText, _interval, _pre, _post);
-                    }
-                } else if (chordText != null) {
-
+                for (var _idx = 0; _idx < data.NoteTextArray.Length; _idx++) {
+                    var _noteText = data.NoteTextArray[_idx];
+                    var _interval = (data.OctArray[_idx] * 12); // オクターブ設定からインターバル作成
+                    var _pre = data.PreArray[_idx];
+                    var _post = data.PostArray[_idx];
+                    var _textData = new TextData(_noteText, (int) getDataType());
+                    applyNote(position, pattern.BeatCount, key, pattern.AllSpan, _textData, _interval, _pre, _post);
                 }
             }
             if (type.Equals("bass")) {
-                applyMonoNote(position, pattern.BeatCount, key, pattern.AllSpan, noteText, -24, pre, post);
+                var _textData = new TextData(noteText, (int) getDataType());
+                applyNote(position, pattern.BeatCount, key, pattern.AllSpan, _textData, -24, pre, post);
             }
             if (type.Equals("seque")) {
                 var _all16beatCount = pattern.BeatCount * 4; // この Pattern の16beatの数
@@ -158,11 +155,11 @@ namespace Meowziq.Core {
             }
         }
 
-        protected void applyMonoNote(int position, int beatCount, Key key, List<Span> spanList, string noteText, int interval = 0, string pre = null, string post = null) {
+        protected void applyNote(int position, int beatCount, Key key, List<Span> spanList, TextData textData, int interval = 0, string pre = null, string post = null) {
             var _16beatIdx = 0; // 16beatのindex
             var _spanIdxCount = 0; // 16beatで1拍をカウントする用
             var _spanIdx = 0; // Span リストの添え字
-            var _noteArray = filter(noteText).ToCharArray();
+            var _noteArray = filter(textData.Body).ToCharArray();
             var _preArray = pre == null ? null : filter(pre).ToCharArray(); // TODO: バリデート
             var _postArray = post == null ? null : filter(post).ToCharArray(); // TODO: バリデート
             foreach (var _note in _noteArray) {
@@ -173,16 +170,21 @@ namespace Meowziq.Core {
                     _spanIdxCount = 0; // カウンタリセット
                     _spanIdx++; // Span のindex値をインクリメント
                 }
-                if (Regex.IsMatch(_note.ToString(), @"^[1-7]+$")) { // 1～7まで度数の数値がある時
+                if ((textData.Type == 0 && Regex.IsMatch(_note.ToString(), @"^[1-7]+$")) || (textData.Type == 1 && Regex.IsMatch(_note.ToString(), @"^[1-9]+$"))) { // 1～7まで度数の数値がある時、chord モードは1～9
                     var _span = spanList[_spanIdx];
-                    int _noteNum;
+                    int[] _noteNumArray = new int[7];
+                    _noteNumArray = _noteNumArray.Select(x => x = -1).ToArray(); // -1 で初期化
                     // 曲の旋法と Span の旋法が同じ場合は自動旋法
                     if (_span.KeyMode == _span.Mode) {
-                        _noteNum = Utils.GetNoteWithAutoMode(key, _span.Degree, _span.KeyMode, int.Parse(_note.ToString()));
+                        if (textData.Type == 0) {
+                            _noteNumArray[0] = Utils.GetNoteWithAutoMode(key, _span.Degree, _span.KeyMode, int.Parse(_note.ToString()));
+                        }
                     }
                     // Span に旋法が設定してあればそちらを適用する
                     else {
-                        _noteNum = Utils.GetNoteWithSpanMode(key, _span.Degree, _span.KeyMode, _span.Mode, int.Parse(_note.ToString()));
+                        if (textData.Type == 0) {
+                            _noteNumArray[0] = Utils.GetNoteWithSpanMode(key, _span.Degree, _span.KeyMode, _span.Mode, int.Parse(_note.ToString()));
+                        }
                     }
                     // この音の音価を調査する
                     var _gateCount = 0;
@@ -212,9 +214,13 @@ namespace Meowziq.Core {
                     var _gate = Tick.Of16beat.Int32() * (_gateCount + 1); // 音の長さ：+1 は数値文字の分
                     // シンコぺがある場合は優先発音フラグON
                     if (_prePosition != 0) {
-                        add(new Note((_prePosition + position) + (Tick.Of16beat.Int32() * _16beatIdx), (int) _noteNum + interval, _gate, 127, true)); // 優先ノート
+                        _noteNumArray.Where(x => x != -1).ToList().ForEach(
+                            x => add(new Note((_prePosition + position) + (Tick.Of16beat.Int32() * _16beatIdx), x + interval, _gate, 127, true)) // 優先ノート
+                        );
                     } else {
-                        add(new Note(position + (Tick.Of16beat.Int32() * _16beatIdx), (int) _noteNum + interval, _gate, 127));
+                        _noteNumArray.Where(x => x != -1).ToList().ForEach(
+                            x => add(new Note(position + (Tick.Of16beat.Int32() * _16beatIdx), x + interval, _gate, 127))
+                        );
                     }
                 }
                 _16beatIdx++; // 16beatを進める
@@ -285,6 +291,33 @@ namespace Meowziq.Core {
                         RemoveBy(_note); // ノートを削除
                     }
                 }
+            }
+        }
+
+        int? getDataType() {
+            if (data.NoteTextArray == null && noteText != null && chordText == null) {
+                return 0; // ノートテキストタイプ 
+            } else if (data.NoteTextArray != null && noteText == null && chordText == null) {
+                return 0; // 複合ノートテキストタイプ
+            } else if (data.NoteTextArray == null && noteText == null && chordText != null) {
+                return 1; // コードテキストタイプ 
+            }
+            return null;
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // inner Classes
+
+        protected class TextData {
+            public TextData(string body, int type) {
+                Body = body;
+                Type = type;
+            }
+            public string Body {
+                get;
+            }
+            public int Type {
+                get;
             }
         }
     }

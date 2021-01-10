@@ -103,7 +103,7 @@ namespace Meowziq.View {
                 }
                 lock (locked) {
                     stopping = true;
-                    allSoundOff();
+                    stopSound();
                 }
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
@@ -152,7 +152,7 @@ namespace Meowziq.View {
         /// <summary>
         /// オールサウンドオフ
         /// </summary>
-        async void allSoundOff() {
+        async void stopSound() {
             await Task.Run(() => {
                 for (int _idx = 0; _idx < 15; _idx++) {
                     midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, _idx, 120));
