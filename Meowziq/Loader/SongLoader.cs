@@ -41,7 +41,7 @@ namespace Meowziq.Loader {
                 _song.Name,
                 Key.Enum.Parse(_song.Key),
                 Mode.Enum.Parse(_song.Mode),
-                _song.PatternArray.Select(x => searchPattern(x)).ToList() // 名前で探す
+                _song.PatternArray.Select(x => searchPattern(x)).ToList() // 名前で探して Pattern オブジェクトをリスト化
             );
         }
 
