@@ -48,6 +48,7 @@ namespace Meowziq.Core {
         }
 
         public string Name {
+            get => name;
             set => name = value;
         }
 
@@ -91,6 +92,20 @@ namespace Meowziq.Core {
         /// </summary>
         public void Build(int position, Key key, Pattern pattern) {
             onBuild(position, key, pattern);
+        }
+
+        /// <summary>
+        /// シンコペーションで被る Note を除外します
+        /// </summary>
+        public void RemoveBy(Note target) {
+            noteList = noteList
+                .Where(x => !(!x.StopPre && x.Tick == target.Tick)) // FIXME: ドラムは音毎？
+                .ToList(); // 優先ノートではなく tick が同じものを削除
+            if (target.Gate > Tick.Of8beat.Int32()) { // シンコぺが 符点8分音符 の場合
+                noteList = noteList
+                    .Where(x => !(!x.StopPre && x.Tick == target.Tick + Tick.Of16beat.Int32())) // さらに被る16音符を削除
+                    .ToList();
+            }
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -184,7 +199,7 @@ namespace Meowziq.Core {
                     var _prePosition = 0;
                     if (_preArray != null) {
                         var _pre = _preArray[_16beatIdx];
-                        if (Regex.IsMatch(_pre.ToString(), @"^[1-4]+$")) { // 120 * 4 tick まで
+                        if (Regex.IsMatch(_pre.ToString(), @"^[1-2]+$")) { // 120 * 2 tick まで ⇒ 16分・8分音符のシンコぺのみ
                             var _preInt = int.Parse(_pre.ToString());
                             _gateCount += _preInt; // pre の数値を音価に加算
                             _prePosition = -(Tick.Of16beat.Int32() * _preInt); // pre の数値 * 16beat分前にする
@@ -197,7 +212,7 @@ namespace Meowziq.Core {
                     // シンコぺがある時は直前に1回だけそのchの音を停止する
                     if (_prePosition != 0) {
                         // MEMO: chord の場合1回だけにする
-                        add(new Note((_prePosition + position) + (Tick.Of16beat.Int32() * _16beatIdx), 0, 0, 0, true));
+                        add(new Note((_prePosition + position) + (Tick.Of16beat.Int32() * _16beatIdx), 0, 0, 0, true)); // allNoteOff
                         add(new Note((_prePosition + position) + (Tick.Of16beat.Int32() * _16beatIdx), (int) _noteNum + interval, _gate, 127, true)); // 優先ノート
                     } else {
                         add(new Note((_prePosition + position) + (Tick.Of16beat.Int32() * _16beatIdx), (int) _noteNum + interval, _gate, 127));
@@ -246,20 +261,14 @@ namespace Meowziq.Core {
         // private Methods [verb]
 
         void optimize() {
-            return;
-            // FIXME: 消したい音はこのフレーズではない
-            var _stopNoteArray = noteList.Where(x => x.StopPre).ToList(); // 優先ノートのリスト
-            var _newNoteList = new List<Note>();
-            foreach (var _stopNote in _stopNoteArray) {
-                foreach(var _note in noteList) { // このフレーズの全てのノートの中で
-                    if (_note.Tick == _stopNote.Tick) { // 優先ノートを発音タイミングがかぶったら
-                        // ノートを無視
-                    } else {
-                        _newNoteList.Add(_note);
+            // MEMO: 消したい音はこのフレーズではない場合もある
+            foreach (var _stopNote in noteList.Where(x => x.StopPre)) { // 優先ノートのリスト
+                foreach (var _note in noteList) { // このフレーズの全てのノートの中で
+                    if (_note.Tick == _stopNote.Tick) { // 優先ノートと発音タイミングがかぶったら
+                        RemoveBy(_note); // ノートを削除
                     }
                 }
             }
-            noteList = _newNoteList; // 置き換え
         }
     }
 
