@@ -45,7 +45,9 @@ namespace Meowziq {
             if (note.StopPre) { // ノートが優先発音の場合
                 var _noteOffTick = note.Tick - Tick.Of32beat.Int32(); // 念のため32分音符前に停止
                 if (allNoteOffHashsetArray[midiCh].Add(_noteOffTick)) { // MIDI ch 毎にこの tick のノート強制停止は一回のみ 
-                    add(_noteOffTick, new ChannelMessage(ChannelCommand.Controller, midiCh, 120));
+                    if (midiCh != 9) { // ドラム以外
+                        add(_noteOffTick, new ChannelMessage(ChannelCommand.Controller, midiCh, 120));
+                    }
                 }
             }
             add(note.Tick, new ChannelMessage(ChannelCommand.NoteOn, midiCh, note.Num, 127)); // ノートON

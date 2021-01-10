@@ -68,13 +68,10 @@ namespace Meowziq.Core {
         public void Build() {
             // 音色変更
             Message.Apply(midiCh, programNum);
-
             // 全ての Pattern の Note を MIDI データ化する
             // MEMO: リアルタイム演奏を考える場合、1小節前に全て決まっている必要がある ⇒ シンコぺは？
-
             // MEMO: Phrase は前後の関連があるのでシンコペーションなどで 
-            // MIDI 化前に Note を調整する必要あり
-
+            //       MIDI 化前に Note を調整する必要あり
             // MEMO: Player と Phrase の type が一致ものしか入ってない
 
             // Note データ作成のループ
@@ -86,7 +83,9 @@ namespace Meowziq.Core {
                     if (!_previousPatternName.Equals("")) {
                         var _previousPhraseList = phraseList.Where(x => x.Name.Equals(_previousPatternName)).ToList(); // 一つ前の Phrase を引き当てる
                         if (_previousPhraseList.Count != 0) {
-                            optimize(_previousPhraseList[0], _phrase); // 最適化
+                            if (!type.ToLower().Contains("drum")) { // ドラム以外
+                                optimize(_previousPhraseList[0], _phrase); // 最適化
+                            }
                         }
                     }
                 }
