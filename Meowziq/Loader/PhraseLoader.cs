@@ -6,8 +6,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 
-using Meowziq.Core;
-
 namespace Meowziq.Loader {
     /// <summary>
     /// Phrase のローダークラス
@@ -33,9 +31,14 @@ namespace Meowziq.Loader {
             _phrase.Type = phrase.Type;
             _phrase.Name = phrase.Name;
             _phrase.NoteText = validateValue(phrase.Note);
+            _phrase.ChordText = phrase.Chord; // TODO: バリデート
+            _phrase.Pre = phrase.Pre;
+            _phrase.Post = phrase.Post;
             if (phrase.Data != null) { // 複合データがある場合
                 _phrase.Data.NoteTextArray = phrase.Data.NoteArray.Select(x => validateValue(x)).ToArray();
                 _phrase.Data.OctArray = phrase.Data.OctArray;
+                _phrase.Data.PreArray = phrase.Data.PreArray;
+                _phrase.Data.PostArray = phrase.Data.PostArray;
                 if (phrase.Data.InstArray != null) { // ドラム用音名データがある場合
                     _phrase.Data.PercussionArray = phrase.Data.InstArray.Select(x => Percussion.Enum.Parse(x)).ToArray();
                 }

@@ -16,14 +16,17 @@ namespace Meowziq.Core {
 
         int velo; // NOTE強さ
 
+        bool stopPre; // NOTO発音前に強制停止(ch)
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
-        public Note(int tick, int num, int gate, int velo) {
+        public Note(int tick, int num, int gate, int velo, bool stopPre = false) {
             this.tick = tick;
             this.num = num;
             this.gate = gate;
             this.velo = velo;
+            this.stopPre = stopPre;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -43,6 +46,10 @@ namespace Meowziq.Core {
 
         public int Velo {
             get => velo;
+        }
+
+        public bool StopPre {
+            get => stopPre;
         }
     }
 

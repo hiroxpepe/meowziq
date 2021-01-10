@@ -13,8 +13,6 @@ namespace Meowziq.View {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        Midi midi;
-
         static bool playing = false;
 
         static bool played = false;
@@ -22,6 +20,10 @@ namespace Meowziq.View {
         static bool stopping = false;
 
         static object locked = new object();
+
+        Midi midi;
+
+        string targetPath;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
@@ -78,6 +80,7 @@ namespace Meowziq.View {
                 }
                 lock (locked) {
                     Message.Reset();
+                    textBoxSongName.Text = buildSong(targetPath); // TODO: リロード
                     sequence.Load("./data/default.mid");
                     sequencer.Position = 0;
                     sequencer.Start();
@@ -115,7 +118,8 @@ namespace Meowziq.View {
                 folderBrowserDialog.SelectedPath = AppDomain.CurrentDomain.BaseDirectory;
                 var _dr = folderBrowserDialog.ShowDialog();
                 if (_dr == DialogResult.OK) {
-                    textBoxSongName.Text = buildSong(folderBrowserDialog.SelectedPath);
+                    targetPath = folderBrowserDialog.SelectedPath;
+                    textBoxSongName.Text = buildSong(targetPath);
                 }
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
@@ -150,8 +154,8 @@ namespace Meowziq.View {
         /// </summary>
         async void allSoundOff() {
             await Task.Run(() => {
-                for (int _i = 0; _i < 15; _i++) {
-                    midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, _i, 120));
+                for (int _idx = 0; _idx < 15; _idx++) {
+                    midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, _idx, 120));
                 }
                 stopping = false;
                 playing = false;
