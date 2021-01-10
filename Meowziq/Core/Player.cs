@@ -80,7 +80,7 @@ namespace Meowziq.Core {
                     }
                     _noteList.Clear(); // 必要
                 }
-                var _tick = _pattern.BeatCount * Tick.Of4Beat.Int32();
+                var _tick = _pattern.BeatCount * Tick.Of4beat.Int32();
                 _position += _tick; // Pattern の長さ分ポジションを移動する
             }
         }

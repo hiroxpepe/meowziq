@@ -76,7 +76,11 @@ namespace Meowziq.Core {
         /// 全ての Note
         /// </summary>
         public List<Note> AllNote {
-            get => noteList;
+            get {
+                // TODO: 最適化する
+                optimize();
+                return noteList;
+            }
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -103,24 +107,23 @@ namespace Meowziq.Core {
             // FIXME: Type で分離 ⇒ 処理のパターン決め込みで良い：プラグイン拡張出来るように
             if (type.Equals("drum")) {
                 for (var _idx = 0; _idx < data.NoteTextArray.Length; _idx++) {
-                    var _text = data.NoteTextArray[_idx];
-                    applyDrumNote(position, pattern.BeatCount, _text, data.PercussionArray[_idx]);
+                    var _noteText = data.NoteTextArray[_idx];
+                    applyDrumNote(position, pattern.BeatCount, _noteText, data.PercussionArray[_idx]);
                 }
             }
             if (type.Equals("pad")) {
                 if (data.NoteTextArray != null) { // TODO: 分岐を何とかする
                     for (var _idx = 0; _idx < data.NoteTextArray.Length; _idx++) {
-                        var _text = data.NoteTextArray[_idx];
-                        var _interval = (data.OctArray[_idx] * 12);
-                        applyMonoNote(position, pattern.BeatCount, key, pattern.AllSpan, _text, _interval);
+                        var _noteText = data.NoteTextArray[_idx];
+                        var _interval = (data.OctArray[_idx] * 12); // オクターブ設定からインターバル作成
+                        applyMonoNote(position, pattern.BeatCount, key, pattern.AllSpan, _noteText, _interval);
                     }
                 } else if (chordText != null) {
 
                 }
             }
             if (type.Equals("bass")) {
-                var _text = noteText;
-                applyMonoNote(position, pattern.BeatCount, key, pattern.AllSpan, _text, -24);
+                applyMonoNote(position, pattern.BeatCount, key, pattern.AllSpan, noteText, -24, pre, post);
             }
             if (type.Equals("seque")) {
                 var _all16beatCount = pattern.BeatCount * 4; // この Pattern の16beatの数
@@ -133,18 +136,20 @@ namespace Meowziq.Core {
                     }
                     var _span = pattern.AllSpan[_spanIdx];
                     var _note = Utils.GetRandomNote(key, _span.Degree, _span.Mode); // 16の倍数
-                    add(new Note(position + (Tick.Of16Beat.Int32() * _16beatIdx), _note, 30, 127)); // gate 短め
+                    add(new Note(position + (Tick.Of16beat.Int32() * _16beatIdx), _note, 30, 127)); // gate 短め
                     _spanIdxCount++; // Span 用のカウンタも進める
                 }
             }
         }
 
-        protected void applyMonoNote(int position, int beatCount, Key key, List<Span> spanList, string target, int interval = 0) {
+        protected void applyMonoNote(int position, int beatCount, Key key, List<Span> spanList, string noteText, int interval = 0, string pre = null, string post = null) {
             var _16beatIdx = 0; // 16beatのindex
             var _spanIdxCount = 0; // 16beatで1拍をカウントする用
             var _spanIdx = 0; // Span リストの添え字
-            var _valueArray = filter(target).ToCharArray();
-            foreach (var _value in _valueArray) {
+            var _noteArray = filter(noteText).ToCharArray();
+            var _preArray = pre == null ? null : filter(pre).ToCharArray(); // TODO: バリデート
+            var _postArray = post == null ? null : filter(post).ToCharArray(); // TODO: バリデート
+            foreach (var _note in _noteArray) {
                 if (_16beatIdx > beatCount * 4) {
                     return; // Pattern の長さを超えたら終了
                 }
@@ -152,22 +157,22 @@ namespace Meowziq.Core {
                     _spanIdxCount = 0; // カウンタリセット
                     _spanIdx++; // Span のindex値をインクリメント
                 }
-                if (Regex.IsMatch(_value.ToString(), @"^[1-7]+$")) { // 1～7まで度数の数値がある時
+                if (Regex.IsMatch(_note.ToString(), @"^[1-7]+$")) { // 1～7まで度数の数値がある時
                     var _span = spanList[_spanIdx];
                     int _noteNum;
                     // 曲の旋法と Span の旋法が同じ場合は自動旋法
                     if (_span.KeyMode == _span.Mode) {
-                        _noteNum = Utils.GetNoteWithAutoMode(key, _span.Degree, _span.KeyMode, int.Parse(_value.ToString()));
+                        _noteNum = Utils.GetNoteWithAutoMode(key, _span.Degree, _span.KeyMode, int.Parse(_note.ToString()));
                     }
                     // Span に旋法が設定してあればそちらを適用する
                     else {
-                        _noteNum = Utils.GetNoteWithSpanMode(key, _span.Degree, _span.KeyMode, _span.Mode, int.Parse(_value.ToString()));
+                        _noteNum = Utils.GetNoteWithSpanMode(key, _span.Degree, _span.KeyMode, _span.Mode, int.Parse(_note.ToString()));
                     }
                     // この音の音価を調査する
                     var _gateCount = 0;
                     var _all16beatCount = (beatCount * 4); // このパターンの16beatの数
-                    for (var _idx = _16beatIdx + 1; _idx < _all16beatCount; _idx++) { // +1 は数値文字の分
-                        var _search = _valueArray[_idx];
+                    for (var _searchIdx = _16beatIdx + 1; _searchIdx < _all16beatCount; _searchIdx++) { // +1 は数値文字の分
+                        var _search = _noteArray[_searchIdx];
                         if (_search.Equals('>')) {
                             _gateCount++; // 16beat分長さを伸ばす
                         }
@@ -175,22 +180,42 @@ namespace Meowziq.Core {
                             break; // '>' が途切れたら終了
                         }
                     }
-                    var _gate = Tick.Of16Beat.Int32() * (_gateCount + 1); // 音の長さ：+1 は数値文字の分
-                    add(new Note(position + (Tick.Of16Beat.Int32() * _16beatIdx), (int) _noteNum + interval, _gate, 127));
+                    // シンコペーション
+                    var _prePosition = 0;
+                    if (_preArray != null) {
+                        var _pre = _preArray[_16beatIdx];
+                        if (Regex.IsMatch(_pre.ToString(), @"^[1-4]+$")) { // 120 * 4 tick まで
+                            var _preInt = int.Parse(_pre.ToString());
+                            _gateCount += _preInt; // pre の数値を音価に加算
+                            _prePosition = -(Tick.Of16beat.Int32() * _preInt); // pre の数値 * 16beat分前にする
+                        }
+                    }
+                    // TODO: 最後の音を伸ばす
+                    if (_postArray != null) {
+                    }
+                    var _gate = Tick.Of16beat.Int32() * (_gateCount + 1); // 音の長さ：+1 は数値文字の分
+                    // シンコぺがある時は直前に1回だけそのchの音を停止する
+                    if (_prePosition != 0) {
+                        // MEMO: chord の場合1回だけにする
+                        add(new Note((_prePosition + position) + (Tick.Of16beat.Int32() * _16beatIdx), 0, 0, 0, true));
+                        add(new Note((_prePosition + position) + (Tick.Of16beat.Int32() * _16beatIdx), (int) _noteNum + interval, _gate, 127, true)); // 優先ノート
+                    } else {
+                        add(new Note((_prePosition + position) + (Tick.Of16beat.Int32() * _16beatIdx), (int) _noteNum + interval, _gate, 127));
+                    }
                 }
                 _16beatIdx++; // 16beatを進める
                 _spanIdxCount++; // Span 用のカウンタも進める
             }
         }
 
-        protected void applyDrumNote(int position, int beatCount, string target, Percussion noteNum) {
+        protected void applyDrumNote(int position, int beatCount, string noteText, Percussion noteNum) {
             var _16beatIdx = 0;
-            foreach (bool? _value in convertToBool(filter(target))) {
+            foreach (bool? _note in convertToBool(filter(noteText))) {
                 if (_16beatIdx > beatCount * 4) {
                     return; // Pattern の長さを超えたら終了
                 }
-                if (_value == true) {
-                    add(new Note(position + (Tick.Of16Beat.Int32() * _16beatIdx), (int) noteNum, 120, 127));
+                if (_note == true) {
+                    add(new Note(position + (Tick.Of16beat.Int32() * _16beatIdx), (int) noteNum, 120, 127));
                 }
                 _16beatIdx++; // 16beatを進める
             }
@@ -215,6 +240,26 @@ namespace Meowziq.Core {
                 }
             });
             return _list;
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private Methods [verb]
+
+        void optimize() {
+            return;
+            // FIXME: 消したい音はこのフレーズではない
+            var _stopNoteArray = noteList.Where(x => x.StopPre).ToList(); // 優先ノートのリスト
+            var _newNoteList = new List<Note>();
+            foreach (var _stopNote in _stopNoteArray) {
+                foreach(var _note in noteList) { // このフレーズの全てのノートの中で
+                    if (_note.Tick == _stopNote.Tick) { // 優先ノートを発音タイミングがかぶったら
+                        // ノートを無視
+                    } else {
+                        _newNoteList.Add(_note);
+                    }
+                }
+            }
+            noteList = _newNoteList; // 置き換え
         }
     }
 
@@ -283,7 +328,7 @@ namespace Meowziq.Core {
                 checkValue();
                 if (value == null) {
                     preArray = new string[noteTextArray.Length];
-                    preArray.Select(x => x = "-"); // 初期設定を自動生成
+                    preArray.Select(x => x = null); // 初期設定を自動生成
                 } else if (value.Length != noteTextArray.Length) {
                     throw new ArgumentException("preArray must be same count as noteTextArray.");
                 } else {
@@ -302,7 +347,7 @@ namespace Meowziq.Core {
                 checkValue();
                 if (value == null) {
                     postArray = new string[noteTextArray.Length];
-                    postArray.Select(x => x = "-"); // 初期設定を自動生成
+                    postArray.Select(x => x = null); // 初期設定を自動生成
                 } else if (value.Length != noteTextArray.Length) {
                     throw new ArgumentException("postArray must be same count as noteTextArray.");
                 } else {

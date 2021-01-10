@@ -32,6 +32,9 @@ namespace Meowziq {
         }
 
         public static void Apply(int midiCh, Note note) {
+            if (note.StopPre) { // このchのノート強制停止 FIXME: 同じ tick で鳴らされると停止出来ない ⇒ 検索して削除する？
+                add(note.Tick - (Tick.Of32beat.Int32() ), new ChannelMessage(ChannelCommand.Controller, midiCh, 120));
+            }
             add(note.Tick, new ChannelMessage(ChannelCommand.NoteOn, midiCh, note.Num, 127)); // ノートON
             add(note.Tick + note.Gate, new ChannelMessage(ChannelCommand.NoteOff, midiCh, note.Num, 0)); // ノートOFF
         }

@@ -7,11 +7,11 @@ namespace Meowziq {
     // public Enums [noun]
 
     public enum Tick {
-        Of4Beat = 480,
-        Of8Beat = 240,
-        Of16Beat = 120,
-        Of32Beat = 60,
-        Of64Beat = 30,
+        Of4beat = 480,
+        Of8beat = 240,
+        Of16beat = 120,
+        Of32beat = 60,
+        Of64beat = 30,
     }
 
     public enum Key {
