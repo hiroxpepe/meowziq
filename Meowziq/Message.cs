@@ -1,5 +1,6 @@
 ﻿
 using System.Collections.Generic;
+using System.Linq;
 using Sanford.Multimedia.Midi;
 
 using Meowziq.Core;
@@ -17,6 +18,15 @@ namespace Meowziq {
 
         static HashSet<int> hashset = new HashSet<int>(); // カーソル役
 
+        static HashSet<int>[] allNoteOffHashsetArray = new HashSet<int>[16]; // ノート強制停止用配列
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Constructor
+
+        static Message() {
+            allNoteOffHashsetArray = allNoteOffHashsetArray.Select(x => x = new HashSet<int>()).ToArray();
+        }
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]
 
@@ -32,8 +42,11 @@ namespace Meowziq {
         }
 
         public static void Apply(int midiCh, Note note) {
-            if (note.StopPre) { // このchのノート強制停止
-                add(note.Tick - (Tick.Of32beat.Int32() ), new ChannelMessage(ChannelCommand.Controller, midiCh, 120));
+            if (note.StopPre) { // ノートが優先発音の場合
+                var _noteOffTick = note.Tick - Tick.Of32beat.Int32(); // 念のため32分音符前に停止
+                if (allNoteOffHashsetArray[midiCh].Add(_noteOffTick)) { // MIDI ch 毎にこの tick のノート強制停止は一回のみ 
+                    add(_noteOffTick, new ChannelMessage(ChannelCommand.Controller, midiCh, 120));
+                }
             }
             add(note.Tick, new ChannelMessage(ChannelCommand.NoteOn, midiCh, note.Num, 127)); // ノートON
             add(note.Tick + note.Gate, new ChannelMessage(ChannelCommand.NoteOff, midiCh, note.Num, 0)); // ノートOFF
@@ -52,6 +65,7 @@ namespace Meowziq {
         public static void Reset() {
             item.Clear();
             hashset.Clear();
+            allNoteOffHashsetArray.ToList().ForEach(x => x.Clear());
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

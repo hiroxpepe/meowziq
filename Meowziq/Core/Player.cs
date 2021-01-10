@@ -75,26 +75,28 @@ namespace Meowziq.Core {
             // MEMO: Phrase は前後の関連があるのでシンコペーションなどで 
             // MIDI 化前に Note を調整する必要あり
 
+            // MEMO: Player と Phrase の type が一致ものしか入ってない
+
             // Note データ作成のループ
             var _position = 0;
-            var _previousPhraseName = "";
-            foreach (Pattern _pattern in song.AllPattern) { // 演奏順に並んだ Pattern のリスト      
-                foreach (Phrase _phrase in phraseList.Where(x => x.Name.Equals(_pattern.Name))) { // Player と Phrase の type が一致ものしか入ってない
+            var _previousPatternName = "";
+            foreach (var _pattern in song.AllPattern) { // 演奏順に並んだ Pattern のリスト      
+                foreach (var _phrase in phraseList.Where(x => x.Name.Equals(_pattern.Name))) { // Pattern の名前で Phrase を引き当てる
                     _phrase.Build(_position, song.Key, _pattern); // Note データを作成：tick 毎に数回分の Pattern のデータが作成される
-                    if (!_previousPhraseName.Equals("")) {
-                        var _previousPhraseList = phraseList.Where(x => x.Name.Equals(_previousPhraseName)).ToList();
+                    if (!_previousPatternName.Equals("")) {
+                        var _previousPhraseList = phraseList.Where(x => x.Name.Equals(_previousPatternName)).ToList(); // 一つ前の Phrase を引き当てる
                         if (_previousPhraseList.Count != 0) {
                             optimize(_previousPhraseList[0], _phrase); // 最適化
                         }
                     }
                 }
-                _previousPhraseName = _pattern.Name; // 次の直前のフレーズ名を保持
+                _previousPatternName = _pattern.Name; // 次の直前のフレーズ名を保持
                 var _tick = _pattern.BeatCount * Tick.Of4beat.Int32();
                 _position += _tick; // Pattern の長さ分ポジションを移動する
             }
             // Note データ適用のループ
-            foreach (Pattern _pattern in song.AllPattern) { // 演奏順に並んだ Pattern のリスト
-                foreach (Phrase _phrase in phraseList.Where(x => x.Name.Equals(_pattern.Name))) {
+            foreach (var _pattern in song.AllPattern) { // 演奏順に並んだ Pattern のリスト
+                foreach (var _phrase in phraseList.Where(x => x.Name.Equals(_pattern.Name))) { // Pattern の名前で Phrase を引き当てる
                     var _noteList = _phrase.AllNote;
                     foreach (Note _note in _noteList) {
                         Message.Apply(midiCh, _note); // message に適用
