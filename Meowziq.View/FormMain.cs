@@ -64,6 +64,12 @@ namespace Meowziq.View {
                         textBoxDegree.Text = _item.Degree;
                         textBoxKeyMode.Text = _item.KeyMode;
                         textBoxSpanMode.Text = _item.SpanMode;
+                        if (_item.KeyMode == _item.SpanMode) { // 自動旋法
+                            var _autoMode = Utils.ModeBy(Degree.Enum.Parse(_item.Degree), Mode.Enum.Parse(_item.KeyMode));
+                            textBoxAutoMode.Text = _autoMode.ToString();
+                        } else {
+                            textBoxAutoMode.Text = "---";
+                        }
                     }));
                 }
                 // メッセージのリストを取得
@@ -184,6 +190,7 @@ namespace Meowziq.View {
                     textBoxDegree.Text = "---";
                     textBoxKeyMode.Text = "---";
                     textBoxSpanMode.Text = "---";
+                    textBoxAutoMode.Text = "---";
                 }));
             });
         }
