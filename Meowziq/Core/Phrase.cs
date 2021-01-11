@@ -130,13 +130,13 @@ namespace Meowziq.Core {
                     var _interval = (data.OctArray[_idx] * 12); // オクターブ設定からインターバル作成
                     var _pre = data.PreArray[_idx];
                     var _post = data.PostArray[_idx];
-                    var _textData = new TextData(_noteText, (int) getDataType());
-                    applyNote(position, pattern.BeatCount, key, pattern.AllSpan, _textData, _interval, _pre, _post);
+                    var _text = new Text(_noteText, getDataType());
+                    applyNote(position, pattern.BeatCount, key, pattern.AllSpan, _text, _interval, _pre, _post);
                 }
             }
             if (type.Equals("bass")) {
-                var _textData = new TextData(noteText, (int) getDataType());
-                applyNote(position, pattern.BeatCount, key, pattern.AllSpan, _textData, -24, pre, post);
+                var _text = new Text(noteText, getDataType());
+                applyNote(position, pattern.BeatCount, key, pattern.AllSpan, _text, -24, pre, post);
             }
             if (type.Equals("seque")) {
                 var _all16beatCount = pattern.BeatCount * 4; // この Pattern の16beatの数
@@ -155,11 +155,11 @@ namespace Meowziq.Core {
             }
         }
 
-        protected void applyNote(int position, int beatCount, Key key, List<Span> spanList, TextData textData, int interval = 0, string pre = null, string post = null) {
+        protected void applyNote(int position, int beatCount, Key key, List<Span> spanList, Text text, int interval = 0, string pre = null, string post = null) {
             var _16beatIdx = 0; // 16beatのindex
             var _spanIdxCount = 0; // 16beatで1拍をカウントする用
             var _spanIdx = 0; // Span リストの添え字
-            var _noteArray = filter(textData.Body).ToCharArray();
+            var _noteArray = filter(text.Body).ToCharArray();
             var _preArray = pre == null ? null : filter(pre).ToCharArray(); // TODO: バリデート
             var _postArray = post == null ? null : filter(post).ToCharArray(); // TODO: バリデート
             foreach (var _note in _noteArray) {
@@ -170,19 +170,19 @@ namespace Meowziq.Core {
                     _spanIdxCount = 0; // カウンタリセット
                     _spanIdx++; // Span のindex値をインクリメント
                 }
-                if ((textData.Type == 0 && Regex.IsMatch(_note.ToString(), @"^[1-7]+$")) || (textData.Type == 1 && Regex.IsMatch(_note.ToString(), @"^[1-9]+$"))) { // 1～7まで度数の数値がある時、chord モードは1～9
+                if (((text.Type == DataType.NoteMono || text.Type == DataType.NoteMulti) && Regex.IsMatch(_note.ToString(), @"^[1-7]+$")) || (text.Type == DataType.Chord && Regex.IsMatch(_note.ToString(), @"^[1-9]+$"))) { // 1～7まで度数の数値がある時、chord モードは1～9
                     var _span = spanList[_spanIdx];
                     int[] _noteNumArray = new int[7];
                     _noteNumArray = _noteNumArray.Select(x => x = -1).ToArray(); // -1 で初期化
                     // 曲の旋法と Span の旋法が同じ場合は自動旋法
                     if (_span.KeyMode == _span.Mode) {
-                        if (textData.Type == 0) {
+                        if (text.Type == DataType.NoteMono || text.Type == DataType.NoteMulti) {
                             _noteNumArray[0] = Utils.GetNoteByAutoMode(key, _span.Degree, _span.KeyMode, int.Parse(_note.ToString()));
                         }
                     }
                     // Span に旋法が設定してあればそちらを適用する
                     else {
-                        if (textData.Type == 0) {
+                        if (text.Type == DataType.NoteMono || text.Type == DataType.NoteMulti) {
                             _noteNumArray[0] = Utils.GetNoteBySpanMode(key, _span.Degree, _span.KeyMode, _span.Mode, int.Parse(_note.ToString()));
                         }
                     }
@@ -294,29 +294,45 @@ namespace Meowziq.Core {
             }
         }
 
-        int? getDataType() {
-            if (data.NoteTextArray == null && noteText != null && chordText == null) {
-                return 0; // ノートテキストタイプ 
-            } else if (data.NoteTextArray != null && noteText == null && chordText == null) {
-                return 0; // 複合ノートテキストタイプ
-            } else if (data.NoteTextArray == null && noteText == null && chordText != null) {
-                return 1; // コードテキストタイプ 
+        /// <summary>
+        /// json に記述されたデータのタイプを判定します
+        /// </summary>
+        DataType getDataType() {
+            if (data.NoteTextArray == null && noteText != null && chordText == null && data.PercussionArray == null) {
+                return DataType.NoteMono; // 単体ノート記述 
+            } else if (data.NoteTextArray != null && noteText == null && chordText == null && data.PercussionArray == null) {
+                return DataType.NoteMulti; // 複合ノート記述
+            } else if (data.NoteTextArray == null && noteText == null && chordText != null && data.PercussionArray == null) {
+                return DataType.Chord; // コード記述
+            } else if (data.NoteTextArray != null && noteText == null && chordText == null && data.PercussionArray != null) {
+                return DataType.Drum; // ドラム記述 
+            } else if (data.NoteTextArray == null && noteText == null && chordText == null && data.PercussionArray == null) {
+                return DataType.Sequence; // TODO: 暫定
             }
-            return null;
+            throw new ArgumentException("not understandable DataType.");
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // inner Classes
 
-        protected class TextData {
-            public TextData(string body, int type) {
+        protected class Text {
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // Constructor
+
+            public Text(string body, DataType type) {
                 Body = body;
                 Type = type;
             }
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // Properties [noun, adjectives] 
+
             public string Body {
                 get;
             }
-            public int Type {
+
+            public DataType Type {
                 get;
             }
         }
