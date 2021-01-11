@@ -17,8 +17,11 @@ namespace Meowziq {
         /// 1～9の Phrase コード記法から Note No の配列を取得します
         /// ※自動的に旋法を決定する場合
         /// </summary>
-        public static int GetNoteArrayByAutoMode(Key key, Degree degree, Mode keyMode, int index) {
-            return 0;
+        public static int[] GetNoteArrayByAutoMode(Key key, Degree degree, Mode keyMode, int index) {
+            int _noteOfDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
+            Mode _modeOfDegree = modeBy(degree, keyMode); // キーの旋法と度数から旋法に対応したその度数の旋法を取得
+            int[] _scale7 = scale7By(Key.Enum.Parse(_noteOfDegree), _modeOfDegree); // そのルート音の旋法スケールを取得
+            return noteArry(index, _scale7); // 旋法スケールから引数indexに対応したコード構成音の配列を返す
         }
 
         /// <summary>
@@ -26,14 +29,10 @@ namespace Meowziq {
         /// ※自動的に旋法を決定する場合
         /// </summary>
         public static int GetNoteByAutoMode(Key key, Degree degree, Mode keyMode, int index) {
-            // 曲のキーの度数と旋法から度数のルート音を取得
-            int _noteOfDegree = noteRoot(key, degree, keyMode); // FIXME: 曲の旋法？
-            // キーの旋法と度数から旋法に対応したその度数の旋法を取得
-            Mode _modeOfDegree = modeBy(degree, keyMode);
-            // そのルート音の旋法スケールを取得
-            int[] _scale7 = scale7By(Key.Enum.Parse(_noteOfDegree), _modeOfDegree);
-            // 0基底の配列から引数添え字の要素を返す
-            return _scale7[index - 1];
+            int _noteOfDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
+            Mode _modeOfDegree = modeBy(degree, keyMode); // キーの旋法と度数から旋法に対応したその度数の旋法を取得
+            int[] _scale7 = scale7By(Key.Enum.Parse(_noteOfDegree), _modeOfDegree); // そのルート音の旋法スケールを取得
+            return _scale7[index - 1]; // 0基底のスケール配列から引数添え字のノートを返す
         }
 
         /// <summary>
@@ -41,12 +40,9 @@ namespace Meowziq {
         /// ※Span の旋法を適用する場合
         /// </summary>
         public static int GetNoteBySpanMode(Key key, Degree degree, Mode keyMode, Mode spanMode, int index) {
-            // 曲のキーの度数と旋法から度数のルート音を取得
-            int _noteOfDegree = Utils.noteRoot(key, degree, keyMode); // FIXME: 曲の旋法？
-            // そのルート音の旋法スケールを取得※Span に設定した旋法を使用
-            int[] _scale7 = scale7By(Key.Enum.Parse(_noteOfDegree), spanMode);
-            // 0基底の配列から引数添え字の要素を返す
-            return _scale7[index - 1];
+            int _noteOfDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
+            int[] _scale7 = scale7By(Key.Enum.Parse(_noteOfDegree), spanMode); // そのルート音の旋法スケールを取得※Span に設定した旋法を使用
+            return _scale7[index - 1]; // 0基底のスケール配列から引数添え字のノートを返す
         }
 
         /// <summary>
@@ -59,7 +55,53 @@ namespace Meowziq {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private static Methods [verb]
 
-        static int noteRoot(Key key, Degree degree, Mode mode) {
+        /// <summary>
+        /// 1～9のコード記法から Note No の配列を返します
+        /// </summary>
+        static int[] noteArry(int index, int[] scale7) {
+            // TODO: バリデート
+            int[] _note2 = new int[2]; // chord 構成音の2音
+            int[] _note3 = new int[3]; // chord 構成音の3音
+            int[] _note4 = new int[4]; // chord 構成音の4音
+            switch (index) {
+                case 3: // e.g. C, Cm, Cm(b5)
+                    _note3[0] = scale7[1 - 1];
+                    _note3[1] = scale7[3 - 1];
+                    _note3[2] = scale7[5 - 1];
+                    return _note3;
+                case 4: // e.g. C(#4), Csus4, Csus4(-5)
+                    _note3[0] = scale7[1 - 1];
+                    _note3[1] = scale7[4 - 1];
+                    _note3[2] = scale7[5 - 1];
+                    return _note3;
+                case 5: // e.g. C5(no3), C(-5,no3)
+                    _note2[0] = scale7[1 - 1];
+                    _note2[1] = scale7[5 - 1];
+                    return _note2;
+                case 6: // e.g. C6, Cm6, Cm(b6), Cm(-5,b6)
+                    _note4[0] = scale7[1 - 1];
+                    _note4[1] = scale7[3 - 1];
+                    _note4[2] = scale7[5 - 1];
+                    _note4[3] = scale7[6 - 1];
+                    return _note4;
+                case 7: // e.g. CM7, C7, Cm7, Cm7(-5)
+                    _note4[0] = scale7[1 - 1];
+                    _note4[1] = scale7[3 - 1];
+                    _note4[2] = scale7[5 - 1];
+                    _note4[3] = scale7[7 - 1];
+                    return _note4;
+                case 9: // e.g. Cadd9, Cmadd9, Cm(b9), Cm(-5,b9)
+                    _note4[0] = scale7[1 - 1];
+                    _note4[1] = scale7[3 - 1];
+                    _note4[2] = scale7[5 - 1];
+                    _note4[3] = scale7[2 - 1] + 12; // 1オクターブ上
+                    return _note4;
+                default:
+                    throw new ArgumentException("invalid index.");
+            }
+        }
+
+        static int noteRootBy(Key key, Degree degree, Mode mode) {
             if (!key.Validate()) {
                 throw new ArgumentException("not key.");
             }
@@ -73,7 +115,7 @@ namespace Meowziq {
             return _scale7[(int) degree];
         }
 
-        static int[] note3(Key key, Degree degree, Mode mode) {
+        static int[] note3By(Key key, Degree degree, Mode mode) {
             if (!key.Validate()) {
                 throw new ArgumentException("not key.");
             }
@@ -125,7 +167,7 @@ namespace Meowziq {
             return _note3;
         }
 
-        static int[] note4(Key key, Degree degree, Mode mode) {
+        static int[] note4By(Key key, Degree degree, Mode mode) {
             if (!key.Validate()) {
                 throw new ArgumentException("not key.");
             }
@@ -184,13 +226,12 @@ namespace Meowziq {
             return _note4;
         }
 
-        // TODO: 5音を取り出すメソッド
-        // TODO: 7モードのペンタトニック
+        // TODO: 5音を取り出すメソッド：7モードのペンタトニック
 
         /// <summary>
         /// MEMO: 有効？
         /// </summary>
-        static int[] note7(Key key, Degree degree, Mode mode) {
+        static int[] note7By(Key key, Degree degree, Mode mode) {
             if (!key.Validate()) {
                 throw new ArgumentException("not key.");
             }
@@ -496,7 +537,7 @@ namespace Meowziq {
         /// そのキーのルートコードのモードスケール ノートを返す
         /// </summary>
         static int noteOfRandomByModeScaleOf3(Key key, Degree degree, Mode mode) {
-            int[] _scale = note3(key, degree, mode); // 3音
+            int[] _scale = note3By(key, degree, mode); // 3音
             int _random = random.Next(0, 3);
             return _scale[_random]; // 0 から 2
         }
