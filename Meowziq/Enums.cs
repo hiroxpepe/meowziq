@@ -6,6 +6,14 @@ namespace Meowziq {
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // public Enums [noun]
 
+    public enum DataType {
+        NoteMono = 0,
+        NoteMulti = 1,
+        Chord = 2,
+        Drum = 3,
+        Sequence = 4,
+    }
+
     public enum Tick {
         Of4beat = 480,
         Of8beat = 240,
@@ -300,14 +308,12 @@ namespace Meowziq {
             return (int) self;
         }
 
-        public static bool Validate(this Key self) {
+        public static void Validate(this Key self) {
             switch (self) {
                 case Key.Undefined:
-                    return false;
+                    throw new ArgumentException("not key.");
                 case Key.Enum:
-                    return false;
-                default:
-                    return true;
+                    throw new ArgumentException("not key.");
             }
         }
 
@@ -376,14 +382,12 @@ namespace Meowziq {
             }
         }
 
-        public static bool Validate(this Degree self) {
+        public static void Validate(this Degree self) {
             switch (self) {
                 case Degree.Undefined:
-                    return false;
+                    throw new ArgumentException("not degree.");
                 case Degree.Enum:
-                    return false;
-                default:
-                    return true;
+                    throw new ArgumentException("not degree.");
             }
         }
 
@@ -408,14 +412,12 @@ namespace Meowziq {
             }
         }
 
-        public static bool Validate(this Mode self) {
+        public static void Validate(this Mode self) {
             switch (self) {
                 case Mode.Undefined:
-                    return false;
+                    throw new ArgumentException("not mode.");
                 case Mode.Enum:
-                    return false;
-                default:
-                    return true;
+                    throw new ArgumentException("not mode.");
             }
         }
 

@@ -21,7 +21,7 @@ namespace Meowziq {
             int _noteOfDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
             Mode _modeOfDegree = modeBy(degree, keyMode); // キーの旋法と度数から旋法に対応したその度数の旋法を取得
             int[] _scale7 = scale7By(Key.Enum.Parse(_noteOfDegree), _modeOfDegree); // そのルート音の旋法スケールを取得
-            return noteArry(index, _scale7); // 旋法スケールから引数indexに対応したコード構成音の配列を返す
+            return noteArryBy(index, _scale7); // 旋法スケールから引数indexに対応したコード構成音の配列を返す
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace Meowziq {
         /// <summary>
         /// 1～9のコード記法から Note No の配列を返します
         /// </summary>
-        static int[] noteArry(int index, int[] scale7) {
+        static int[] noteArryBy(int index, int[] scale7) {
             // TODO: バリデート
             int[] _note2 = new int[2]; // chord 構成音の2音
             int[] _note3 = new int[3]; // chord 構成音の3音
@@ -102,29 +102,17 @@ namespace Meowziq {
         }
 
         static int noteRootBy(Key key, Degree degree, Mode mode) {
-            if (!key.Validate()) {
-                throw new ArgumentException("not key.");
-            }
-            if (!degree.Validate()) {
-                throw new ArgumentException("not degree.");
-            }
-            if (!mode.Validate()) {
-                throw new ArgumentException("not mode.");
-            }
+            key.Validate();
+            degree.Validate();
+            mode.Validate();
             int[] _scale7 = scale7By(key, mode);
             return _scale7[(int) degree];
         }
 
         static int[] note3By(Key key, Degree degree, Mode mode) {
-            if (!key.Validate()) {
-                throw new ArgumentException("not key.");
-            }
-            if (!degree.Validate()) {
-                throw new ArgumentException("not degree.");
-            }
-            if (!mode.Validate()) {
-                throw new ArgumentException("not mode.");
-            }
+            key.Validate();
+            degree.Validate();
+            mode.Validate();
             int[] _scale7 = scale7By(key, mode);
             int[] _note3 = new int[3]; // コード構成音の3音を抽出
             switch (degree) {
@@ -168,15 +156,9 @@ namespace Meowziq {
         }
 
         static int[] note4By(Key key, Degree degree, Mode mode) {
-            if (!key.Validate()) {
-                throw new ArgumentException("not key.");
-            }
-            if (!degree.Validate()) {
-                throw new ArgumentException("not degree.");
-            }
-            if (!mode.Validate()) {
-                throw new ArgumentException("not mode.");
-            }
+            key.Validate();
+            degree.Validate();
+            mode.Validate();
             int[] _scale7 = scale7By(key, mode);
             int[] _note4 = new int[4]; // コード構成音の4音を抽出
             switch (degree) {
@@ -232,15 +214,9 @@ namespace Meowziq {
         /// MEMO: 有効？
         /// </summary>
         static int[] note7By(Key key, Degree degree, Mode mode) {
-            if (!key.Validate()) {
-                throw new ArgumentException("not key.");
-            }
-            if (!degree.Validate()) {
-                throw new ArgumentException("not degree.");
-            }
-            if (!mode.Validate()) {
-                throw new ArgumentException("not mode.");
-            }
+            key.Validate();
+            degree.Validate();
+            mode.Validate();
             int[] _scale7 = scale7By(key, mode);
             int[] _note7 = new int[7]; // コード構成音の7音を抽出
             switch (degree) {
@@ -315,77 +291,73 @@ namespace Meowziq {
         /// キーと旋法からモードスケールを返します
         /// </summary>
         static int[] scale7By(Key key, Mode mode) {
-            if (!key.Validate()) {
-                throw new ArgumentException("not key.");
-            }
-            if (!mode.Validate()) {
-                throw new ArgumentException("not mode.");
-            }
+            key.Validate();
+            mode.Validate();
             int _noteRoot = (int) key;
-            int[] _scale7 = new int[7]; // 7音を作成
+            int[] _scale7 = new int[7]; // 7音の旋法を作成
             switch (mode) {
                 case Mode.Lyd:
-                    _scale7[0] = _noteRoot; // I
-                    _scale7[1] = _noteRoot + 2; // II
-                    _scale7[2] = _noteRoot + 4; // III
-                    _scale7[3] = _noteRoot + 6; // IV
-                    _scale7[4] = _noteRoot + 7; // V
-                    _scale7[5] = _noteRoot + 9; // VI
-                    _scale7[6] = _noteRoot + 11; // VII
+                    _scale7[0] = _noteRoot; // 1
+                    _scale7[1] = _noteRoot + 2; // 2
+                    _scale7[2] = _noteRoot + 4; // 3
+                    _scale7[3] = _noteRoot + 6; // #4
+                    _scale7[4] = _noteRoot + 7; // 5
+                    _scale7[5] = _noteRoot + 9; // 6
+                    _scale7[6] = _noteRoot + 11; // 7
                     break;
                 case Mode.Ion:
-                    _scale7[0] = _noteRoot; // I
-                    _scale7[1] = _noteRoot + 2; // II
-                    _scale7[2] = _noteRoot + 4; // III
-                    _scale7[3] = _noteRoot + 5; // IV
-                    _scale7[4] = _noteRoot + 7; // V
-                    _scale7[5] = _noteRoot + 9; // VI
-                    _scale7[6] = _noteRoot + 11; // VII
+                    _scale7[0] = _noteRoot; // 1
+                    _scale7[1] = _noteRoot + 2; // 2
+                    _scale7[2] = _noteRoot + 4; // 3
+                    _scale7[3] = _noteRoot + 5; // 4
+                    _scale7[4] = _noteRoot + 7; // 5
+                    _scale7[5] = _noteRoot + 9; // 6
+                    _scale7[6] = _noteRoot + 11; // 7
                     break;
                 case Mode.Mix:
-                    _scale7[0] = _noteRoot; // I
-                    _scale7[1] = _noteRoot + 2; // II
-                    _scale7[2] = _noteRoot + 4; // III
-                    _scale7[3] = _noteRoot + 5; // IV
-                    _scale7[4] = _noteRoot + 7; // V
-                    _scale7[5] = _noteRoot + 9; // VI
-                    _scale7[6] = _noteRoot + 10; // VII
+                    _scale7[0] = _noteRoot; // 1
+                    _scale7[1] = _noteRoot + 2; // 2
+                    _scale7[2] = _noteRoot + 4; // 3
+                    _scale7[3] = _noteRoot + 5; // 4
+                    _scale7[4] = _noteRoot + 7; // 5
+                    _scale7[5] = _noteRoot + 9; // 6
+                    _scale7[6] = _noteRoot + 10; // b7
                     break;
                 case Mode.Dor:
-                    _scale7[0] = _noteRoot; // I
-                    _scale7[1] = _noteRoot + 2; // II
-                    _scale7[2] = _noteRoot + 3; // III
-                    _scale7[3] = _noteRoot + 5; // IV
-                    _scale7[4] = _noteRoot + 7; // V
-                    _scale7[5] = _noteRoot + 9; // VI
-                    _scale7[6] = _noteRoot + 10; // VII
+                    _scale7[0] = _noteRoot; // 1
+                    _scale7[1] = _noteRoot + 2; // 2
+                    _scale7[2] = _noteRoot + 3; // b3
+                    _scale7[3] = _noteRoot + 5; // 4
+                    _scale7[4] = _noteRoot + 7; // 5
+                    _scale7[5] = _noteRoot + 9; // 6
+                    _scale7[6] = _noteRoot + 10; // b7
                     break;
                 case Mode.Aeo:
-                    _scale7[0] = _noteRoot; // I
-                    _scale7[1] = _noteRoot + 2; // II
-                    _scale7[2] = _noteRoot + 3; // III
-                    _scale7[3] = _noteRoot + 5; // IV
-                    _scale7[4] = _noteRoot + 7; // V
-                    _scale7[5] = _noteRoot + 8; // VI
-                    _scale7[6] = _noteRoot + 10; // VII
+                    _scale7[0] = _noteRoot; // 1
+                    _scale7[1] = _noteRoot + 2; // 2
+                    _scale7[2] = _noteRoot + 3; // b3
+                    _scale7[3] = _noteRoot + 5; // 4
+                    _scale7[4] = _noteRoot + 7; // 5
+                    _scale7[5] = _noteRoot + 8; // b6
+                    _scale7[6] = _noteRoot + 10; // b7
                     break;
                 case Mode.Phr:
-                    _scale7[0] = _noteRoot; // I
-                    _scale7[1] = _noteRoot + 1; // II
-                    _scale7[2] = _noteRoot + 3; // III
-                    _scale7[3] = _noteRoot + 5; // IV
-                    _scale7[4] = _noteRoot + 7; // V
-                    _scale7[5] = _noteRoot + 8; // VI
-                    _scale7[6] = _noteRoot + 10; // VII
+                    _scale7[0] = _noteRoot; // 1
+                    _scale7[1] = _noteRoot + 1; // b2
+                    _scale7[2] = _noteRoot + 3; // b3
+                    _scale7[3] = _noteRoot + 5; // 4
+                    _scale7[4] = _noteRoot + 7; // 5
+                    _scale7[5] = _noteRoot + 8; // b6
+                    _scale7[6] = _noteRoot + 10; // b7
                     break;
                 case Mode.Loc:
-                    _scale7[0] = _noteRoot; // I
-                    _scale7[1] = _noteRoot + 1; // II
-                    _scale7[2] = _noteRoot + 3; // III
-                    _scale7[3] = _noteRoot + 5; // IV
-                    _scale7[4] = _noteRoot + 6; // V
-                    _scale7[5] = _noteRoot + 8; // VI
-                    _scale7[6] = _noteRoot + 10; // VII
+                    _scale7[0] = _noteRoot; // 1
+                    _scale7[1] = _noteRoot + 1; // b2
+                    _scale7[2] = _noteRoot + 3; // b3
+                    _scale7[3] = _noteRoot + 5; // 4
+                    _scale7[4] = _noteRoot + 6; // b5
+                    _scale7[5] = _noteRoot + 8; // b6
+                    _scale7[6] = _noteRoot + 10; // b7
                     break;
             }
             return _scale7;
@@ -395,12 +367,8 @@ namespace Meowziq {
         /// 度数とキーの旋法から旋法に対応したその度数の旋法を返します
         /// </summary>
         static Mode modeBy(Degree degree, Mode keyMode) {
-            if (!degree.Validate()) {
-                throw new ArgumentException("not degree.");
-            }
-            if (!keyMode.Validate()) {
-                throw new ArgumentException("not mode.");
-            }
+            keyMode.Validate();
+            degree.Validate();
             if (keyMode == Mode.Lyd) {
                 switch (degree) {
                     case Degree.I:
