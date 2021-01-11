@@ -32,6 +32,7 @@ namespace Meowziq.Loader {
             _phrase.Name = phrase.Name;
             _phrase.NoteText = validateValue(phrase.Note);
             _phrase.ChordText = phrase.Chord; // TODO: バリデート
+            _phrase.Range = phrase.Range;
             _phrase.Pre = phrase.Pre;
             _phrase.Post = phrase.Post;
             if (phrase.Data != null) { // 複合データがある場合
@@ -47,6 +48,7 @@ namespace Meowziq.Loader {
         }
 
         /// <summary>
+        /// FIXME: バリデーターはローダーではなく本クラスに移動する
         /// TODO: 使用可能な文字
         /// </summary>
         static string validateValue(string target) {
@@ -108,6 +110,10 @@ namespace Meowziq.Loader {
             }
             [DataMember(Name = "chord")]
             public string Chord {
+                get; set;
+            }
+            [DataMember(Name = "range")]
+            public string Range {
                 get; set;
             }
             [DataMember(Name = "pre")]

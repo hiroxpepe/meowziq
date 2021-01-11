@@ -104,7 +104,7 @@ namespace Meowziq {
                     _note4[0] = scale7[1 - 1];
                     _note4[1] = scale7[3 - 1];
                     _note4[2] = scale7[5 - 1];
-                    _note4[3] = scale7[2 - 1] + 12; // 1オクターブ上
+                    _note4[3] = scale7[2 - 1] + 12; // 1オクターブ上: FIXME: Range の対応外
                     return _note4;
                 default:
                     throw new ArgumentException("invalid index.");

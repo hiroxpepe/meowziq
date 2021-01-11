@@ -57,7 +57,7 @@ namespace Meowziq.View {
                 if (_list != null) {
                     _list.ForEach(x => {
                         midi.OutDevice.Send(x); // MIDIデバイスにメッセージを追加送信
-                        if (x.MidiChannel != 9) {
+                        if (x.MidiChannel != 9 && x.MidiChannel != 1) { // FIXME: 暫定シーケンス
                             pianoControl.Send(x); // ドラム以外はピアノロールに表示
                         }
                     });
