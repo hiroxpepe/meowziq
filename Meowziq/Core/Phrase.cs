@@ -105,6 +105,21 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
+        /// TBA: シーケンス
+        /// Phrase の拍数を返す
+        /// </summary>
+        public int BeatCount {
+            get {
+                switch (getDataType()) {
+                    case DataType.NoteMono:
+                        return measCount(noteText);
+                    default:
+                        throw new ArgumentException("not understandable DataType.");
+                }
+            }
+        }
+
+        /// <summary>
         /// 全ての Note
         /// </summary>
         public List<Note> AllNote {
@@ -144,10 +159,13 @@ namespace Meowziq.Core {
         // protected Methods [verb]
 
         /// <summary>
-        /// TODO: パターンとフレーズの長さが一致しているかどうか
+        /// Note データを生成します
         /// </summary>
         protected void onBuild(int position, Key key, Pattern pattern) {
-            // FIXME: Type で分離 ⇒ 処理のパターン決め込みで良い：プラグイン拡張出来るように
+            //if (BeatCount != pattern.BeatCount) {
+            //    throw new ArgumentException("invalid beatCount.");
+            //}
+            // NOTE: Type で分岐：プラグイン拡張出来るように
             var _dataType = getDataType();
             if (_dataType == DataType.NoteMono) {
                 var _text = new Text(noteText, getDataType());
@@ -191,6 +209,9 @@ namespace Meowziq.Core {
             }
         }
 
+        /// <summary>
+        /// Note を適用します
+        /// </summary>
         protected void applyNote(int position, int beatCount, Key key, List<Span> spanList, Text text, int interval = 0, string pre = null, string post = null) {
             var _16beatIdx = 0; // 16beatのindex
             var _spanIdxCount = 0; // 16beatで1拍をカウントする用
@@ -270,6 +291,9 @@ namespace Meowziq.Core {
             }
         }
 
+        /// <summary>
+        /// ドラム用 Note を適用します
+        /// </summary>
         protected void applyDrumNote(int position, int beatCount, string noteText, Percussion noteNum, string pre = null) {
             var _16beatIdx = 0;
             var _preArray = pre == null ? null : filter(pre).ToCharArray(); // TODO: バリデート
@@ -299,27 +323,6 @@ namespace Meowziq.Core {
                 }
                 _16beatIdx++; // 16beatを進める
             }
-        }
-
-        protected void add(Note note) {
-            noteList.Add(note);
-        }
-
-        protected static string filter(string target) {
-            return target.Replace("|", "").Replace("[", "").Replace("]", ""); // 不要文字削除
-        }
-
-        protected static List<bool?> convertToBool(string target) {
-            // on, null スイッチ
-            var _list = new List<bool?>();
-            target.ToList().ForEach(x => {
-                if (x.Equals('x')) {
-                    _list.Add(true);
-                } else if (x.Equals('-')) {
-                    _list.Add(null);
-                }
-            });
-            return _list;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -373,6 +376,48 @@ namespace Meowziq.Core {
                 return DataType.Sequence; // TODO: 暫定
             }
             throw new ArgumentException("not understandable DataType.");
+        }
+
+        /// <summary>
+        /// Note リストに追加します
+        /// </summary>
+        void add(Note note) {
+            noteList.Add(note);
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private static Methods [verb]
+
+        /// <summary>
+        /// TBA
+        /// </summary>
+        static int measCount(string target) {
+            if (target == null) {
+                throw new ArgumentException("target must not be null.");
+            }
+            // 小節に切り出す
+            var _measStringArray = target.Replace("][", "@")  // まず "][" を "@" に置き換え
+                .Split('@') // 小節で切り分ける
+                .Select(x => x.Replace("[", "").Replace("]", "")).ToArray(); // 不要文字削除
+            // FIXME: 1小節を4拍として計算
+            return _measStringArray.Length * 4;
+        }
+
+        static string filter(string target) {
+            return target.Replace("|", "").Replace("[", "").Replace("]", ""); // 不要文字削除
+        }
+
+        static List<bool?> convertToBool(string target) {
+            // on, null スイッチ
+            var _list = new List<bool?>();
+            target.ToList().ForEach(x => {
+                if (x.Equals('x')) {
+                    _list.Add(true);
+                } else if (x.Equals('-')) {
+                    _list.Add(null);
+                }
+            });
+            return _list;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
