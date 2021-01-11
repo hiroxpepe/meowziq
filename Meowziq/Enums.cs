@@ -300,6 +300,17 @@ namespace Meowziq {
             return (int) self;
         }
 
+        public static bool Validate(this Key self) {
+            switch (self) {
+                case Key.Undefined:
+                    return false;
+                case Key.Enum:
+                    return false;
+                default:
+                    return true;
+            }
+        }
+
         public static Key Parse(this Key self, string target) {
             switch (target.ToLower()) {
                 case "e":
@@ -331,6 +342,51 @@ namespace Meowziq {
             }
         }
 
+        public static Key Parse(this Key self, int target) { // TODO: 拡張メソッド
+            if (target > 75) {
+                target -= 12; // オクターブ調節
+            }
+            switch (target) {
+                case 75:
+                    return Key.Eb;
+                case 74:
+                    return Key.D;
+                case 73:
+                    return Key.Db;
+                case 72:
+                    return Key.C;
+                case 71:
+                    return Key.B;
+                case 70:
+                    return Key.Bb;
+                case 69:
+                    return Key.A;
+                case 68:
+                    return Key.Ab;
+                case 67:
+                    return Key.G;
+                case 66:
+                    return Key.Gb;
+                case 65:
+                    return Key.F;
+                case 64:
+                    return Key.E; // MEMO: E を最低音とする
+                default:
+                    throw new ArgumentException("not key.");
+            }
+        }
+
+        public static bool Validate(this Degree self) {
+            switch (self) {
+                case Degree.Undefined:
+                    return false;
+                case Degree.Enum:
+                    return false;
+                default:
+                    return true;
+            }
+        }
+
         public static Degree Parse(this Degree self, string target) {
             switch (target) {
                 case "I":
@@ -349,6 +405,17 @@ namespace Meowziq {
                     return Degree.VII;
                 default:
                     throw new ArgumentException("not degree.");
+            }
+        }
+
+        public static bool Validate(this Mode self) {
+            switch (self) {
+                case Mode.Undefined:
+                    return false;
+                case Mode.Enum:
+                    return false;
+                default:
+                    return true;
             }
         }
 
