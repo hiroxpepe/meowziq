@@ -117,14 +117,12 @@ namespace Meowziq.Core {
         /// </summary>
         protected void onBuild(int position, Key key, Pattern pattern) {
             // FIXME: Type で分離 ⇒ 処理のパターン決め込みで良い：プラグイン拡張出来るように
-            if (type.Equals("drum")) {
-                for (var _idx = 0; _idx < data.NoteTextArray.Length; _idx++) {
-                    var _noteText = data.NoteTextArray[_idx];
-                    var _pre = data.PreArray[_idx];
-                    applyDrumNote(position, pattern.BeatCount, _noteText, data.PercussionArray[_idx], _pre);
-                }
+            var _dataType = getDataType();
+            if (_dataType == DataType.NoteMono) {
+                var _text = new Text(noteText, getDataType());
+                applyNote(position, pattern.BeatCount, key, pattern.AllSpan, _text, -24, pre, post);
             }
-            if (type.Equals("pad")) {
+            if (_dataType == DataType.NoteMulti) {
                 for (var _idx = 0; _idx < data.NoteTextArray.Length; _idx++) {
                     var _noteText = data.NoteTextArray[_idx];
                     var _interval = (data.OctArray[_idx] * 12); // オクターブ設定からインターバル作成
@@ -134,11 +132,14 @@ namespace Meowziq.Core {
                     applyNote(position, pattern.BeatCount, key, pattern.AllSpan, _text, _interval, _pre, _post);
                 }
             }
-            if (type.Equals("bass")) {
-                var _text = new Text(noteText, getDataType());
-                applyNote(position, pattern.BeatCount, key, pattern.AllSpan, _text, -24, pre, post);
+            if (_dataType == DataType.Drum) {
+                for (var _idx = 0; _idx < data.NoteTextArray.Length; _idx++) {
+                    var _noteText = data.NoteTextArray[_idx];
+                    var _pre = data.PreArray[_idx];
+                    applyDrumNote(position, pattern.BeatCount, _noteText, data.PercussionArray[_idx], _pre);
+                }
             }
-            if (type.Equals("seque")) {
+            if (_dataType == DataType.Sequence) {
                 var _all16beatCount = pattern.BeatCount * 4; // この Pattern の16beatの数
                 var _spanIdxCount = 0; // 16beatで1拍をカウントする用
                 var _spanIdx = 0; // Span リストの添え字
