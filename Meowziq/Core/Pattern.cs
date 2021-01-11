@@ -39,7 +39,7 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// パターンの拍数を返す
+        /// Pattern の拍数を返す
         /// </summary>
         public int BeatCount {
             // FIXME: 1小節を4拍として計算
