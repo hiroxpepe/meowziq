@@ -214,6 +214,33 @@ namespace Meowziq.Core {
                     _spanIdxCount++; // Span 用のカウンタも進める
                 }
             }
+            // UI 表示情報
+            if (true) {
+                var _all16beatCount = pattern.BeatCount * 4; // この Pattern の16beatの数
+                var _spanIdxCount = 0; // 16beatで1拍をカウントする用
+                var _spanIdx = 0; // Span リストの添え字
+                for (var _16beatIdx = 0; _16beatIdx < _all16beatCount; _16beatIdx++) {
+                    if (_spanIdxCount == 4) { // 16beatが4回進んだ時(1拍)
+                        _spanIdxCount = 0; // カウンタリセット
+                        _spanIdx++; // Span のindex値をインクリメント
+                    }
+                    var _span = pattern.AllSpan[_spanIdx];
+                    // 16beat の tick 毎に処理
+                    //var _note = Utils.GetNoteAsRandom(key, _span.Degree, _span.Mode); // 16の倍数
+                    //add(new Note(position + (Tick.Of16beat.Int32() * _16beatIdx), _note, 30, 127)); // gate 短め
+                    var _tick = position + (Tick.Of16beat.Int32() * _16beatIdx);
+                    if (Info.HashSet.Add(_tick)) { // tick につき1度だけ
+                        Info.ItemDictionary.Add(_tick, new Info.Item {
+                            Tick = _tick, 
+                            Key = key.ToString(), 
+                            Degree = _span.Degree.ToString(), 
+                            KeyMode = _span.KeyMode.ToString(), 
+                            SpanMode = _span.Mode.ToString()
+                        });
+                    }
+                    _spanIdxCount++; // Span 用のカウンタも進める
+                }
+            }
         }
 
         /// <summary>

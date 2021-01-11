@@ -49,9 +49,23 @@ namespace Meowziq.View {
             // MEMO: 30 tick単位でしか呼ばれていない
             if (this.Visible) {
                 var _beat = ((sequencer.Position / 480) + 1).ToString(); // 0開始 ではなく 1開始として表示
-                Invoke((MethodInvoker) (() => textBoxBeat.Text = _beat));
                 var _meas = ((int.Parse(_beat) - 1) / 4 + 1).ToString();
-                Invoke((MethodInvoker) (() => textBoxMeas.Text = _meas));
+                Invoke((MethodInvoker) (() => {
+                    textBoxBeat.Text = _beat;
+                    textBoxMeas.Text = _meas; 
+                }));
+                // UI情報表示
+                var _itemDictionary = Info.ItemDictionary;
+                var _tick = sequencer.Position - 1; // 1, 31 と来る
+                if (_itemDictionary.ContainsKey(_tick)) {
+                    var _item = _itemDictionary[_tick];
+                    Invoke((MethodInvoker) (() => {
+                        textBoxKey.Text = _item.Key;
+                        textBoxDegree.Text = _item.Degree;
+                        textBoxKeyMode.Text = _item.KeyMode;
+                        textBoxSpanMode.Text = _item.SpanMode;
+                    }));
+                }
                 // メッセージのリストを取得
                 var _list = Message.GetBy(sequencer.Position);
                 if (_list != null) {
@@ -80,6 +94,7 @@ namespace Meowziq.View {
                 }
                 lock (locked) {
                     Message.Reset();
+                    Info.Reset();
                     textBoxSongName.Text = buildSong(targetPath); // TODO: リロード
                     sequence.Load("./data/default.mid");
                     sequencer.Position = 0;
@@ -87,6 +102,7 @@ namespace Meowziq.View {
                     labelPlay.ForeColor = Color.Lime;
                     playing = true;
                     played = false;
+                    var _item = Info.ItemDictionary; // DDDDD
                 }
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
@@ -160,9 +176,15 @@ namespace Meowziq.View {
                 stopping = false;
                 playing = false;
                 sequencer.Stop();
-                Invoke((MethodInvoker) (() => labelPlay.ForeColor = Color.DimGray));
-                Invoke((MethodInvoker) (() => textBoxBeat.Text = "0"));
-                Invoke((MethodInvoker) (() => textBoxMeas.Text = "0"));
+                Invoke((MethodInvoker) (() => { 
+                    labelPlay.ForeColor = Color.DimGray;
+                    textBoxBeat.Text = "0";
+                    textBoxMeas.Text = "0";
+                    textBoxKey.Text = "---";
+                    textBoxDegree.Text = "---";
+                    textBoxKeyMode.Text = "---";
+                    textBoxSpanMode.Text = "---";
+                }));
             });
         }
     }
