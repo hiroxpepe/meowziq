@@ -148,7 +148,7 @@ namespace Meowziq.Core {
                         _spanIdx++; // Span のindex値をインクリメント
                     }
                     var _span = pattern.AllSpan[_spanIdx];
-                    var _note = Utils.GetRandomNote(key, _span.Degree, _span.Mode); // 16の倍数
+                    var _note = Utils.GetNoteAsRandom(key, _span.Degree, _span.Mode); // 16の倍数
                     add(new Note(position + (Tick.Of16beat.Int32() * _16beatIdx), _note, 30, 127)); // gate 短め
                     _spanIdxCount++; // Span 用のカウンタも進める
                 }
@@ -177,13 +177,13 @@ namespace Meowziq.Core {
                     // 曲の旋法と Span の旋法が同じ場合は自動旋法
                     if (_span.KeyMode == _span.Mode) {
                         if (textData.Type == 0) {
-                            _noteNumArray[0] = Utils.GetNoteWithAutoMode(key, _span.Degree, _span.KeyMode, int.Parse(_note.ToString()));
+                            _noteNumArray[0] = Utils.GetNoteByAutoMode(key, _span.Degree, _span.KeyMode, int.Parse(_note.ToString()));
                         }
                     }
                     // Span に旋法が設定してあればそちらを適用する
                     else {
                         if (textData.Type == 0) {
-                            _noteNumArray[0] = Utils.GetNoteWithSpanMode(key, _span.Degree, _span.KeyMode, _span.Mode, int.Parse(_note.ToString()));
+                            _noteNumArray[0] = Utils.GetNoteBySpanMode(key, _span.Degree, _span.KeyMode, _span.Mode, int.Parse(_note.ToString()));
                         }
                     }
                     // この音の音価を調査する
