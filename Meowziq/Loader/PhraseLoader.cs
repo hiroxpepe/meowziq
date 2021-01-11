@@ -31,6 +31,7 @@ namespace Meowziq.Loader {
             _phrase.Type = phrase.Type;
             _phrase.Name = phrase.Name;
             _phrase.NoteText = validateValue(phrase.Note);
+            _phrase.Oct = phrase.Oct;
             _phrase.ChordText = phrase.Chord; // TODO: バリデート
             _phrase.Range = phrase.Range;
             _phrase.Pre = phrase.Pre;
@@ -106,6 +107,10 @@ namespace Meowziq.Loader {
             }
             [DataMember(Name = "note")]
             public string Note {
+                get; set;
+            }
+            [DataMember(Name = "oct")]
+            public int Oct {
                 get; set;
             }
             [DataMember(Name = "chord")]
