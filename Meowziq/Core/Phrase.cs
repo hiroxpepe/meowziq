@@ -21,6 +21,8 @@ namespace Meowziq.Core {
 
         string noteText;
 
+        int oct;
+
         string chordText;
 
         int rangeMin;
@@ -60,6 +62,10 @@ namespace Meowziq.Core {
             set => noteText = value;
         }
 
+        public int Oct {
+            set => oct = value; // デフォルト値は 0
+        }
+
         public string ChordText {
             set => chordText = value;
         }
@@ -78,10 +84,10 @@ namespace Meowziq.Core {
                 rangeMin = int.Parse(_rangeArray[0]);
                 rangeMax = int.Parse(_rangeArray[1]);
                 if (rangeMin < 0) {
-                    throw new ArgumentException("invalid rangeMin.");
+                    throw new ArgumentException("invalid range min.");
                 }
                 if (rangeMax > 127) {
-                    throw new ArgumentException("invalid rangeMin.");
+                    throw new ArgumentException("invalid range max.");
                 }
                 if (rangeMax - rangeMin != 11) { // オクターブの範囲外
                     var _okMax = rangeMin + 11;
@@ -169,7 +175,8 @@ namespace Meowziq.Core {
             var _dataType = getDataType();
             if (_dataType == DataType.NoteMono) {
                 var _text = new Text(noteText, getDataType());
-                applyNote(position, pattern.BeatCount, key, pattern.AllSpan, _text, -24, pre, post); // FIXME: オクターブ
+                var _interval = oct * 12; // オクターブ設定からインターバル作成
+                applyNote(position, pattern.BeatCount, key, pattern.AllSpan, _text, _interval, pre, post);
             }
             if (_dataType == DataType.Chord) {
                 var _text = new Text(chordText, getDataType());
@@ -178,7 +185,7 @@ namespace Meowziq.Core {
             if (_dataType == DataType.NoteMulti) {
                 for (var _idx = 0; _idx < data.NoteTextArray.Length; _idx++) {
                     var _noteText = data.NoteTextArray[_idx];
-                    var _interval = (data.OctArray[_idx] * 12); // オクターブ設定からインターバル作成
+                    var _interval = data.OctArray[_idx] * 12; // オクターブ設定からインターバル作成
                     var _pre = data.PreArray[_idx];
                     var _post = data.PostArray[_idx];
                     var _text = new Text(_noteText, getDataType());
