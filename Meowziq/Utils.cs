@@ -65,8 +65,37 @@ namespace Meowziq {
         /// <summary>
         /// 度数とキーの旋法から旋法に対応したその度数の旋法を返します
         /// </summary>
-        public static Mode ModeBy(Degree degree, Mode keyMode) {
+        public static Mode GetModeBy(Degree degree, Mode keyMode) {
             return modeBy(degree, keyMode);
+        }
+
+        /// <summary>
+        /// メジャーかマイナーがシンプルなコードネームを返します
+        /// </summary>
+        public static string GetSimpleCodeName(Key key, Degree degree, Mode keyMode, Mode spanMode) {
+            int _noteOfDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取
+            string _codeBase = Key.Enum.Parse(_noteOfDegree).ToString(); // コードネームの基本取得
+            Mode _mode;
+            if (keyMode == spanMode) { // 自動旋法
+                _mode = modeBy(degree, keyMode);
+            } else {
+                _mode = spanMode; // Spanの旋法
+            }
+            string _3rd = "";
+            switch (_mode) {
+                case Mode.Lyd:
+                case Mode.Ion:
+                case Mode.Mix:
+                    _3rd = "";
+                    break;
+                case Mode.Dor:
+                case Mode.Aeo:
+                case Mode.Phr:
+                case Mode.Loc:
+                    _3rd = "m";
+                    break;
+            }
+            return _codeBase + _3rd;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
