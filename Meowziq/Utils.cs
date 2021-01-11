@@ -25,6 +25,16 @@ namespace Meowziq {
         }
 
         /// <summary>
+        /// 1～7の Phrase コード記法から Note No の配列を取得します
+        /// ※Span の旋法を適用する場合
+        /// </summary>
+        public static int[] GetNoteArrayBySpanMode(Key key, Degree degree, Mode keyMode, Mode spanMode, int index) {
+            int _noteOfDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
+            int[] _scale7 = scale7By(Key.Enum.Parse(_noteOfDegree), spanMode); // そのルート音の旋法スケールを取得※Span に設定した旋法を使用
+            return noteArryBy(index, _scale7); // 旋法スケールから引数indexに対応したコード構成音の配列を返す
+        }
+
+        /// <summary>
         /// 1～7の Phrase ノート記法から Note No を取得します
         /// ※自動的に旋法を決定する場合
         /// </summary>

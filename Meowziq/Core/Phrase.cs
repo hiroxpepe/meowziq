@@ -179,12 +179,16 @@ namespace Meowziq.Core {
                     if (_span.KeyMode == _span.Mode) {
                         if (text.Type == DataType.NoteMono || text.Type == DataType.NoteMulti) {
                             _noteNumArray[0] = Utils.GetNoteByAutoMode(key, _span.Degree, _span.KeyMode, int.Parse(_note.ToString()));
+                        } else if (text.Type == DataType.Chord) {
+                            _noteNumArray = Utils.GetNoteArrayByAutoMode(key, _span.Degree, _span.KeyMode, int.Parse(_note.ToString()));
                         }
                     }
                     // Span に旋法が設定してあればそちらを適用する
                     else {
                         if (text.Type == DataType.NoteMono || text.Type == DataType.NoteMulti) {
                             _noteNumArray[0] = Utils.GetNoteBySpanMode(key, _span.Degree, _span.KeyMode, _span.Mode, int.Parse(_note.ToString()));
+                        } else if (text.Type == DataType.Chord) {
+                            _noteNumArray = Utils.GetNoteArrayBySpanMode(key, _span.Degree, _span.KeyMode, _span.Mode, int.Parse(_note.ToString()));
                         }
                     }
                     // この音の音価を調査する
