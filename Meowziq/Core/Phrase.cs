@@ -23,6 +23,10 @@ namespace Meowziq.Core {
 
         string chordText;
 
+        int rangeMin;
+
+        int rangeMax;
+
         string pre;
 
         string post;
@@ -58,6 +62,33 @@ namespace Meowziq.Core {
 
         public string ChordText {
             set => chordText = value;
+        }
+
+        /// <summary>
+        /// TODO: default レンジ
+        /// </summary>
+        public string Range {
+            set {
+                if (value == null) return;
+                var _rangeText = value;
+                if (!_rangeText.Contains(":")) {
+                    throw new ArgumentException("invalid range format.");
+                }
+                var _rangeArray = _rangeText.Split(':');
+                rangeMin = int.Parse(_rangeArray[0]);
+                rangeMax = int.Parse(_rangeArray[1]);
+                if (rangeMin < 0) {
+                    throw new ArgumentException("invalid rangeMin.");
+                }
+                if (rangeMax > 127) {
+                    throw new ArgumentException("invalid rangeMin.");
+                }
+                if (rangeMax - rangeMin != 11) { // オクターブの範囲外
+                    var _okMax = rangeMin + 11;
+                    var _okMin = rangeMax - 11;
+                    throw new ArgumentException($"invalid range length,\r\nmust set {rangeMin}:{_okMax} or {_okMin}:{rangeMax}.");
+                }
+            }
         }
 
         public string Pre {
@@ -120,7 +151,11 @@ namespace Meowziq.Core {
             var _dataType = getDataType();
             if (_dataType == DataType.NoteMono) {
                 var _text = new Text(noteText, getDataType());
-                applyNote(position, pattern.BeatCount, key, pattern.AllSpan, _text, -24, pre, post);
+                applyNote(position, pattern.BeatCount, key, pattern.AllSpan, _text, -24, pre, post); // FIXME: オクターブ
+            }
+            if (_dataType == DataType.Chord) {
+                var _text = new Text(chordText, getDataType());
+                applyNote(position, pattern.BeatCount, key, pattern.AllSpan, _text, 0, pre, post);
             }
             if (_dataType == DataType.NoteMulti) {
                 for (var _idx = 0; _idx < data.NoteTextArray.Length; _idx++) {
@@ -181,6 +216,7 @@ namespace Meowziq.Core {
                             _noteNumArray[0] = Utils.GetNoteByAutoMode(key, _span.Degree, _span.KeyMode, int.Parse(_note.ToString()));
                         } else if (text.Type == DataType.Chord) {
                             _noteNumArray = Utils.GetNoteArrayByAutoMode(key, _span.Degree, _span.KeyMode, int.Parse(_note.ToString()));
+                            _noteNumArray = applyRange(_noteNumArray); // コード展開形の範囲を適用
                         }
                     }
                     // Span に旋法が設定してあればそちらを適用する
@@ -189,6 +225,7 @@ namespace Meowziq.Core {
                             _noteNumArray[0] = Utils.GetNoteBySpanMode(key, _span.Degree, _span.KeyMode, _span.Mode, int.Parse(_note.ToString()));
                         } else if (text.Type == DataType.Chord) {
                             _noteNumArray = Utils.GetNoteArrayBySpanMode(key, _span.Degree, _span.KeyMode, _span.Mode, int.Parse(_note.ToString()));
+                            _noteNumArray = applyRange(_noteNumArray); // コード展開形の範囲を適用
                         }
                     }
                     // この音の音価を調査する
@@ -287,6 +324,27 @@ namespace Meowziq.Core {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private Methods [verb]
+
+        /// <summary>
+        /// 全てのノートを Range 範囲指定以内に変換します
+        /// </summary>
+        int[] applyRange(int[] target) {
+            var _newArray = new int[target.Length];
+            for (var _idx = 0; _idx < target.Length; _idx++) {
+                if (target[_idx] < rangeMin) {
+                    _newArray[_idx] = target[_idx] + 12;
+                } else if (target[_idx] > rangeMax) {
+                    _newArray[_idx] = target[_idx] - 12;
+                } else {
+                    _newArray[_idx] = target[_idx];
+                }
+            }
+            // 全てのノートが範囲指定以内
+            if ((target.Min() >= rangeMin) && (target.Max() <= rangeMax)) {
+                return _newArray;
+            }
+            return applyRange(_newArray); // 再帰処理
+        }
 
         void optimize() {
             // MEMO: 消したい音はこのフレーズではない場合もある
