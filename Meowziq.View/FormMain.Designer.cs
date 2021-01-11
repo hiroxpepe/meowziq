@@ -50,6 +50,8 @@
             this.textBoxSpanMode = new System.Windows.Forms.TextBox();
             this.labelCode = new System.Windows.Forms.Label();
             this.textBoxCode = new System.Windows.Forms.TextBox();
+            this.labelAutoMode = new System.Windows.Forms.Label();
+            this.textBoxAutoMode = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // sequence
@@ -254,7 +256,7 @@
             this.labelDegree.AutoSize = true;
             this.labelDegree.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.labelDegree.ForeColor = System.Drawing.Color.White;
-            this.labelDegree.Location = new System.Drawing.Point(443, 15);
+            this.labelDegree.Location = new System.Drawing.Point(442, 15);
             this.labelDegree.Name = "labelDegree";
             this.labelDegree.Size = new System.Drawing.Size(57, 17);
             this.labelDegree.TabIndex = 17;
@@ -264,7 +266,7 @@
             // 
             this.textBoxDegree.BackColor = System.Drawing.Color.PaleGreen;
             this.textBoxDegree.Font = new System.Drawing.Font("Meiryo UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBoxDegree.Location = new System.Drawing.Point(445, 36);
+            this.textBoxDegree.Location = new System.Drawing.Point(444, 36);
             this.textBoxDegree.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.textBoxDegree.Name = "textBoxDegree";
             this.textBoxDegree.Size = new System.Drawing.Size(66, 31);
@@ -275,11 +277,11 @@
             // labelKeyMode
             // 
             this.labelKeyMode.AutoSize = true;
-            this.labelKeyMode.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.labelKeyMode.Font = new System.Drawing.Font("Meiryo UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.labelKeyMode.ForeColor = System.Drawing.Color.White;
             this.labelKeyMode.Location = new System.Drawing.Point(359, 79);
             this.labelKeyMode.Name = "labelKeyMode";
-            this.labelKeyMode.Size = new System.Drawing.Size(75, 17);
+            this.labelKeyMode.Size = new System.Drawing.Size(68, 15);
             this.labelKeyMode.TabIndex = 19;
             this.labelKeyMode.Text = "Key Mode";
             // 
@@ -298,11 +300,11 @@
             // labelSpanMode
             // 
             this.labelSpanMode.AutoSize = true;
-            this.labelSpanMode.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.labelSpanMode.Font = new System.Drawing.Font("Meiryo UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.labelSpanMode.ForeColor = System.Drawing.Color.White;
-            this.labelSpanMode.Location = new System.Drawing.Point(443, 79);
+            this.labelSpanMode.Location = new System.Drawing.Point(442, 79);
             this.labelSpanMode.Name = "labelSpanMode";
-            this.labelSpanMode.Size = new System.Drawing.Size(84, 17);
+            this.labelSpanMode.Size = new System.Drawing.Size(77, 15);
             this.labelSpanMode.TabIndex = 21;
             this.labelSpanMode.Text = "Span Mode";
             // 
@@ -310,7 +312,7 @@
             // 
             this.textBoxSpanMode.BackColor = System.Drawing.Color.PaleGreen;
             this.textBoxSpanMode.Font = new System.Drawing.Font("Meiryo UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBoxSpanMode.Location = new System.Drawing.Point(445, 100);
+            this.textBoxSpanMode.Location = new System.Drawing.Point(444, 100);
             this.textBoxSpanMode.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.textBoxSpanMode.Name = "textBoxSpanMode";
             this.textBoxSpanMode.Size = new System.Drawing.Size(66, 31);
@@ -341,12 +343,37 @@
             this.textBoxCode.TabStop = false;
             this.textBoxCode.Text = "---";
             // 
+            // labelAutoMode
+            // 
+            this.labelAutoMode.AutoSize = true;
+            this.labelAutoMode.Font = new System.Drawing.Font("Meiryo UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.labelAutoMode.ForeColor = System.Drawing.Color.White;
+            this.labelAutoMode.Location = new System.Drawing.Point(524, 79);
+            this.labelAutoMode.Name = "labelAutoMode";
+            this.labelAutoMode.Size = new System.Drawing.Size(75, 15);
+            this.labelAutoMode.TabIndex = 25;
+            this.labelAutoMode.Text = "Auto Mode";
+            // 
+            // textBoxAutoMode
+            // 
+            this.textBoxAutoMode.BackColor = System.Drawing.Color.PaleGreen;
+            this.textBoxAutoMode.Font = new System.Drawing.Font("Meiryo UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBoxAutoMode.Location = new System.Drawing.Point(526, 100);
+            this.textBoxAutoMode.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBoxAutoMode.Name = "textBoxAutoMode";
+            this.textBoxAutoMode.Size = new System.Drawing.Size(66, 31);
+            this.textBoxAutoMode.TabIndex = 24;
+            this.textBoxAutoMode.TabStop = false;
+            this.textBoxAutoMode.Text = "---";
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
             this.ClientSize = new System.Drawing.Size(727, 286);
+            this.Controls.Add(this.labelAutoMode);
+            this.Controls.Add(this.textBoxAutoMode);
             this.Controls.Add(this.labelCode);
             this.Controls.Add(this.textBoxCode);
             this.Controls.Add(this.labelSpanMode);
@@ -408,6 +435,8 @@
         private System.Windows.Forms.TextBox textBoxSpanMode;
         private System.Windows.Forms.Label labelCode;
         private System.Windows.Forms.TextBox textBoxCode;
+        private System.Windows.Forms.Label labelAutoMode;
+        private System.Windows.Forms.TextBox textBoxAutoMode;
     }
 }
 

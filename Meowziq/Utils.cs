@@ -62,6 +62,13 @@ namespace Meowziq {
             return noteOfRandomByModeScaleOf3(key, degree, mode);
         }
 
+        /// <summary>
+        /// 度数とキーの旋法から旋法に対応したその度数の旋法を返します
+        /// </summary>
+        public static Mode ModeBy(Degree degree, Mode keyMode) {
+            return modeBy(degree, keyMode);
+        }
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private static Methods [verb]
 
