@@ -84,4 +84,38 @@ namespace Meowziq {
             }
         }
     }
+
+    public static class Info {
+        static Info() {
+            HashSet = new HashSet<int>();
+            ItemDictionary = new Dictionary<int, Item>();
+        }
+        public static HashSet<int> HashSet {
+            get; set;
+        }
+        public static Dictionary<int, Item> ItemDictionary {
+            get; set;
+        }
+        public static void Reset() {
+            HashSet.Clear();
+            ItemDictionary.Clear();
+        }
+        public class Item {
+            public int Tick {
+                get; set;
+            }
+            public string Key {
+                get; set;
+            }
+            public string Degree {
+                get; set;
+            }
+            public string KeyMode {
+                get; set;
+            }
+            public string SpanMode {
+                get; set;
+            }
+        }
+    }
 }
