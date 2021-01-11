@@ -63,8 +63,14 @@ namespace Meowziq.View {
                         textBoxKey.Text = _item.Key;
                         textBoxDegree.Text = _item.Degree;
                         textBoxKeyMode.Text = _item.KeyMode;
+                        textBoxCode.Text = Utils.GetSimpleCodeName(
+                            Key.Enum.Parse(_item.Key),
+                            Degree.Enum.Parse(_item.Degree), 
+                            Mode.Enum.Parse(_item.KeyMode),
+                            Mode.Enum.Parse(_item.SpanMode)
+                        );
                         if (_item.KeyMode == _item.SpanMode) { // 自動旋法
-                            var _autoMode = Utils.ModeBy(Degree.Enum.Parse(_item.Degree), Mode.Enum.Parse(_item.KeyMode));
+                            var _autoMode = Utils.GetModeBy(Degree.Enum.Parse(_item.Degree), Mode.Enum.Parse(_item.KeyMode));
                             textBoxAutoMode.Text = _autoMode.ToString();
                             textBoxAutoMode.BackColor = Color.PaleGreen;
                             textBoxSpanMode.Text = "---";
@@ -196,6 +202,7 @@ namespace Meowziq.View {
                     textBoxKeyMode.Text = "---";
                     textBoxSpanMode.Text = "---";
                     textBoxAutoMode.Text = "---";
+                    textBoxCode.Text = "---";
                     textBoxAutoMode.BackColor = Color.DarkOliveGreen;
                     textBoxSpanMode.BackColor = Color.DarkOliveGreen;
                 }));

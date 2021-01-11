@@ -25,7 +25,7 @@ namespace Meowziq.Core {
 
         string chordText;
 
-        int rangeMin;
+        int rangeMin; // TODO: 範囲を小節内で指定出来るように
 
         int rangeMax;
 
