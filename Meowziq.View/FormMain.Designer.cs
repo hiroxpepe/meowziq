@@ -104,12 +104,12 @@
             // pianoControl
             // 
             this.pianoControl.HighNoteID = 109;
-            this.pianoControl.Location = new System.Drawing.Point(10, 198);
+            this.pianoControl.Location = new System.Drawing.Point(11, 198);
             this.pianoControl.LowNoteID = 21;
             this.pianoControl.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.pianoControl.Name = "pianoControl";
             this.pianoControl.NoteOnColor = System.Drawing.Color.SkyBlue;
-            this.pianoControl.Size = new System.Drawing.Size(710, 77);
+            this.pianoControl.Size = new System.Drawing.Size(705, 77);
             this.pianoControl.TabIndex = 4;
             this.pianoControl.TabStop = false;
             this.pianoControl.Text = "pianoControl";
@@ -143,7 +143,7 @@
             this.labelTitle.AutoSize = true;
             this.labelTitle.Font = new System.Drawing.Font("Impact", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelTitle.ForeColor = System.Drawing.Color.Gold;
-            this.labelTitle.Location = new System.Drawing.Point(610, 36);
+            this.labelTitle.Location = new System.Drawing.Point(610, 30);
             this.labelTitle.Name = "labelTitle";
             this.labelTitle.Size = new System.Drawing.Size(110, 34);
             this.labelTitle.TabIndex = 6;
@@ -154,7 +154,7 @@
             this.labelSubTitle.AutoSize = true;
             this.labelSubTitle.Font = new System.Drawing.Font("Impact", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelSubTitle.ForeColor = System.Drawing.Color.Gold;
-            this.labelSubTitle.Location = new System.Drawing.Point(618, 21);
+            this.labelSubTitle.Location = new System.Drawing.Point(618, 15);
             this.labelSubTitle.Name = "labelSubTitle";
             this.labelSubTitle.Size = new System.Drawing.Size(92, 16);
             this.labelSubTitle.TabIndex = 7;
@@ -165,7 +165,7 @@
             this.labelVersion.AutoSize = true;
             this.labelVersion.Font = new System.Drawing.Font("Impact", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelVersion.ForeColor = System.Drawing.Color.Gold;
-            this.labelVersion.Location = new System.Drawing.Point(661, 70);
+            this.labelVersion.Location = new System.Drawing.Point(661, 64);
             this.labelVersion.Name = "labelVersion";
             this.labelVersion.Size = new System.Drawing.Size(47, 16);
             this.labelVersion.TabIndex = 8;
@@ -287,7 +287,7 @@
             // 
             // textBoxKeyMode
             // 
-            this.textBoxKeyMode.BackColor = System.Drawing.Color.PaleGreen;
+            this.textBoxKeyMode.BackColor = System.Drawing.Color.DarkOliveGreen;
             this.textBoxKeyMode.Font = new System.Drawing.Font("Meiryo UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.textBoxKeyMode.Location = new System.Drawing.Point(360, 100);
             this.textBoxKeyMode.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
@@ -310,7 +310,7 @@
             // 
             // textBoxSpanMode
             // 
-            this.textBoxSpanMode.BackColor = System.Drawing.Color.PaleGreen;
+            this.textBoxSpanMode.BackColor = System.Drawing.Color.DarkOliveGreen;
             this.textBoxSpanMode.Font = new System.Drawing.Font("Meiryo UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.textBoxSpanMode.Location = new System.Drawing.Point(444, 100);
             this.textBoxSpanMode.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
@@ -333,7 +333,7 @@
             // 
             // textBoxCode
             // 
-            this.textBoxCode.BackColor = System.Drawing.Color.PaleGreen;
+            this.textBoxCode.BackColor = System.Drawing.Color.DarkOliveGreen;
             this.textBoxCode.Font = new System.Drawing.Font("Meiryo UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.textBoxCode.Location = new System.Drawing.Point(527, 37);
             this.textBoxCode.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
@@ -356,7 +356,7 @@
             // 
             // textBoxAutoMode
             // 
-            this.textBoxAutoMode.BackColor = System.Drawing.Color.PaleGreen;
+            this.textBoxAutoMode.BackColor = System.Drawing.Color.DarkOliveGreen;
             this.textBoxAutoMode.Font = new System.Drawing.Font("Meiryo UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.textBoxAutoMode.Location = new System.Drawing.Point(526, 100);
             this.textBoxAutoMode.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
