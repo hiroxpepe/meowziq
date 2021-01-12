@@ -8,10 +8,13 @@ using Sanford.Multimedia.Midi;
 using Meowziq.Loader;
 
 namespace Meowziq.View {
+    /// <summary>
+    /// TODO: 排他制御
+    /// </summary>
     public partial class FormMain : Form {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Fields
+        // static Fields
 
         static bool playing = false;
 
@@ -20,6 +23,9 @@ namespace Meowziq.View {
         static bool stopping = false;
 
         static object locked = new object();
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Fields
 
         Midi midi;
 
@@ -56,9 +62,10 @@ namespace Meowziq.View {
                 }));
                 // UI情報表示
                 var _itemDictionary = Info.ItemDictionary;
-                var _tick = sequencer.Position - 1; // 1, 31 と来る
-                if (_itemDictionary.ContainsKey(_tick)) {
+                var _tick = sequencer.Position - 1; // Position が 1, 31 と来るので
+                if (_itemDictionary.ContainsKey(_tick)) { // FIXME: ContainsKey 大丈夫？
                     var _item = _itemDictionary[_tick];
+                    // TODO: デリゲートで置き換え可能？
                     Invoke((MethodInvoker) (() => {
                         textBoxKey.Text = _item.Key;
                         textBoxDegree.Text = _item.Degree;
@@ -69,13 +76,13 @@ namespace Meowziq.View {
                             Mode.Enum.Parse(_item.KeyMode),
                             Mode.Enum.Parse(_item.SpanMode)
                         );
-                        if (_item.KeyMode == _item.SpanMode) { // 自動旋法
+                        if (_item.KeyMode == _item.SpanMode) { // 自動旋法適用の場合
                             var _autoMode = Utils.GetModeBy(Degree.Enum.Parse(_item.Degree), Mode.Enum.Parse(_item.KeyMode));
                             textBoxAutoMode.Text = _autoMode.ToString();
                             textBoxAutoMode.BackColor = Color.PaleGreen;
                             textBoxSpanMode.Text = "---";
                             textBoxSpanMode.BackColor = Color.DarkOliveGreen;
-                        } else {
+                        } else { // Spanの旋法適用の場合
                             textBoxAutoMode.Text = "---";
                             textBoxAutoMode.BackColor = Color.DarkOliveGreen;
                             textBoxSpanMode.Text = _item.SpanMode;
@@ -119,7 +126,6 @@ namespace Meowziq.View {
                     labelPlay.ForeColor = Color.Lime;
                     playing = true;
                     played = false;
-                    var _item = Info.ItemDictionary; // DDDDD
                 }
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Stop);

@@ -4,20 +4,41 @@
 ## 楽曲データについて
 + 楽曲を演奏する際に以下の4種類のテキストデータファイルを必要とします
 + テキストデータは既存のテキストエディタ等を使用して作成します
-    |No|概念|ファイル名|内容|
-    |:--|:--|:--|:--|
-    |1|Pattern|pattern.json|楽曲のパターン、コード進行を定義します|
-    |2|Song|song.json|楽曲のキー、旋法、構成を定義します|
-    |3|Phrase|phrase.json|楽曲のフレーズを定義します|
-    |4|Player|player.json|楽曲の演奏者を定義します|
+    |No|概念|読み|ファイル名|内容|
+    |:--|:--|:--|:--|:--|
+    |1|Pattern|パターン|pattern.json|楽曲のパターンを定義します|
+    |2|Song|ソング|song.json|楽曲のキー・旋法、パターン構成を定義します|
+    |3|Phrase|フレーズ|phrase.json|楽曲のフレーズを定義します|
+    |4|Player|プレイヤー|player.json|楽曲の演奏者を定義します|
 + 楽曲データは JSON ファイルとして作成します
 + データの記述について
     + '[ ]' で区切られた範囲を1小節とみなします 
     + '|' で区切られた範囲を1拍とみなします
-    + 現時点では4/4拍子の楽曲にしか対応しません
+    + 現時点では4/4拍子の楽曲にしか対応していません
 
 ---
-## 記述フォーマット
+## 各概念の関係性
+#### データファイル
+|概念|項目|内容|
+|:--|:--|:--|
+|Song|pattern|複数の Pattern の名前を記述します|
+|Pattern|name|Pattern と Phrase の name 項目は同じ名前で記述します|
+|Phrase|name|Pattern と Phrase の name 項目は同じ名前で記述します|
+|Phrase|type|Player と Phrase の type 項目は同じ名前で記述します|
+|Player|type|Player と Phrase の type 項目は同じ名前で記述します|
+
+#### ※参考:プログラム内部では
+|概念|上記概念への参照|備考|
+|:--|:--|:--|
+|Phrase|※なし|※Note のリストを持ちます|
+|Pattern|※なし|※Meas のリストを持ちます|
+|Song|Pattern のリストを持ちます||
+|Player|Song を持ちます||
+|Player|Phrase のリストを持ちます||
+※ Player が起点となり演奏データが作成されます
+
+---
+## データファイル 記述フォーマット
 + json 形式で記述します [※参考](https://lab.syncer.jp/Tool/JSON-Viewer/)
 
 ---
@@ -26,7 +47,7 @@
 + pattern.json の内容
     |No|項目|内容|
     |:--|:--|:--|
-    |1|name|Pattern の名前を記述します、Song の pattern 項目と同一にする必要があります|
+    |1|name|Pattern の名前を記述します、Song の pattern 項目と同一にする必要があります、また Phrase の name 項目と同一にする必要があります|
     |2|data|Pattern の内容を記述します、※記述方法については後述します|
 + Pattern の記述例
     + Song キーに対する度数をローマ数字(I,V文字を使用)で記述します
@@ -117,7 +138,7 @@
     |No|項目|内容|
     |:--|:--|:--|
     |1|name|Song の名前を記述します|
-    |2|tempo|※Song のテンポを指定します ※未実装：今後実装予定|
+    |2|tempo|※Song のテンポを指定します ※未実装：実装予定|
     |3|key|Song のキーを指定します、※記述方法については後述します|
     |4|mode|Song の旋法を指定します|
     |5|pattern|Pattern の名前を配列として指定します|
@@ -141,7 +162,7 @@
     }
     ```
     + ※ Pattern の name 要素と Song の pattern 要素は一致する必要があります
-+ キーについて
++ キーの一覧
     |No|記述|備考|
     |:--|:--|:--|
     |1 |E |    |
@@ -156,18 +177,33 @@
     |10|Db|= C#|
     |11|D |    |
     |12|Eb|= D#|
++ 旋法の一覧
+    |No|記述|正式名|
+    |:--|:--|:--|
+    |1 |Lyd|Lydian|
+    |2 |Ion|Ionian|
+    |3 |Mix|Mixolydian|
+    |4 |Dor|Dorian|
+    |5 |Aeo|Aeolian|
+    |6 |Phr|Phrygian|
+    |7 |Loc|Locrian|
+
 ---
 ## Phrase 記述仕様
 + 定義のルートを "phrase" とします
++ Phrase は内容により記述方法が異なります
+
+
+
 + phrase.json の内容
     |No|項目|内容|
     |:--|:--|:--|
     |1|type     |Phrase の種類を記述します、Player の type 項目と同一にする必要があります|
     |2|name     |Phrase の名前を記述します、Pattern の name 項目と同一にする必要があります|
-    |3|note     |Phrase の内容を記述します ※単一の設定、オクターブは設定出来ません|
-    |4|data.inst|Phrase の楽器(ドラム)を指定します、※ drum のみ、記述方法については後述します|
-    |5|data.note|Phrase の内容を記述します ※複数の設定|
-    |6|data.oct |Phrase のオクターブを記述します ※複数の設定|
+    |3|note     |Phrase の内容を記述します|
+    |4|data.inst|Phrase の楽器(ドラム)を配列で指定します、※記述方法については後述します|
+    |5|data.note|Phrase の内容を配列で記述します|
+    |6|data.oct |Phrase のオクターブを配列で記述します|
 + Phrase の記述例
     ```json
     {
@@ -250,7 +286,7 @@
 + player.json の内容
     |No|項目|内容|
     |:--|:--|:--|
-    |1|type|Player の種類を指定します、※現在、drum、bass、pad、seque に対応します (TODO:)|
+    |1|type|Player の種類を指定します、Phrase の type 項目と同一にする必要があります|
     |2|midi|Player の MIDIチャンネルを指定します、drum は9を指定します|
     |3|inst|Player の楽器を記述します、※記述方法については後述します|
 + Player の記述例
@@ -478,6 +514,7 @@
     |46|Mute_Triangle|ミュートトライアングル|
     |47|Open_Triangle|オープントライアングル|
 
-
 + TODO: シンコペーションの実装 and 記述方法
+    + 1 の記述で 16分音符が 8分音符のシンコペーションになる
+    + 2 の記述で 16分音符が 付点8分音符のシンコペーションになる
 + MEMO: ドラムのシンコペーションには制限有り

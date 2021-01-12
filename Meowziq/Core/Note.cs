@@ -1,26 +1,29 @@
 ﻿
 namespace Meowziq.Core {
     /// <summary>
-    /// ChannelMessage に変換される
+    /// ChannelMessage に変換される音情報保持クラス
     /// </summary>
     public class Note {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        int tick; // TICK ※絶対値
+        int tick; // 4分音符 480の分解能のシーケンサーの tick 値 ※絶対値
 
-        int num; // NOTE番号
+        int num; // MIDI ノート番号
 
-        int gate; // NOTE長さ
+        int gate; // MIDI ノートON -> ノートOFF までの長さ
 
-        int velo; // NOTE強さ
+        int velo; // MIDI ノート強さ
 
-        bool stopPre; // NOTO発音前に強制停止(ch)
+        bool stopPre; // 優先発音フラグ
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
+        /// <summary>
+        /// NOTE: 作成したら状態は変更できません
+        /// </summary>
         public Note(int tick, int num, int gate, int velo, bool stopPre = false) {
             this.tick = tick;
             this.num = num;
@@ -33,36 +36,23 @@ namespace Meowziq.Core {
         // Properties [noun, adjectives] 
 
         public int Tick {
-            get => tick;
+            get => tick; // NOTE: 変更操作を提供しません
         }
 
         public int Num {
-            get => num;
+            get => num; // NOTE: 変更操作を提供しません
         }
 
         public int Gate {
-            get => gate;
+            get => gate; // NOTE: 変更操作を提供しません
         }
 
         public int Velo {
-            get => velo;
+            get => velo; // NOTE: 変更操作を提供しません
         }
 
         public bool StopPre {
-            get => stopPre;
+            get => stopPre; // NOTE: 変更操作を提供しません
         }
-    }
-
-    /// <summary>
-    /// Note の配列を持つ
-    /// </summary>
-    public class Chord {
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Fields
-
-        Note[] noteArray;
-
-        // キーのコードと自分を比較して自動展開
     }
 }

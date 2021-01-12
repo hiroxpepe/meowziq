@@ -70,36 +70,42 @@ namespace Meowziq {
         }
 
         /// <summary>
-        /// メジャーかマイナーがシンプルなコードネームを返します
+        /// メジャーかマイナーかシンプルなコードネームを返します
         /// </summary>
         public static string GetSimpleCodeName(Key key, Degree degree, Mode keyMode, Mode spanMode) {
             int _noteOfDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取
             string _codeBase = Key.Enum.Parse(_noteOfDegree).ToString(); // コードネームの基本取得
             Mode _mode;
-            if (keyMode == spanMode) { // 自動旋法
+            if (keyMode == spanMode) { // 自動旋法取得
                 _mode = modeBy(degree, keyMode);
             } else {
-                _mode = spanMode; // Spanの旋法
+                _mode = spanMode; // Spanの旋法適用
             }
-            string _3rd = "";
-            switch (_mode) {
-                case Mode.Lyd:
-                case Mode.Ion:
-                case Mode.Mix:
-                    _3rd = "";
-                    break;
-                case Mode.Dor:
-                case Mode.Aeo:
-                case Mode.Phr:
-                case Mode.Loc:
-                    _3rd = "m";
-                    break;
-            }
-            return _codeBase + _3rd;
+            string _3rdString = majorOrMinerString(_mode);
+            return _codeBase + _3rdString;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private static Methods [verb]
+
+        /// <summary>
+        /// その旋法のコードがメジャーかマイナーか付加する文字列を返します
+        /// </summary>
+        static string majorOrMinerString(Mode _mode) {
+            switch (_mode) {
+                case Mode.Lyd:
+                case Mode.Ion:
+                case Mode.Mix:
+                    return ""; // TODO: "M"
+                case Mode.Dor:
+                case Mode.Aeo:
+                case Mode.Phr:
+                case Mode.Loc:
+                    return "m";
+                default:
+                    throw new ArgumentException("invalid mode.");
+            }
+        }
 
         /// <summary>
         /// 1～9のコード記法から Note No の配列を返します

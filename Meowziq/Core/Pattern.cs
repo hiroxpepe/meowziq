@@ -6,7 +6,7 @@ using System.Linq;
 namespace Meowziq.Core {
     /// <summary>
     /// Pattern クラス
-    ///     + Meas オブジェクトのリストを管理する
+    ///     + Meas オブジェクトのリストを管理します
     /// </summary>
     public class Pattern {
 
@@ -21,7 +21,7 @@ namespace Meowziq.Core {
         // Constructor
 
         /// <summary>
-        /// コンストラクタだけが作成する唯一の方法
+        /// NOTE: コンストラクタだけが作成する唯一の方法
         /// </summary>
         public Pattern(string name, List<Meas> measList) {
             if (measList.Count > 16) {
@@ -89,7 +89,7 @@ namespace Meowziq.Core {
             // Span を分解して個別にする
             this.spanList = new List<Span>();
             spanList.ForEach(x => {
-                for (var _i = 0; _i < x.Beat; _i++) {
+                for (var _idx = 0; _idx < x.Beat; _idx++) {
                     this.spanList.Add(new Span(1, x.Degree, x.Mode));
                 }
             });

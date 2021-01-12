@@ -126,11 +126,11 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// 全ての Note
+        /// Note のリストを返します
         /// </summary>
         public List<Note> AllNote {
             get {
-                if (!type.ToLower().Contains("drum")) { // ドラム以外
+                if (!type.ToLower().Contains("drum")) { // ドラム以外 TODO: これで良いか確認
                     optimize(); // 最適化する
                 }
                 return noteList;
@@ -141,7 +141,8 @@ namespace Meowziq.Core {
         // public Methods [verb]
 
         /// <summary>
-        /// Player オブジェクトから呼ばれます
+        /// Note データを生成します
+        /// NOTE: Player オブジェクトから呼ばれます
         /// </summary>
         public void Build(int position, Key key, Pattern pattern) {
             onBuild(position, key, pattern);
@@ -211,7 +212,7 @@ namespace Meowziq.Core {
                     var _span = pattern.AllSpan[_spanIdx];
                     var _note = Utils.GetNoteAsRandom(key, _span.Degree, _span.Mode); // 16の倍数
                     add(new Note(position + (Tick.Of16beat.Int32() * _16beatIdx), _note, 30, 127)); // gate 短め
-                    _spanIdxCount++; // Span 用のカウンタも進める
+                    _spanIdxCount++; // Span 用のカウンタをインクリメント
                 }
             }
             // UI 表示情報
@@ -225,10 +226,7 @@ namespace Meowziq.Core {
                         _spanIdx++; // Span のindex値をインクリメント
                     }
                     var _span = pattern.AllSpan[_spanIdx];
-                    // 16beat の tick 毎に処理
-                    //var _note = Utils.GetNoteAsRandom(key, _span.Degree, _span.Mode); // 16の倍数
-                    //add(new Note(position + (Tick.Of16beat.Int32() * _16beatIdx), _note, 30, 127)); // gate 短め
-                    var _tick = position + (Tick.Of16beat.Int32() * _16beatIdx);
+                    var _tick = position + (Tick.Of16beat.Int32() * _16beatIdx); // 16beat の tick 毎に処理
                     if (Info.HashSet.Add(_tick)) { // tick につき1度だけ
                         Info.ItemDictionary.Add(_tick, new Info.Item {
                             Tick = _tick, 
@@ -238,13 +236,14 @@ namespace Meowziq.Core {
                             SpanMode = _span.Mode.ToString()
                         });
                     }
-                    _spanIdxCount++; // Span 用のカウンタも進める
+                    _spanIdxCount++; // Span 用のカウンタをインクリメント
                 }
             }
         }
 
         /// <summary>
         /// Note を適用します
+        /// TODO: static化？
         /// </summary>
         protected void applyNote(int position, int beatCount, Key key, List<Span> spanList, Text text, int interval = 0, string pre = null, string post = null) {
             var _16beatIdx = 0; // 16beatのindex
@@ -320,13 +319,14 @@ namespace Meowziq.Core {
                         );
                     }
                 }
-                _16beatIdx++; // 16beatを進める
-                _spanIdxCount++; // Span 用のカウンタも進める
+                _16beatIdx++; // 16beatのindex値をインクリメント
+                _spanIdxCount++; // Span 用のカウンタをインクリメント
             }
         }
 
         /// <summary>
         /// ドラム用 Note を適用します
+        /// TODO: static化？
         /// </summary>
         protected void applyDrumNote(int position, int beatCount, string noteText, Percussion noteNum, string pre = null) {
             var _16beatIdx = 0;
@@ -355,7 +355,7 @@ namespace Meowziq.Core {
                         add(new Note(position + (Tick.Of16beat.Int32() * _16beatIdx), (int) noteNum, 120, 127));
                     }
                 }
-                _16beatIdx++; // 16beatを進める
+                _16beatIdx++; // 16beatのindex値をインクリメント
             }
         }
 
@@ -549,8 +549,7 @@ namespace Meowziq.Core {
                 } else if (value.Length != noteTextArray.Length) {
                     throw new ArgumentException("preArray must be same count as noteTextArray.");
                 } else {
-                    // TODO: バリデーション
-                    preArray = value;
+                    preArray = value; // TODO: バリデーション
                 }
             }
         }
@@ -568,8 +567,7 @@ namespace Meowziq.Core {
                 } else if (value.Length != noteTextArray.Length) {
                     throw new ArgumentException("postArray must be same count as noteTextArray.");
                 } else {
-                    // TODO: バリデーション
-                    postArray = value;
+                    postArray = value; // TODO: バリデーション
                 }
             }
         }

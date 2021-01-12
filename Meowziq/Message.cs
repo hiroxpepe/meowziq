@@ -16,12 +16,12 @@ namespace Meowziq {
 
         static Dictionary<int, List<ChannelMessage>> item = new Dictionary<int, List<ChannelMessage>>(); // Tick 毎の メッセージのリスト
 
-        static HashSet<int> hashset = new HashSet<int>(); // カーソル役
+        static HashSet<int> hashset = new HashSet<int>(); // ※Dictionary.ContainsKey() が遅いのでその対策
 
         static HashSet<int>[] allNoteOffHashsetArray = new HashSet<int>[16]; // ノート強制停止用配列
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Constructor
+        // static　Constructor
 
         static Message() {
             allNoteOffHashsetArray = allNoteOffHashsetArray.Select(x => x = new HashSet<int>()).ToArray();
@@ -30,10 +30,13 @@ namespace Meowziq {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]
 
+        /// <summary>
+        /// 引数の tick の ChannelMessage のリストを返します
+        /// </summary>
         public static List<ChannelMessage> GetBy(int tick) {
             tick = tick - 1; // -1 が必要
             if (!hashset.Add(tick)) {
-                return null; // 既に処理した tick
+                return null; // 既に処理した tick なので無視する
             }
             if (item.ContainsKey(tick)) { // その tick が存在するかどうか
                 return item[tick];
@@ -41,6 +44,9 @@ namespace Meowziq {
             return null;
         }
 
+        /// <summary>
+        /// Note を ChannelMessage として適用します
+        /// </summary>
         public static void Apply(int midiCh, Note note) {
             if (note.StopPre) { // ノートが優先発音の場合
                 var _noteOffTick = note.Tick - Tick.Of32beat.Int32(); // 念のため32分音符前に停止
@@ -55,6 +61,7 @@ namespace Meowziq {
         }
 
         /// <summary>
+        /// プログラムNo(音色)を ChannelMessage として適用します
         /// TODO: バンクセレクト
         /// </summary>
         public static void Apply(int midiCh, int programNum) {
@@ -62,7 +69,7 @@ namespace Meowziq {
         }
 
         /// <summary>
-        /// カーソルクリア
+        /// 状態をリセットします
         /// </summary>
         public static void Reset() {
             item.Clear();
@@ -73,6 +80,9 @@ namespace Meowziq {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private static Methods [verb]
 
+        /// <summary>
+        /// ChannelMessage をリストに追加します
+        /// </summary>
         static void add(int tick, ChannelMessage channelMessage) {
             if (!item.ContainsKey(tick)) {
                 var _newList = new List<ChannelMessage>();
@@ -85,22 +95,51 @@ namespace Meowziq {
         }
     }
 
+    /// <summary>
+    /// 曲がどのような状況で演奏されているかを表す情報を保持するクラス
+    /// NOTE: 設定されて読み出させるだけ、これを状態を変更する目的で使わない
+    /// TODO: 記述するファイル移動
+    /// </summary>
     public static class Info {
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // static　Constructor
+
         static Info() {
-            HashSet = new HashSet<int>();
+            HashSet = new HashSet<int>(); // ※Dictionary.ContainsKey() が遅いのでその対策
             ItemDictionary = new Dictionary<int, Item>();
         }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // static Properties [noun, adjectives] 
+
         public static HashSet<int> HashSet {
             get; set;
         }
+
         public static Dictionary<int, Item> ItemDictionary {
             get; set;
         }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public static Methods [verb]
+
         public static void Reset() {
             HashSet.Clear();
             ItemDictionary.Clear();
         }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // inner Classes
+
+        /// <summary>
+        /// どのようなキー、度数、旋法で演奏されているかを表す情報
+        /// </summary>
         public class Item {
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // static Properties [noun, adjectives] 
+
             public int Tick {
                 get; set;
             }
