@@ -60,6 +60,7 @@
     <Compile Include="Core\Mixer.cs" />
     <Compile Include="Core\Note.cs" />
     <Compile Include="Core\Pattern.cs" />
+    <Compile Include="Core\Generator.cs" />
     <Compile Include="Core\Phrase.cs" />
     <Compile Include="Core\Player.cs" />
     <Compile Include="Core\Song.cs" />
