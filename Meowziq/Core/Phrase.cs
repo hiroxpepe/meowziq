@@ -16,6 +16,8 @@ namespace Meowziq.Core {
 
         Field field;
 
+        Range range; // TODO: 範囲を小節内で指定出来るように
+
         Data data;
 
         List<Note> noteList; // Pattern の設定回数分の Note を格納
@@ -65,18 +67,20 @@ namespace Meowziq.Core {
                     throw new ArgumentException("invalid range format.");
                 }
                 var _rangeArray = _rangeText.Split(':');
-                field.RangeMin = int.Parse(_rangeArray[0]);
-                field.RangeMax = int.Parse(_rangeArray[1]);
-                if (field.RangeMin < 0) {
+                this.range = new Range(
+                    int.Parse(_rangeArray[0]),
+                    int.Parse(_rangeArray[1])
+                );
+                if (range.Min < 0) {
                     throw new ArgumentException("invalid range min.");
                 }
-                if (field.RangeMax > 127) {
+                if (range.Max > 127) {
                     throw new ArgumentException("invalid range max.");
                 }
-                if (field.RangeMax - field.RangeMin != 11) { // オクターブの範囲外
-                    var _okMax = field.RangeMin + 11;
-                    var _okMin = field.RangeMax - 11;
-                    throw new ArgumentException($"invalid range length,\r\nmust set {field.RangeMin}:{_okMax} or {_okMin}:{field.RangeMax}.");
+                if (range.Max - range.Min != 11) { // オクターブの範囲外
+                    var _okMax = range.Min + 11;
+                    var _okMin = range.Max - 11;
+                    throw new ArgumentException($"invalid range length,\r\nmust set {range.Min}:{_okMax} or {_okMin}:{range.Max}.");
                 }
             }
         }
@@ -166,7 +170,7 @@ namespace Meowziq.Core {
             }
             if (_dataType == DataType.Chord) {
                 var _text = new Text(field.ChordText, getDataType());
-                var _range = new Range(field.RangeMin, field.RangeMax);
+                var _range = new Range(range.Min, range.Max);
                 _generator.ApplyNote(position, pattern.BeatCount, key, pattern.AllSpan, _text, 0, _range, field.Pre, field.Post);
             }
             if (_dataType == DataType.NoteMulti) {
@@ -248,6 +252,7 @@ namespace Meowziq.Core {
 
         /// <summary>
         /// Field クラス
+        /// TODO: 内容・用途により小さなクラスに変換
         /// </summary>
         class Field {
 
@@ -267,12 +272,6 @@ namespace Meowziq.Core {
                 get; set;
             }
             public string ChordText {
-                get; set;
-            }
-            public int RangeMin {
-                get; set; // TODO: 範囲を小節内で指定出来るように
-            }
-            public int RangeMax {
                 get; set;
             }
             public string Pre {
