@@ -134,6 +134,7 @@ namespace Meowziq.Core {
     /// <summary>
     /// Phrase クラスの Text クラス
     /// TODO: 引数クラスとして Range 等を含める？
+    /// TODO: DataType で分岐する処理に渡す引数パラメータクラス
     /// </summary>
     public class Text {
 
