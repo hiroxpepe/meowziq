@@ -30,14 +30,14 @@ namespace Meowziq.Loader {
             var _phrase = new Core.Phrase();
             _phrase.Type = phrase.Type;
             _phrase.Name = phrase.Name;
-            _phrase.NoteText = validateValue(phrase.Note);
+            _phrase.Note = validateValue(phrase.Note);
             _phrase.Oct = phrase.Oct;
-            _phrase.ChordText = phrase.Chord; // TODO: バリデート
+            _phrase.Chord = phrase.Chord; // TODO: バリデート
             _phrase.Range = phrase.Range;
             _phrase.Pre = phrase.Pre;
             _phrase.Post = phrase.Post;
             if (phrase.Data != null) { // 複合データがある場合
-                _phrase.Data.NoteTextArray = phrase.Data.NoteArray.Select(x => validateValue(x)).ToArray();
+                _phrase.Data.NoteArray = phrase.Data.NoteArray.Select(x => validateValue(x)).ToArray();
                 _phrase.Data.OctArray = phrase.Data.OctArray;
                 _phrase.Data.PreArray = phrase.Data.PreArray;
                 _phrase.Data.PostArray = phrase.Data.PostArray;
@@ -49,7 +49,7 @@ namespace Meowziq.Loader {
         }
 
         /// <summary>
-        /// FIXME: バリデーターはローダーではなく本クラスに移動する
+        /// FIXME: バリデーターは Loader ではなく Value クラスに移動する
         /// TODO: 使用可能な文字
         /// </summary>
         static string validateValue(string target) {

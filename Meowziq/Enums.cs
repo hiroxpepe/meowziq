@@ -7,8 +7,8 @@ namespace Meowziq {
     // public Enums [noun]
 
     public enum DataType {
-        NoteMono = 0,
-        NoteMulti = 1,
+        Mono = 0,
+        Multi = 1,
         Chord = 2,
         Drum = 3,
         Sequence = 4,

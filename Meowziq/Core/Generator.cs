@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
+using Meowziq.Value;
+
 namespace Meowziq.Core {
     /// <summary>
     /// Generator クラス
@@ -28,14 +30,17 @@ namespace Meowziq.Core {
         /// <summary>
         /// Note を適用します
         /// </summary>
-        public void ApplyNote(int position, int beatCount, Key key, List<Span> spanList, Text text, int interval = 0, Range range = null, string pre = null, string post = null) {
+        public void ApplyNote(int position, int beatCount, Key key, List<Span> spanList, Param param) {
             var _16beatIdx = 0; // 16beatのindex
             var _spanIdxCount = 0; // 16beatで1拍をカウントする用
             var _spanIdx = 0; // Span リストの添え字
-            var _noteArray = filter(text.Body).ToCharArray();
-            var _preArray = pre == null ? null : filter(pre).ToCharArray(); // TODO: バリデート
-            var _postArray = post == null ? null : filter(post).ToCharArray(); // TODO: バリデート
-            foreach (var _note in _noteArray) {
+            char[] _noteArray = new char[16];
+            if (param.Type == DataType.Mono || param.Type == DataType.Multi) {
+                _noteArray = param.Note.TextCharArray;
+            } else if (param.Type == DataType.Chord) {
+                _noteArray = param.Chord.TextCharArray;
+            }
+            foreach (var _note in _noteArray) { // TODO: param.NoteArray の形式に
                 if (_16beatIdx > beatCount * 4) {
                     return; // Pattern の長さを超えたら終了
                 }
@@ -43,26 +48,26 @@ namespace Meowziq.Core {
                     _spanIdxCount = 0; // カウンタリセット
                     _spanIdx++; // Span のindex値をインクリメント
                 }
-                if (((text.Type == DataType.NoteMono || text.Type == DataType.NoteMulti) && Regex.IsMatch(_note.ToString(), @"^[1-7]+$")) || (text.Type == DataType.Chord && Regex.IsMatch(_note.ToString(), @"^[1-9]+$"))) { // 1～7まで度数の数値がある時、chord モードは1～9
+                if (((param.Type == DataType.Mono || param.Type == DataType.Multi) && Regex.IsMatch(_note.ToString(), @"^[1-7]+$")) || (param.Type == DataType.Chord && Regex.IsMatch(_note.ToString(), @"^[1-9]+$"))) { // 1～7まで度数の数値がある時、chord モードは1～9
                     var _span = spanList[_spanIdx];
                     int[] _noteNumArray = new int[7];
                     _noteNumArray = _noteNumArray.Select(x => x = -1).ToArray(); // -1 で初期化
                     // 曲の旋法と Span の旋法が同じ場合は自動旋法
                     if (_span.KeyMode == _span.Mode) {
-                        if (text.Type == DataType.NoteMono || text.Type == DataType.NoteMulti) {
+                        if (param.Type == DataType.Mono || param.Type == DataType.Multi) {
                             _noteNumArray[0] = Utils.GetNoteByAutoMode(key, _span.Degree, _span.KeyMode, int.Parse(_note.ToString()));
-                        } else if (text.Type == DataType.Chord) {
+                        } else if (param.Type == DataType.Chord) {
                             _noteNumArray = Utils.GetNoteArrayByAutoMode(key, _span.Degree, _span.KeyMode, int.Parse(_note.ToString()));
-                            _noteNumArray = applyRange(_noteNumArray, range); // コード展開形の範囲を適用
+                            _noteNumArray = applyRange(_noteNumArray, param.Chord.Range); // コード展開形の範囲を適用
                         }
                     }
                     // Span に旋法が設定してあればそちらを適用する
                     else {
-                        if (text.Type == DataType.NoteMono || text.Type == DataType.NoteMulti) {
+                        if (param.Type == DataType.Mono || param.Type == DataType.Multi) {
                             _noteNumArray[0] = Utils.GetNoteBySpanMode(key, _span.Degree, _span.KeyMode, _span.Mode, int.Parse(_note.ToString()));
-                        } else if (text.Type == DataType.Chord) {
+                        } else if (param.Type == DataType.Chord) {
                             _noteNumArray = Utils.GetNoteArrayBySpanMode(key, _span.Degree, _span.KeyMode, _span.Mode, int.Parse(_note.ToString()));
-                            _noteNumArray = applyRange(_noteNumArray, range); // コード展開形の範囲を適用
+                            _noteNumArray = applyRange(_noteNumArray, param.Chord.Range); // コード展開形の範囲を適用
                         }
                     }
                     // この音の音価を調査する
@@ -79,8 +84,8 @@ namespace Meowziq.Core {
                     }
                     // シンコペーション
                     var _prePosition = 0;
-                    if (_preArray != null) {
-                        var _pre = _preArray[_16beatIdx];
+                    if (param.Exp.HasPre) {
+                        var _pre = param.Exp.PreCharArray[_16beatIdx];
                         if (Regex.IsMatch(_pre.ToString(), @"^[1-2]+$")) { // 120 * 2 tick まで ⇒ 16分・8分音符のシンコぺのみ
                             var _preInt = int.Parse(_pre.ToString());
                             _gateCount += _preInt; // pre の数値を音価に加算
@@ -88,17 +93,17 @@ namespace Meowziq.Core {
                         }
                     }
                     // TODO: 最後の音を伸ばす
-                    if (_postArray != null) {
+                    if (param.Exp.HasPost) {
                     }
                     var _gate = Tick.Of16beat.Int32() * (_gateCount + 1); // 音の長さ：+1 は数値文字の分
                     // シンコぺがある場合は優先発音フラグON
                     if (_prePosition != 0) {
                         _noteNumArray.Where(x => x != -1).ToList().ForEach(
-                            x => add(new Note((_prePosition + position) + (Tick.Of16beat.Int32() * _16beatIdx), x + interval, _gate, 127, true)) // 優先ノート
+                            x => add(new Note((_prePosition + position) + (Tick.Of16beat.Int32() * _16beatIdx), x + param.Note.Interval, _gate, 127, true)) // 優先ノート
                         );
                     } else {
                         _noteNumArray.Where(x => x != -1).ToList().ForEach(
-                            x => add(new Note(position + (Tick.Of16beat.Int32() * _16beatIdx), x + interval, _gate, 127))
+                            x => add(new Note(position + (Tick.Of16beat.Int32() * _16beatIdx), x + param.Note.Interval, _gate, 127))
                         );
                     }
                 }
@@ -110,10 +115,9 @@ namespace Meowziq.Core {
         /// <summary>
         /// ドラム用 Note を適用します
         /// </summary>
-        public void ApplyDrumNote(int position, int beatCount, string text, Percussion noteNum, string pre = null) {
+        public void ApplyDrumNote(int position, int beatCount, Param param) {
             var _16beatIdx = 0;
-            var _preArray = pre == null ? null : filter(pre).ToCharArray(); // TODO: バリデート
-            foreach (bool? _note in convertToBool(filter(text))) {
+            foreach (bool? _note in param.Note.BoolList) {
                 if (_16beatIdx > beatCount * 4) {
                     return; // Pattern の長さを超えたら終了
                 }
@@ -121,8 +125,8 @@ namespace Meowziq.Core {
                     // シンコペーション
                     var _gateCount = 0;
                     var _prePosition = 0;
-                    if (_preArray != null) {
-                        var _pre = _preArray[_16beatIdx];
+                    if (param.Exp.HasPre) { // pre設定があれば
+                        var _pre = param.Exp.PreCharArray[_16beatIdx];
                         if (Regex.IsMatch(_pre.ToString(), @"^[1-2]+$")) { // 120 * 2 tick まで ⇒ 16分・8分音符のシンコぺのみ
                             var _preInt = int.Parse(_pre.ToString());
                             _gateCount += _preInt; // pre の数値を音価に加算
@@ -132,9 +136,9 @@ namespace Meowziq.Core {
                     var _gate = Tick.Of16beat.Int32() * (_gateCount + 1); // 音の長さ：+1 は数値文字の分
                     // シンコぺがある場合は優先発音フラグON
                     if (_prePosition != 0) {
-                        add(new Note((_prePosition + position) + (Tick.Of16beat.Int32() * _16beatIdx), (int) noteNum, _gate, 127, true));
+                        add(new Note((_prePosition + position) + (Tick.Of16beat.Int32() * _16beatIdx), param.PercussionNoteNum, _gate, 127, true));
                     } else {
-                        add(new Note(position + (Tick.Of16beat.Int32() * _16beatIdx), (int) noteNum, 120, 127));
+                        add(new Note(position + (Tick.Of16beat.Int32() * _16beatIdx), param.PercussionNoteNum, 120, 127));
                     }
                 }
                 _16beatIdx++; // 16beatのindex値をインクリメント
@@ -219,23 +223,27 @@ namespace Meowziq.Core {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // private static Methods [verb]
 
-        static string filter(string target) {
-            return target.Replace("|", "").Replace("[", "").Replace("]", ""); // 不要文字削除
-        }
-
-        static List<bool?> convertToBool(string target) {
-            // on, null スイッチ
-            var _list = new List<bool?>();
-            target.ToList().ForEach(x => {
-                if (x.Equals('x')) {
-                    _list.Add(true);
-                } else if (x.Equals('-')) {
-                    _list.Add(null);
+        /// <summary>
+        /// 4インクリメントされる毎に1インクリメントした index 値を返す
+        /// </summary>
+        class SpanIndex {
+            int idx4;
+            public SpanIndex() {
+                Idx = 0;
+                idx4 = 0;
+            }
+            public int Idx { 
+                get;
+                private set;
+            }
+            public void Increment() {
+                idx4++;
+                if (idx4 == 4) {
+                    idx4 = 0;
+                    Idx++;
                 }
-            });
-            return _list;
+            }
         }
     }
 }
