@@ -33,29 +33,29 @@ namespace Meowziq.Core {
         public void ApplyNote(int position, int beatCount, Key key, List<Span> spanList, Param param) {
             var _16beatIdx = 0; // 16beatのindex
             var _spanIndex = new SpanIndex(); // Span リストの添え字オブジェクト
-            foreach (var _note in param.TextCharArray) {
+            foreach (var _text in param.TextCharArray) {
                 if (_16beatIdx > beatCount * 4) {
                     return; // Pattern の長さを超えたら終了
                 }
-                if (((param.Type == DataType.Mono || param.Type == DataType.Multi) && param.IsMatch(_note)) || (param.Type == DataType.Chord && param.IsMatch(_note))) {
+                if (((param.TypeNote) && param.IsMatch(_text)) || (param.TypeChord && param.IsMatch(_text))) {
                     var _span = spanList[_spanIndex.Idx]; // 16beat 4個で1進む
                     int[] _noteNumArray = new int[7];
                     _noteNumArray = _noteNumArray.Select(x => x = -1).ToArray(); // -1 で初期化
                     // 曲の旋法と Span の旋法が同じ場合は自動旋法
-                    if (_span.KeyMode == _span.Mode) {
-                        if (param.Type == DataType.Mono || param.Type == DataType.Multi) {
-                            _noteNumArray[0] = Utils.GetNoteByAutoMode(key, _span.Degree, _span.KeyMode, int.Parse(_note.ToString()));
-                        } else if (param.Type == DataType.Chord) {
-                            _noteNumArray = Utils.GetNoteArrayByAutoMode(key, _span.Degree, _span.KeyMode, int.Parse(_note.ToString()));
+                    if (_span.AutoMode) {
+                        if (param.TypeNote) {
+                            _noteNumArray[0] = Utils.GetNoteByAutoMode(key, _span.Degree, _span.KeyMode, int.Parse(_text.ToString()));
+                        } else if (param.TypeChord) {
+                            _noteNumArray = Utils.GetNoteArrayByAutoMode(key, _span.Degree, _span.KeyMode, int.Parse(_text.ToString()));
                             _noteNumArray = applyRange(_noteNumArray, param.Chord.Range); // コード展開形の範囲を適用
                         }
                     }
                     // Span に旋法が設定してあればそちらを適用する
                     else {
-                        if (param.Type == DataType.Mono || param.Type == DataType.Multi) {
-                            _noteNumArray[0] = Utils.GetNoteBySpanMode(key, _span.Degree, _span.KeyMode, _span.Mode, int.Parse(_note.ToString()));
-                        } else if (param.Type == DataType.Chord) {
-                            _noteNumArray = Utils.GetNoteArrayBySpanMode(key, _span.Degree, _span.KeyMode, _span.Mode, int.Parse(_note.ToString()));
+                        if (param.TypeNote) {
+                            _noteNumArray[0] = Utils.GetNoteBySpanMode(key, _span.Degree, _span.KeyMode, _span.Mode, int.Parse(_text.ToString()));
+                        } else if (param.TypeChord) {
+                            _noteNumArray = Utils.GetNoteArrayBySpanMode(key, _span.Degree, _span.KeyMode, _span.Mode, int.Parse(_text.ToString()));
                             _noteNumArray = applyRange(_noteNumArray, param.Chord.Range); // コード展開形の範囲を適用
                         }
                     }
@@ -103,11 +103,11 @@ namespace Meowziq.Core {
         /// </summary>
         public void ApplyDrumNote(int position, int beatCount, Param param) {
             var _16beatIdx = 0;
-            foreach (bool? _note in param.Note.BoolList) {
+            foreach (bool? _text in param.Note.BoolList) {
                 if (_16beatIdx > beatCount * 4) {
                     return; // Pattern の長さを超えたら終了
                 }
-                if (_note == true) {
+                if (_text == true) {
                     // シンコペーション
                     var _gateCount = 0;
                     var _prePosition = 0;

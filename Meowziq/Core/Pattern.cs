@@ -160,5 +160,10 @@ namespace Meowziq.Core {
             get => keyMode;
             set => keyMode = value;
         }
+
+        public bool AutoMode {
+            get => mode == keyMode; // 曲の旋法と Span の旋法が同じ場合は自動旋法
+        }
+
     }
 }
