@@ -85,6 +85,10 @@ namespace Meowziq {
             return _codeBase + _3rdString;
         }
 
+        public static string Filter(string target) {
+            return target.Replace("|", "").Replace("[", "").Replace("]", ""); // 不要文字削除
+        }
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private static Methods [verb]
 
