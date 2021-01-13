@@ -16,8 +16,6 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        Field field;
-
         Value.Note note;
 
         Value.Chord chord;
@@ -32,7 +30,6 @@ namespace Meowziq.Core {
         // Constructor
 
         public Phrase() {
-            this.field = new Field();
             this.note = new Value.Note();
             this.chord = new Value.Chord();
             this.exp = new Value.Exp();
@@ -44,13 +41,11 @@ namespace Meowziq.Core {
         // Properties [noun, adjectives] 
 
         public string Type {
-            get => field.Type;
-            set => field.Type = value;
+            get; set;
         }
 
         public string Name {
-            get => field.Name;
-            set => field.Name = value;
+            get; set;
         }
 
         public string Note {
@@ -127,7 +122,7 @@ namespace Meowziq.Core {
         /// </summary>
         public List<Note> AllNote {
             get {
-                if (!field.Type.ToLower().Contains("drum")) { // ドラム以外 TODO: これで良いか確認
+                if (!Type.ToLower().Contains("drum")) { // ドラム以外 TODO: これで良いか確認
                     optimize(); // 最適化する
                 }
                 return noteList;
@@ -169,40 +164,46 @@ namespace Meowziq.Core {
             //if (BeatCount != pattern.BeatCount) {
             //    throw new ArgumentException("invalid beatCount.");
             //}
-            // NOTE: Type で分岐：プラグイン拡張出来るように
-            var _generator = new Generator(noteList); // TODO: コンストラクタで生成
-            var _dataType = defineDataType(); // TODO: switch で置き換え
-            if (_dataType == DataType.Mono) {
-                var _param = new Param(note, exp, _dataType);
-                _generator.ApplyNote(position, pattern.BeatCount, key, pattern.AllSpan, _param);
-            }
-            if (_dataType == DataType.Chord) {
-                var _param = new Param(chord, exp, _dataType);
-                _generator.ApplyNote(position, pattern.BeatCount, key, pattern.AllSpan, _param);
-            }
-            if (_dataType == DataType.Multi) {
-                for (var _idx = 0; _idx < data.NoteArray.Length; _idx++) {
-                    var _param = new Param(
-                        new Value.Note(data.NoteArray[_idx], data.OctArray[_idx]),
-                        new Value.Exp(data.PreArray[_idx], data.PostArray[_idx]),
-                        _dataType
-                    );
-                    _generator.ApplyNote(position, pattern.BeatCount, key, pattern.AllSpan, _param);
-                }
-            }
-            if (_dataType == DataType.Drum) {
-                for (var _idx = 0; _idx < data.NoteArray.Length; _idx++) {
-                    var _param = new Param(
-                        new Value.Note(data.NoteArray[_idx], 0),
-                        (int) data.PercussionArray[_idx],
-                        new Value.Exp(data.PreArray[_idx], ""),
-                        _dataType
-                    );
-                    _generator.ApplyDrumNote(position, pattern.BeatCount, _param);
-                }
-            }
-            if (_dataType == DataType.Sequence) {
-                _generator.ApplyRandomNote(position, pattern.BeatCount, key, pattern.AllSpan);
+            // NOTE: DataType で分岐 TODO: プラグイン拡張出来るように
+            var _generator = new Generator(noteList); // NOTE: コンストラクタで生成ではNG
+            var _dataType = defineDataType();
+            switch (_dataType) {
+                case DataType.Mono: 
+                    {
+                        var _param = new Param(note, exp, _dataType);
+                        _generator.ApplyNote(position, pattern.BeatCount, key, pattern.AllSpan, _param);
+                    }
+                    break;
+                case DataType.Chord: 
+                    {
+                        var _param = new Param(chord, exp, _dataType);
+                        _generator.ApplyNote(position, pattern.BeatCount, key, pattern.AllSpan, _param);
+                    }
+                    break;
+                case DataType.Multi:
+                    for (var _idx = 0; _idx < data.NoteArray.Length; _idx++) {
+                        var _param = new Param(
+                            new Value.Note(data.NoteArray[_idx], data.OctArray[_idx]),
+                            new Value.Exp(data.PreArray[_idx], data.PostArray[_idx]),
+                            _dataType
+                        );
+                        _generator.ApplyNote(position, pattern.BeatCount, key, pattern.AllSpan, _param);
+                    }
+                    break;
+                case DataType.Drum:
+                    for (var _idx = 0; _idx < data.NoteArray.Length; _idx++) {
+                        var _param = new Param(
+                            new Value.Note(data.NoteArray[_idx], 0),
+                            (int) data.PercussionArray[_idx],
+                            new Value.Exp(data.PreArray[_idx], ""),
+                            _dataType
+                        );
+                        _generator.ApplyDrumNote(position, pattern.BeatCount, _param);
+                    }
+                    break;
+                case DataType.Sequence:
+                    _generator.ApplyRandomNote(position, pattern.BeatCount, key, pattern.AllSpan);
+                    break;
             }
             // UI 表示情報作成
             _generator.ApplyInfo(position, pattern.BeatCount, key, pattern.AllSpan);
@@ -256,26 +257,6 @@ namespace Meowziq.Core {
                 .Select(x => x.Replace("[", "").Replace("]", "")).ToArray(); // 不要文字削除
             // FIXME: 1小節を4拍として計算
             return _measStringArray.Length * 4;
-        }
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // inner Classes
-
-        /// <summary>
-        /// Field クラス
-        /// TODO: 必要？
-        /// </summary>
-        class Field {
-
-            ///////////////////////////////////////////////////////////////////////////////////////////
-            // Properties [noun, adjectives] 
-
-            public string Type {
-                get; set;
-            }
-            public string Name {
-                get; set;
-            }
         }
     }
 }
