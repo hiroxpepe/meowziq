@@ -168,13 +168,13 @@ namespace Meowziq.Core {
             var _generator = new Generator(noteList); // NOTE: コンストラクタで生成ではNG
             var _dataType = defineDataType();
             switch (_dataType) {
-                case DataType.Mono: 
+                case DataType.Mono:
                     {
                         var _param = new Param(note, exp, _dataType);
                         _generator.ApplyNote(position, pattern.BeatCount, key, pattern.AllSpan, _param);
                     }
                     break;
-                case DataType.Chord: 
+                case DataType.Chord:
                     {
                         var _param = new Param(chord, exp, _dataType);
                         _generator.ApplyNote(position, pattern.BeatCount, key, pattern.AllSpan, _param);

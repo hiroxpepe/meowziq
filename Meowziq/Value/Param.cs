@@ -374,6 +374,24 @@ namespace Meowziq.Value {
             }
         }
 
+        public bool TypeNote {
+            get {
+                if (Type == DataType.Mono || Type == DataType.Multi) {
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        public bool TypeChord {
+            get {
+                if (Type == DataType.Chord) {
+                    return true;
+                }
+                return false;
+            }
+        }
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
 
