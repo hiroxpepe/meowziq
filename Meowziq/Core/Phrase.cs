@@ -16,13 +16,7 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        Value.Note note;
-
-        Value.Chord chord;
-
-        Value.Exp exp;
-
-        Data data;
+        Data data; // json から読み込んだデータを格納
 
         List<Note> noteList; // Pattern の設定回数分の Note を格納
 
@@ -30,9 +24,6 @@ namespace Meowziq.Core {
         // Constructor
 
         public Phrase() {
-            this.note = new Value.Note();
-            this.chord = new Value.Chord();
-            this.exp = new Value.Exp();
             this.data = new Data(); // json から詰められるデータ
             this.noteList = new List<Note>();
         }
@@ -49,15 +40,15 @@ namespace Meowziq.Core {
         }
 
         public string Note {
-            set => note.Text = value;
+            set => data.Note.Text = value;
         }
 
         public int Oct {
-            set => note.Oct = value; // デフォルト値は 0
+            set => data.Note.Oct = value; // デフォルト値は 0
         }
 
         public string Chord {
-            set => chord.Text = value;
+            set => data.Chord.Text = value;
         }
 
         /// <summary>
@@ -71,30 +62,30 @@ namespace Meowziq.Core {
                     throw new ArgumentException("invalid range format.");
                 }
                 var _rangeArray = _rangeText.Split(':');
-                chord.Range = new Range(
+                data.Chord.Range = new Range(
                     int.Parse(_rangeArray[0]),
                     int.Parse(_rangeArray[1])
                 );
-                if (chord.Range.Min < 0) {
+                if (data.Chord.Range.Min < 0) {
                     throw new ArgumentException("invalid range min.");
                 }
-                if (chord.Range.Max > 127) {
+                if (data.Chord.Range.Max > 127) {
                     throw new ArgumentException("invalid range max.");
                 }
-                if (chord.Range.Max - chord.Range.Min != 11) { // オクターブの範囲外
-                    var _okMax = chord.Range.Min + 11;
-                    var _okMin = chord.Range.Max - 11;
-                    throw new ArgumentException($"invalid range length,\r\nmust set {chord.Range.Min}:{_okMax} or {_okMin}:{chord.Range.Max}.");
+                if (data.Chord.Range.Max - data.Chord.Range.Min != 11) { // オクターブの範囲外
+                    var _okMax = data.Chord.Range.Min + 11;
+                    var _okMin = data.Chord.Range.Max - 11;
+                    throw new ArgumentException($"invalid range length,\r\nmust set {data.Chord.Range.Min}:{_okMax} or {_okMin}:{data.Chord.Range.Max}.");
                 }
             }
         }
 
         public string Pre {
-            set => exp.Pre = value;
+            set => data.Exp.Pre = value;
         }
 
         public string Post {
-            set => exp.Post = value;
+            set => data.Exp.Post = value;
         }
 
         public Data Data {
@@ -110,7 +101,7 @@ namespace Meowziq.Core {
             get {
                 switch (defineDataType()) {
                     case DataType.Mono:
-                        return measCount(note.Text);
+                        return measCount(data.Note.Text);
                     default:
                         throw new ArgumentException("not understandable DataType.");
                 }
@@ -170,13 +161,13 @@ namespace Meowziq.Core {
             switch (_dataType) {
                 case DataType.Mono:
                     {
-                        var _param = new Param(note, exp, _dataType);
+                        var _param = new Param(data.Note, data.Exp, _dataType);
                         _generator.ApplyNote(position, pattern.BeatCount, key, pattern.AllSpan, _param);
                     }
                     break;
                 case DataType.Chord:
                     {
-                        var _param = new Param(chord, exp, _dataType);
+                        var _param = new Param(data.Chord, data.Exp, _dataType);
                         _generator.ApplyNote(position, pattern.BeatCount, key, pattern.AllSpan, _param);
                     }
                     break;
@@ -227,15 +218,15 @@ namespace Meowziq.Core {
         /// json に記述されたデータのタイプを判定します
         /// </summary>
         DataType defineDataType() {
-            if (data.NoteArray == null && note.Text != null && chord.Text == null && data.PercussionArray == null) {
+            if (data.NoteArray == null && data.Note.Text != null && data.Chord.Text == null && data.PercussionArray == null) {
                 return DataType.Mono; // 単体ノート記述 
-            } else if (data.NoteArray != null && note.Text == null && chord.Text == null && data.PercussionArray == null) {
+            } else if (data.NoteArray != null && data.Note.Text == null && data.Chord.Text == null && data.PercussionArray == null) {
                 return DataType.Multi; // 複合ノート記述
-            } else if (data.NoteArray == null && note.Text == null && chord.Text != null && data.PercussionArray == null) {
+            } else if (data.NoteArray == null && data.Note.Text == null && data.Chord.Text != null && data.PercussionArray == null) {
                 return DataType.Chord; // コード記述
-            } else if (data.NoteArray != null && note.Text == null && chord.Text == null && data.PercussionArray != null) {
+            } else if (data.NoteArray != null && data.Note.Text == null && data.Chord.Text == null && data.PercussionArray != null) {
                 return DataType.Drum; // ドラム記述 
-            } else if (data.NoteArray == null && note.Text == null && chord.Text == null && data.PercussionArray == null) {
+            } else if (data.NoteArray == null && data.Note.Text == null && data.Chord.Text == null && data.PercussionArray == null) {
                 return DataType.Sequence; // TODO: 暫定
             }
             throw new ArgumentException("not understandable DataType.");

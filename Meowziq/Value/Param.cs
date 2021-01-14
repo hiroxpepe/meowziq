@@ -1,6 +1,5 @@
 ﻿
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -17,6 +16,12 @@ namespace Meowziq.Value {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
+        Note note;
+
+        Chord chord;
+
+        Exp exp;
+
         Percussion[] percussionArray;
 
         string[] noteArray;
@@ -28,7 +33,31 @@ namespace Meowziq.Value {
         string[] postArray;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Constructor
+
+        public Data() {
+            this.note = new Note();
+            this.chord = new Chord();
+            this.exp = new Exp();
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjectives] 
+
+        public Note Note {
+            get => note;
+            set => note = value;
+        }
+
+        public Chord Chord {
+            get => chord;
+            set => chord = value;
+        }
+
+        public Exp Exp {
+            get => exp;
+            set => exp = value; // デフォルト値は 0
+        }
 
         /// <summary>
         /// Percussion の音色設定
@@ -202,6 +231,13 @@ namespace Meowziq.Value {
                 return Utils.Filter(Post).ToCharArray();
             }
         }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Methods [verb]
+
+        public bool IsMatchPre(char target) {
+            return Regex.IsMatch(target.ToString(), @"^[1-2]+$");  // 120 * 2 tick まで ⇒ 16分・8分音符のシンコぺのみ
+        }
     }
 
     /// <summary>
@@ -243,20 +279,6 @@ namespace Meowziq.Value {
                     return null;
                 }
                 return Utils.Filter(Text).ToCharArray();
-            }
-        }
-
-        public List<bool?> BoolList {
-            get {
-                var _list = new List<bool?>(); // on, null スイッチ
-                Utils.Filter(Text).ToList().ForEach(x => {
-                    if (x.Equals('x')) {
-                        _list.Add(true);
-                    } else if (x.Equals('-')) {
-                        _list.Add(null);
-                    }
-                });
-                return _list;
             }
         }
     }
@@ -356,7 +378,7 @@ namespace Meowziq.Value {
 
         public char[] TextCharArray {
             get {
-                if (Type == DataType.Mono || Type == DataType.Multi) {
+                if (Type == DataType.Mono || Type == DataType.Multi || Type == DataType.Drum) {
                     return Note.TextCharArray;
                 } else if (Type == DataType.Chord) {
                     return Chord.TextCharArray;
@@ -401,7 +423,7 @@ namespace Meowziq.Value {
             } else if (Type == DataType.Chord) {
                 return Regex.IsMatch(target.ToString(), @"^[1-9]+$"); // chord モードは1～9
             } else if (Type == DataType.Drum) {
-                // TODO:
+                return target.ToString().Equals("x");
             }
             return false;
         }
