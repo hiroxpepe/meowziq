@@ -54,13 +54,13 @@ namespace Meowziq.View {
             }
             // MEMO: 30 tick単位でしか呼ばれていない
             if (this.Visible) {
-                var _beat = ((sequencer.Position / 480) + 1).ToString(); // 0開始 ではなく 1開始として表示
+                var _beat = (((sequencer.Position - 1) / 480) + 1).ToString(); // 0開始 ではなく 1開始として表示
                 var _meas = ((int.Parse(_beat) - 1) / 4 + 1).ToString();
                 Invoke((MethodInvoker) (() => {
                     textBoxBeat.Text = _beat;
                     textBoxMeas.Text = _meas; 
                 }));
-                // UI情報表示
+                // UI情報表示 TODO: デリゲート化
                 var _itemDictionary = Info.ItemDictionary;
                 var _tick = sequencer.Position - 1; // Position が 1, 31 と来るので
                 if (_itemDictionary.ContainsKey(_tick)) { // FIXME: ContainsKey 大丈夫？
@@ -90,8 +90,9 @@ namespace Meowziq.View {
                         }
                     }));
                 }
+                Message.Apply(sequencer.Position - 1); // 1小節ごとに切り替える // MEMO: シンコぺを考慮する
                 // メッセージのリストを取得
-                var _list = Message.GetBy(sequencer.Position);
+                var _list = Message.GetBy(sequencer.Position - 1);
                 if (_list != null) {
                     _list.ForEach(x => {
                         midi.OutDevice.Send(x); // MIDIデバイスにメッセージを追加送信
