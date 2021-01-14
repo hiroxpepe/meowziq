@@ -1,7 +1,6 @@
 ﻿
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 using Meowziq.Value;
 
@@ -37,7 +36,7 @@ namespace Meowziq.Core {
                 if (_16beatIdx > beatCount * 4) {
                     return; // Pattern の長さを超えたら終了
                 }
-                if (((param.TypeNote) && param.IsMatch(_text)) || (param.TypeChord && param.IsMatch(_text))) {
+                if (param.IsMatch(_text)) {
                     var _span = spanList[_spanIndex.Idx]; // 16beat 4個で1進む
                     int[] _noteNumArray = new int[7];
                     _noteNumArray = _noteNumArray.Select(x => x = -1).ToArray(); // -1 で初期化
@@ -76,7 +75,7 @@ namespace Meowziq.Core {
                     var _stopPre = false;
                     if (param.Exp.HasPre) {
                         var _pre = param.Exp.PreCharArray[_16beatIdx];
-                        if (Regex.IsMatch(_pre.ToString(), @"^[1-2]+$")) { // 120 * 2 tick まで ⇒ 16分・8分音符のシンコぺのみ
+                        if (param.Exp.IsMatchPre(_pre)) {
                             var _preInt = int.Parse(_pre.ToString());
                             _gateCount += _preInt; // pre の数値を音価に加算
                             _prePosition = -(Tick.Of16beat.Int32() * _preInt); // pre の数値 * 16beat分前にする
@@ -103,18 +102,18 @@ namespace Meowziq.Core {
         /// </summary>
         public void ApplyDrumNote(int position, int beatCount, Param param) {
             var _16beatIdx = 0;
-            foreach (bool? _text in param.Note.BoolList) {
+            foreach (char _text in param.TextCharArray) {
                 if (_16beatIdx > beatCount * 4) {
                     return; // Pattern の長さを超えたら終了
                 }
-                if (_text == true) {
+                if (param.IsMatch(_text)) {
                     // シンコペーション
                     var _gateCount = 0;
                     var _prePosition = 0;
                     var _stopPre = false;
                     if (param.Exp.HasPre) { // pre設定があれば
                         var _pre = param.Exp.PreCharArray[_16beatIdx];
-                        if (Regex.IsMatch(_pre.ToString(), @"^[1-2]+$")) { // 120 * 2 tick まで ⇒ 16分・8分音符のシンコぺのみ
+                        if (param.Exp.IsMatchPre(_pre)) {
                             var _preInt = int.Parse(_pre.ToString());
                             _gateCount += _preInt; // pre の数値を音価に加算
                             _prePosition = -(Tick.Of16beat.Int32() * _preInt); // pre の数値 * 16beat分前にする
