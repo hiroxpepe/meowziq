@@ -42,18 +42,18 @@ namespace Meowziq.Core {
                     _noteNumArray = _noteNumArray.Select(x => x = -1).ToArray(); // -1 で初期化
                     // 曲の旋法と Span の旋法が同じ場合は自動旋法
                     if (_span.AutoMode) {
-                        if (param.TypeNote) {
+                        if (param.IsNote) {
                             _noteNumArray[0] = Utils.GetNoteByAutoMode(key, _span.Degree, _span.KeyMode, int.Parse(_text.ToString()));
-                        } else if (param.TypeChord) {
+                        } else if (param.IsChord) {
                             _noteNumArray = Utils.GetNoteArrayByAutoMode(key, _span.Degree, _span.KeyMode, int.Parse(_text.ToString()));
                             _noteNumArray = applyRange(_noteNumArray, param.Chord.Range); // コード展開形の範囲を適用
                         }
                     }
                     // Span に旋法が設定してあればそちらを適用する
                     else {
-                        if (param.TypeNote) {
+                        if (param.IsNote) {
                             _noteNumArray[0] = Utils.GetNoteBySpanMode(key, _span.Degree, _span.KeyMode, _span.Mode, int.Parse(_text.ToString()));
-                        } else if (param.TypeChord) {
+                        } else if (param.IsChord) {
                             _noteNumArray = Utils.GetNoteArrayBySpanMode(key, _span.Degree, _span.KeyMode, _span.Mode, int.Parse(_text.ToString()));
                             _noteNumArray = applyRange(_noteNumArray, param.Chord.Range); // コード展開形の範囲を適用
                         }

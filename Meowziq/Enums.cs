@@ -6,7 +6,7 @@ namespace Meowziq {
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // public Enums [noun]
 
-    public enum DataType {
+    public enum Way {
         Mono = 0,
         Multi = 1,
         Chord = 2,

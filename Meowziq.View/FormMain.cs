@@ -31,6 +31,8 @@ namespace Meowziq.View {
 
         string targetPath;
 
+        Track track = new Track();
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
@@ -98,6 +100,7 @@ namespace Meowziq.View {
                         if (x.MidiChannel != 9 && x.MidiChannel != 1) { // FIXME: 暫定シーケンス
                             pianoControl.Send(x); // ドラム以外はピアノロールに表示
                         }
+                        track.Insert(_tick, x);
                     });
                 }
                 played = true;
@@ -199,6 +202,9 @@ namespace Meowziq.View {
                 stopping = false;
                 playing = false;
                 sequencer.Stop();
+                sequence.Clear();
+                sequence.Add(track);
+                sequence.Save("./data/out.mid");
                 Invoke((MethodInvoker) (() => { 
                     labelPlay.ForeColor = Color.DimGray;
                     textBoxBeat.Text = "0";

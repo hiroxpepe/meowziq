@@ -99,8 +99,8 @@ namespace Meowziq.Core {
         /// </summary>
         public int BeatCount {
             get {
-                switch (defineDataType()) {
-                    case DataType.Mono:
+                switch (defineWay()) {
+                    case Way.Mono:
                         return measCount(data.Note.Text);
                     default:
                         throw new ArgumentException("not understandable DataType.");
@@ -157,42 +157,42 @@ namespace Meowziq.Core {
             //}
             // NOTE: DataType で分岐 TODO: プラグイン拡張出来るように
             var _generator = new Generator(noteList); // NOTE: コンストラクタで生成ではNG
-            var _dataType = defineDataType();
-            switch (_dataType) {
-                case DataType.Mono:
+            var _way = defineWay();
+            switch (_way) {
+                case Way.Mono:
                     {
-                        var _param = new Param(data.Note, data.Exp, _dataType);
+                        var _param = new Param(data.Note, data.Exp, _way);
                         _generator.ApplyNote(tick, pattern.BeatCount, key, pattern.AllSpan, _param);
                     }
                     break;
-                case DataType.Chord:
+                case Way.Chord:
                     {
-                        var _param = new Param(data.Chord, data.Exp, _dataType);
+                        var _param = new Param(data.Chord, data.Exp, _way);
                         _generator.ApplyNote(tick, pattern.BeatCount, key, pattern.AllSpan, _param);
                     }
                     break;
-                case DataType.Multi:
+                case Way.Multi:
                     for (var _idx = 0; _idx < data.NoteArray.Length; _idx++) {
                         var _param = new Param(
                             new Value.Note(data.NoteArray[_idx], data.OctArray[_idx]),
                             new Value.Exp(data.PreArray[_idx], data.PostArray[_idx]),
-                            _dataType
+                            _way
                         );
                         _generator.ApplyNote(tick, pattern.BeatCount, key, pattern.AllSpan, _param);
                     }
                     break;
-                case DataType.Drum:
+                case Way.Drum:
                     for (var _idx = 0; _idx < data.NoteArray.Length; _idx++) {
                         var _param = new Param(
                             new Value.Note(data.NoteArray[_idx], 0),
                             (int) data.PercussionArray[_idx],
                             new Value.Exp(data.PreArray[_idx], ""),
-                            _dataType
+                            _way
                         );
                         _generator.ApplyDrumNote(tick, pattern.BeatCount, _param);
                     }
                     break;
-                case DataType.Sequence:
+                case Way.Sequence:
                     _generator.ApplyRandomNote(tick, pattern.BeatCount, key, pattern.AllSpan);
                     break;
             }
@@ -217,19 +217,19 @@ namespace Meowziq.Core {
         /// <summary>
         /// json に記述されたデータのタイプを判定します
         /// </summary>
-        DataType defineDataType() {
+        Way defineWay() {
             if (data.NoteArray == null && data.Note.Text != null && data.Chord.Text == null && data.PercussionArray == null) {
-                return DataType.Mono; // 単体ノート記述 
+                return Way.Mono; // 単体ノート記述 
             } else if (data.NoteArray != null && data.Note.Text == null && data.Chord.Text == null && data.PercussionArray == null) {
-                return DataType.Multi; // 複合ノート記述
+                return Way.Multi; // 複合ノート記述
             } else if (data.NoteArray == null && data.Note.Text == null && data.Chord.Text != null && data.PercussionArray == null) {
-                return DataType.Chord; // コード記述
+                return Way.Chord; // コード記述
             } else if (data.NoteArray != null && data.Note.Text == null && data.Chord.Text == null && data.PercussionArray != null) {
-                return DataType.Drum; // ドラム記述 
+                return Way.Drum; // ドラム記述 
             } else if (data.NoteArray == null && data.Note.Text == null && data.Chord.Text == null && data.PercussionArray == null) {
-                return DataType.Sequence; // TODO: 暫定
+                return Way.Sequence; // TODO: 暫定
             }
-            throw new ArgumentException("not understandable DataType.");
+            throw new ArgumentException("not understandable Way.");
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
