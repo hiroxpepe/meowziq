@@ -14,7 +14,7 @@ namespace Meowziq {
         Sequence = 4,
     }
 
-    public enum Tick {
+    public enum Length {
         Of4beat = 480,
         Of8beat = 240,
         Of16beat = 120,
@@ -304,7 +304,7 @@ namespace Meowziq {
 
     public static class Extensions {
 
-        public static int Int32(this Tick self) {
+        public static int Int32(this Length self) {
             return (int) self;
         }
 

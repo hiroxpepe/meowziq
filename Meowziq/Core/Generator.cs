@@ -29,7 +29,7 @@ namespace Meowziq.Core {
         /// <summary>
         /// Note を適用します
         /// </summary>
-        public void ApplyNote(int position, int beatCount, Key key, List<Span> spanList, Param param) {
+        public void ApplyNote(int tick, int beatCount, Key key, List<Span> spanList, Param param) {
             var _16beatIdx = 0; // 16beatのindex
             var _spanIndex = new SpanIndex(); // Span リストの添え字オブジェクト
             foreach (var _text in param.TextCharArray) {
@@ -37,7 +37,7 @@ namespace Meowziq.Core {
                     return; // Pattern の長さを超えたら終了
                 }
                 if (param.IsMatch(_text)) {
-                    var _span = spanList[_spanIndex.Idx]; // 16beat 4個で1進む
+                    var _span = spanList[_spanIndex.Idx]; // 16beat 4個で1拍進む
                     int[] _noteNumArray = new int[7];
                     _noteNumArray = _noteNumArray.Select(x => x = -1).ToArray(); // -1 で初期化
                     // 曲の旋法と Span の旋法が同じ場合は自動旋法
@@ -71,25 +71,25 @@ namespace Meowziq.Core {
                         }
                     }
                     // シンコペーション
-                    var _prePosition = 0;
+                    var _preLength = 0;
                     var _stopPre = false;
                     if (param.Exp.HasPre) {
                         var _pre = param.Exp.PreCharArray[_16beatIdx];
                         if (param.Exp.IsMatchPre(_pre)) {
                             var _preInt = int.Parse(_pre.ToString());
                             _gateCount += _preInt; // pre の数値を音価に加算
-                            _prePosition = -(Tick.Of16beat.Int32() * _preInt); // pre の数値 * 16beat分前にする
+                            _preLength = -(Length.Of16beat.Int32() * _preInt); // pre の数値 * 16beat分前にする
                         }
-                        if (_prePosition != 0) {
+                        if (_preLength != 0) {
                             _stopPre = true; // シンコぺがある場合は優先発音フラグON
                         }
                     }
                     // TODO: 最後の音を伸ばす
                     if (param.Exp.HasPost) {
                     }
-                    var _gate = Tick.Of16beat.Int32() * (_gateCount + 1); // 音の長さ：+1 は数値文字の分
+                    var _gate = Length.Of16beat.Int32() * (_gateCount + 1); // 音の長さ：+1 は数値文字の分
                     _noteNumArray.Where(x => x != -1).ToList().ForEach(
-                        x => add(new Note((_prePosition + position) + (Tick.Of16beat.Int32() * _16beatIdx), x + param.Interval, _gate, 127, _stopPre))
+                        x => add(new Note((_preLength + tick) + (Length.Of16beat.Int32() * _16beatIdx), x + param.Interval, _gate, 127, _stopPre))
                     );
                 }
                 _16beatIdx++; // 16beatのindex値をインクリメント
@@ -100,7 +100,7 @@ namespace Meowziq.Core {
         /// <summary>
         /// ドラム用 Note を適用します
         /// </summary>
-        public void ApplyDrumNote(int position, int beatCount, Param param) {
+        public void ApplyDrumNote(int tick, int beatCount, Param param) {
             var _16beatIdx = 0;
             foreach (char _text in param.TextCharArray) {
                 if (_16beatIdx > beatCount * 4) {
@@ -109,21 +109,21 @@ namespace Meowziq.Core {
                 if (param.IsMatch(_text)) {
                     // シンコペーション
                     var _gateCount = 0;
-                    var _prePosition = 0;
+                    var _preLength = 0;
                     var _stopPre = false;
                     if (param.Exp.HasPre) { // pre設定があれば
                         var _pre = param.Exp.PreCharArray[_16beatIdx];
                         if (param.Exp.IsMatchPre(_pre)) {
                             var _preInt = int.Parse(_pre.ToString());
                             _gateCount += _preInt; // pre の数値を音価に加算
-                            _prePosition = -(Tick.Of16beat.Int32() * _preInt); // pre の数値 * 16beat分前にする
+                            _preLength = -(Length.Of16beat.Int32() * _preInt); // pre の数値 * 16beat分前にする
                         }
-                        if (_prePosition != 0) {
+                        if (_preLength != 0) {
                             _stopPre = true; // シンコぺがある場合は優先発音フラグON
                         }
                     }
-                    var _gate = Tick.Of16beat.Int32() * (_gateCount + 1); // 音の長さ：+1 は数値文字の分
-                    add(new Note((_prePosition + position) + (Tick.Of16beat.Int32() * _16beatIdx), param.PercussionNoteNum, _gate, 127, _stopPre));
+                    var _gate = Length.Of16beat.Int32() * (_gateCount + 1); // 音の長さ：+1 は数値文字の分
+                    add(new Note((_preLength + tick) + (Length.Of16beat.Int32() * _16beatIdx), param.PercussionNoteNum, _gate, 127, _stopPre));
                 }
                 _16beatIdx++; // 16beatのindex値をインクリメント
             }
@@ -132,13 +132,13 @@ namespace Meowziq.Core {
         /// <summary>
         /// シーケンス用 ランダム Note を適用します
         /// </summary>
-        public void ApplyRandomNote(int position, int beatCount, Key key, List<Span> spanList) {
+        public void ApplyRandomNote(int tick, int beatCount, Key key, List<Span> spanList) {
             var _all16beatCount = beatCount * 4; // この Pattern の16beatの数
             var _spanIndex = new SpanIndex(); // Span リストの添え字オブジェクト
             for (var _16beatIdx = 0; _16beatIdx < _all16beatCount; _16beatIdx++) {
-                var _span = spanList[_spanIndex.Idx]; // 16beat 4個で1進む
+                var _span = spanList[_spanIndex.Idx]; // 16beat 4個で1拍進む
                 var _note = Utils.GetNoteAsRandom(key, _span.Degree, _span.Mode); // 16の倍数
-                add(new Note(position + (Tick.Of16beat.Int32() * _16beatIdx), _note, 30, 127)); // gate 短め
+                add(new Note(tick + (Length.Of16beat.Int32() * _16beatIdx), _note, 30, 127)); // gate 短め
                 _spanIndex.Increment(); // Span リストの添え字オブジェクトをインクリメント
             }
         }
@@ -146,12 +146,12 @@ namespace Meowziq.Core {
         /// <summary>
         /// UI 表示用の情報を作成します
         /// </summary>
-        public void ApplyInfo(int position, int beatCount, Key key, List<Span> spanList) {
+        public void ApplyInfo(int tick, int beatCount, Key key, List<Span> spanList) {
             var _all16beatCount = beatCount * 4; // この Pattern の16beatの数
             var _spanIndex = new SpanIndex(); // Span リストの添え字オブジェクト
             for (var _16beatIdx = 0; _16beatIdx < _all16beatCount; _16beatIdx++) {
-                var _span = spanList[_spanIndex.Idx]; // 16beat 4個で1進む
-                var _tick = position + (Tick.Of16beat.Int32() * _16beatIdx); // 16beat の tick 毎に処理
+                var _span = spanList[_spanIndex.Idx]; // 16beat 4個で1拍進む
+                var _tick = tick + (Length.Of16beat.Int32() * _16beatIdx); // 16beat の tick 毎に処理
                 if (Info.HashSet.Add(_tick)) { // tick につき1度だけ
                     Info.ItemDictionary.Add(_tick, new Info.Item {
                         Tick = _tick,
@@ -201,6 +201,7 @@ namespace Meowziq.Core {
 
         /// <summary>
         /// 4インクリメントされる毎に1インクリメントした index 値を返す
+        /// NOTE: ここの Span は必ず1拍である
         /// </summary>
         class SpanIndex {
 
@@ -229,11 +230,12 @@ namespace Meowziq.Core {
             // private Methods [verb]
 
             public void Increment() {
-                idx4++;
+                idx4++; // 16beat のカウント
                 if (idx4 == 4) {
                     idx4 = 0;
-                    Idx++;
+                    Idx++; // 1拍のこと
                 }
+                // TODO: 必要なのは1小節をカウントすることとそのindex値
             }
         }
     }

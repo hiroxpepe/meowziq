@@ -75,11 +75,11 @@ namespace Meowziq.Core {
             // MEMO: Player と Phrase の type が一致ものしか入ってない
 
             // Note データ作成のループ
-            var _position = 0;
+            var _tick = 0;
             var _previousPatternName = "";
             foreach (var _pattern in song.AllPattern) { // 演奏順に並んだ Pattern のリスト      
                 foreach (var _phrase in phraseList.Where(x => x.Name.Equals(_pattern.Name))) { // Pattern の名前で Phrase を引き当てる
-                    _phrase.Build(_position, song.Key, _pattern); // Note データを作成：tick 毎に数回分の Pattern のデータが作成される
+                    _phrase.Build(_tick, song.Key, _pattern); // Note データを作成：tick 毎に数回分の Pattern のデータが作成される
                     if (!_previousPatternName.Equals("")) {
                         var _previousPhraseList = phraseList.Where(x => x.Name.Equals(_previousPatternName)).ToList(); // 一つ前の Phrase を引き当てる
                         if (_previousPhraseList.Count != 0) {
@@ -90,8 +90,8 @@ namespace Meowziq.Core {
                     }
                 }
                 _previousPatternName = _pattern.Name; // 次の直前のフレーズ名を保持
-                var _tick = _pattern.BeatCount * Tick.Of4beat.Int32();
-                _position += _tick; // Pattern の長さ分ポジションを移動する
+                var _patternLength = _pattern.BeatCount * Length.Of4beat.Int32();
+                _tick += _patternLength; // Pattern の長さ分ポジションを移動する
             }
             // Note データ適用のループ
             foreach (var _pattern in song.AllPattern) { // 演奏順に並んだ Pattern のリスト

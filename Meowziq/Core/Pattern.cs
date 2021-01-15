@@ -86,7 +86,7 @@ namespace Meowziq.Core {
                 // FIXME: 3拍子とかは？
                 throw new ArgumentException("beat counts needs 4."); // 1小節に足りない or 超過している
             }
-            // Span を分解して個別にする
+            // Span を分解して1拍毎に追加する
             this.spanList = new List<Span>();
             spanList.ForEach(x => {
                 for (var _idx = 0; _idx < x.Beat; _idx++) {
