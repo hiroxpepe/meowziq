@@ -92,7 +92,7 @@ namespace Meowziq.View {
                         }
                     }));
                 }
-                Message.Apply(_tick); // 1小節ごとに切り替える // MEMO: シンコぺを考慮する
+                Message.Apply(_tick, loadSong); // 1小節ごとに切り替える // MEMO: シンコぺを考慮する
                 var _list = Message.GetBy(_tick); // メッセージのリストを取得
                 if (_list != null) {
                     _list.ForEach(x => {
@@ -175,7 +175,6 @@ namespace Meowziq.View {
         /// ソングを作成
         /// </summary>
         string buildSong(string targetDir) {
-
             // Pattern と Song をロード
             SongLoader.PatternList = PatternLoader.Build($"{targetDir}/pattern.json");
             var _song = SongLoader.Build($"{targetDir}/song.json");
@@ -186,9 +185,26 @@ namespace Meowziq.View {
                 x.Song = _song; // Song データを設定
                 x.Build(); // MIDI データを構築
             });
-
             // Song の名前を返す
             return _song.Name;
+        }
+
+        /// <summary>
+        /// ソングをロード
+        /// </summary>
+        async void loadSong() {
+            await Task.Run(() => {
+                // Pattern と Song をロード
+                SongLoader.PatternList = PatternLoader.Build($"{targetPath}/pattern.json");
+                var _song = SongLoader.Build($"{targetPath}/song.json");
+
+                // Phrase と Player をロード
+                PlayerLoader.PhraseList = PhraseLoader.Build($"{targetPath}/phrase.json");
+                PlayerLoader.Build($"{targetPath}/player.json").ForEach(x => {
+                    x.Song = _song; // Song データを設定
+                    x.Build(); // MIDI データを構築
+                });
+            });
         }
 
         /// <summary>
