@@ -4,6 +4,7 @@ using System.Linq;
 using Sanford.Multimedia.Midi;
 
 using Meowziq.Core;
+using System;
 
 namespace Meowziq {
     /// <summary>
@@ -23,13 +24,7 @@ namespace Meowziq {
 
         static Message() {
             flag = true;
-        }
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Properties [noun, adjectives] 
-
-        static bool IsPrime { // TODO: 必要？
-            get => flag;
+            // TODO: 初回は両方同期が必要
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -38,16 +33,17 @@ namespace Meowziq {
         /// <summary>
         /// 引数の tick を起点にして切り替え処理を行います
         /// </summary>
-        public static void Apply(int tick) { // MEMO: tick が 2回くる
-            if (tick == 0) {
-                return; // 初回は無視:必要
-            }
+        public static void Apply(int tick, Action load) { // MEMO: tick が 2回くる
+            //if (tick == 0) {
+            //    return; // 初回は無視:必要
+            //}
             if (!hashSet.Add(tick)) {
                 return; // 既に処理した tick なので無視する
             }
             // tick が1小節ごとに切り替え
             if (tick % (Length.Of4beat.Int32() * 4) == 0) {
-                //flag = change();
+                change();
+                load();
             }
         }
 
@@ -55,7 +51,7 @@ namespace Meowziq {
         /// 引数の tick の ChannelMessage のリストを返します
         /// </summary>
         public static List<ChannelMessage> GetBy(int tick) {
-            if (flag) {
+            if (flag) { // Prime スタートで実行
                 if (!Prime.HashSet.Add(tick)) {
                     return null; // 既に処理した tick なので無視する
                 }
@@ -74,10 +70,22 @@ namespace Meowziq {
         }
 
         /// <summary>
+        /// プログラムNo(音色)を ChannelMessage として適用します
+        /// TODO: バンクセレクト
+        /// </summary>
+        public static void Apply(int midiCh, int programNum) {
+            if (flag) { // Prime スタートで実行
+                add(0, new ChannelMessage(ChannelCommand.ProgramChange, midiCh, programNum, 127)); // プログラムチェンジ
+            } else {
+                add(0, new ChannelMessage(ChannelCommand.ProgramChange, midiCh, programNum, 127)); // プログラムチェンジ
+            }
+        }
+
+        /// <summary>
         /// Note を ChannelMessage として適用します
         /// </summary>
         public static void Apply(int midiCh, Note note) {
-            if (flag) {
+            if (!flag) {
                 if (note.StopPre) { // ノートが優先発音の場合
                     var _noteOffTick = note.Tick - Length.Of32beat.Int32(); // 念のため32分音符前に停止
                     if (Prime.AllNoteOffHashsetArray[midiCh].Add(_noteOffTick)) { // MIDI ch 毎にこの tick のノート強制停止は一回のみ 
@@ -88,7 +96,7 @@ namespace Meowziq {
                 }
                 add(note.Tick, new ChannelMessage(ChannelCommand.NoteOn, midiCh, note.Num, 127)); // ノートON
                 add(note.Tick + note.Gate, new ChannelMessage(ChannelCommand.NoteOff, midiCh, note.Num, 0)); // ノートOFF
-            } else {
+            } else { // Second スタートで実行
                 if (note.StopPre) { // ノートが優先発音の場合
                     var _noteOffTick = note.Tick - Length.Of32beat.Int32(); // 念のため32分音符前に停止
                     if (Second.AllNoteOffHashsetArray[midiCh].Add(_noteOffTick)) { // MIDI ch 毎にこの tick のノート強制停止は一回のみ 
@@ -103,31 +111,16 @@ namespace Meowziq {
         }
 
         /// <summary>
-        /// プログラムNo(音色)を ChannelMessage として適用します
-        /// TODO: バンクセレクト
-        /// </summary>
-        public static void Apply(int midiCh, int programNum) {
-            if (flag) {
-                add(0, new ChannelMessage(ChannelCommand.ProgramChange, midiCh, programNum, 127)); // プログラムチェンジ
-            } else {
-                add(0, new ChannelMessage(ChannelCommand.ProgramChange, midiCh, programNum, 127)); // プログラムチェンジ
-            }
-        }
-
-        /// <summary>
         /// 状態をリセットします
         /// </summary>
         public static void Reset() {
             hashSet.Clear();
-            if (flag) {
-                Prime.Item.Clear();
-                Prime.HashSet.Clear();
-                Prime.AllNoteOffHashsetArray.ToList().ForEach(x => x.Clear());
-            } else {
-                Second.Item.Clear();
-                Second.HashSet.Clear();
-                Second.AllNoteOffHashsetArray.ToList().ForEach(x => x.Clear());
-            }
+            Prime.Item.Clear();
+            Prime.HashSet.Clear();
+            Prime.AllNoteOffHashsetArray.ToList().ForEach(x => x.Clear());
+            Second.Item.Clear();
+            Second.HashSet.Clear();
+            Second.AllNoteOffHashsetArray.ToList().ForEach(x => x.Clear());
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -137,7 +130,7 @@ namespace Meowziq {
         /// ChannelMessage をリストに追加します
         /// </summary>
         static void add(int tick, ChannelMessage channelMessage) {
-            if (flag) {
+            if (!flag) {
                 if (!Prime.Item.ContainsKey(tick)) {
                     var _newList = new List<ChannelMessage>();
                     _newList.Add(channelMessage);
@@ -146,7 +139,7 @@ namespace Meowziq {
                     var _list = Prime.Item[tick];
                     _list.Add(channelMessage); // 追加
                 }
-            } else {
+            } else { // Second スタートで実行
                 if (!Second.Item.ContainsKey(tick)) {
                     var _newList = new List<ChannelMessage>();
                     _newList.Add(channelMessage);
@@ -161,12 +154,8 @@ namespace Meowziq {
         /// <summary>
         /// 内部のデータを切り替えます
         /// </summary>
-        static bool change() {
-            if (flag == true) {
-                return false;
-            } else {
-                return true;
-            }
+        static void change() {
+            flag = !flag;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
