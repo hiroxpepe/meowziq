@@ -328,29 +328,29 @@ namespace Meowziq.Value {
         /// <summary>
         /// ノート記述用パラメータ
         /// </summary>
-        public Param(Note note, Exp exp, DataType type) {
+        public Param(Note note, Exp exp, Way way) {
             Note = note;
             Exp = exp;
-            Type = type;
+            Way = way;
         }
 
         /// <summary>
         /// ドラム記述用パラメータ
         /// </summary>
-        public Param(Note note, int percussionNoteNum, Exp exp, DataType type) {
+        public Param(Note note, int percussionNoteNum, Exp exp, Way way) {
             Note = note;
             PercussionNoteNum = percussionNoteNum;
             Exp = exp;
-            Type = type;
+            Way = way;
         }
 
         /// <summary>
         /// コード記述用パラメータ
         /// </summary>
-        public Param(Chord chord, Exp exp, DataType type) {
+        public Param(Chord chord, Exp exp, Way type) {
             Chord = chord;
             Exp = exp;
-            Type = type;
+            Way = type;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -372,15 +372,15 @@ namespace Meowziq.Value {
             get;
         }
 
-        public DataType Type {
+        public Way Way {
             get;
         }
 
         public char[] TextCharArray {
             get {
-                if (Type == DataType.Mono || Type == DataType.Multi || Type == DataType.Drum) {
+                if (Way == Way.Mono || Way == Way.Multi || Way == Way.Drum) {
                     return Note.TextCharArray;
-                } else if (Type == DataType.Chord) {
+                } else if (Way == Way.Chord) {
                     return Chord.TextCharArray;
                 }
                 return null;
@@ -389,25 +389,25 @@ namespace Meowziq.Value {
 
         public int Interval {
             get {
-                if (Type == DataType.Mono || Type == DataType.Multi) {
+                if (Way == Way.Mono || Way == Way.Multi) {
                     return Note.Interval;
                 }
                 return 0; // Chord はインターバルなし
             }
         }
 
-        public bool TypeNote {
+        public bool IsNote {
             get {
-                if (Type == DataType.Mono || Type == DataType.Multi) {
+                if (Way == Way.Mono || Way == Way.Multi) {
                     return true;
                 }
                 return false;
             }
         }
 
-        public bool TypeChord {
+        public bool IsChord {
             get {
-                if (Type == DataType.Chord) {
+                if (Way == Way.Chord) {
                     return true;
                 }
                 return false;
@@ -418,11 +418,11 @@ namespace Meowziq.Value {
         // public Methods [verb]
 
         public bool IsMatch(char target) {
-            if (Type == DataType.Mono || Type == DataType.Multi) {
+            if (Way == Way.Mono || Way == Way.Multi) {
                 return Regex.IsMatch(target.ToString(), @"^[1-7]+$"); // 1～7まで度数の数値がある時
-            } else if (Type == DataType.Chord) {
+            } else if (Way == Way.Chord) {
                 return Regex.IsMatch(target.ToString(), @"^[1-9]+$"); // chord モードは1～9
-            } else if (Type == DataType.Drum) {
+            } else if (Way == Way.Drum) {
                 return target.ToString().Equals("x");
             }
             return false;
