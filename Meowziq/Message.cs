@@ -14,6 +14,8 @@ namespace Meowziq {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Fields
 
+        static HashSet<int> hashSet = new HashSet<int>();
+
         static bool flag;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -33,13 +35,19 @@ namespace Meowziq {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]
 
+        /// <summary>
+        /// 引数の tick を起点にして切り替え処理を行います
+        /// </summary>
         public static void Apply(int tick) { // MEMO: tick が 2回くる
             if (tick == 0) {
                 return; // 初回は無視:必要
             }
-            // tick が1小節ごとに切り替え // TODO 外に出す か専用の HashSet
-            if (tick % (Tick.Of4beat.Int32() * 4) == 0) {
-                flag = change();
+            if (!hashSet.Add(tick)) {
+                return; // 既に処理した tick なので無視する
+            }
+            // tick が1小節ごとに切り替え
+            if (tick % (Length.Of4beat.Int32() * 4) == 0) {
+                //flag = change();
             }
         }
 
@@ -48,7 +56,6 @@ namespace Meowziq {
         /// </summary>
         public static List<ChannelMessage> GetBy(int tick) {
             if (flag) {
-                //tick = tick - 1; // -1 が必要
                 if (!Prime.HashSet.Add(tick)) {
                     return null; // 既に処理した tick なので無視する
                 }
@@ -56,7 +63,6 @@ namespace Meowziq {
                     return Prime.Item[tick];
                 }
             } else {
-                //tick = tick - 1; // -1 が必要
                 if (!Second.HashSet.Add(tick)) {
                     return null; // 既に処理した tick なので無視する
                 }
@@ -73,7 +79,7 @@ namespace Meowziq {
         public static void Apply(int midiCh, Note note) {
             if (flag) {
                 if (note.StopPre) { // ノートが優先発音の場合
-                    var _noteOffTick = note.Tick - Tick.Of32beat.Int32(); // 念のため32分音符前に停止
+                    var _noteOffTick = note.Tick - Length.Of32beat.Int32(); // 念のため32分音符前に停止
                     if (Prime.AllNoteOffHashsetArray[midiCh].Add(_noteOffTick)) { // MIDI ch 毎にこの tick のノート強制停止は一回のみ 
                         if (midiCh != 9) { // ドラム以外
                             add(_noteOffTick, new ChannelMessage(ChannelCommand.Controller, midiCh, 120));
@@ -84,7 +90,7 @@ namespace Meowziq {
                 add(note.Tick + note.Gate, new ChannelMessage(ChannelCommand.NoteOff, midiCh, note.Num, 0)); // ノートOFF
             } else {
                 if (note.StopPre) { // ノートが優先発音の場合
-                    var _noteOffTick = note.Tick - Tick.Of32beat.Int32(); // 念のため32分音符前に停止
+                    var _noteOffTick = note.Tick - Length.Of32beat.Int32(); // 念のため32分音符前に停止
                     if (Second.AllNoteOffHashsetArray[midiCh].Add(_noteOffTick)) { // MIDI ch 毎にこの tick のノート強制停止は一回のみ 
                         if (midiCh != 9) { // ドラム以外
                             add(_noteOffTick, new ChannelMessage(ChannelCommand.Controller, midiCh, 120));
@@ -112,6 +118,7 @@ namespace Meowziq {
         /// 状態をリセットします
         /// </summary>
         public static void Reset() {
+            hashSet.Clear();
             if (flag) {
                 Prime.Item.Clear();
                 Prime.HashSet.Clear();

@@ -127,8 +127,8 @@ namespace Meowziq.Core {
         /// Note データを生成します
         /// NOTE: Player オブジェクトから呼ばれます
         /// </summary>
-        public void Build(int position, Key key, Pattern pattern) {
-            onBuild(position, key, pattern);
+        public void Build(int tick, Key key, Pattern pattern) {
+            onBuild(tick, key, pattern);
         }
 
         /// <summary>
@@ -138,9 +138,9 @@ namespace Meowziq.Core {
             noteList = noteList
                 .Where(x => !(!x.StopPre && x.Tick == target.Tick)) // FIXME: ドラムは音毎？
                 .ToList(); // 優先ノートではなく tick が同じものを削除
-            if (target.Gate > Tick.Of8beat.Int32()) { // シンコぺが 符点8分音符 の場合
+            if (target.Gate > Length.Of8beat.Int32()) { // シンコぺが 符点8分音符 の場合
                 noteList = noteList
-                    .Where(x => !(!x.StopPre && x.Tick == target.Tick + Tick.Of16beat.Int32())) // さらに被る16音符を削除
+                    .Where(x => !(!x.StopPre && x.Tick == target.Tick + Length.Of16beat.Int32())) // さらに被る16音符を削除
                     .ToList();
             }
         }
@@ -151,7 +151,7 @@ namespace Meowziq.Core {
         /// <summary>
         /// Note データを生成します
         /// </summary>
-        protected void onBuild(int position, Key key, Pattern pattern) {
+        protected void onBuild(int tick, Key key, Pattern pattern) {
             //if (BeatCount != pattern.BeatCount) {
             //    throw new ArgumentException("invalid beatCount.");
             //}
@@ -162,13 +162,13 @@ namespace Meowziq.Core {
                 case DataType.Mono:
                     {
                         var _param = new Param(data.Note, data.Exp, _dataType);
-                        _generator.ApplyNote(position, pattern.BeatCount, key, pattern.AllSpan, _param);
+                        _generator.ApplyNote(tick, pattern.BeatCount, key, pattern.AllSpan, _param);
                     }
                     break;
                 case DataType.Chord:
                     {
                         var _param = new Param(data.Chord, data.Exp, _dataType);
-                        _generator.ApplyNote(position, pattern.BeatCount, key, pattern.AllSpan, _param);
+                        _generator.ApplyNote(tick, pattern.BeatCount, key, pattern.AllSpan, _param);
                     }
                     break;
                 case DataType.Multi:
@@ -178,7 +178,7 @@ namespace Meowziq.Core {
                             new Value.Exp(data.PreArray[_idx], data.PostArray[_idx]),
                             _dataType
                         );
-                        _generator.ApplyNote(position, pattern.BeatCount, key, pattern.AllSpan, _param);
+                        _generator.ApplyNote(tick, pattern.BeatCount, key, pattern.AllSpan, _param);
                     }
                     break;
                 case DataType.Drum:
@@ -189,15 +189,15 @@ namespace Meowziq.Core {
                             new Value.Exp(data.PreArray[_idx], ""),
                             _dataType
                         );
-                        _generator.ApplyDrumNote(position, pattern.BeatCount, _param);
+                        _generator.ApplyDrumNote(tick, pattern.BeatCount, _param);
                     }
                     break;
                 case DataType.Sequence:
-                    _generator.ApplyRandomNote(position, pattern.BeatCount, key, pattern.AllSpan);
+                    _generator.ApplyRandomNote(tick, pattern.BeatCount, key, pattern.AllSpan);
                     break;
             }
             // UI 表示情報作成
-            _generator.ApplyInfo(position, pattern.BeatCount, key, pattern.AllSpan);
+            _generator.ApplyInfo(tick, pattern.BeatCount, key, pattern.AllSpan);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

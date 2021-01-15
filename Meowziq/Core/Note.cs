@@ -10,6 +10,8 @@ namespace Meowziq.Core {
 
         int tick; // 4分音符 480の分解能のシーケンサーの tick 値 ※絶対値
 
+        int head; // この Note の1小節(4拍)の頭の tick 値 ※絶対値 
+
         int num; // MIDI ノート番号
 
         int gate; // MIDI ノートON -> ノートOFF までの長さ
