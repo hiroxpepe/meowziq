@@ -33,14 +33,14 @@ namespace Meowziq {
         /// <summary>
         /// 引数の tick を起点にして切り替え処理を行います
         /// </summary>
-        public static void Apply(int tick, Action load) {
+        public static void Apply(int tick, Action<int> load) {
             if (!hashSet.Add(tick)) {
                 return; // 既に処理した tick なので無視する
             }
             // tick が1小節ごとに切り替え
             if (tick % (Length.Of4beat.Int32() * 4) == 0) {
                 change();
-                load();
+                load(tick);
             }
         }
 
