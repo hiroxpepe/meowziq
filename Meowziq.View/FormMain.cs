@@ -3,6 +3,7 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sanford.Multimedia.Midi;
@@ -93,7 +94,9 @@ namespace Meowziq.View {
         void buttonPlay_Click(object sender, EventArgs e) {
             try {
                 if (textBoxSongName.Text.Equals("------------")) {
-                    MessageBox.Show("please load a song.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    var _message = "please load a song.";
+                    MessageBox.Show(_message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    Log.Error(_message);
                     return;
                 }
                 if (playing || stopping) {
@@ -104,6 +107,7 @@ namespace Meowziq.View {
                 }
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                Log.Error(ex.Message);
             }
         }
 
@@ -120,6 +124,7 @@ namespace Meowziq.View {
                 }
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                Log.Error(ex.Message);
             }
         }
 
@@ -136,6 +141,7 @@ namespace Meowziq.View {
                 }
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                Log.Error(ex.Message);
             }
         }
 
@@ -145,7 +151,9 @@ namespace Meowziq.View {
         async void buttonSave_Click(object sender, EventArgs e) {
             try {
                 if (textBoxSongName.Text.Equals("------------")) {
-                    MessageBox.Show("please load a song.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    var _message = "please load a song.";
+                    MessageBox.Show(_message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    Log.Error(_message);
                     return;
                 }
                 if (await saveSong()) {
@@ -153,6 +161,7 @@ namespace Meowziq.View {
                 }
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                Log.Error(ex.Message);
             }
         }
 
@@ -208,6 +217,17 @@ namespace Meowziq.View {
         /// </summary>
         async Task<bool> saveSong() {
             await Task.Run(async () => {
+                // 進捗表示用タイマー
+                var _message = "PLEASE WAIT";
+                var _timer = Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
+                var _disposer = _timer.Subscribe(x => {
+                    Log.Info($"saving a song.. ({x})");
+                    Invoke((MethodInvoker) (() => {
+                        var _dot = (x % 2) == 0 ? "*" : "-";
+                        textBoxSongName.Text = $"{_message} {_dot}";
+                    }));
+                });
+                // セーブ開始
                 Message.Reset();
                 var _songName = await buildSong(true);
                 var _songDir = targetPath.Split(Path.DirectorySeparatorChar).Last();
@@ -233,6 +253,8 @@ namespace Meowziq.View {
                 sequence.Clear();
                 sequence.Add(track);
                 sequence.Save($"./data/{_songDir}/{_songName}.mid");
+                textBoxSongName.Text = _songName; // Song 名戻す
+                _disposer.Dispose(); // タイマー破棄
                 Log.Info("save! :D");
                 return true;
             });
