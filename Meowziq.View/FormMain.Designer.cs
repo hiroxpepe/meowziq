@@ -52,6 +52,7 @@
             this.textBoxCode = new System.Windows.Forms.TextBox();
             this.labelAutoMode = new System.Windows.Forms.Label();
             this.textBoxAutoMode = new System.Windows.Forms.TextBox();
+            this.buttonSave = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // sequence
@@ -212,7 +213,7 @@
             this.textBoxSongName.Location = new System.Drawing.Point(178, 36);
             this.textBoxSongName.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.textBoxSongName.Name = "textBoxSongName";
-            this.textBoxSongName.Size = new System.Drawing.Size(154, 31);
+            this.textBoxSongName.Size = new System.Drawing.Size(159, 31);
             this.textBoxSongName.TabIndex = 12;
             this.textBoxSongName.TabStop = false;
             this.textBoxSongName.Text = "------------";
@@ -366,12 +367,25 @@
             this.textBoxAutoMode.TabStop = false;
             this.textBoxAutoMode.Text = "---";
             // 
+            // buttonSave
+            // 
+            this.buttonSave.Font = new System.Drawing.Font("Meiryo UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.buttonSave.Location = new System.Drawing.Point(257, 79);
+            this.buttonSave.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonSave.Name = "buttonSave";
+            this.buttonSave.Size = new System.Drawing.Size(80, 32);
+            this.buttonSave.TabIndex = 26;
+            this.buttonSave.Text = "to SMF";
+            this.buttonSave.UseVisualStyleBackColor = true;
+            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
             this.ClientSize = new System.Drawing.Size(727, 286);
+            this.Controls.Add(this.buttonSave);
             this.Controls.Add(this.labelAutoMode);
             this.Controls.Add(this.textBoxAutoMode);
             this.Controls.Add(this.labelCode);
@@ -437,6 +451,7 @@
         private System.Windows.Forms.TextBox textBoxCode;
         private System.Windows.Forms.Label labelAutoMode;
         private System.Windows.Forms.TextBox textBoxAutoMode;
+        private System.Windows.Forms.Button buttonSave;
     }
 }
 

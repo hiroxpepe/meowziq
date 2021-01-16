@@ -109,6 +109,14 @@ namespace Meowziq {
             Prime.Clear();
             Second.Clear();
             Info.Reset();
+            flag = true;
+        }
+
+        /// <summary>
+        /// 内部フラグを反転します
+        /// </summary>
+        public static void Invert() {
+            flag = !flag;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
