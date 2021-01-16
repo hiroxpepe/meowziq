@@ -65,7 +65,7 @@ namespace Meowziq.Core {
         /// <summary>
         /// MIDI ノートを生成します
         /// </summary>
-        public void Build() {
+        public void Build(int tick) {
             // 音色変更
             Message.Apply(midiCh, programNum);
             // 全ての Pattern の Note を MIDI データ化する
@@ -73,13 +73,24 @@ namespace Meowziq.Core {
             // MEMO: Phrase は前後の関連があるのでシンコペーションなどで 
             //       MIDI 化前に Note を調整する必要あり
             // MEMO: Player と Phrase の type が一致ものしか入ってない
+            Log.Info($"tick: {tick}");
 
             // Note データ作成のループ
-            var _tick = 0;
+            var _tickOfPatternHead = 0;
             var _previousPatternName = "";
-            foreach (var _pattern in song.AllPattern) { // 演奏順に並んだ Pattern のリスト      
+            foreach (var _pattern in song.AllPattern) { // 演奏順に並んだ Pattern のリスト
+                var _patternLength = _pattern.BeatCount * Length.Of4beat.Int32(); // この Pattern の長さ
+                var _endOfPattern = 0;
+                if (tick == _tickOfPatternHead) { // 演奏 tick とデータ処理の tick が一致した ⇒ パターン切り替え
+                    _endOfPattern = _tickOfPatternHead + _patternLength;
+                    Log.Info($"pattarn change! tick: {tick}");
+                    Log.Info($"_endOfPattern: {_endOfPattern}");
+                }
                 foreach (var _phrase in phraseList.Where(x => x.Name.Equals(_pattern.Name))) { // Pattern の名前で Phrase を引き当てる
-                    _phrase.Build(_tick, song.Key, _pattern); // Note データを作成：tick 毎に数回分の Pattern のデータが作成される
+                    if (tick <= _endOfPattern) { // この tick が含まれてる pattern のみ Build する
+                        _phrase.Build(_tickOfPatternHead, song.Key, _pattern); // Note データを作成：tick 毎に数回分の Pattern のデータが作成される
+                        Log.Info($"Build: {tick}");
+                    }
                     if (!_previousPatternName.Equals("")) {
                         var _previousPhraseList = phraseList.Where(x => x.Name.Equals(_previousPatternName)).ToList(); // 一つ前の Phrase を引き当てる
                         if (_previousPhraseList.Count != 0) {
@@ -90,8 +101,7 @@ namespace Meowziq.Core {
                     }
                 }
                 _previousPatternName = _pattern.Name; // 次の直前のフレーズ名を保持
-                var _patternLength = _pattern.BeatCount * Length.Of4beat.Int32();
-                _tick += _patternLength; // Pattern の長さ分ポジションを移動する
+                _tickOfPatternHead += _patternLength; // Pattern の長さ分ポジションを移動する
             }
             // Note データ適用のループ
             foreach (var _pattern in song.AllPattern) { // 演奏順に並んだ Pattern のリスト

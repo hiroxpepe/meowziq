@@ -85,6 +85,7 @@ namespace Meowziq.View {
                             textBoxSpanMode.Text = "---";
                             textBoxSpanMode.BackColor = Color.DarkOliveGreen;
                         } else { // Spanの旋法適用の場合
+                            // TODO: キーの転旋法表示？
                             textBoxAutoMode.Text = "---";
                             textBoxAutoMode.BackColor = Color.DarkOliveGreen;
                             textBoxSpanMode.Text = _item.SpanMode;
@@ -171,6 +172,8 @@ namespace Meowziq.View {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private Methods [verb]
 
+        // TODO: 演奏開始
+
         /// <summary>
         /// ソングを作成
         /// </summary>
@@ -183,7 +186,7 @@ namespace Meowziq.View {
             PlayerLoader.PhraseList = PhraseLoader.Build($"{targetDir}/phrase.json");
             PlayerLoader.Build($"{targetDir}/player.json").ForEach(x => {
                 x.Song = _song; // Song データを設定
-                x.Build(); // MIDI データを構築
+                x.Build(0); // MIDI データを構築
             });
             // Song の名前を返す
             return _song.Name;
@@ -192,7 +195,7 @@ namespace Meowziq.View {
         /// <summary>
         /// ソングをロード
         /// </summary>
-        async void loadSong() {
+        async void loadSong(int tick) {
             await Task.Run(() => {
                 // Pattern と Song をロード
                 SongLoader.PatternList = PatternLoader.Build($"{targetPath}/pattern.json");
@@ -202,18 +205,18 @@ namespace Meowziq.View {
                 PlayerLoader.PhraseList = PhraseLoader.Build($"{targetPath}/phrase.json");
                 PlayerLoader.Build($"{targetPath}/player.json").ForEach(x => {
                     x.Song = _song; // Song データを設定
-                    x.Build(); // MIDI データを構築
+                    x.Build(tick); // MIDI データを構築
                 });
             });
         }
 
         /// <summary>
-        /// オールサウンドオフ
+        /// 演奏停止
         /// </summary>
         async void stopSound() {
             await Task.Run(() => {
                 for (int _idx = 0; _idx < 15; _idx++) {
-                    midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, _idx, 120));
+                    midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, _idx, 120)); // All sound off.
                 }
                 stopping = false;
                 playing = false;
