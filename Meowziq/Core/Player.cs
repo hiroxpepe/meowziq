@@ -68,28 +68,23 @@ namespace Meowziq.Core {
         public void Build(int tick) {
             // 音色変更
             Message.Apply(midiCh, programNum);
-            // 全ての Pattern の Note を MIDI データ化する
-            // MEMO: リアルタイム演奏を考える場合、1小節前に全て決まっている必要がある ⇒ シンコぺは？
-            // MEMO: Phrase は前後の関連があるのでシンコペーションなどで 
-            //       MIDI 化前に Note を調整する必要あり
+            // MEMO: Phrase は前後の関連があるのでシンコペーションなどで MIDI 化前に Note を調整する必要あり
             // MEMO: Player と Phrase の type が一致ものしか入ってない
-            Log.Info($"tick: {tick}");
 
             // Note データ作成のループ
             var _tickOfPatternHead = 0;
             var _previousPatternName = "";
             foreach (var _pattern in song.AllPattern) { // 演奏順に並んだ Pattern のリスト
                 var _patternLength = _pattern.BeatCount * Length.Of4beat.Int32(); // この Pattern の長さ
-                var _endOfPattern = 0;
                 if (tick == _tickOfPatternHead) { // 演奏 tick とデータ処理の tick が一致した ⇒ パターン切り替え
-                    _endOfPattern = _tickOfPatternHead + _patternLength;
-                    Log.Info($"pattarn change! tick: {tick}");
-                    Log.Info($"_endOfPattern: {_endOfPattern}");
+                    Log.Info($"pattarn changed. tick: {tick} {_pattern.Name} {type}");
                 }
                 foreach (var _phrase in phraseList.Where(x => x.Name.Equals(_pattern.Name))) { // Pattern の名前で Phrase を引き当てる
-                    if (tick <= _endOfPattern) { // この tick が含まれてる pattern のみ Build する
-                        _phrase.Build(_tickOfPatternHead, song.Key, _pattern); // Note データを作成：tick 毎に数回分の Pattern のデータが作成される
-                        Log.Info($"Build: {tick}");
+                    if (tick <= _tickOfPatternHead + _patternLength) { // この tick が含まれてる pattern のみ Build する
+                        if (_tickOfPatternHead < tick + Length.Of4beat.Int32() * 4 * 16) { // また _tickOfPatternHead に16小節(パターン最大長)を足した長さ以下
+                            _phrase.Build(_tickOfPatternHead, song.Key, _pattern); // Note データを作成：tick 毎に数回分の Pattern のデータが作成される
+                            Log.Debug($"Build: tick: {tick} head: {_tickOfPatternHead} {_pattern.Name} {type}");
+                        }
                     }
                     if (!_previousPatternName.Equals("")) {
                         var _previousPhraseList = phraseList.Where(x => x.Name.Equals(_previousPatternName)).ToList(); // 一つ前の Phrase を引き当てる
@@ -101,7 +96,7 @@ namespace Meowziq.Core {
                     }
                 }
                 _previousPatternName = _pattern.Name; // 次の直前のフレーズ名を保持
-                _tickOfPatternHead += _patternLength; // Pattern の長さ分ポジションを移動する
+                _tickOfPatternHead += _patternLength; // Pattern の長さ分 Pattern 開始 tick を移動する
             }
             // Note データ適用のループ
             foreach (var _pattern in song.AllPattern) { // 演奏順に並んだ Pattern のリスト
