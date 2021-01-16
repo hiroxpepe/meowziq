@@ -47,17 +47,17 @@ namespace Meowziq.View {
         // EventHandler
 
         /// <summary>
+        /// NOTE: conductor.midi 依存で 30 tick単位でしか呼ばれていない
+        /// NOTE: conductor.midi のメッセージはスルーする  midi.OutDevice.Send(e.Message);
+        /// MEMO: tick と名前を付ける対象は常に絶対値とする
         /// TODO: メッセージ送信のタイミングは独自実装出来るのでは？
         /// </summary>
         void handleChannelMessagePlayed(object sender, ChannelMessageEventArgs e) {
-            // NOTE: conductor.midi のメッセージはスルーする  midi.OutDevice.Send(e.Message);
             if (stopping) {
                 return;
             }
-            // MEMO: 30 tick単位でしか呼ばれていない
             if (this.Visible) {
-                // MEMO: tick と名前を付ける対象は常に絶対値とする
-                var _tick = sequencer.Position - 1; // NOTE: Position が 1, 31 と来るので予め1引きます
+                var _tick = sequencer.Position - 1; // NOTE: Position が 1, 31 と来るので予め1引く
                 var _beat = (((_tick) / 480) + 1).ToString(); // 0開始 ではなく 1開始として表示
                 var _meas = ((int.Parse(_beat) - 1) / 4 + 1).ToString();
                 Invoke((MethodInvoker) (() => {
@@ -68,13 +68,13 @@ namespace Meowziq.View {
                 var _itemDictionary = Info.ItemDictionary;
                 if (_itemDictionary.ContainsKey(_tick)) { // FIXME: ContainsKey 大丈夫？
                     var _item = _itemDictionary[_tick];
-                    Invoke((MethodInvoker) (updateDisplay(_item)));
+                    Invoke(updateDisplay(_item));
                 }
                 Message.Apply(_tick, loadSong); // 1小節ごとに切り替える // MEMO: シンコぺを考慮する
                 var _list = Message.GetBy(_tick); // メッセージのリストを取得
                 if (_list != null) {
                     _list.ForEach(x => {
-                        midi.OutDevice.Send(x); // MIDIデバイスにメッセージを追加送信
+                        midi.OutDevice.Send(x); // MIDIデバイスにメッセージを追加送信 MEMO: CCなどは直接ここで投げては？
                         if (x.MidiChannel != 9 && x.MidiChannel != 1) { // FIXME: 暫定シーケンス
                             pianoControl.Send(x); // ドラム以外はピアノロールに表示
                         }
@@ -208,7 +208,7 @@ namespace Meowziq.View {
                 sequence.Clear();
                 sequence.Add(track);
                 sequence.Save("./data/out.mid"); // TODO: songのディレクトリにsongの名前で
-                Invoke((MethodInvoker) (resetDisplay()));
+                Invoke(resetDisplay());
                 Log.Info("stop. :|");
             });
         }
