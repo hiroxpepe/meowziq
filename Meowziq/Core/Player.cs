@@ -67,7 +67,7 @@ namespace Meowziq.Core {
         /// NOTE: Phrase は前後の関連があるのでシンコペーションなどで MIDI 化前に Note を調整する必要あり
         /// NOTE: Player と Phrase の type が一致ものしか入ってない
         /// </summary>
-        public void Build(int tick) {
+        public void Build(int tick, bool save = false) {
             // 音色変更
             Message.Apply(midiCh, 0, programNum); // 初回
 
@@ -76,15 +76,18 @@ namespace Meowziq.Core {
             var _previousPatternName = "";
             foreach (var _pattern in song.AllPattern) { // 演奏順に並んだ Pattern のリスト
                 var _patternLength = _pattern.BeatCount * Length.Of4beat.Int32(); // この Pattern の長さ
-                if (tick == _tickOfPatternHead) { // 演奏 tick とデータ処理の tick が一致した ⇒ パターン切り替え
+                if (tick == _tickOfPatternHead && !save) { // 演奏 tick とデータ処理の tick が一致した ⇒ パターン切り替え
                     Log.Info($"pattarn changed. tick: {tick} {_pattern.Name} {type}");
                 }
                 foreach (var _phrase in phraseList.Where(x => x.Name.Equals(_pattern.Name))) { // Pattern の名前で Phrase を引き当てる
-                    if (tick <= _tickOfPatternHead + _patternLength) { // この tick が含まれてる pattern のみ Build する
-                        if (_tickOfPatternHead < tick + Length.Of4beat.Int32() * 4 * 16) { // また _tickOfPatternHead に16小節(パターン最大長)を足した長さ以下
-                            _phrase.Build(_tickOfPatternHead, song.Key, _pattern); // Note データを作成：tick 毎に数回分の Pattern のデータが作成される
-                            Log.Debug($"Build: tick: {tick} head: {_tickOfPatternHead} {_pattern.Name} {type}");
-                        }
+                    var _tickOfPatternEnd = _tickOfPatternHead + _patternLength; // この Pattern の終了 tick
+                    var _lengthOfPatternMax = tick + Length.Of4beat.Int32() * 4 * 16; // Pattern の最大の長さ
+                    if (save) {
+                        _phrase.Build(_tickOfPatternHead, song.Key, _pattern); // SMF出力モードの場合
+                    }
+                    else if (tick <= _tickOfPatternEnd && _tickOfPatternHead < _lengthOfPatternMax) { // この tick が含まれてる、かつ _tickOfPatternHead に16小節(パターン最大長)を足した長さ以下 pattern のみ Build する 
+                        _phrase.Build(_tickOfPatternHead, song.Key, _pattern); // Note データを作成：tick 毎に数回分の Pattern のデータが作成される
+                        Log.Debug($"Build: tick: {tick} head: {_tickOfPatternHead} {_pattern.Name} {type}");
                     }
                     if (!_previousPatternName.Equals("")) {
                         var _previousPhraseList = phraseList.Where(x => x.Name.Equals(_previousPatternName)).ToList(); // 一つ前の Phrase を引き当てる
@@ -105,7 +108,7 @@ namespace Meowziq.Core {
                     var _hashSet = new HashSet<int>();
                     foreach (Note _note in _noteList) {
                         Message.Apply(midiCh, _note); // message に適用
-                        if (_hashSet.Add(_note.Tick)) { // tick に1回だけ
+                        if (_hashSet.Add(_note.Tick)) { // tick につき1回だけ
                             Message.Apply(midiCh, _note.Tick, programNum); // 音色変更:演奏中 FIXME: なぜここでないとNG?
                         }
                     }
