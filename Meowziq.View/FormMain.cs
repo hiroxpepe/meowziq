@@ -128,6 +128,7 @@ namespace Meowziq.View {
                     labelPlay.ForeColor = Color.Lime;
                     playing = true;
                     played = false;
+                    Log.Info("Hi :D");
                 }
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);

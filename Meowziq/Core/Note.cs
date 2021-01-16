@@ -32,6 +32,7 @@ namespace Meowziq.Core {
             this.gate = gate;
             this.velo = velo;
             this.stopPre = stopPre;
+            Log.Debug($"tick: {tick}");
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
