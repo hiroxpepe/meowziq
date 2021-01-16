@@ -64,34 +64,11 @@ namespace Meowziq.View {
                     textBoxBeat.Text = _beat;
                     textBoxMeas.Text = _meas; 
                 }));
-                // UI情報表示 TODO: デリゲート化
+                // UI情報表示
                 var _itemDictionary = Info.ItemDictionary;
                 if (_itemDictionary.ContainsKey(_tick)) { // FIXME: ContainsKey 大丈夫？
                     var _item = _itemDictionary[_tick];
-                    Invoke((MethodInvoker) (() => {
-                        textBoxKey.Text = _item.Key;
-                        textBoxDegree.Text = _item.Degree;
-                        textBoxKeyMode.Text = _item.KeyMode;
-                        textBoxCode.Text = Utils.GetSimpleCodeName(
-                            Key.Enum.Parse(_item.Key),
-                            Degree.Enum.Parse(_item.Degree), 
-                            Mode.Enum.Parse(_item.KeyMode),
-                            Mode.Enum.Parse(_item.SpanMode)
-                        );
-                        if (_item.KeyMode == _item.SpanMode) { // 自動旋法適用の場合
-                            var _autoMode = Utils.GetModeBy(Degree.Enum.Parse(_item.Degree), Mode.Enum.Parse(_item.KeyMode));
-                            textBoxAutoMode.Text = _autoMode.ToString();
-                            textBoxAutoMode.BackColor = Color.PaleGreen;
-                            textBoxSpanMode.Text = "---";
-                            textBoxSpanMode.BackColor = Color.DarkOliveGreen;
-                        } else { // Spanの旋法適用の場合
-                            // TODO: キーの転旋法表示？
-                            textBoxAutoMode.Text = "---";
-                            textBoxAutoMode.BackColor = Color.DarkOliveGreen;
-                            textBoxSpanMode.Text = _item.SpanMode;
-                            textBoxSpanMode.BackColor = Color.PaleGreen;
-                        }
-                    }));
+                    Invoke((MethodInvoker) (updateDisplay(_item)));
                 }
                 Message.Apply(_tick, loadSong); // 1小節ごとに切り替える // MEMO: シンコぺを考慮する
                 var _list = Message.GetBy(_tick); // メッセージのリストを取得
@@ -121,15 +98,7 @@ namespace Meowziq.View {
                     return;
                 }
                 lock (locked) {
-                    Message.Reset();
-                    textBoxSongName.Text = buildSong(targetPath); // TODO: リロード
-                    sequence.Load("./data/default.mid");
-                    sequencer.Position = 0;
-                    sequencer.Start();
-                    labelPlay.ForeColor = Color.Lime;
-                    playing = true;
-                    played = false;
-                    Log.Info("Hi :D");
+                    startSound();
                 }
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
@@ -145,7 +114,6 @@ namespace Meowziq.View {
                     return;
                 }
                 lock (locked) {
-                    stopping = true;
                     stopSound();
                 }
             } catch (Exception ex) {
@@ -171,8 +139,6 @@ namespace Meowziq.View {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private Methods [verb]
-
-        // TODO: 演奏開始
 
         /// <summary>
         /// ソングを作成
@@ -211,10 +177,28 @@ namespace Meowziq.View {
         }
 
         /// <summary>
+        /// 演奏開始
+        /// </summary>
+        async void startSound() {
+            await Task.Run(() => {
+                Message.Reset();
+                textBoxSongName.Text = buildSong(targetPath); // TODO: リロード
+                sequence.Load("./data/default.mid");
+                sequencer.Position = 0;
+                sequencer.Start();
+                labelPlay.ForeColor = Color.Lime;
+                playing = true;
+                played = false;
+                Log.Info("start! :D");
+            });
+        }
+
+        /// <summary>
         /// 演奏停止
         /// </summary>
         async void stopSound() {
             await Task.Run(() => {
+                stopping = true;
                 for (int _idx = 0; _idx < 15; _idx++) {
                     midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, _idx, 120)); // All sound off.
                 }
@@ -224,20 +208,59 @@ namespace Meowziq.View {
                 sequence.Clear();
                 sequence.Add(track);
                 sequence.Save("./data/out.mid");
-                Invoke((MethodInvoker) (() => { 
-                    labelPlay.ForeColor = Color.DimGray;
-                    textBoxBeat.Text = "0";
-                    textBoxMeas.Text = "0";
-                    textBoxKey.Text = "---";
-                    textBoxDegree.Text = "---";
-                    textBoxKeyMode.Text = "---";
-                    textBoxSpanMode.Text = "---";
-                    textBoxAutoMode.Text = "---";
-                    textBoxCode.Text = "---";
-                    textBoxAutoMode.BackColor = Color.DarkOliveGreen;
-                    textBoxSpanMode.BackColor = Color.DarkOliveGreen;
-                }));
+                Invoke((MethodInvoker) (resetDisplay()));
+                Log.Info("stop. :|");
             });
+        }
+
+        /// <summary>
+        /// UI表示を更新します
+        /// </summary>
+        MethodInvoker updateDisplay(Info.Item _item) {
+            return () => {
+                textBoxKey.Text = _item.Key;
+                textBoxDegree.Text = _item.Degree;
+                textBoxKeyMode.Text = _item.KeyMode;
+                textBoxCode.Text = Utils.GetSimpleCodeName(
+                    Key.Enum.Parse(_item.Key),
+                    Degree.Enum.Parse(_item.Degree),
+                    Mode.Enum.Parse(_item.KeyMode),
+                    Mode.Enum.Parse(_item.SpanMode)
+                );
+                if (_item.KeyMode == _item.SpanMode) { // 自動旋法適用の場合
+                    var _autoMode = Utils.GetModeBy(Degree.Enum.Parse(_item.Degree), Mode.Enum.Parse(_item.KeyMode));
+                    textBoxAutoMode.Text = _autoMode.ToString();
+                    textBoxAutoMode.BackColor = Color.PaleGreen;
+                    textBoxSpanMode.Text = "---";
+                    textBoxSpanMode.BackColor = Color.DarkOliveGreen;
+                } else { // Spanの旋法適用の場合
+                         // TODO: キーの転旋法表示？
+                    textBoxAutoMode.Text = "---";
+                    textBoxAutoMode.BackColor = Color.DarkOliveGreen;
+                    textBoxSpanMode.Text = _item.SpanMode;
+                    textBoxSpanMode.BackColor = Color.PaleGreen;
+                }
+            };
+        }
+
+        /// <summary>
+        /// UI表示を初期化します
+        /// </summary>
+        /// <returns></returns>
+        MethodInvoker resetDisplay() {
+            return () => {
+                labelPlay.ForeColor = Color.DimGray;
+                textBoxBeat.Text = "0";
+                textBoxMeas.Text = "0";
+                textBoxKey.Text = "---";
+                textBoxDegree.Text = "---";
+                textBoxKeyMode.Text = "---";
+                textBoxSpanMode.Text = "---";
+                textBoxAutoMode.Text = "---";
+                textBoxCode.Text = "---";
+                textBoxAutoMode.BackColor = Color.DarkOliveGreen;
+                textBoxSpanMode.BackColor = Color.DarkOliveGreen;
+            };
         }
     }
 }
