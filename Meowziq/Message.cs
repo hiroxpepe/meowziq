@@ -1,10 +1,10 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sanford.Multimedia.Midi;
 
 using Meowziq.Core;
-using System;
 
 namespace Meowziq {
     /// <summary>
@@ -24,25 +24,10 @@ namespace Meowziq {
 
         static Message() {
             flag = true;
-            // TODO: 初回は両方同期が必要
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]
-
-        /// <summary>
-        /// 引数の tick を起点にして切り替え処理を行います
-        /// </summary>
-        public static void Apply(int tick, Action<int> load) {
-            if (!hashSet.Add(tick)) {
-                return; // 既に処理した tick なので無視する
-            }
-            // tick が1小節ごとに切り替え
-            if (tick % (Length.Of4beat.Int32() * 4) == 0) {
-                change();
-                load(tick);
-            }
-        }
 
         /// <summary>
         /// 引数の tick の ChannelMessage のリストを返します
@@ -67,15 +52,24 @@ namespace Meowziq {
         }
 
         /// <summary>
-        /// プログラムNo(音色)を ChannelMessage として適用します
-        /// TODO: バンクセレクト
+        /// 引数の tick を起点にして切り替え処理を行います
         /// </summary>
-        public static void Apply(int midiCh, int programNum) {
-            if (flag) { // Prime スタートで実行
-                add(0, new ChannelMessage(ChannelCommand.ProgramChange, midiCh, programNum, 127)); // プログラムチェンジ
-            } else {
-                add(0, new ChannelMessage(ChannelCommand.ProgramChange, midiCh, programNum, 127)); // プログラムチェンジ
+        public static void Apply(int tick, Action<int> load) {
+            if (!hashSet.Add(tick)) {
+                return; // 既に処理した tick なので無視する
             }
+            // tick が1小節ごとに切り替え
+            if (tick % (Length.Of4beat.Int32() * 4) == 0) {
+                change();
+                load(tick);
+            }
+        }
+
+        /// <summary>
+        /// プログラムNo(音色)を ChannelMessage として適用します TODO: バンクセレクト
+        /// </summary>
+        public static void Apply(int midiCh, int tick, int programNum ) {
+            add(tick, new ChannelMessage(ChannelCommand.ProgramChange, midiCh, programNum, 127)); // プログラムチェンジ
         }
 
         /// <summary>

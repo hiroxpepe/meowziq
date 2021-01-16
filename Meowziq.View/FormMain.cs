@@ -50,7 +50,7 @@ namespace Meowziq.View {
         /// TODO: メッセージ送信のタイミングは独自実装出来るのでは？
         /// </summary>
         void handleChannelMessagePlayed(object sender, ChannelMessageEventArgs e) {
-            // NOTE: default.midi のメッセージはスルーする  midi.OutDevice.Send(e.Message);
+            // NOTE: conductor.midi のメッセージはスルーする  midi.OutDevice.Send(e.Message);
             if (stopping) {
                 return;
             }
@@ -78,7 +78,7 @@ namespace Meowziq.View {
                         if (x.MidiChannel != 9 && x.MidiChannel != 1) { // FIXME: 暫定シーケンス
                             pianoControl.Send(x); // ドラム以外はピアノロールに表示
                         }
-                        track.Insert(_tick, x);
+                        track.Insert(_tick, x); // TODO: 静的生成にする
                     });
                 }
                 played = true;
@@ -183,7 +183,7 @@ namespace Meowziq.View {
             await Task.Run(() => {
                 Message.Reset();
                 textBoxSongName.Text = buildSong(targetPath); // TODO: リロード
-                sequence.Load("./data/default.mid");
+                sequence.Load("./data/conductor.mid");
                 sequencer.Position = 0;
                 sequencer.Start();
                 labelPlay.ForeColor = Color.Lime;
@@ -207,7 +207,7 @@ namespace Meowziq.View {
                 sequencer.Stop();
                 sequence.Clear();
                 sequence.Add(track);
-                sequence.Save("./data/out.mid");
+                sequence.Save("./data/out.mid"); // TODO: songのディレクトリにsongの名前で
                 Invoke((MethodInvoker) (resetDisplay()));
                 Log.Info("stop. :|");
             });
@@ -246,7 +246,6 @@ namespace Meowziq.View {
         /// <summary>
         /// UI表示を初期化します
         /// </summary>
-        /// <returns></returns>
         MethodInvoker resetDisplay() {
             return () => {
                 labelPlay.ForeColor = Color.DimGray;

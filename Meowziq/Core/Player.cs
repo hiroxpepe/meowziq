@@ -64,12 +64,12 @@ namespace Meowziq.Core {
 
         /// <summary>
         /// MIDI ノートを生成します
+        /// NOTE: Phrase は前後の関連があるのでシンコペーションなどで MIDI 化前に Note を調整する必要あり
+        /// NOTE: Player と Phrase の type が一致ものしか入ってない
         /// </summary>
         public void Build(int tick) {
             // 音色変更
-            Message.Apply(midiCh, programNum);
-            // MEMO: Phrase は前後の関連があるのでシンコペーションなどで MIDI 化前に Note を調整する必要あり
-            // MEMO: Player と Phrase の type が一致ものしか入ってない
+            Message.Apply(midiCh, 0, programNum); // 初回
 
             // Note データ作成のループ
             var _tickOfPatternHead = 0;
@@ -102,8 +102,12 @@ namespace Meowziq.Core {
             foreach (var _pattern in song.AllPattern) { // 演奏順に並んだ Pattern のリスト
                 foreach (var _phrase in phraseList.Where(x => x.Name.Equals(_pattern.Name))) { // Pattern の名前で Phrase を引き当てる
                     var _noteList = _phrase.AllNote;
+                    var _hashSet = new HashSet<int>();
                     foreach (Note _note in _noteList) {
                         Message.Apply(midiCh, _note); // message に適用
+                        if (_hashSet.Add(_note.Tick)) { // tick に1回だけ
+                            Message.Apply(midiCh, _note.Tick, programNum); // 音色変更:演奏中 FIXME: なぜここでないとNG?
+                        }
                     }
                     _noteList.Clear(); // 必要
                 }
