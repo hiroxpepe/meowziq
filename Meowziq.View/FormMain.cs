@@ -1,6 +1,8 @@
 ﻿
 using System;
 using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sanford.Multimedia.Midi;
@@ -30,8 +32,6 @@ namespace Meowziq.View {
         Midi midi;
 
         string targetPath;
-
-        string targetDirName; // TODO: song のディレクトリ名だけ
 
         Track track = new Track();
 
@@ -210,9 +210,17 @@ namespace Meowziq.View {
             await Task.Run(async () => {
                 Message.Reset();
                 var _songName = await buildSong(true);
+                var _songDir = targetPath.Split(Path.DirectorySeparatorChar).Last();
                 Message.Invert();
-                // FIXME: どこまで回す？
-                for (var _idx = 0; _idx < 9999999; _idx++) { // tick を 30間隔でループさせます
+                track.Clear();
+                byte[] _data = new byte[3]{ // MEMO: 120BPM 暫定
+                    Convert.ToByte("07", 16),
+                    Convert.ToByte("A1", 16),
+                    Convert.ToByte("20", 16) 
+                };
+                var _tempo = new MetaMessage(MetaType.Tempo, _data);
+                track.Insert(0, _tempo);
+                for (var _idx = 0; _idx < 9999999; _idx++) { // tick を 30間隔でループさせます // FIXME: どこまで回す？
                     var _tick = _idx * 30; // 30 tick を手動生成
                     var _list = Message.GetBy(_tick); // メッセージのリストを取得
                     if (_list != null) {
@@ -223,12 +231,12 @@ namespace Meowziq.View {
                 }
                 sequence.Load("./data/conductor.mid");
                 sequence.Clear();
-                sequence.Add(track); // TODO: テンポ
-                sequence.Save($"./data/{_songName}.mid"); // TODO: ディレクトリ
+                sequence.Add(track);
+                sequence.Save($"./data/{_songDir}/{_songName}.mid");
                 Log.Info("save! :D");
                 return true;
             });
-            return true;
+            return true; // TODO: 戻り値
         }
 
         /// <summary>
