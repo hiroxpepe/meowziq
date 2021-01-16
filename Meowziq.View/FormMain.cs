@@ -31,6 +31,8 @@ namespace Meowziq.View {
 
         string targetPath;
 
+        string targetDirName; // TODO: song のディレクトリ名だけ
+
         Track track = new Track();
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -91,7 +93,7 @@ namespace Meowziq.View {
         void buttonPlay_Click(object sender, EventArgs e) {
             try {
                 if (textBoxSongName.Text.Equals("------------")) {
-                    MessageBox.Show("please load the song.", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    MessageBox.Show("please load a song.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     return;
                 }
                 if (playing || stopping) {
@@ -137,6 +139,23 @@ namespace Meowziq.View {
             }
         }
 
+        /// <summary>
+        /// データをセーブします
+        /// </summary>
+        async void buttonSave_Click(object sender, EventArgs e) {
+            try {
+                if (textBoxSongName.Text.Equals("------------")) {
+                    MessageBox.Show("please load a song.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    return;
+                }
+                if (await saveSong()) {
+                    MessageBox.Show("song saved to SMF.", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            } catch (Exception ex) {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            }
+        }
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private Methods [verb]
 
@@ -144,7 +163,7 @@ namespace Meowziq.View {
         /// ソングをロード
         /// </summary>
         async Task<string> buildSong(bool save = false) {
-            var _name = "";
+            var _name = "------------";
             await Task.Run(() => {
                 // Pattern と Song をロード
                 SongLoader.PatternList = PatternLoader.Build($"{targetPath}/pattern.json");
@@ -157,6 +176,7 @@ namespace Meowziq.View {
                     x.Build(0, save); // MIDI データを構築
                 });
                 _name = _song.Name;
+                Log.Info("load! :)");
             });
             // Song の名前を返す
             return _name;
@@ -164,6 +184,7 @@ namespace Meowziq.View {
 
         /// <summary>
         /// ソングをロード
+        /// NOTE: Message クラスから呼ばれます
         /// </summary>
         async void loadSong(int tick) {
             await Task.Run(() => {
@@ -177,7 +198,37 @@ namespace Meowziq.View {
                     x.Song = _song; // Song データを設定
                     x.Build(tick); // MIDI データを構築
                 });
+                Log.Info("load! :)");
             });
+        }
+
+        /// <summary>
+        /// ソングをセーブ
+        /// TODO: 曲再生を止める
+        /// </summary>
+        async Task<bool> saveSong() {
+            await Task.Run(async () => {
+                Message.Reset();
+                var _songName = await buildSong(true);
+                Message.Invert();
+                // FIXME: どこまで回す？
+                for (var _idx = 0; _idx < 9999999; _idx++) { // tick を 30間隔でループさせます
+                    var _tick = _idx * 30; // 30 tick を手動生成
+                    var _list = Message.GetBy(_tick); // メッセージのリストを取得
+                    if (_list != null) {
+                        _list.ForEach(x => {
+                            track.Insert(_tick, x);
+                        });
+                    }
+                }
+                sequence.Load("./data/conductor.mid");
+                sequence.Clear();
+                sequence.Add(track); // TODO: テンポ
+                sequence.Save($"./data/{_songName}.mid"); // TODO: ディレクトリ
+                Log.Info("save! :D");
+                return true;
+            });
+            return true;
         }
 
         /// <summary>
