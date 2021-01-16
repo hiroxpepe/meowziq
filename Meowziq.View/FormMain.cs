@@ -121,7 +121,6 @@ namespace Meowziq.View {
                 }
                 lock (locked) {
                     Message.Reset();
-                    Info.Reset();
                     textBoxSongName.Text = buildSong(targetPath); // TODO: リロード
                     sequence.Load("./data/default.mid");
                     sequencer.Position = 0;
@@ -131,7 +130,7 @@ namespace Meowziq.View {
                     played = false;
                 }
             } catch (Exception ex) {
-                MessageBox.Show(ex.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
         }
 
@@ -148,7 +147,7 @@ namespace Meowziq.View {
                     stopSound();
                 }
             } catch (Exception ex) {
-                MessageBox.Show(ex.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
         }
 
@@ -164,7 +163,7 @@ namespace Meowziq.View {
                     textBoxSongName.Text = buildSong(targetPath);
                 }
             } catch (Exception ex) {
-                MessageBox.Show(ex.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
         }
 

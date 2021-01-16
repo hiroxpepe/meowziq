@@ -64,7 +64,13 @@ namespace Meowziq.Value {
         /// </summary>
         public Percussion[] PercussionArray {
             get => percussionArray;
-            set => percussionArray = value;
+            set {
+                if (value.Length != noteArray.Length) {
+                    throw new ArgumentException("percussionArray must be same count as noteTextArray.");
+                } else {
+                    percussionArray = value;
+                }
+            }
         }
 
         /// <summary>

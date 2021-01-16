@@ -33,10 +33,7 @@ namespace Meowziq {
         /// <summary>
         /// 引数の tick を起点にして切り替え処理を行います
         /// </summary>
-        public static void Apply(int tick, Action load) { // MEMO: tick が 2回くる
-            //if (tick == 0) {
-            //    return; // 初回は無視:必要
-            //}
+        public static void Apply(int tick, Action load) {
             if (!hashSet.Add(tick)) {
                 return; // 既に処理した tick なので無視する
             }
@@ -115,12 +112,9 @@ namespace Meowziq {
         /// </summary>
         public static void Reset() {
             hashSet.Clear();
-            Prime.Item.Clear();
-            Prime.HashSet.Clear();
-            Prime.AllNoteOffHashsetArray.ToList().ForEach(x => x.Clear());
-            Second.Item.Clear();
-            Second.HashSet.Clear();
-            Second.AllNoteOffHashsetArray.ToList().ForEach(x => x.Clear());
+            Prime.Clear();
+            Second.Clear();
+            Info.Reset();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -156,6 +150,13 @@ namespace Meowziq {
         /// </summary>
         static void change() {
             flag = !flag;
+            if (flag) {
+                Second.Clear();
+                Info.Reset();
+            } else {
+                Prime.Clear();
+                Info.Reset();
+            }
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -196,6 +197,15 @@ namespace Meowziq {
                 get => allNoteOffHashsetArray;
                 set => allNoteOffHashsetArray = value;
             }
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////
+            // private Methods [verb]
+
+            public static void Clear() {
+                item.Clear();
+                hashSet.Clear();
+                allNoteOffHashsetArray.ToList().ForEach(x => x.Clear());
+            }
         }
 
         static class Second {
@@ -232,6 +242,15 @@ namespace Meowziq {
             public static HashSet<int>[] AllNoteOffHashsetArray {
                 get => allNoteOffHashsetArray;
                 set => allNoteOffHashsetArray = value;
+            }
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////
+            // private Methods [verb]
+
+            public static void Clear() {
+                item.Clear();
+                hashSet.Clear();
+                allNoteOffHashsetArray.ToList().ForEach(x => x.Clear());
             }
         }
     }
