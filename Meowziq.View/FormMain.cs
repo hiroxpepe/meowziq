@@ -124,13 +124,13 @@ namespace Meowziq.View {
         /// <summary>
         /// データをロードします
         /// </summary>
-        void buttonLoad_Click(object sender, EventArgs e) {
+        async void buttonLoad_Click(object sender, EventArgs e) {
             try {
                 folderBrowserDialog.SelectedPath = AppDomain.CurrentDomain.BaseDirectory;
                 var _dr = folderBrowserDialog.ShowDialog();
                 if (_dr == DialogResult.OK) {
                     targetPath = folderBrowserDialog.SelectedPath;
-                    textBoxSongName.Text = buildSong(targetPath);
+                    textBoxSongName.Text = await buildSong();
                 }
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
@@ -141,21 +141,25 @@ namespace Meowziq.View {
         // private Methods [verb]
 
         /// <summary>
-        /// ソングを作成
+        /// ソングをロード
         /// </summary>
-        string buildSong(string targetDir) {
-            // Pattern と Song をロード
-            SongLoader.PatternList = PatternLoader.Build($"{targetDir}/pattern.json");
-            var _song = SongLoader.Build($"{targetDir}/song.json");
+        async Task<string> buildSong(bool save = false) {
+            var _name = "";
+            await Task.Run(() => {
+                // Pattern と Song をロード
+                SongLoader.PatternList = PatternLoader.Build($"{targetPath}/pattern.json");
+                var _song = SongLoader.Build($"{targetPath}/song.json");
 
-            // Phrase と Player をロード
-            PlayerLoader.PhraseList = PhraseLoader.Build($"{targetDir}/phrase.json");
-            PlayerLoader.Build($"{targetDir}/player.json").ForEach(x => {
-                x.Song = _song; // Song データを設定
-                x.Build(0); // MIDI データを構築
+                // Phrase と Player をロード
+                PlayerLoader.PhraseList = PhraseLoader.Build($"{targetPath}/phrase.json");
+                PlayerLoader.Build($"{targetPath}/player.json").ForEach(x => {
+                    x.Song = _song; // Song データを設定
+                    x.Build(0, save); // MIDI データを構築
+                });
+                _name = _song.Name;
             });
             // Song の名前を返す
-            return _song.Name;
+            return _name;
         }
 
         /// <summary>
@@ -180,9 +184,9 @@ namespace Meowziq.View {
         /// 演奏開始
         /// </summary>
         async void startSound() {
-            await Task.Run(() => {
+            await Task.Run(async () => {
                 Message.Reset();
-                textBoxSongName.Text = buildSong(targetPath); // TODO: リロード
+                textBoxSongName.Text = await buildSong();
                 sequence.Load("./data/conductor.mid");
                 sequencer.Position = 0;
                 sequencer.Start();
