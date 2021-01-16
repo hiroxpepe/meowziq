@@ -253,7 +253,7 @@ namespace Meowziq.View {
                 sequence.Clear();
                 sequence.Add(track);
                 sequence.Save($"./data/{_songDir}/{_songName}.mid");
-                textBoxSongName.Text = _songName; // Song 名戻す
+                Invoke((MethodInvoker) (() => textBoxSongName.Text = _songName));// Song 名戻す
                 _disposer.Dispose(); // タイマー破棄
                 Log.Info("save! :D");
                 return true;
