@@ -317,13 +317,21 @@ namespace Meowziq.View {
                     item.AutoMode
                 );
                 if (item.AutoMode) { // 自動旋法適用の場合
-                    var _autoMode = Utils.GetModeBy(Degree.Enum.Parse(item.Degree), Mode.Enum.Parse(item.KeyMode));
+                    var _autoMode = Utils.GetModeBy(
+                        Degree.Enum.Parse(item.Degree),
+                        Mode.Enum.Parse(item.KeyMode)
+                    );
                     textBoxMode.Text = _autoMode.ToString();
                     labelModulation.ForeColor = Color.DimGray;
                 } else { // Spanの旋法適用の場合
                     textBoxMode.Text = item.SpanMode;
-                    var _keyMode = Utils.GeyModeKeyBy(Degree.Enum.Parse(item.Degree), Mode.Enum.Parse(item.SpanMode));
-                    textBoxKeyMode.Text = _keyMode.ToString();// TODO: 暫定
+                    var _keyMode = Utils.GeyModeKeyBy(
+                        Key.Enum.Parse(item.Key),
+                        Degree.Enum.Parse(item.Degree),
+                        Mode.Enum.Parse(item.KeyMode),
+                        Mode.Enum.Parse(item.SpanMode)
+                    );
+                    textBoxKeyMode.Text = _keyMode.ToString().Equals("Undefined") ? "---" : _keyMode.ToString(); // TODO: 暫定
                     labelModulation.ForeColor = Color.HotPink; // TODO: 度合によって色変化
                 }
             };
