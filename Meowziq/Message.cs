@@ -52,6 +52,17 @@ namespace Meowziq {
         }
 
         /// <summary>
+        /// 引数 index 値のアイテムを持つかどうかを返します
+        /// </summary>
+        public static bool HasNext(int idx) {
+            if (flag) { // Prime スタートで実行
+                return Prime.Item.Count() > idx;
+            } else {
+                return Second.Item.Count() > idx;
+            }
+        }
+
+        /// <summary>
         /// 引数の tick を起点にして切り替え処理を行います
         /// </summary>
         public static void Apply(int tick, Action<int> load) {
@@ -102,13 +113,13 @@ namespace Meowziq {
         }
 
         /// <summary>
-        /// 状態をリセットします
+        /// 状態を初期化します
         /// </summary>
-        public static void Reset() {
+        public static void Clear() {
             hashSet.Clear();
             Prime.Clear();
             Second.Clear();
-            Info.Reset();
+            Info.Clear();
             flag = true;
         }
 
@@ -154,10 +165,10 @@ namespace Meowziq {
             flag = !flag;
             if (flag) {
                 Second.Clear();
-                Info.Reset();
+                Info.Clear();
             } else {
                 Prime.Clear();
-                Info.Reset();
+                Info.Clear();
             }
         }
 

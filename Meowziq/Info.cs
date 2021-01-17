@@ -5,7 +5,6 @@ namespace Meowziq {
     /// <summary>
     /// 曲がどのような状況で演奏されているかを表す情報を保持するクラス
     /// NOTE: 設定されて読み出させるだけ、これを状態を変更する目的で使わない
-    /// TODO: 記述するファイル移動
     /// </summary>
     public static class Info {
 
@@ -18,7 +17,15 @@ namespace Meowziq {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // static Properties [noun, adjectives] 
+        // public static Properties [noun, adjectives] 
+
+        public static int Beat {
+            get; set;
+        }
+
+        public static int Meas {
+            get; set;
+        }
 
         public static HashSet<int> HashSet {
             get; set;
@@ -31,7 +38,9 @@ namespace Meowziq {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]
 
-        public static void Reset() {
+        public static void Clear() {
+            Beat = 0;
+            Meas = 0;
             HashSet.Clear();
             ItemDictionary.Clear();
         }

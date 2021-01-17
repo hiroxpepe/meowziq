@@ -13,6 +13,7 @@ using Meowziq.Loader;
 namespace Meowziq.View {
     /// <summary>
     /// TODO: 排他制御
+    /// MEMO: 半動的生成で MIDI ノートを出力し MIDI 楽器の音色をリアルタイムで変化させて楽しむ 
     /// </summary>
     public partial class FormMain : Form {
 
@@ -141,16 +142,15 @@ namespace Meowziq.View {
                 var _tick = sequencer.Position - 1; // NOTE: Position が 1, 31 と来るので予め1引く
                 var _beat = (((_tick) / 480) + 1).ToString(); // 0開始 ではなく 1開始として表示
                 var _meas = ((int.Parse(_beat) - 1) / 4 + 1).ToString();
-                Invoke((MethodInvoker) (() => { // TODO: Infoに格納してから後で表示
-                    textBoxBeat.Text = _beat;
-                    textBoxMeas.Text = _meas;
-                }));
-                // UI情報表示
+                Info.Beat = int.Parse(_beat);
+                Info.Meas = int.Parse(_meas);
+                
                 var _itemDictionary = Info.ItemDictionary;
                 if (_itemDictionary.ContainsKey(_tick)) { // FIXME: ContainsKey 大丈夫？
                     var _item = _itemDictionary[_tick];
-                    Invoke(updateDisplay(_item));
+                    Invoke(updateDisplay(_item)); // UI情報表示
                 }
+
                 Message.Apply(_tick, loadSong); // 1小節ごとに切り替える // MEMO: シンコぺを考慮する
                 var _list = Message.GetBy(_tick); // メッセージのリストを取得
                 if (_list != null) {
@@ -229,7 +229,7 @@ namespace Meowziq.View {
                     }));
                 });
                 // セーブ開始
-                Message.Reset();
+                Message.Clear();
                 var _songName = await buildSong(true);
                 var _songDir = targetPath.Split(Path.DirectorySeparatorChar).Last();
                 Message.Invert();
@@ -241,7 +241,7 @@ namespace Meowziq.View {
                 };
                 var _tempo = new MetaMessage(MetaType.Tempo, _data);
                 track.Insert(0, _tempo);
-                for (var _idx = 0; _idx < 9999999; _idx++) { // tick を 30間隔でループさせます // FIXME: どこまで回す？
+                for (var _idx = 0; Message.HasNext(_idx); _idx++) { // tick を 30間隔でループさせます
                     var _tick = _idx * 30; // 30 tick を手動生成
                     var _list = Message.GetBy(_tick); // メッセージのリストを取得
                     if (_list != null) {
@@ -267,7 +267,7 @@ namespace Meowziq.View {
         /// </summary>
         async void startSound() {
             await Task.Run(async () => {
-                Message.Reset();
+                Message.Clear();
                 textBoxSongName.Text = await buildSong();
                 sequence.Load("./data/conductor.mid");
                 sequencer.Position = 0;
@@ -285,15 +285,13 @@ namespace Meowziq.View {
         async void stopSound() {
             await Task.Run(() => {
                 stopping = true;
-                for (int _idx = 0; _idx < 15; _idx++) {
-                    midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, _idx, 120)); // All sound off.
+                for (int _idx = 0; _idx < 15; _idx++) { // All sound off.
+                    midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, _idx, 120));
                 }
                 stopping = false;
                 playing = false;
                 sequencer.Stop();
                 sequence.Clear();
-                sequence.Add(track);
-                sequence.Save("./data/out.mid"); // TODO: songのディレクトリにsongの名前で
                 Invoke(resetDisplay());
                 Log.Info("stop. :|");
             });
@@ -304,6 +302,8 @@ namespace Meowziq.View {
         /// </summary>
         MethodInvoker updateDisplay(Info.Item item) {
             return () => {
+                textBoxBeat.Text = Info.Beat.ToString();
+                textBoxMeas.Text = Info.Meas.ToString();
                 textBoxKey.Text = item.Key;
                 textBoxDegree.Text = item.Degree;
                 textBoxKeyMode.Text = item.KeyMode;
@@ -319,8 +319,7 @@ namespace Meowziq.View {
                     textBoxAutoMode.BackColor = Color.PaleGreen;
                     textBoxSpanMode.Text = "---";
                     textBoxSpanMode.BackColor = Color.DarkOliveGreen;
-                } else { // Spanの旋法適用の場合
-                         // TODO: キーの転旋法表示？
+                } else { // Spanの旋法適用の場合 // TODO: キーの転旋法表示？
                     textBoxAutoMode.Text = "---";
                     textBoxAutoMode.BackColor = Color.DarkOliveGreen;
                     textBoxSpanMode.Text = item.SpanMode;
