@@ -21,6 +21,10 @@ namespace Meowziq.Core {
 
         List<Pattern> patternList; // TODO: patternList が key と mode を持つ構造に改造する
 
+        // TODO: List<Pattern> を保持するクラス ⇒ Section オブジェクトのリスト
+
+        List<Section> sectionList;
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
@@ -29,6 +33,12 @@ namespace Meowziq.Core {
             this.key = key;
             this.keyMode = keyMode;
             this.patternList = patternList.Select(x => checkeMode(x)).ToList();
+        }
+
+        // TODO: 新しいコンストラクタ
+        public Song(string name, List<Section> sectionList) {
+            this.name = name;
+            this.sectionList = sectionList;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -66,6 +76,57 @@ namespace Meowziq.Core {
                 x.AllSpan.ForEach(_x => _x.KeyMode = keyMode); // FIXME: 曲の旋法を変える時は？
             });
             return pattern;
+        }
+    }
+
+    /// <summary>
+    /// Section クラス
+    ///     + Pattern オブジェクトのリストを管理します
+    /// </summary>
+    public class Section {
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Fields
+
+        Key key;
+
+        Mode keyMode;
+
+        List<string> patternNameList;
+
+        List<Pattern> patternList;
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Constructor
+
+        public Section(Key key, Mode keyMode, List<string> patternNameList) {
+            this.key = key;
+            this.keyMode = keyMode;
+            this.patternNameList = patternNameList;
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Properties [noun, adjectives] 
+
+        /// <summary>
+        /// 曲のキー
+        /// </summary>
+        public Key Key {
+            get => key;
+        }
+
+        /// <summary>
+        /// 曲の旋法
+        /// </summary>
+        public Mode KeyMode {
+            get => keyMode;
+        }
+
+        /// <summary>
+        /// 全ての Pattern
+        /// </summary>
+        public List<Pattern> AllPattern {
+            get => patternList;
         }
     }
 }
