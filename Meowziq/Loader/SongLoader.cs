@@ -37,11 +37,10 @@ namespace Meowziq.Loader {
                 throw new ArgumentException("need patternList.");
             }
             var _song = loadJson(targetPath).Song;
+            var _sectionList = _song.Section.Select(x => new Core.Section(Key.Enum.Parse(x.Key), Mode.Enum.Parse(x.Mode), x.PatternArray.Select(_x => _x).ToList())).ToList();
             return new Core.Song(
                 _song.Name,
-                Key.Enum.Parse(_song.Key),
-                Mode.Enum.Parse(_song.Mode),
-                _song.PatternArray.Select(x => searchPattern(x)).ToList() // 名前で探して Pattern オブジェクトをリスト化
+                _sectionList // TODO: 名前で探して Pattern オブジェクトをリスト化
             );
         }
 
@@ -84,6 +83,14 @@ namespace Meowziq.Loader {
             public string Tempo {
                 get; set;
             }
+            [DataMember(Name = "section")]
+            public Section[] Section {
+                get; set;
+            }
+        }
+
+        [DataContract]
+        class Section {
             [DataMember(Name = "key")]
             public string Key {
                 get; set;

@@ -117,27 +117,31 @@ namespace Meowziq.Core {
 
         int beat; // 拍数
 
+        Key key; // 曲のキー
+
         Degree degree; // キーに対する度数
 
-        Mode spanMode; // この期間の旋法
-
         Mode keyMode; // キーの旋法
+
+        Mode spanMode; // この期間の旋法
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
         public Span(int beat, Degree degree) {
             this.beat = beat;
+            this.key = Key.Undefined;
             this.degree = degree;
-            this.spanMode = Mode.Undefined;
             this.keyMode = Mode.Undefined;
+            this.spanMode = Mode.Undefined;
         }
 
         public Span(int beat, Degree degree, Mode spanMode) {
             this.beat = beat;
+            this.key = Key.Undefined;
             this.degree = degree;
-            this.spanMode = spanMode;
             this.keyMode = Mode.Undefined;
+            this.spanMode = spanMode;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -151,13 +155,18 @@ namespace Meowziq.Core {
             get => degree;
         }
 
-        public Mode SpanMode {
-            get => spanMode; // 一度設定した spanMode は変更しない
+        public Key Key {
+            get => key;
+            set => key = value;
         }
 
         public Mode KeyMode {
             get => keyMode;
             set => keyMode = value;
+        }
+
+        public Mode SpanMode {
+            get => spanMode; // 一度設定した spanMode は変更しない
         }
 
         public bool AutoMode {

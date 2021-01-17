@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Meowziq {
-
+    /// <summary>
+    /// NOTE: TOPレベルであるべき ⇒ 実装パッケージを using しない
+    /// </summary>
     public class Utils {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
