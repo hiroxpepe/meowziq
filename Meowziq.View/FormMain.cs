@@ -146,9 +146,9 @@ namespace Meowziq.View {
         }
 
         /// <summary>
-        /// データをセーブします
+        /// データをSMFに変換します
         /// </summary>
-        async void buttonSave_Click(object sender, EventArgs e) {
+        async void buttonConvert_Click(object sender, EventArgs e) {
             try {
                 if (textBoxSongName.Text.Equals("------------")) {
                     var _message = "please load a song.";
@@ -157,7 +157,7 @@ namespace Meowziq.View {
                     return;
                 }
                 if (await saveSong()) {
-                    MessageBox.Show("song saved to SMF.", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("converted the song to SMF.", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
@@ -221,7 +221,7 @@ namespace Meowziq.View {
                 var _message = "PLEASE WAIT";
                 var _timer = Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
                 var _disposer = _timer.Subscribe(x => {
-                    Log.Info($"saving a song.. ({x})");
+                    Log.Info($"converting the song.. ({x})");
                     Invoke((MethodInvoker) (() => {
                         var _dot = (x % 2) == 0 ? "*" : "-";
                         textBoxSongName.Text = $"{_message} {_dot}";
@@ -301,19 +301,19 @@ namespace Meowziq.View {
         /// <summary>
         /// UI表示を更新します
         /// </summary>
-        MethodInvoker updateDisplay(Info.Item _item) {
+        MethodInvoker updateDisplay(Info.Item item) {
             return () => {
-                textBoxKey.Text = _item.Key;
-                textBoxDegree.Text = _item.Degree;
-                textBoxKeyMode.Text = _item.KeyMode;
+                textBoxKey.Text = item.Key;
+                textBoxDegree.Text = item.Degree;
+                textBoxKeyMode.Text = item.KeyMode;
                 textBoxCode.Text = Utils.GetSimpleCodeName(
-                    Key.Enum.Parse(_item.Key),
-                    Degree.Enum.Parse(_item.Degree),
-                    Mode.Enum.Parse(_item.KeyMode),
-                    Mode.Enum.Parse(_item.SpanMode)
+                    Key.Enum.Parse(item.Key),
+                    Degree.Enum.Parse(item.Degree),
+                    Mode.Enum.Parse(item.KeyMode),
+                    Mode.Enum.Parse(item.SpanMode)
                 );
-                if (_item.KeyMode == _item.SpanMode) { // 自動旋法適用の場合
-                    var _autoMode = Utils.GetModeBy(Degree.Enum.Parse(_item.Degree), Mode.Enum.Parse(_item.KeyMode));
+                if (item.KeyMode == item.SpanMode) { // 自動旋法適用の場合
+                    var _autoMode = Utils.GetModeBy(Degree.Enum.Parse(item.Degree), Mode.Enum.Parse(item.KeyMode));
                     textBoxAutoMode.Text = _autoMode.ToString();
                     textBoxAutoMode.BackColor = Color.PaleGreen;
                     textBoxSpanMode.Text = "---";
@@ -322,7 +322,7 @@ namespace Meowziq.View {
                          // TODO: キーの転旋法表示？
                     textBoxAutoMode.Text = "---";
                     textBoxAutoMode.BackColor = Color.DarkOliveGreen;
-                    textBoxSpanMode.Text = _item.SpanMode;
+                    textBoxSpanMode.Text = item.SpanMode;
                     textBoxSpanMode.BackColor = Color.PaleGreen;
                 }
             };
