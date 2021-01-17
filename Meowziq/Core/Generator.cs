@@ -41,7 +41,7 @@ namespace Meowziq.Core {
                     int[] _noteNumArray = new int[7];
                     _noteNumArray = _noteNumArray.Select(x => x = -1).ToArray(); // -1 で初期化
                     // 曲の旋法と Span の旋法が同じ場合は自動旋法
-                    if (_span.AutoMode) {
+                    if (_span.AutoMode) { // TODO: span で判定出来るので Utils の中に入れれる？
                         if (param.IsNote) {
                             _noteNumArray[0] = Utils.GetNoteByAutoMode(key, _span.Degree, _span.KeyMode, int.Parse(_text.ToString()));
                         } else if (param.IsChord) {
@@ -52,9 +52,9 @@ namespace Meowziq.Core {
                     // Span に旋法が設定してあればそちらを適用する
                     else {
                         if (param.IsNote) {
-                            _noteNumArray[0] = Utils.GetNoteBySpanMode(key, _span.Degree, _span.KeyMode, _span.Mode, int.Parse(_text.ToString()));
+                            _noteNumArray[0] = Utils.GetNoteBySpanMode(key, _span.Degree, _span.KeyMode, _span.SpanMode, int.Parse(_text.ToString()));
                         } else if (param.IsChord) {
-                            _noteNumArray = Utils.GetNoteArrayBySpanMode(key, _span.Degree, _span.KeyMode, _span.Mode, int.Parse(_text.ToString()));
+                            _noteNumArray = Utils.GetNoteArrayBySpanMode(key, _span.Degree, _span.KeyMode, _span.SpanMode, int.Parse(_text.ToString()));
                             _noteNumArray = applyRange(_noteNumArray, param.Chord.Range); // コード展開形の範囲を適用
                         }
                     }
@@ -137,7 +137,7 @@ namespace Meowziq.Core {
             var _spanIndex = new SpanIndex(); // Span リストの添え字オブジェクト
             for (var _16beatIdx = 0; _16beatIdx < _all16beatCount; _16beatIdx++) {
                 var _span = spanList[_spanIndex.Idx]; // 16beat 4個で1拍進む
-                var _note = Utils.GetNoteAsRandom(key, _span.Degree, _span.Mode); // 16の倍数
+                var _note = Utils.GetNoteAsRandom(key, _span.Degree, _span.KeyMode, _span.SpanMode, _span.AutoMode); // 16の倍数
                 add(new Note(tick + (Length.Of16beat.Int32() * _16beatIdx), _note, 30, 127)); // gate 短め
                 _spanIndex.Increment(); // Span リストの添え字オブジェクトをインクリメント
             }
@@ -158,7 +158,7 @@ namespace Meowziq.Core {
                         Key = key.ToString(),
                         Degree = _span.Degree.ToString(),
                         KeyMode = _span.KeyMode.ToString(),
-                        SpanMode = _span.Mode.ToString()
+                        SpanMode = _span.SpanMode.ToString()
                     });
                 }
                 _spanIndex.Increment(); // Span リストの添え字オブジェクトをインクリメント

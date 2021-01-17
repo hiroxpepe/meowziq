@@ -62,8 +62,7 @@ namespace Meowziq.Core {
         /// </summary>
         Pattern checkeMode(Pattern pattern) {
             pattern.AllMeas.ForEach(x => {
-                x.AllSpan.Where(_x => _x.Mode == Mode.Undefined).Select(_x => _x.Mode = keyMode).ToList(); // 設定がない場合 song の旋法を設定
-                x.AllSpan.ForEach(_x => _x.KeyMode = keyMode); // こちらはもれなく設定 // FIXME: 曲の旋法を変える時
+                x.AllSpan.ForEach(_x => _x.KeyMode = keyMode); // FIXME: 曲の旋法を変える時は？
             });
             return pattern;
         }

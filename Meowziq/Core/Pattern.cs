@@ -90,7 +90,7 @@ namespace Meowziq.Core {
             this.spanList = new List<Span>();
             spanList.ForEach(x => {
                 for (var _idx = 0; _idx < x.Beat; _idx++) {
-                    this.spanList.Add(new Span(1, x.Degree, x.Mode));
+                    this.spanList.Add(new Span(1, x.Degree, x.SpanMode));
                 }
             });
         }
@@ -119,9 +119,9 @@ namespace Meowziq.Core {
 
         Degree degree; // キーに対する度数
 
-        Mode mode; // 旋法
+        Mode spanMode; // この期間の旋法
 
-        Mode keyMode; // キー(曲)の旋法
+        Mode keyMode; // キーの旋法
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
@@ -129,14 +129,14 @@ namespace Meowziq.Core {
         public Span(int beat, Degree degree) {
             this.beat = beat;
             this.degree = degree;
-            this.mode = Mode.Undefined;
+            this.spanMode = Mode.Undefined;
             this.keyMode = Mode.Undefined;
         }
 
-        public Span(int beat, Degree degree, Mode mode) {
+        public Span(int beat, Degree degree, Mode spanMode) {
             this.beat = beat;
             this.degree = degree;
-            this.mode = mode;
+            this.spanMode = spanMode;
             this.keyMode = Mode.Undefined;
         }
 
@@ -151,9 +151,8 @@ namespace Meowziq.Core {
             get => degree;
         }
 
-        public Mode Mode {
-            get => mode;
-            set => mode = value;
+        public Mode SpanMode {
+            get => spanMode; // 一度設定した spanMode は変更しない
         }
 
         public Mode KeyMode {
@@ -162,8 +161,12 @@ namespace Meowziq.Core {
         }
 
         public bool AutoMode {
-            get => mode == keyMode; // 曲の旋法と Span の旋法が同じ場合は自動旋法
+            get {
+                if (spanMode == Mode.Undefined) {
+                    return true;
+                }
+                return false;
+            }
         }
-
     }
 }

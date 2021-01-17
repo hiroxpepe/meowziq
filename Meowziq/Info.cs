@@ -54,22 +54,46 @@ namespace Meowziq {
         public class Item {
 
             ///////////////////////////////////////////////////////////////////////////////////////////
+            // Fields
+
+            string spanMode;
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
             // static Properties [noun, adjectives] 
 
             public int Tick {
                 get; set;
             }
+
             public string Key {
                 get; set;
             }
+
             public string Degree {
                 get; set;
             }
+
             public string KeyMode {
                 get; set;
             }
+
             public string SpanMode {
-                get; set;
+                get {
+                    if (spanMode.Equals("Undefined")) {
+                        return KeyMode;
+                    }
+                    return spanMode;
+                } 
+                set => spanMode = value;
+            }
+
+            public bool AutoMode {
+                get {
+                    if (spanMode.Equals("Undefined")) {
+                        return true;
+                    }
+                    return false;
+                }
             }
         }
     }

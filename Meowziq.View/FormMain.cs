@@ -313,19 +313,18 @@ namespace Meowziq.View {
                     Key.Enum.Parse(item.Key),
                     Degree.Enum.Parse(item.Degree),
                     Mode.Enum.Parse(item.KeyMode),
-                    Mode.Enum.Parse(item.SpanMode)
+                    Mode.Enum.Parse(item.SpanMode),
+                    item.AutoMode
                 );
-                if (item.KeyMode == item.SpanMode) { // 自動旋法適用の場合
+                if (item.AutoMode) { // 自動旋法適用の場合
                     var _autoMode = Utils.GetModeBy(Degree.Enum.Parse(item.Degree), Mode.Enum.Parse(item.KeyMode));
-                    textBoxAutoMode.Text = _autoMode.ToString();
-                    textBoxAutoMode.BackColor = Color.PaleGreen;
-                    textBoxSpanMode.Text = "---";
-                    textBoxSpanMode.BackColor = Color.DarkOliveGreen;
-                } else { // Spanの旋法適用の場合 // TODO: キーの転旋法表示？
-                    textBoxAutoMode.Text = "---";
-                    textBoxAutoMode.BackColor = Color.DarkOliveGreen;
-                    textBoxSpanMode.Text = item.SpanMode;
-                    textBoxSpanMode.BackColor = Color.PaleGreen;
+                    textBoxMode.Text = _autoMode.ToString();
+                    labelModulation.ForeColor = Color.DimGray;
+                } else { // Spanの旋法適用の場合
+                    textBoxMode.Text = item.SpanMode;
+                    var _keyMode = Utils.GeyModeKeyBy(Degree.Enum.Parse(item.Degree), Mode.Enum.Parse(item.SpanMode));
+                    textBoxKeyMode.Text = _keyMode.ToString();// TODO: 暫定
+                    labelModulation.ForeColor = Color.HotPink; // TODO: 度合によって色変化
                 }
             };
         }
@@ -336,16 +335,14 @@ namespace Meowziq.View {
         MethodInvoker resetDisplay() {
             return () => {
                 labelPlay.ForeColor = Color.DimGray;
+                labelModulation.ForeColor = Color.DimGray;
                 textBoxBeat.Text = "0";
                 textBoxMeas.Text = "0";
                 textBoxKey.Text = "---";
                 textBoxDegree.Text = "---";
                 textBoxKeyMode.Text = "---";
-                textBoxSpanMode.Text = "---";
-                textBoxAutoMode.Text = "---";
+                textBoxMode.Text = "---";
                 textBoxCode.Text = "---";
-                textBoxAutoMode.BackColor = Color.DarkOliveGreen;
-                textBoxSpanMode.BackColor = Color.DarkOliveGreen;
             };
         }
     }

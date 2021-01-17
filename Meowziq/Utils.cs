@@ -58,8 +58,8 @@ namespace Meowziq {
         /// <summary>
         /// FIXME: テキスト設定からランダムアルぺジエーター
         /// </summary>
-        public static int GetNoteAsRandom(Key key, Degree degree, Mode mode) {
-            return noteOfRandomByModeScaleOf3(key, degree, mode);
+        public static int GetNoteAsRandom(Key key, Degree degree, Mode keyMode, Mode spanMode, bool autoMode) {
+            return noteOfRandomByModeScaleOf3(key, degree, keyMode, spanMode, autoMode);
         }
 
         /// <summary>
@@ -70,13 +70,20 @@ namespace Meowziq {
         }
 
         /// <summary>
+        /// TBA: 暫定
+        /// </summary>
+        public static Mode GeyModeKeyBy(Degree degree, Mode spanMode) {
+            return modeKeyBy(degree, spanMode);
+        }
+
+        /// <summary>
         /// メジャーかマイナーかシンプルなコードネームを返します
         /// </summary>
-        public static string GetSimpleCodeName(Key key, Degree degree, Mode keyMode, Mode spanMode) {
+        public static string GetSimpleCodeName(Key key, Degree degree, Mode keyMode, Mode spanMode, bool autoMode = true) {
             int _noteOfDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取
             string _codeBase = Key.Enum.Parse(_noteOfDegree).ToString(); // コードネームの基本取得
             Mode _mode;
-            if (keyMode == spanMode) { // 自動旋法取得
+            if (autoMode) { // 自動旋法取得
                 _mode = modeBy(degree, keyMode);
             } else {
                 _mode = spanMode; // Spanの旋法適用
@@ -157,19 +164,19 @@ namespace Meowziq {
             }
         }
 
-        static int noteRootBy(Key key, Degree degree, Mode mode) {
+        static int noteRootBy(Key key, Degree degree, Mode keyMode) {
             key.Validate();
             degree.Validate();
-            mode.Validate();
-            int[] _scale7 = scale7By(key, mode);
+            keyMode.Validate();
+            int[] _scale7 = scale7By(key, keyMode);
             return _scale7[(int) degree];
         }
 
-        static int[] note3By(Key key, Degree degree, Mode mode) {
+        static int[] note3By(Key key, Degree degree, Mode keyMode) {
             key.Validate();
             degree.Validate();
-            mode.Validate();
-            int[] _scale7 = scale7By(key, mode);
+            keyMode.Validate();
+            int[] _scale7 = scale7By(key, keyMode);
             int[] _note3 = new int[3]; // コード構成音の3音を抽出
             switch (degree) {
                 case Degree.I:
@@ -211,11 +218,11 @@ namespace Meowziq {
             return _note3;
         }
 
-        static int[] note4By(Key key, Degree degree, Mode mode) {
+        static int[] note4By(Key key, Degree degree, Mode keyMode) {
             key.Validate();
             degree.Validate();
-            mode.Validate();
-            int[] _scale7 = scale7By(key, mode);
+            keyMode.Validate();
+            int[] _scale7 = scale7By(key, keyMode);
             int[] _note4 = new int[4]; // コード構成音の4音を抽出
             switch (degree) {
                 case Degree.I:
@@ -269,11 +276,11 @@ namespace Meowziq {
         /// <summary>
         /// MEMO: 有効？
         /// </summary>
-        static int[] note7By(Key key, Degree degree, Mode mode) {
+        static int[] note7By(Key key, Degree degree, Mode keyMode) {
             key.Validate();
             degree.Validate();
-            mode.Validate();
-            int[] _scale7 = scale7By(key, mode);
+            keyMode.Validate();
+            int[] _scale7 = scale7By(key, keyMode);
             int[] _note7 = new int[7]; // コード構成音の7音を抽出
             switch (degree) {
                 case Degree.I:
@@ -346,12 +353,12 @@ namespace Meowziq {
         /// <summary>
         /// キーと旋法からモードスケールを返します
         /// </summary>
-        static int[] scale7By(Key key, Mode mode) {
+        static int[] scale7By(Key key, Mode keyMode) {
             key.Validate();
-            mode.Validate();
+            keyMode.Validate();
             int _noteRoot = (int) key;
             int[] _scale7 = new int[7]; // 7音の旋法を作成
-            switch (mode) {
+            switch (keyMode) {
                 case Mode.Lyd:
                     _scale7[0] = _noteRoot; // 1
                     _scale7[1] = _noteRoot + 2; // 2
@@ -417,6 +424,135 @@ namespace Meowziq {
                     break;
             }
             return _scale7;
+        }
+
+        /// <summary>
+        /// TODO: 仮：span の度数と旋法でキーの旋法を返す TODO: C キーで Am が A になる時は？
+        /// </summary>
+        static Mode modeKeyBy(Degree degree, Mode spanMode) {
+            spanMode.Validate();
+            degree.Validate();
+            if (spanMode == Mode.Lyd) {
+                switch (degree) {
+                    case Degree.I:
+                        return Mode.Lyd;
+                    case Degree.II:
+                        return Mode.Phr;
+                    case Degree.III:
+                        return Mode.Dor;
+                    case Degree.IV:
+                        return Mode.Ion;
+                    case Degree.V:
+                        return Mode.Loc;
+                    case Degree.VI:
+                        return Mode.Aeo;
+                    case Degree.VII:
+                        return Mode.Mix;
+                }
+            } else if (spanMode == Mode.Ion) {
+                switch (degree) {
+                    case Degree.I:
+                        return Mode.Ion;
+                    case Degree.II:
+                        return Mode.Loc;
+                    case Degree.III:
+                        return Mode.Aeo;
+                    case Degree.IV:
+                        return Mode.Mix;
+                    case Degree.V:
+                        return Mode.Lyd;
+                    case Degree.VI:
+                        return Mode.Phr;
+                    case Degree.VII:
+                        return Mode.Dor;
+                }
+            } else if (spanMode == Mode.Mix) {
+                switch (degree) {
+                    case Degree.I:
+                        return Mode.Mix;
+                    case Degree.II:
+                        return Mode.Lyd;
+                    case Degree.III:
+                        return Mode.Phr;
+                    case Degree.IV:
+                        return Mode.Dor;
+                    case Degree.V:
+                        return Mode.Ion;
+                    case Degree.VI:
+                        return Mode.Loc;
+                    case Degree.VII:
+                        return Mode.Aeo;
+                }
+            } else if (spanMode == Mode.Dor) {
+                switch (degree) {
+                    case Degree.I:
+                        return Mode.Dor;
+                    case Degree.II:
+                        return Mode.Ion;
+                    case Degree.III:
+                        return Mode.Loc;
+                    case Degree.IV:
+                        return Mode.Aeo;
+                    case Degree.V:
+                        return Mode.Mix;
+                    case Degree.VI:
+                        return Mode.Lyd;
+                    case Degree.VII:
+                        return Mode.Phr;
+                }
+            } else if (spanMode == Mode.Aeo) {
+                switch (degree) {
+                    case Degree.I:
+                        return Mode.Aeo;
+                    case Degree.II:
+                        return Mode.Mix;
+                    case Degree.III:
+                        return Mode.Lyd;
+                    case Degree.IV:
+                        return Mode.Phr;
+                    case Degree.V:
+                        return Mode.Dor;
+                    case Degree.VI:
+                        return Mode.Ion;
+                    case Degree.VII:
+                        return Mode.Loc;
+                }
+            } else if (spanMode == Mode.Phr) {
+                switch (degree) {
+                    case Degree.I:
+                        return Mode.Phr;
+                    case Degree.II:
+                        return Mode.Dor;
+                    case Degree.III:
+                        return Mode.Ion;
+                    case Degree.IV:
+                        return Mode.Loc;
+                    case Degree.V:
+                        return Mode.Aeo;
+                    case Degree.VI:
+                        return Mode.Mix;
+                    case Degree.VII:
+                        return Mode.Lyd;
+                }
+            } else if (spanMode == Mode.Loc) {
+                switch (degree) {
+                    case Degree.I:
+                        return Mode.Loc;
+                    case Degree.II:
+                        return Mode.Aeo;
+                    case Degree.III:
+                        return Mode.Mix;
+                    case Degree.IV:
+                        return Mode.Lyd;
+                    case Degree.V:
+                        return Mode.Phr;
+                    case Degree.VI:
+                        return Mode.Dor;
+                    case Degree.VII:
+                        return Mode.Ion;
+                }
+            }
+            throw new ArgumentException("not key or degree.");
         }
 
         /// <summary>
@@ -549,19 +685,24 @@ namespace Meowziq {
         }
 
         /// <summary>
-        /// コード関係なく、そのキー、モードのスケール ノートを返す
+        /// 度数関係なくそのキーの旋法の構成音をランダムで返す
         /// </summary>
-        static int noteOfRandomByModeScale(Key key, Mode mode) {
-            int[] _scale = scale7By(key, mode);
+        static int noteOfRandomByModeScale(Key key, Mode keyMode) {
+            int[] _scale = scale7By(key, keyMode);
             int _random = random.Next(0, 7);
             return _scale[_random]; // 0 から 6
         }
 
         /// <summary>
-        /// そのキーのルートコードのモードスケール ノートを返す
+        /// そのキーの旋法の度数の構成音をランダムで返す
         /// </summary>
-        static int noteOfRandomByModeScaleOf3(Key key, Degree degree, Mode mode) {
-            int[] _scale = note3By(key, degree, mode); // 3音
+        static int noteOfRandomByModeScaleOf3(Key key, Degree degree, Mode keyMode, Mode spanMode, bool autoMode = true) {
+            int[] _scale;
+            if (autoMode) {
+                _scale = note3By(key, degree, keyMode); // 3音
+            } else {
+                _scale = note3By(key, degree, spanMode); // 3音
+            }
             int _random = random.Next(0, 3);
             return _scale[_random]; // 0 から 2
         }
