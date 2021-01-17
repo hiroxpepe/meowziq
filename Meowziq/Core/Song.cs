@@ -6,6 +6,7 @@ namespace Meowziq.Core {
     /// <summary>
     /// Song クラス
     ///     + Pattern のオブジェクトのリストを管理する
+    /// MEMO: フリジアンやロクリアンの調性感というより、上5度転調、下4度転調の概念を取り入れる
     /// </summary>
     public class Song {
 
@@ -18,7 +19,7 @@ namespace Meowziq.Core {
 
         string name;
 
-        List<Pattern> patternList;
+        List<Pattern> patternList; // TODO: patternList が key と mode を持つ構造に改造する
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor

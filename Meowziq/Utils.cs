@@ -1,5 +1,7 @@
 ﻿
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Meowziq {
 
@@ -70,10 +72,20 @@ namespace Meowziq {
         }
 
         /// <summary>
-        /// TBA: 暫定
+        /// TBA: 暫定: span の旋法から曲の旋法を判定する
         /// </summary>
-        public static Mode GeyModeKeyBy(Degree degree, Mode spanMode) {
-            return modeKeyBy(degree, spanMode);
+        public static Mode GeyModeKeyBy(Key key, Degree degree, Mode keyMode, Mode spanMode) {
+            // TODO: まず旋法チェンジ判定不能なものをはねる
+            // MEMO: C における A の表示の仕方は後で考える
+            // MEMO: 曲中に転調させる方法と合わせて考える
+            Mode _modeMaybeKey = modeKeyBy(degree, spanMode); // span の度数と旋法からこの旋法と推測される
+            int[] _scaleOfKey = scale7By(key, _modeMaybeKey); // この旋法と曲キーで作成したスケールの構成音が同じになるはずである
+            int _noteOfDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
+            int[] _scaleOfSpan = scale7By(Key.Enum.Parse(_noteOfDegree), spanMode); // span の度数と旋法でもスケールを作成してみる
+            if (!compareScale(_scaleOfKey, _scaleOfSpan)) { // 比較して構成音は同じはず
+                return Mode.Undefined; // 構成音が違う場合
+            }
+            return _modeMaybeKey; // TODO: これで正しいかテストを作成して確認
         }
 
         /// <summary>
@@ -98,6 +110,19 @@ namespace Meowziq {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private static Methods [verb]
+
+        /// <summary>
+        /// スケールの構成音を比較します
+        /// </summary>
+        static bool compareScale(int[] scale1, int[] scale2) {
+            List<Key> _keyList1 = scale1.Select(x => Key.Enum.Parse(x)).OrderBy(x => x).ToList();
+            List<Key> _keyList2 = scale2.Select(x => Key.Enum.Parse(x)).OrderBy(x => x).ToList();
+            var _result = _keyList1.Where(x => !_keyList2.Contains(x));
+            if (_result.Count() == 0) {
+                return true; // 構成音が一致
+            }
+            return false;
+        }
 
         /// <summary>
         /// その旋法のコードがメジャーかマイナーか付加する文字列を返します
@@ -427,6 +452,7 @@ namespace Meowziq {
         }
 
         /// <summary>
+        /// MEMO: ここで引いた Mode と元々の曲 key でスケールを作成してルート音が合っているか調べる
         /// TODO: 仮：span の度数と旋法でキーの旋法を返す TODO: C キーで Am が A になる時は？
         /// </summary>
         static Mode modeKeyBy(Degree degree, Mode spanMode) {
