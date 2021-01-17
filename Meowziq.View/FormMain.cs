@@ -228,19 +228,20 @@ namespace Meowziq.View {
                         textBoxSongName.Text = $"{_message} {_dot}";
                     }));
                 });
-                // セーブ開始
-                Message.Clear();
-                var _songName = await buildSong(true);
-                var _songDir = targetPath.Split(Path.DirectorySeparatorChar).Last();
-                Message.Invert();
-                track.Clear();
+                // テンポ追加
                 byte[] _data = new byte[3]{ // MEMO: 120BPM 暫定
                     Convert.ToByte("07", 16),
                     Convert.ToByte("A1", 16),
                     Convert.ToByte("20", 16) 
                 };
                 var _tempo = new MetaMessage(MetaType.Tempo, _data);
+                track.Clear();
                 track.Insert(0, _tempo);
+                // MIDI データ生成
+                Message.Clear();
+                var _songName = await buildSong(true);
+                var _songDir = targetPath.Split(Path.DirectorySeparatorChar).Last();
+                Message.Invert();
                 for (var _idx = 0; Message.HasNext(_idx); _idx++) { // tick を 30間隔でループさせます
                     var _tick = _idx * 30; // 30 tick を手動生成
                     var _list = Message.GetBy(_tick); // メッセージのリストを取得
@@ -250,6 +251,7 @@ namespace Meowziq.View {
                         });
                     }
                 }
+                // SMF ファイル書き出し
                 sequence.Load("./data/conductor.mid");
                 sequence.Clear();
                 sequence.Add(track);
