@@ -20,7 +20,7 @@ namespace Meowziq.Loader {
         static List<Pattern> patternList;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // static Properties [noun, adjectives] 
+        // static Properties [noun, adjective] 
 
         public static List<Pattern> PatternList {
             set => patternList = value;
@@ -37,10 +37,15 @@ namespace Meowziq.Loader {
                 throw new ArgumentException("need patternList.");
             }
             var _song = loadJson(targetPath).Song;
-            var _sectionList = _song.Section.Select(x => new Core.Section(Key.Enum.Parse(x.Key), Mode.Enum.Parse(x.Mode), x.PatternArray.Select(_x => _x).ToList())).ToList();
+            var _sectionList = _song.Section.Select(x => 
+                new Core.Section(
+                    Key.Enum.Parse(x.Key), 
+                    Mode.Enum.Parse(x.Mode), 
+                    x.PatternArray.Select(_x => searchPattern(_x)).ToList()
+            )).ToList();
             return new Core.Song(
                 _song.Name,
-                _sectionList // TODO: 名前で探して Pattern オブジェクトをリスト化
+                _sectionList
             );
         }
 

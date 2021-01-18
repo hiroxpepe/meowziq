@@ -22,7 +22,7 @@ namespace Meowziq {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Properties [noun, adjectives] 
+        // Properties [noun, adjective] 
 
         public OutputDevice OutDevice {
             get {

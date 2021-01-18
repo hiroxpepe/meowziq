@@ -32,7 +32,7 @@ namespace Meowziq.Core {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Properties [noun, adjectives] 
+        // Properties [noun, adjective] 
 
         public string Name {
             get => name;
@@ -96,7 +96,7 @@ namespace Meowziq.Core {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Properties [noun, adjectives] 
+        // Properties [noun, adjective] 
 
         /// <summary>
         /// Span のリストを返す
@@ -145,7 +145,7 @@ namespace Meowziq.Core {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Properties [noun, adjectives] 
+        // Properties [noun, adjective] 
 
         public int Beat {
             get => beat;

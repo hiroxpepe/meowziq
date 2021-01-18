@@ -36,7 +36,7 @@ namespace Meowziq.Core {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Properties [noun, adjectives] 
+        // Properties [noun, adjective] 
 
         public int Tick {
             get => tick; // NOTE: 変更操作を提供しません

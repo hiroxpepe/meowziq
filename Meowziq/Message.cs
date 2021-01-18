@@ -194,7 +194,7 @@ namespace Meowziq {
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
-            // static Properties [noun, adjectives] 
+            // static Properties [noun, adjective] 
 
             public static Dictionary<int, List<ChannelMessage>> Item {
                 get => item;
@@ -240,7 +240,7 @@ namespace Meowziq {
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
-            // static Properties [noun, adjectives] 
+            // static Properties [noun, adjective] 
 
             public static Dictionary<int, List<ChannelMessage>> Item {
                 get => item;

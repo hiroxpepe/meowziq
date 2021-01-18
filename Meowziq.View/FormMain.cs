@@ -35,8 +35,6 @@ namespace Meowziq.View {
 
         string targetPath;
 
-        Track track = new Track();
-
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
@@ -118,7 +116,7 @@ namespace Meowziq.View {
                     Log.Error(_message);
                     return;
                 }
-                if (await saveSong()) {
+                if (await convertSong()) {
                     MessageBox.Show("converted the song to SMF.", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             } catch (Exception ex) {
@@ -139,27 +137,27 @@ namespace Meowziq.View {
                 return;
             }
             if (this.Visible) {
+                // TODO: カウント分はUIではマイナス表示とする？
                 var _tick = sequencer.Position - 1; // NOTE: Position が 1, 31 と来るので予め1引く
                 var _beat = (((_tick) / 480) + 1).ToString(); // 0開始 ではなく 1開始として表示
                 var _meas = ((int.Parse(_beat) - 1) / 4 + 1).ToString();
-                Info.Beat = int.Parse(_beat);
-                Info.Meas = int.Parse(_meas);
-                
+                Info.Beat = int.Parse(_beat); // TODO: int のままでいける
+                Info.Meas = int.Parse(_meas); // TODO: int のままでいける
+                // UI情報更新
                 var _itemDictionary = Info.ItemDictionary;
                 if (_itemDictionary.ContainsKey(_tick)) { // FIXME: ContainsKey 大丈夫？
                     var _item = _itemDictionary[_tick];
-                    Invoke(updateDisplay(_item)); // UI情報表示
+                    Invoke(updateDisplay(_item));
                 }
-
-                Message.Apply(_tick, loadSong); // 1小節ごとに切り替える // MEMO: シンコぺを考慮する
-                var _list = Message.GetBy(_tick); // メッセージのリストを取得
+                // MIDIメッセージ処理
+                Message.Apply(_tick, loadSong); // 1小節ごとに切り替える MEMO: シンコぺを考慮する
+                var _list = Message.GetBy(_tick); // MIDIメッセージのリストを取得
                 if (_list != null) {
                     _list.ForEach(x => {
                         midi.OutDevice.Send(x); // MIDIデバイスにメッセージを追加送信 MEMO: CCなどは直接ここで投げては？
-                        if (x.MidiChannel != 9 && x.MidiChannel != 1) { // FIXME: 暫定シーケンス
+                        if (x.MidiChannel != 9 && x.MidiChannel != 1) { // FIXME: 暫定:シーケンス除外
                             pianoControl.Send(x); // ドラム以外はピアノロールに表示
                         }
-                        track.Insert(_tick, x); // TODO: 静的生成にする
                     });
                 }
                 played = true;
@@ -178,7 +176,6 @@ namespace Meowziq.View {
                 // Pattern と Song をロード
                 SongLoader.PatternList = PatternLoader.Build($"{targetPath}/pattern.json");
                 var _song = SongLoader.Build($"{targetPath}/song.json");
-
                 // Phrase と Player をロード
                 PlayerLoader.PhraseList = PhraseLoader.Build($"{targetPath}/phrase.json");
                 PlayerLoader.Build($"{targetPath}/player.json").ForEach(x => {
@@ -201,7 +198,6 @@ namespace Meowziq.View {
                 // Pattern と Song をロード
                 SongLoader.PatternList = PatternLoader.Build($"{targetPath}/pattern.json");
                 var _song = SongLoader.Build($"{targetPath}/song.json");
-
                 // Phrase と Player をロード
                 PlayerLoader.PhraseList = PhraseLoader.Build($"{targetPath}/phrase.json");
                 PlayerLoader.Build($"{targetPath}/player.json").ForEach(x => {
@@ -213,10 +209,10 @@ namespace Meowziq.View {
         }
 
         /// <summary>
-        /// ソングをセーブ
+        /// ソングをSMFに変換して出力
         /// TODO: 曲再生を止める
         /// </summary>
-        async Task<bool> saveSong() {
+        async Task<bool> convertSong() {
             await Task.Run(async () => {
                 // 進捗表示用タイマー
                 var _message = "PLEASE WAIT";
@@ -229,32 +225,32 @@ namespace Meowziq.View {
                     }));
                 });
                 // テンポ追加
-                byte[] _data = new byte[3]{ // MEMO: 120BPM 暫定
+                byte[] _data = new byte[3]{ // TODO: 120BPM 暫定
                     Convert.ToByte("07", 16),
                     Convert.ToByte("A1", 16),
                     Convert.ToByte("20", 16) 
                 };
                 var _tempo = new MetaMessage(MetaType.Tempo, _data);
-                track.Clear();
-                track.Insert(0, _tempo);
+                var _track = new Track();
+                _track.Insert(0, _tempo);
                 // MIDI データ生成
                 Message.Clear();
                 var _songName = await buildSong(true);
                 var _songDir = targetPath.Split(Path.DirectorySeparatorChar).Last();
-                Message.Invert();
+                Message.Invert(); // データ生成後にフラグ反転
                 for (var _idx = 0; Message.HasNext(_idx); _idx++) { // tick を 30間隔でループさせます
                     var _tick = _idx * 30; // 30 tick を手動生成
                     var _list = Message.GetBy(_tick); // メッセージのリストを取得
                     if (_list != null) {
                         _list.ForEach(x => {
-                            track.Insert(_tick, x);
+                            _track.Insert(_tick, x);
                         });
                     }
                 }
                 // SMF ファイル書き出し
                 sequence.Load("./data/conductor.mid");
                 sequence.Clear();
-                sequence.Add(track);
+                sequence.Add(_track);
                 sequence.Save($"./data/{_songDir}/{_songName}.mid");
                 Invoke((MethodInvoker) (() => textBoxSongName.Text = _songName));// Song 名戻す
                 _disposer.Dispose(); // タイマー破棄
@@ -331,7 +327,7 @@ namespace Meowziq.View {
                         Mode.Enum.Parse(item.KeyMode),
                         Mode.Enum.Parse(item.SpanMode)
                     );
-                    textBoxKeyMode.Text = _keyMode.ToString().Equals("Undefined") ? "---" : _keyMode.ToString(); // TODO: 暫定
+                    textBoxKeyMode.Text = _keyMode.ToString().Equals("Undefined") ? "---" : _keyMode.ToString();
                     labelModulation.ForeColor = Color.HotPink; // TODO: 度合によって色変化
                 }
             };
