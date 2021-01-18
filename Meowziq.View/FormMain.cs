@@ -139,10 +139,8 @@ namespace Meowziq.View {
             if (this.Visible) {
                 // TODO: カウント分はUIではマイナス表示とする？
                 var _tick = sequencer.Position - 1; // NOTE: Position が 1, 31 と来るので予め1引く
-                var _beat = (((_tick) / 480) + 1).ToString(); // 0開始 ではなく 1開始として表示
-                var _meas = ((int.Parse(_beat) - 1) / 4 + 1).ToString();
-                Info.Beat = int.Parse(_beat); // TODO: int のままでいける
-                Info.Meas = int.Parse(_meas); // TODO: int のままでいける
+                Info.Beat = ((_tick / 480) + 1); // 0開始 ではなく 1開始として表示
+                Info.Meas = ((Info.Beat - 1) / 4 + 1);
                 // UI情報更新
                 var _itemDictionary = Info.ItemDictionary;
                 if (_itemDictionary.ContainsKey(_tick)) { // FIXME: ContainsKey 大丈夫？
@@ -173,11 +171,9 @@ namespace Meowziq.View {
         async Task<string> buildSong(bool save = false) {
             var _name = "------------";
             await Task.Run(() => {
-                // Pattern と Song をロード
-                SongLoader.PatternList = PatternLoader.Build($"{targetPath}/pattern.json");
+                SongLoader.PatternList = PatternLoader.Build($"{targetPath}/pattern.json"); // Pattern と Song をロード
                 var _song = SongLoader.Build($"{targetPath}/song.json");
-                // Phrase と Player をロード
-                PlayerLoader.PhraseList = PhraseLoader.Build($"{targetPath}/phrase.json");
+                PlayerLoader.PhraseList = PhraseLoader.Build($"{targetPath}/phrase.json"); // Phrase と Player をロード
                 PlayerLoader.Build($"{targetPath}/player.json").ForEach(x => {
                     x.Song = _song; // Song データを設定
                     x.Build(0, save); // MIDI データを構築
@@ -195,11 +191,9 @@ namespace Meowziq.View {
         /// </summary>
         async void loadSong(int tick) {
             await Task.Run(() => {
-                // Pattern と Song をロード
-                SongLoader.PatternList = PatternLoader.Build($"{targetPath}/pattern.json");
+                SongLoader.PatternList = PatternLoader.Build($"{targetPath}/pattern.json"); // Pattern と Song をロード
                 var _song = SongLoader.Build($"{targetPath}/song.json");
-                // Phrase と Player をロード
-                PlayerLoader.PhraseList = PhraseLoader.Build($"{targetPath}/phrase.json");
+                PlayerLoader.PhraseList = PhraseLoader.Build($"{targetPath}/phrase.json"); // Phrase と Player をロード
                 PlayerLoader.Build($"{targetPath}/player.json").ForEach(x => {
                     x.Song = _song; // Song データを設定
                     x.Build(tick); // MIDI データを構築
