@@ -6,7 +6,7 @@ namespace Meowziq.Core {
     /// <summary>
     /// Player クラス
     ///     + Phrase オブジェクトのリストを管理
-    ///     + MIDIノートを生成する
+    ///     + Phrase オブジェクトを適切なタイミングで Build します
     /// </summary>
     public class Player {
 
@@ -31,7 +31,7 @@ namespace Meowziq.Core {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Properties [noun, adjectives] 
+        // Properties [noun, adjective] 
 
         public Song Song {
             set => song = value;
@@ -74,32 +74,37 @@ namespace Meowziq.Core {
             // Note データ作成のループ
             var _tickOfPatternHead = 0;
             var _previousPatternName = "";
-            foreach (var _pattern in song.AllPattern) { // 演奏順に並んだ Pattern のリスト
-                var _patternLength = _pattern.BeatCount * Length.Of4beat.Int32(); // この Pattern の長さ
-                if (tick == _tickOfPatternHead && !save) { // 演奏 tick とデータ処理の tick が一致した ⇒ パターン切り替え
-                    Log.Info($"pattarn changed. tick: {tick} {_pattern.Name} {type}");
-                }
-                foreach (var _phrase in phraseList.Where(x => x.Name.Equals(_pattern.Name))) { // Pattern の名前で Phrase を引き当てる
-                    var _tickOfPatternEnd = _tickOfPatternHead + _patternLength; // この Pattern の終了 tick
-                    var _lengthOfPatternMax = tick + Length.Of4beat.Int32() * 4 * 16; // Pattern の最大の長さ
-                    if (save) {
-                        _phrase.Build(_tickOfPatternHead, song.Key, _pattern); // SMF出力モードの場合
+            foreach (var _section in song.AllSection) { // 演奏順に並んだ Section のリスト
+                foreach (var _pattern in _section.AllPattern) { // 演奏順に並んだ Pattern のリスト
+                    _pattern.AllMeas.ForEach(x => x.AllSpan.ForEach(_x => { // Span に この Section のキーと旋法を追加
+                        _x.Key = _section.Key; _x.KeyMode = _section.KeyMode; 
+                    }));
+                    var _patternLength = _pattern.BeatCount * Length.Of4beat.Int32(); // この Pattern の長さ
+                    if (tick == _tickOfPatternHead && !save) { // 演奏 tick とデータ処理の tick が一致した ⇒ パターン切り替え
+                        Log.Info($"pattarn changed. tick: {tick} {_pattern.Name} {type}");
                     }
-                    else if (tick <= _tickOfPatternEnd && _tickOfPatternHead < _lengthOfPatternMax) { // この tick が含まれてる、かつ _tickOfPatternHead に16小節(パターン最大長)を足した長さ以下 pattern のみ Build する 
-                        _phrase.Build(_tickOfPatternHead, song.Key, _pattern); // Note データを作成：tick 毎に数回分の Pattern のデータが作成される
-                        Log.Debug($"Build: tick: {tick} head: {_tickOfPatternHead} {_pattern.Name} {type}");
-                    }
-                    if (!_previousPatternName.Equals("")) {
-                        var _previousPhraseList = phraseList.Where(x => x.Name.Equals(_previousPatternName)).ToList(); // 一つ前の Phrase を引き当てる
-                        if (_previousPhraseList.Count != 0) {
-                            if (!type.ToLower().Contains("drum")) { // ドラム以外
-                                optimize(_previousPhraseList[0], _phrase); // 最適化
+                    foreach (var _phrase in phraseList.Where(x => x.Name.Equals(_pattern.Name))) { // Pattern の名前で Phrase を引き当てる
+                        var _tickOfPatternEnd = _tickOfPatternHead + _patternLength; // この Pattern の終了 tick
+                        var _lengthOfPatternMax = tick + Length.Of4beat.Int32() * 4 * 16; // Pattern の最大の長さ
+                        var _keyAndMode = new KeyAndMode(tick, _section.Key, _section.KeyMode);
+                        if (save) {
+                            _phrase.Build(_tickOfPatternHead, _pattern); // SMF出力モードの場合
+                        } else if (tick <= _tickOfPatternEnd && _tickOfPatternHead < _lengthOfPatternMax) { // この tick が含まれてる、かつ _tickOfPatternHead に16小節(パターン最大長)を足した長さ以下 pattern のみ Build する 
+                            _phrase.Build(_tickOfPatternHead, _pattern); // Note データを作成：tick 毎に数回分の Pattern のデータが作成される
+                            Log.Debug($"Build: tick: {tick} head: {_tickOfPatternHead} {_pattern.Name} {type}");
+                        }
+                        if (!_previousPatternName.Equals("")) {
+                            var _previousPhraseList = phraseList.Where(x => x.Name.Equals(_previousPatternName)).ToList(); // 一つ前の Phrase を引き当てる
+                            if (_previousPhraseList.Count != 0) {
+                                if (!type.ToLower().Contains("drum")) { // ドラム以外
+                                    optimize(_previousPhraseList[0], _phrase); // 最適化
+                                }
                             }
                         }
                     }
+                    _previousPatternName = _pattern.Name; // 次の直前のフレーズ名を保持
+                    _tickOfPatternHead += _patternLength; // Pattern の長さ分 Pattern 開始 tick を移動する
                 }
-                _previousPatternName = _pattern.Name; // 次の直前のフレーズ名を保持
-                _tickOfPatternHead += _patternLength; // Pattern の長さ分 Pattern 開始 tick を移動する
             }
             // Note データ適用のループ
             foreach (var _pattern in song.AllPattern) { // 演奏順に並んだ Pattern のリスト

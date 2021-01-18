@@ -29,7 +29,7 @@ namespace Meowziq.Core {
         /// <summary>
         /// Note を適用します
         /// </summary>
-        public void ApplyNote(int tick, int beatCount, Key key, List<Span> spanList, Param param) {
+        public void ApplyNote(int tick, int beatCount, List<Span> spanList, Param param) {
             var _16beatIdx = 0; // 16beatのindex
             var _spanIndex = new SpanIndex(); // Span リストの添え字オブジェクト
             foreach (var _text in param.TextCharArray) {
@@ -43,18 +43,18 @@ namespace Meowziq.Core {
                     // 曲の旋法と Span の旋法が同じ場合は自動旋法
                     if (_span.AutoMode) { // TODO: span で判定出来るので Utils の中に入れれる？
                         if (param.IsNote) {
-                            _noteNumArray[0] = Utils.GetNoteByAutoMode(key, _span.Degree, _span.KeyMode, int.Parse(_text.ToString()));
+                            _noteNumArray[0] = Utils.GetNoteByAutoMode(_span.Key, _span.Degree, _span.KeyMode, int.Parse(_text.ToString()));
                         } else if (param.IsChord) {
-                            _noteNumArray = Utils.GetNoteArrayByAutoMode(key, _span.Degree, _span.KeyMode, int.Parse(_text.ToString()));
+                            _noteNumArray = Utils.GetNoteArrayByAutoMode(_span.Key, _span.Degree, _span.KeyMode, int.Parse(_text.ToString()));
                             _noteNumArray = applyRange(_noteNumArray, param.Chord.Range); // コード展開形の範囲を適用
                         }
                     }
                     // Span に旋法が設定してあればそちらを適用する
                     else {
                         if (param.IsNote) {
-                            _noteNumArray[0] = Utils.GetNoteBySpanMode(key, _span.Degree, _span.KeyMode, _span.SpanMode, int.Parse(_text.ToString()));
+                            _noteNumArray[0] = Utils.GetNoteBySpanMode(_span.Key, _span.Degree, _span.KeyMode, _span.SpanMode, int.Parse(_text.ToString()));
                         } else if (param.IsChord) {
-                            _noteNumArray = Utils.GetNoteArrayBySpanMode(key, _span.Degree, _span.KeyMode, _span.SpanMode, int.Parse(_text.ToString()));
+                            _noteNumArray = Utils.GetNoteArrayBySpanMode(_span.Key, _span.Degree, _span.KeyMode, _span.SpanMode, int.Parse(_text.ToString()));
                             _noteNumArray = applyRange(_noteNumArray, param.Chord.Range); // コード展開形の範囲を適用
                         }
                     }
@@ -132,12 +132,12 @@ namespace Meowziq.Core {
         /// <summary>
         /// シーケンス用 ランダム Note を適用します
         /// </summary>
-        public void ApplyRandomNote(int tick, int beatCount, Key key, List<Span> spanList) {
+        public void ApplyRandomNote(int tick, int beatCount, List<Span> spanList) {
             var _all16beatCount = beatCount * 4; // この Pattern の16beatの数
             var _spanIndex = new SpanIndex(); // Span リストの添え字オブジェクト
             for (var _16beatIdx = 0; _16beatIdx < _all16beatCount; _16beatIdx++) {
                 var _span = spanList[_spanIndex.Idx]; // 16beat 4個で1拍進む
-                var _note = Utils.GetNoteAsRandom(key, _span.Degree, _span.KeyMode, _span.SpanMode, _span.AutoMode); // 16の倍数
+                var _note = Utils.GetNoteAsRandom(_span.Key, _span.Degree, _span.KeyMode, _span.SpanMode, _span.AutoMode); // 16の倍数
                 add(new Note(tick + (Length.Of16beat.Int32() * _16beatIdx), _note, 30, 127)); // gate 短め
                 _spanIndex.Increment(); // Span リストの添え字オブジェクトをインクリメント
             }
@@ -146,7 +146,7 @@ namespace Meowziq.Core {
         /// <summary>
         /// UI 表示用の情報を作成します
         /// </summary>
-        public void ApplyInfo(int tick, int beatCount, Key key, List<Span> spanList) {
+        public void ApplyInfo(int tick, int beatCount, List<Span> spanList) {
             var _all16beatCount = beatCount * 4; // この Pattern の16beatの数
             var _spanIndex = new SpanIndex(); // Span リストの添え字オブジェクト
             for (var _16beatIdx = 0; _16beatIdx < _all16beatCount; _16beatIdx++) {
@@ -155,7 +155,7 @@ namespace Meowziq.Core {
                 if (Info.HashSet.Add(_tick)) { // tick につき1度だけ
                     Info.ItemDictionary.Add(_tick, new Info.Item {
                         Tick = _tick,
-                        Key = key.ToString(),
+                        Key = _span.Key.ToString(),
                         Degree = _span.Degree.ToString(),
                         KeyMode = _span.KeyMode.ToString(),
                         SpanMode = _span.SpanMode.ToString()
@@ -219,7 +219,7 @@ namespace Meowziq.Core {
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
-            // Properties [noun, adjectives] 
+            // Properties [noun, adjective] 
 
             public int Idx { 
                 get;

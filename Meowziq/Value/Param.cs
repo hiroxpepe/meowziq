@@ -42,7 +42,7 @@ namespace Meowziq.Value {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Properties [noun, adjectives] 
+        // Properties [noun, adjective] 
 
         public Note Note {
             get => note;
@@ -161,7 +161,7 @@ namespace Meowziq.Value {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Properties [noun, adjectives] 
+        // Properties [noun, adjective] 
 
         public int Min {
             get;
@@ -192,7 +192,7 @@ namespace Meowziq.Value {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Properties [noun, adjectives] 
+        // Properties [noun, adjective] 
 
         public string Pre {
             get; set;
@@ -265,7 +265,7 @@ namespace Meowziq.Value {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Properties [noun, adjectives] 
+        // Properties [noun, adjective] 
 
         public string Text {
             get; set;
@@ -303,7 +303,7 @@ namespace Meowziq.Value {
         //}
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Properties [noun, adjectives] 
+        // Properties [noun, adjective] 
 
         public string Text {
             get; set;
@@ -360,7 +360,7 @@ namespace Meowziq.Value {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Properties [noun, adjectives] 
+        // Properties [noun, adjective] 
 
         public Note Note {
             get;

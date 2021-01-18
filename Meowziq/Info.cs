@@ -17,7 +17,7 @@ namespace Meowziq {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public static Properties [noun, adjectives] 
+        // public static Properties [noun, adjective] 
 
         public static int Beat {
             get; set;
@@ -59,7 +59,7 @@ namespace Meowziq {
             string spanMode;
 
             ///////////////////////////////////////////////////////////////////////////////////////////
-            // static Properties [noun, adjectives] 
+            // static Properties [noun, adjective] 
 
             public int Tick {
                 get; set;

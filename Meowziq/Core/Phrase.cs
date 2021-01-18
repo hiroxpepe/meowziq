@@ -29,7 +29,7 @@ namespace Meowziq.Core {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Properties [noun, adjectives] 
+        // Properties [noun, adjective] 
 
         public string Type {
             get; set;
@@ -127,8 +127,8 @@ namespace Meowziq.Core {
         /// Note データを生成します
         /// NOTE: Player オブジェクトから呼ばれます
         /// </summary>
-        public void Build(int tick, Key key, Pattern pattern) {
-            onBuild(tick, key, pattern);
+        public void Build(int tick, Pattern pattern) {
+            onBuild(tick, pattern);
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace Meowziq.Core {
         /// <summary>
         /// Note データを生成します
         /// </summary>
-        protected void onBuild(int tick, Key key, Pattern pattern) {
+        protected void onBuild(int tick, Pattern pattern) {
             //if (BeatCount != pattern.BeatCount) {
             //    throw new ArgumentException("invalid beatCount.");
             //}
@@ -162,13 +162,13 @@ namespace Meowziq.Core {
                 case Way.Mono:
                     {
                         var _param = new Param(data.Note, data.Exp, _way);
-                        _generator.ApplyNote(tick, pattern.BeatCount, key, pattern.AllSpan, _param);
+                        _generator.ApplyNote(tick, pattern.BeatCount, pattern.AllSpan, _param);
                     }
                     break;
                 case Way.Chord:
                     {
                         var _param = new Param(data.Chord, data.Exp, _way);
-                        _generator.ApplyNote(tick, pattern.BeatCount, key, pattern.AllSpan, _param);
+                        _generator.ApplyNote(tick, pattern.BeatCount, pattern.AllSpan, _param);
                     }
                     break;
                 case Way.Multi:
@@ -178,7 +178,7 @@ namespace Meowziq.Core {
                             new Value.Exp(data.PreArray[_idx], data.PostArray[_idx]),
                             _way
                         );
-                        _generator.ApplyNote(tick, pattern.BeatCount, key, pattern.AllSpan, _param);
+                        _generator.ApplyNote(tick, pattern.BeatCount, pattern.AllSpan, _param);
                     }
                     break;
                 case Way.Drum:
@@ -193,11 +193,11 @@ namespace Meowziq.Core {
                     }
                     break;
                 case Way.Sequence:
-                    _generator.ApplyRandomNote(tick, pattern.BeatCount, key, pattern.AllSpan);
+                    _generator.ApplyRandomNote(tick, pattern.BeatCount, pattern.AllSpan);
                     break;
             }
             // UI 表示情報作成
-            _generator.ApplyInfo(tick, pattern.BeatCount, key, pattern.AllSpan);
+            _generator.ApplyInfo(tick, pattern.BeatCount, pattern.AllSpan);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

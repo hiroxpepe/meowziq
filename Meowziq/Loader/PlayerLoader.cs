@@ -20,7 +20,7 @@ namespace Meowziq.Loader {
         static List<Phrase> phraseList; // 誰に何を渡すか
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // static Properties [noun, adjectives] 
+        // static Properties [noun, adjective] 
 
         public static List<Phrase> PhraseList {
             set => phraseList = value;
