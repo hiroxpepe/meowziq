@@ -30,14 +30,13 @@ namespace Meowziq.Core {
         /// Note を適用します
         /// </summary>
         public void ApplyNote(int tick, int beatCount, List<Span> spanList, Param param) {
-            var _16beatIdx = new SedecIndex(beatCount); // 16beatのindex
-            var _spanIdx = new SpanIndex(); // Span リストの添え字オブジェクト
+            var _16beatIdx = new Index(beatCount); // 16beatのindex
             foreach (var _text in param.TextCharArray) {
                 if (!_16beatIdx.HasNext) {
                     return; // Pattern の長さを超えたら終了
                 }
                 if (param.IsMatch(_text)) {
-                    var _span = spanList[_spanIdx.Idx]; // 16beat 4個で1拍進む
+                    var _span = spanList[_16beatIdx.SpanIdx]; // 16beat 4個で1拍進む
                     var _noteNumArray = (new int[7]).Select(x => -1).ToArray();  // ノート記述を -1 で初期化: はじく為
                     if (param.IsNote) { // ノート記述
                         _noteNumArray[0] = Utils.GetNoteBy(
@@ -82,7 +81,6 @@ namespace Meowziq.Core {
                     );
                 }
                 _16beatIdx.Increment(); // 16beatのindex値をインクリメント
-                _spanIdx.Increment(); // Span リストの添え字オブジェクトをインクリメント
             }
         }
 
@@ -90,7 +88,7 @@ namespace Meowziq.Core {
         /// ドラム用 Note を適用します
         /// </summary>
         public void ApplyDrumNote(int tick, int beatCount, Param param) {
-            var _16beatIdx = new SedecIndex(beatCount); // 16beatのindex
+            var _16beatIdx = new Index(beatCount); // 16beatのindex
             foreach (var _text in param.TextCharArray) {
                 if (!_16beatIdx.HasNext) {
                     return; // Pattern の長さを超えたら終了
@@ -122,12 +120,10 @@ namespace Meowziq.Core {
         /// シーケンス用 ランダム Note を適用します
         /// </summary>
         public void ApplyRandomNote(int tick, int beatCount, List<Span> spanList) {
-            var _spanIdx = new SpanIndex(); // Span リストの添え字オブジェクト
-            for (var _16beatIdx = new SedecIndex(beatCount); _16beatIdx.HasNext; _16beatIdx.Increment()) {
-                var _span = spanList[_spanIdx.Idx]; // 16beat 4個で1拍進む
+            for (var _16beatIdx = new Index(beatCount); _16beatIdx.HasNext; _16beatIdx.Increment()) {
+                var _span = spanList[_16beatIdx.SpanIdx]; // 16beat 4個で1拍進む
                 var _note = Utils.GetNoteAsRandom(_span.Key, _span.Degree, _span.KeyMode, _span.SpanMode, _span.AutoMode); // 16の倍数
                 add(new Note(tick + Utils.To16beatLength(_16beatIdx.Idx), _note, 30, 127)); // gate 短め
-                _spanIdx.Increment(); // Span リストの添え字オブジェクトをインクリメント TODO: for 内
             }
         }
 
@@ -135,9 +131,8 @@ namespace Meowziq.Core {
         /// UI 表示用の情報を作成します
         /// </summary>
         public void ApplyInfo(int tick, int beatCount, List<Span> spanList) {
-            var _spanIdx = new SpanIndex(); // Span リストの添え字オブジェクト
-            for (var _16beatIdx = new SedecIndex(beatCount); _16beatIdx.HasNext; _16beatIdx.Increment()) {
-                var _span = spanList[_spanIdx.Idx]; // 16beat 4個で1拍進む
+            for (var _16beatIdx = new Index(beatCount); _16beatIdx.HasNext; _16beatIdx.Increment()) {
+                var _span = spanList[_16beatIdx.SpanIdx]; // 16beat 4個で1拍進む
                 var _tick = tick + Utils.To16beatLength(_16beatIdx.Idx); // 16beat の tick 毎に処理
                 if (Info.HashSet.Add(_tick)) { // tick につき1度だけ
                     Info.ItemDictionary.Add(_tick, new Info.Item {
@@ -148,7 +143,6 @@ namespace Meowziq.Core {
                         SpanMode = _span.SpanMode.ToString()
                     });
                 }
-                _spanIdx.Increment(); // Span リストの添え字オブジェクトをインクリメント TODO: for 内
             }
         }
 
@@ -187,60 +181,26 @@ namespace Meowziq.Core {
         // inner Classes
 
         /// <summary>
-        /// 4インクリメントされる毎に1インクリメントした index 値を返す
+        /// 16beatのカウントを保持するクラス
+        /// 4インクリメントされる毎に1インクリメントした Span の index 値も返す
         /// NOTE: ここの Span は必ず1拍である
         /// </summary>
-        class SpanIndex {
-
-            ///////////////////////////////////////////////////////////////////////////////////////////
-            // Fields
-
-            int idx4;
-
-            ///////////////////////////////////////////////////////////////////////////////////////////
-            // Constructor
-
-            public SpanIndex() {
-                Idx = 0;
-                idx4 = 0;
-            }
-
-            ///////////////////////////////////////////////////////////////////////////////////////////
-            // Properties [noun, adjective] 
-
-            public int Idx {
-                get;
-                private set;
-            }
-
-            ///////////////////////////////////////////////////////////////////////////////////////////
-            // public Methods [verb]
-
-            public void Increment() {
-                idx4++; // 16beat のカウント
-                if (idx4 == 4) {
-                    idx4 = 0;
-                    Idx++; // 1拍のこと
-                }
-                // TODO: 必要なのは1小節をカウントすることとそのindex値
-            }
-        }
-
-        /// <summary>
-        /// 16beatのカウントを保持するクラス
-        /// </summary>
-        class SedecIndex {
+        class Index {
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Fields
 
             int beatCount; // この Pattern の拍数
 
+            int idx4; // 16beatを4回数える用
+
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Constructor
 
-            public SedecIndex(int beatCount) {
+            public Index(int beatCount) {
                 this.beatCount = beatCount;
+                idx4 = 0;
+                SpanIdx = 0;
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
@@ -250,6 +210,11 @@ namespace Meowziq.Core {
             /// 16beat の index 値
             /// </summary>
             public int Idx {
+                get;
+                private set;
+            }
+
+            public int SpanIdx {
                 get;
                 private set;
             }
@@ -271,6 +236,11 @@ namespace Meowziq.Core {
 
             public void Increment() {
                 Idx++; // 16beat をインクリメントする
+                idx4++; // 16beat のカウント
+                if (idx4 == 4) {
+                    idx4 = 0;
+                    SpanIdx++; // 1拍のこと
+                } // TODO: 必要なのは1小節をカウントすることとそのindex値
             }
         }
     }
