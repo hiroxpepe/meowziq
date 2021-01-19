@@ -63,7 +63,7 @@
             // 
             this.sequencer.Position = 0;
             this.sequencer.Sequence = this.sequence;
-            this.sequencer.ChannelMessagePlayed += new System.EventHandler<Sanford.Multimedia.Midi.ChannelMessageEventArgs>(this.handleChannelMessagePlayed);
+            this.sequencer.ChannelMessagePlayed += new System.EventHandler<Sanford.Multimedia.Midi.ChannelMessageEventArgs>(this.sequencer_ChannelMessagePlayed);
             // 
             // textBoxBeat
             // 

@@ -1,4 +1,4 @@
-﻿using Meowziq.Loader;
+﻿
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -9,9 +9,8 @@ namespace Meowziq.Loader.Tests {
         // BuildPatternList
 
         [TestMethod()]
-        public void GetPatternListTest() {
-            var obj = new PatternLoader(@"./data/pattern.jsonc");
-            var list = obj.BuildPatternList(); // デバッグ用
+        public void BuildTest() {
+            var list = PatternLoader.Build(@"./data/pattern.json"); // デバッグ用
         }
     }
 }

@@ -10,16 +10,14 @@ namespace Meowziq.Loader.Tests {
 
         [TestMethod()]
         public void validateValueTest1() {
-            var obj = new PhraseLoader("");
-            var result = obj.validateValue("[1111|----|5555|----]"); // 正常データ
+            var result = new PrivateType(typeof(PhraseLoader)).InvokeStatic("validateValue", "[1111|----|5555|----]"); // 正常データ
             Assert.AreEqual(result, "[1111|----|5555|----]");
         }
 
         [TestMethod()]
         [ExpectedException(typeof(FormatException))]
         public void validateValueTest2() {
-            var obj = new PhraseLoader("");
-            obj.validateValue("[--1--|----|----|----]"); // 例外をテスト
+            new PrivateType(typeof(PhraseLoader)).InvokeStatic("validateValue", "[--1--|----|----|----]"); // 例外をテスト
         }
     }
 }

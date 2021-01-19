@@ -144,6 +144,32 @@ namespace Meowziq.Value {
                 throw new ArgumentException("must set noteTextArray.");
             }
         }
+
+        // TODO: このバリデーションを使う
+        /// <summary>
+        /// FIXME: バリデーターは Loader ではなく Value クラスに移動する
+        /// TODO: 使用可能な文字
+        /// </summary>
+        static string validateValue(string target) {
+            if (target == null) {
+                return target; // 値がなければそのまま返す FIXME:
+            }
+            // 拍のデータの数が4文字かどうか
+            var _target1 = target;
+            // 文字の置き換え
+            _target1 = _target1.Replace("[", "|").Replace("]", "|");
+            // 区切り文字で切り分ける
+            var _array1 = _target1.Split('|')
+                .Where(x => !string.IsNullOrWhiteSpace(x)) // 空文字以外
+                .Where(x => x.Length != 4) // データが4文字ではない
+                .ToArray();
+            // そのデータがあれば例外を投げる
+            if (_array1.Length != 0) {
+                throw new FormatException("data count must be 4.");
+            }
+            // バリデーションOKなら元々の文字列を返す
+            return target;
+        }
     }
 
     /// <summary>
