@@ -302,6 +302,9 @@ namespace Meowziq {
         Enum = -128,
     }
 
+    /// <summary>
+    /// Enum 用拡張メソッド
+    /// </summary>
     public static class Extensions {
 
         public static int Int32(this Length self) {

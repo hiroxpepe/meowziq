@@ -7,8 +7,8 @@
     <ProjectGuid>{020B8C9F-E580-4CC0-A3F5-693D6D50B9BB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MeowziqTests</RootNamespace>
-    <AssemblyName>MeowziqTests</AssemblyName>
+    <RootNamespace>Meowziq.Test</RootNamespace>
+    <AssemblyName>Meowziq.Test</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>

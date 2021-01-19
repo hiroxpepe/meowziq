@@ -132,7 +132,7 @@ namespace Meowziq.View {
         /// MEMO: tick と名前を付ける対象は常に絶対値とする
         /// TODO: メッセージ送信のタイミングは独自実装出来るのでは？
         /// </summary>
-        void handleChannelMessagePlayed(object sender, ChannelMessageEventArgs e) {
+        void sequencer_ChannelMessagePlayed(object sender, ChannelMessageEventArgs e) {
             if (stopping) {
                 return;
             }
@@ -181,8 +181,7 @@ namespace Meowziq.View {
                 _name = _song.Name;
                 Log.Info("load! :)");
             });
-            // Song の名前を返す
-            return _name;
+            return _name; // Song の名前を返す
         }
 
         /// <summary>
@@ -207,7 +206,7 @@ namespace Meowziq.View {
         /// TODO: 曲再生を止める
         /// </summary>
         async Task<bool> convertSong() {
-            await Task.Run(async () => {
+            return await Task.Run(async () => {
                 // 進捗表示用タイマー
                 var _message = "PLEASE WAIT";
                 var _timer = Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
@@ -236,9 +235,7 @@ namespace Meowziq.View {
                     var _tick = _idx * 30; // 30 tick を手動生成
                     var _list = Message.GetBy(_tick); // メッセージのリストを取得
                     if (_list != null) {
-                        _list.ForEach(x => {
-                            _track.Insert(_tick, x);
-                        });
+                        _list.ForEach(x => _track.Insert(_tick, x));
                     }
                 }
                 // SMF ファイル書き出し
@@ -251,7 +248,6 @@ namespace Meowziq.View {
                 Log.Info("save! :D");
                 return true;
             });
-            return true; // TODO: 戻り値
         }
 
         /// <summary>
@@ -307,7 +303,7 @@ namespace Meowziq.View {
                     item.AutoMode
                 );
                 if (item.AutoMode) { // 自動旋法適用の場合
-                    var _autoMode = Utils.GetModeBy(
+                    var _autoMode = Utils.GetSpanModeBy(
                         Degree.Enum.Parse(item.Degree),
                         Mode.Enum.Parse(item.KeyMode)
                     );

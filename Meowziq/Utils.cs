@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Meowziq {
     /// <summary>
-    /// NOTE: TOPレベルであるべき ⇒ 実装パッケージを using しない
+    /// NOTE: TOPレベルであるべき ⇒ 実装パッケージを using しない、引数はプリミティブ型か Enum のみ
     /// </summary>
     public class Utils {
 
@@ -18,44 +18,48 @@ namespace Meowziq {
         // public static Methods [verb]
 
         /// <summary>
+        /// 引数の index 値の 16beat における長さを返します
+        /// </summary>
+        public static int To16beatLength(int index) {
+            return Length.Of16beat.Int32() * index;
+        }
+        
+        /// <summary>
+        /// 1拍における 16beat の数を返します
+        /// </summary>
+        public static int To16beatCount(int beatCount) {
+            return beatCount * 4; // 1拍における 16beat の数なので 4 を掛ける
+        }
+
+        /// <summary>
         /// 1～9の Phrase コード記法から Note No の配列を取得します
-        /// ※自動的に旋法を決定する場合
+        /// ※自動的に旋法を決定、Span の旋法両対応
         /// </summary>
-        public static int[] GetNoteArrayByAutoMode(Key key, Degree degree, Mode keyMode, int index) {
+        public static int[] GetNoteArrayBy(Key key, Degree degree, Mode keyMode, Mode spanMode, int index, bool autoMode = true) {
             int _noteOfDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
-            Mode _modeOfDegree = modeSpanBy(degree, keyMode); // キーの旋法と度数から旋法に対応したその度数の旋法を取得
-            int[] _scale7 = scale7By(Key.Enum.Parse(_noteOfDegree), _modeOfDegree); // そのルート音の旋法スケールを取得
-            return noteArryBy(index, _scale7); // 旋法スケールから引数indexに対応したコード構成音の配列を返す
-        }
-
-        /// <summary>
-        /// 1～7の Phrase コード記法から Note No の配列を取得します
-        /// ※Span の旋法を適用する場合
-        /// </summary>
-        public static int[] GetNoteArrayBySpanMode(Key key, Degree degree, Mode keyMode, Mode spanMode, int index) {
-            int _noteOfDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
-            int[] _scale7 = scale7By(Key.Enum.Parse(_noteOfDegree), spanMode); // そのルート音の旋法スケールを取得※Span に設定した旋法を使用
+            int[] _scale7;
+            if (autoMode) { // 自動旋法
+                Mode _modeOfDegree = modeSpanBy(degree, keyMode); // キーの旋法と度数から旋法に対応したその度数の旋法を取得
+                _scale7 = scale7By(Key.Enum.Parse(_noteOfDegree), _modeOfDegree); // そのルート音の旋法スケールを取得
+            } else { // Span の旋法
+                _scale7 = scale7By(Key.Enum.Parse(_noteOfDegree), spanMode); // そのルート音の旋法スケールを取得※Span に設定した旋法を使用
+            }
             return noteArryBy(index, _scale7); // 旋法スケールから引数indexに対応したコード構成音の配列を返す
         }
 
         /// <summary>
         /// 1～7の Phrase ノート記法から Note No を取得します
-        /// ※自動的に旋法を決定する場合
+        /// ※自動的に旋法を決定、Span の旋法両対応
         /// </summary>
-        public static int GetNoteByAutoMode(Key key, Degree degree, Mode keyMode, int index) {
+        public static int GetNoteBy(Key key, Degree degree, Mode keyMode, Mode spanMode, int index, bool autoMode = true) {
             int _noteOfDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
-            Mode _modeOfDegree = modeSpanBy(degree, keyMode); // キーの旋法と度数から旋法に対応したその度数の旋法を取得
-            int[] _scale7 = scale7By(Key.Enum.Parse(_noteOfDegree), _modeOfDegree); // そのルート音の旋法スケールを取得
-            return _scale7[index - 1]; // 0基底のスケール配列から引数添え字のノートを返す
-        }
-
-        /// <summary>
-        /// 1～7の Phrase ノート記法から Note No を取得します
-        /// ※Span の旋法を適用する場合
-        /// </summary>
-        public static int GetNoteBySpanMode(Key key, Degree degree, Mode keyMode, Mode spanMode, int index) {
-            int _noteOfDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
-            int[] _scale7 = scale7By(Key.Enum.Parse(_noteOfDegree), spanMode); // そのルート音の旋法スケールを取得※Span に設定した旋法を使用
+            int[] _scale7;
+            if (autoMode) { // 自動旋法
+                Mode _modeOfDegree = modeSpanBy(degree, keyMode); // キーの旋法と度数から旋法に対応したその度数の旋法を取得
+                _scale7 = scale7By(Key.Enum.Parse(_noteOfDegree), _modeOfDegree); // そのルート音の旋法スケールを取得
+            } else { // Span の旋法
+                _scale7 = scale7By(Key.Enum.Parse(_noteOfDegree), spanMode); // そのルート音の旋法スケールを取得※Span に設定した旋法を使用
+            }
             return _scale7[index - 1]; // 0基底のスケール配列から引数添え字のノートを返す
         }
 
@@ -69,17 +73,16 @@ namespace Meowziq {
         /// <summary>
         /// 度数とキーの旋法から旋法に対応したその度数の旋法を返します
         /// </summary>
-        public static Mode GetModeBy(Degree degree, Mode keyMode) {
+        public static Mode GetSpanModeBy(Degree degree, Mode keyMode) {
             return modeSpanBy(degree, keyMode);
         }
 
         /// <summary>
-        /// TBA: 暫定: span の旋法から曲の旋法を判定する
+        /// Span の旋法から曲の旋法を判定する
         /// </summary>
         public static Mode GeyModeKeyBy(Key key, Degree degree, Mode keyMode, Mode spanMode) {
-            // TODO: まず旋法チェンジ判定不能なものをはねる
-            // MEMO: C における A の表示の仕方は後で考える
-            // MEMO: 曲中に転調させる方法と合わせて考える
+            // NOTE: 旋法チェンジ判定不能なものをはねる
+            // MEMO: C キーにおける A の表示の仕方は後で考える
             Mode _modeKeyMaybe = modeKeyMaybeBy(degree, spanMode); // span の度数と旋法からこの旋法と推測される
             int[] _scaleOfKey = scale7By(key, _modeKeyMaybe); // この旋法と曲キーで作成したスケールの構成音が同じになるはずである
             int _noteOfDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
@@ -106,6 +109,9 @@ namespace Meowziq {
             return _codeBase + _majorOrMinerString;
         }
 
+        /// <summary>
+        /// 不要文字 "[", "]", "|", を削除します
+        /// </summary>
         public static string Filter(string target) {
             return target.Replace("|", "").Replace("[", "").Replace("]", ""); // 不要文字削除
         }

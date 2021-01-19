@@ -133,6 +133,7 @@ namespace Meowziq.Core {
 
         /// <summary>
         /// シンコペーションで被る Note を除外します
+        /// TODO: この処理の高速化が必要：List が遅い？ LINQ が遅い？
         /// </summary>
         public void RemoveBy(Note target) {
             noteList = noteList
@@ -155,7 +156,7 @@ namespace Meowziq.Core {
             //if (BeatCount != pattern.BeatCount) {
             //    throw new ArgumentException("invalid beatCount.");
             //}
-            // NOTE: DataType で分岐 TODO: プラグイン拡張出来るように
+            // NOTE: Way で分岐 TODO: プラグイン拡張出来るように
             var _generator = new Generator(noteList); // NOTE: コンストラクタで生成ではNG
             var _way = defineWay();
             switch (_way) {
@@ -203,8 +204,14 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private Methods [verb]
 
+        /// <summary>
+        /// MEMO: 消したい音はこのフレーズではない場合もある ⇒ Player で処理を定義
+        /// TODO: この処理の高速化が必須：何が必要で何がひつようでないか
+        ///       previous の発音が続いてる Note を識別する？：どのように？
+        ///           previous.AllNote.Were(なんとか) 
+        ///       current の シンコペ Note () ← 判定済み
+        /// </summary>
         void optimize() {
-            // MEMO: 消したい音はこのフレーズではない場合もある
             foreach (var _stopNote in noteList.Where(x => x.StopPre)) { // 優先ノートのリスト
                 foreach (var _note in noteList) { // このフレーズの全てのノートの中で
                     if (_note.Tick == _stopNote.Tick) { // 優先ノートと発音タイミングがかぶったら
