@@ -49,35 +49,29 @@ namespace Meowziq.Core {
                         _noteNumArray = applyRange(_noteNumArray, param.Chord.Range); // コード展開形の範囲を適用
                     }
                     // この音の音価を調査する
-                    var _gateCount = 0;
-                    for (var _searchIdx = _16beatIdx.Idx + 1; _searchIdx < Utils.To16beatCount(beatCount); _searchIdx++) { // +1 は数値文字の分
-                        var _search = param.TextCharArray[_searchIdx];
+                    var _gate = new Gete(_16beatIdx.Idx, beatCount);
+                    for (; _gate.HasNextSearch; _gate.IncrementSearchIdx()) { // +1 は数値文字の分
+                        var _search = param.TextCharArray[_gate.SearchIdx];
                         if (_search.Equals('>')) {
-                            _gateCount++; // 16beat分長さを伸ばす
+                            _gate.IncrementGateCount(); // 16beat分長さを伸ばす
                         }
                         if (!_search.Equals('>')) {
                             break; // '>' が途切れたら終了
                         }
                     }
                     // シンコペーション
-                    var _preLength = 0;
-                    var _stopPre = false;
                     if (param.Exp.HasPre) {
                         var _pre = param.Exp.PreCharArray[_16beatIdx.Idx];
                         if (param.Exp.IsMatchPre(_pre)) {
                             var _preInt = int.Parse(_pre.ToString());
-                            _gateCount += _preInt; // pre の数値を音価に加算
-                            _preLength = -Utils.To16beatLength(_preInt); // pre の数値 * 16beat分前にする
-                        }
-                        if (_preLength != 0) {
-                            _stopPre = true; // シンコぺがある場合は優先発音フラグON
+                            _gate.Count += _preInt; // pre の数値を音価に加算
+                            _gate.PreLength = -Utils.To16beatLength(_preInt); // pre の数値 * 16beat分前にする
                         }
                     }
                     if (param.Exp.HasPost) { // TODO: 最後の音を伸ばす
                     }
-                    var _gate = Utils.To16beatLength(_gateCount + 1); // 音の長さ：+1 は数値文字の分
                     _noteNumArray.Where(x => x != -1).ToList().ForEach(
-                        x => add(new Note((_preLength + tick) + Utils.To16beatLength(_16beatIdx.Idx), x + param.Interval, _gate, 127, _stopPre))
+                        x => add(new Note((_gate.PreLength + tick) + Utils.To16beatLength(_16beatIdx.Idx), x + param.Interval, _gate.Value, 127, _gate.StopPre))
                     );
                 }
                 _16beatIdx.Increment(); // 16beatのindex値をインクリメント
@@ -95,22 +89,16 @@ namespace Meowziq.Core {
                 }
                 if (param.IsMatch(_text)) {
                     // シンコペーション
-                    var _gateCount = 0;
-                    var _preLength = 0;
-                    var _stopPre = false;
+                    var _gate = new Gete();
                     if (param.Exp.HasPre) { // pre設定があれば
                         var _pre = param.Exp.PreCharArray[_16beatIdx.Idx];
                         if (param.Exp.IsMatchPre(_pre)) {
                             var _preInt = int.Parse(_pre.ToString());
-                            _gateCount += _preInt; // pre の数値を音価に加算
-                            _preLength = -Utils.To16beatLength(_preInt); // pre の数値 * 16beat分前にする
-                        }
-                        if (_preLength != 0) {
-                            _stopPre = true; // シンコぺがある場合は優先発音フラグON
+                            _gate.Count += _preInt; // pre の数値を音価に加算
+                            _gate.PreLength = -Utils.To16beatLength(_preInt); // pre の数値 * 16beat分前にする
                         }
                     }
-                    var _gate = Utils.To16beatLength(_gateCount + 1); // 音の長さ：+1 は数値文字の分
-                    add(new Note((_preLength + tick) + Utils.To16beatLength(_16beatIdx.Idx), param.PercussionNoteNum, _gate, 127, _stopPre));
+                    add(new Note((_gate.PreLength + tick) + Utils.To16beatLength(_16beatIdx.Idx), param.PercussionNoteNum, _gate.Value, 127, _gate.StopPre));
                 }
                 _16beatIdx.Increment(); // 16beatのindex値をインクリメント
             }
@@ -179,6 +167,95 @@ namespace Meowziq.Core {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // inner Classes
+
+        /// <summary>
+        /// 音価の情報を保持するクラス
+        /// </summary>
+        class Gete {
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // Fields
+
+            int beatCount;
+
+            int gateCount;
+
+            int searchIdx;
+
+            int preLength;
+
+            bool stopPre;
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // Constructor
+
+            public Gete(int searchIdx, int beatCount) {
+                this.beatCount = beatCount;
+                this.searchIdx = searchIdx + 1; // +1 は数値文字の分
+                this.gateCount = 0;
+                this.preLength = 0;
+                this.stopPre = false;
+            }
+
+            public Gete() {
+                this.gateCount = 0;
+                this.preLength = 0;
+                this.stopPre = false;
+            }
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // Properties [noun, adjective] 
+
+            /// <summary>
+            /// この Pattern に次の 16beat が存在するかどうか
+            /// </summary>
+            public bool HasNextSearch {
+                get {
+                    if (searchIdx < Utils.To16beatCount(beatCount)) {
+                        return true; // index 値がパターンの16beatの長さ以下なら true
+                    }
+                    return false;
+                }
+            }
+
+            public int SearchIdx {
+                get => searchIdx;
+            }
+
+            public int Count {
+                get => gateCount;
+                set => gateCount = value;
+            }
+
+            public int PreLength {
+                get => preLength;
+                set {
+                    preLength = value;
+                    if (preLength != 0) {
+                        stopPre = true; // シンコぺがある場合は優先発音フラグON
+                    }
+                }
+            }
+
+            public bool StopPre {
+                get => stopPre;
+            }
+
+            public int Value {
+                get => Utils.To16beatLength(gateCount + 1); // 音の長さ：+1 は数値文字の分
+            }
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // public Methods [verb]
+
+            public void IncrementSearchIdx() {
+                searchIdx++;
+            }
+
+            public void IncrementGateCount() {
+                gateCount++;
+            }
+        }
 
         /// <summary>
         /// 16beatのカウントを保持するクラス
