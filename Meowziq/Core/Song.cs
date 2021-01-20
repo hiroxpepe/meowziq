@@ -57,8 +57,7 @@ namespace Meowziq.Core {
         // private Methods [verb]
 
         /// <summary>
-        /// 旋法の設定があるか確認
-        /// MEMO: ここで渡しても参照なのでNGだろう
+        /// TODO: 使われていない？
         /// </summary>
         Pattern checkeMode(Pattern pattern) {
             pattern.AllMeas.ForEach(x => {
@@ -114,57 +113,6 @@ namespace Meowziq.Core {
         /// </summary>
         public List<Pattern> AllPattern {
             get => patternList;
-        }
-    }
-
-    /// <summary>
-    /// KeyAndMode クラス
-    ///     + 転調用の引数パラメータ
-    /// NOTE: 必ず不変オブジェクトにすること
-    /// MEMO: mode の名前は常に keyMode と spanMode として用途を区別する
-    /// </summary>
-    public class KeyAndMode {
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Fields
-
-        int tick; // 開始時点の tick ※絶対値
-
-        Key key;
-
-        Mode keyMode;
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Constructor
-
-        public KeyAndMode(int tick, Key key, Mode keyMode) {
-            this.tick = tick;
-            this.key = key;
-            this.keyMode = keyMode;
-        }
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Properties [noun, adjective] 
-
-        /// <summary>
-        /// この転調パラメータが適用される tick ※絶対値
-        /// </summary>
-        public int Tick {
-            get => tick; // NOTE: 後から変更できない
-        }
-
-        /// <summary>
-        /// キー
-        /// </summary>
-        public Key Key {
-            get => key; // NOTE: 後から変更できない
-        }
-
-        /// <summary>
-        /// 旋法
-        /// </summary>
-        public Mode KeyMode {
-            get => keyMode; // NOTE: 後から変更できない
         }
     }
 }

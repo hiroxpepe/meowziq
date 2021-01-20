@@ -54,7 +54,7 @@ namespace Meowziq {
         /// <summary>
         /// 引数 index 値のアイテムを持つかどうかを返します
         /// </summary>
-        public static bool HasNext(int idx) {
+        public static bool Has(int idx) {
             if (flag) { // Prime スタートで実行
                 return Prime.Item.Count() > idx;
             } else {
@@ -119,7 +119,7 @@ namespace Meowziq {
             hashSet.Clear();
             Prime.Clear();
             Second.Clear();
-            Info.Clear();
+            State.Clear();
             flag = true;
         }
 
@@ -165,10 +165,10 @@ namespace Meowziq {
             flag = !flag;
             if (flag) {
                 Second.Clear();
-                Info.Clear();
+                State.Clear();
             } else {
                 Prime.Clear();
-                Info.Clear();
+                State.Clear();
             }
         }
 
@@ -177,7 +177,7 @@ namespace Meowziq {
 
         static class Prime {
 
-            ///////////////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////////////
             // static Fields
 
             static Dictionary<int, List<ChannelMessage>> item = new Dictionary<int, List<ChannelMessage>>(); // Tick 毎の メッセージのリスト
@@ -211,7 +211,7 @@ namespace Meowziq {
                 set => allNoteOffHashsetArray = value;
             }
 
-            ///////////////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////////////
             // private Methods [verb]
 
             public static void Clear() {
@@ -223,7 +223,7 @@ namespace Meowziq {
 
         static class Second {
 
-            ///////////////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////////////
             // static Fields
 
             static Dictionary<int, List<ChannelMessage>> item = new Dictionary<int, List<ChannelMessage>>(); // Tick 毎の メッセージのリスト
@@ -257,7 +257,7 @@ namespace Meowziq {
                 set => allNoteOffHashsetArray = value;
             }
 
-            ///////////////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////////////
             // private Methods [verb]
 
             public static void Clear() {
