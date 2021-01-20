@@ -62,6 +62,7 @@ namespace Meowziq.View {
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 Log.Error(ex.Message);
+                stopSound();
             }
         }
 
@@ -79,6 +80,7 @@ namespace Meowziq.View {
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 Log.Error(ex.Message);
+                stopSound();
             }
         }
 
@@ -96,6 +98,7 @@ namespace Meowziq.View {
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 Log.Error(ex.Message);
+                stopSound();
             }
         }
 
@@ -116,6 +119,7 @@ namespace Meowziq.View {
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 Log.Error(ex.Message);
+                stopSound();
             }
         }
 
@@ -149,6 +153,9 @@ namespace Meowziq.View {
                         midi.OutDevice.Send(x); // MIDIデバイスにメッセージを追加送信 MEMO: CCなどは直接ここで投げては？
                         if (x.MidiChannel != 9 && x.MidiChannel != 1) { // FIXME: 暫定:シーケンス除外
                             pianoControl.Send(x); // ドラム以外はピアノロールに表示
+                        }
+                        if (x.MidiChannel == 2) {
+                            Log.Info($"Data1: {x.Data1} Data2: {x.Data2}");
                         }
                     });
                 }
