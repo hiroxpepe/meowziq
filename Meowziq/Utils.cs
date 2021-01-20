@@ -6,6 +6,7 @@ using System.Linq;
 namespace Meowziq {
     /// <summary>
     /// NOTE: TOPレベルであるべき ⇒ 実装パッケージを using しない、引数はプリミティブ型か Enum のみ
+    /// MEMO: ここでは var で変数を定義しない
     /// </summary>
     public class Utils {
 
@@ -25,7 +26,7 @@ namespace Meowziq {
         }
         
         /// <summary>
-        /// 1拍における 16beat の数を返します
+        /// 引数の count 値(1拍)における 16beat の数を返します
         /// </summary>
         public static int To16beatCount(int beatCount) {
             return beatCount * 4; // 1拍における 16beat の数なので 4 を掛ける
@@ -35,14 +36,14 @@ namespace Meowziq {
         /// 1～9の Phrase コード記法から Note No の配列を取得します
         /// ※自動的に旋法を決定、Span の旋法両対応
         /// </summary>
-        public static int[] GetNoteArrayBy(Key key, Degree degree, Mode keyMode, Mode spanMode, int index, bool autoMode = true) {
-            int _noteOfDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
+        public static int[] ToNoteArray(Key key, Degree degree, Mode keyMode, Mode spanMode, int index, bool autoMode = true) {
+            int _noteDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
             int[] _scale7;
             if (autoMode) { // 自動旋法
-                Mode _modeOfDegree = modeSpanBy(degree, keyMode); // キーの旋法と度数から旋法に対応したその度数の旋法を取得
-                _scale7 = scale7By(Key.Enum.Parse(_noteOfDegree), _modeOfDegree); // そのルート音の旋法スケールを取得
+                Mode _modeDegree = modeSpanBy(degree, keyMode); // キーの旋法と度数から旋法に対応したその度数の旋法を取得
+                _scale7 = scale7By(Key.Enum.Parse(_noteDegree), _modeDegree); // そのルート音の旋法スケールを取得
             } else { // Span の旋法
-                _scale7 = scale7By(Key.Enum.Parse(_noteOfDegree), spanMode); // そのルート音の旋法スケールを取得※Span に設定した旋法を使用
+                _scale7 = scale7By(Key.Enum.Parse(_noteDegree), spanMode); // そのルート音の旋法スケールを取得※Span に設定した旋法を使用
             }
             return noteArryBy(index, _scale7); // 旋法スケールから引数indexに対応したコード構成音の配列を返す
         }
@@ -51,14 +52,14 @@ namespace Meowziq {
         /// 1～7の Phrase ノート記法から Note No を取得します
         /// ※自動的に旋法を決定、Span の旋法両対応
         /// </summary>
-        public static int GetNoteBy(Key key, Degree degree, Mode keyMode, Mode spanMode, int index, bool autoMode = true) {
-            int _noteOfDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
+        public static int ToNote(Key key, Degree degree, Mode keyMode, Mode spanMode, int index, bool autoMode = true) {
+            int _noteDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
             int[] _scale7;
             if (autoMode) { // 自動旋法
-                Mode _modeOfDegree = modeSpanBy(degree, keyMode); // キーの旋法と度数から旋法に対応したその度数の旋法を取得
-                _scale7 = scale7By(Key.Enum.Parse(_noteOfDegree), _modeOfDegree); // そのルート音の旋法スケールを取得
+                Mode _modeDegree = modeSpanBy(degree, keyMode); // キーの旋法と度数から旋法に対応したその度数の旋法を取得
+                _scale7 = scale7By(Key.Enum.Parse(_noteDegree), _modeDegree); // そのルート音の旋法スケールを取得
             } else { // Span の旋法
-                _scale7 = scale7By(Key.Enum.Parse(_noteOfDegree), spanMode); // そのルート音の旋法スケールを取得※Span に設定した旋法を使用
+                _scale7 = scale7By(Key.Enum.Parse(_noteDegree), spanMode); // そのルート音の旋法スケールを取得※Span に設定した旋法を使用
             }
             return _scale7[index - 1]; // 0基底のスケール配列から引数添え字のノートを返す
         }
@@ -66,28 +67,28 @@ namespace Meowziq {
         /// <summary>
         /// FIXME: テキスト設定からランダムアルぺジエーター
         /// </summary>
-        public static int GetNoteAsRandom(Key key, Degree degree, Mode keyMode, Mode spanMode, bool autoMode) {
-            return noteOfRandomByModeScaleOf3(key, degree, keyMode, spanMode, autoMode);
+        public static int ToNoteRandom(Key key, Degree degree, Mode keyMode, Mode spanMode, bool autoMode) {
+            return noteOfRandom3By(key, degree, keyMode, spanMode, autoMode);
         }
 
         /// <summary>
         /// 度数とキーの旋法から旋法に対応したその度数の旋法を返します
         /// </summary>
-        public static Mode GetSpanModeBy(Degree degree, Mode keyMode) {
+        public static Mode ToModeSpan(Degree degree, Mode keyMode) {
             return modeSpanBy(degree, keyMode);
         }
 
         /// <summary>
         /// Span の旋法から曲の旋法を判定する
         /// </summary>
-        public static Mode GeyModeKeyBy(Key key, Degree degree, Mode keyMode, Mode spanMode) {
+        public static Mode ToModeKey(Key key, Degree degree, Mode keyMode, Mode spanMode) {
             // NOTE: 旋法チェンジ判定不能なものをはねる
             // MEMO: C キーにおける A の表示の仕方は後で考える
             Mode _modeKeyMaybe = modeKeyMaybeBy(degree, spanMode); // span の度数と旋法からこの旋法と推測される
-            int[] _scaleOfKey = scale7By(key, _modeKeyMaybe); // この旋法と曲キーで作成したスケールの構成音が同じになるはずである
-            int _noteOfDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
-            int[] _scaleOfSpan = scale7By(Key.Enum.Parse(_noteOfDegree), spanMode); // span の度数と旋法でもスケールを作成してみる
-            if (!compareScale(_scaleOfKey, _scaleOfSpan)) { // 比較して構成音は同じはず
+            int[] _scaleKey = scale7By(key, _modeKeyMaybe); // この旋法と曲キーで作成したスケールの構成音が同じになるはずである
+            int _noteDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
+            int[] _scaleSpan = scale7By(Key.Enum.Parse(_noteDegree), spanMode); // span の度数と旋法でもスケールを作成してみる
+            if (!compareScale(_scaleKey, _scaleSpan)) { // 比較して構成音は同じはず
                 return Mode.Undefined; // 構成音が違う場合
             }
             return _modeKeyMaybe; // TODO: これで正しいかテストを作成して確認
@@ -96,9 +97,9 @@ namespace Meowziq {
         /// <summary>
         /// メジャーかマイナーかシンプルなコードネームを返します
         /// </summary>
-        public static string GetSimpleCodeName(Key key, Degree degree, Mode keyMode, Mode spanMode, bool autoMode = true) {
-            int _noteOfDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
-            string _codeBase = Key.Enum.Parse(_noteOfDegree).ToString(); // コードネームの基本取得
+        public static string ToSimpleCodeName(Key key, Degree degree, Mode keyMode, Mode spanMode, bool autoMode = true) {
+            int _noteDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
+            string _codeBase = Key.Enum.Parse(_noteDegree).ToString(); // コードネームの基本取得
             Mode _mode;
             if (autoMode) { // 自動旋法取得
                 _mode = modeSpanBy(degree, keyMode);
@@ -123,9 +124,9 @@ namespace Meowziq {
         /// スケールの構成音を比較します
         /// </summary>
         static bool compareScale(int[] scale1, int[] scale2) {
-            List<Key> _keyList1 = scale1.Select(x => Key.Enum.Parse(x)).OrderBy(x => x).ToList();
-            List<Key> _keyList2 = scale2.Select(x => Key.Enum.Parse(x)).OrderBy(x => x).ToList();
-            var _result = _keyList1.Where(x => !_keyList2.Contains(x));
+            List<Key> _list1 = scale1.Select(x => Key.Enum.Parse(x)).OrderBy(x => x).ToList();
+            List<Key> _list2 = scale2.Select(x => Key.Enum.Parse(x)).OrderBy(x => x).ToList();
+            var _result = _list1.Where(x => !_list2.Contains(x));
             if (_result.Count() == 0) {
                 return true; // 構成音が一致
             }
@@ -461,7 +462,8 @@ namespace Meowziq {
 
         /// <summary>
         /// MEMO: ここで引いた Mode と元々の曲 key でスケールを作成してルート音が合っているか調べる
-        /// TODO: 仮：span の度数と旋法でキーの旋法を返す TODO: C キーで Am が A になる時は？
+        /// TODO: ※仮 -- Span の度数と旋法でキーの旋法を返す
+        /// TODO: C キーで Am が A になる時は？ ⇒ ※暫定: 後続でチェックして Mode.Undefined を返すようにした
         /// </summary>
         static Mode modeKeyMaybeBy(Degree degree, Mode spanMode) {
             spanMode.Validate();
@@ -721,7 +723,7 @@ namespace Meowziq {
         /// <summary>
         /// 度数関係なくそのキーの旋法の構成音をランダムで返す
         /// </summary>
-        static int noteOfRandomByModeScale(Key key, Mode keyMode) {
+        static int noteOfRandomBy(Key key, Mode keyMode) {
             int[] _scale = scale7By(key, keyMode);
             int _random = random.Next(0, 7);
             return _scale[_random]; // 0 から 6
@@ -730,7 +732,7 @@ namespace Meowziq {
         /// <summary>
         /// そのキーの旋法の度数の構成音をランダムで返す
         /// </summary>
-        static int noteOfRandomByModeScaleOf3(Key key, Degree degree, Mode keyMode, Mode spanMode, bool autoMode = true) {
+        static int noteOfRandom3By(Key key, Degree degree, Mode keyMode, Mode spanMode, bool autoMode = true) {
             int[] _scale;
             if (autoMode) {
                 _scale = noteArray3By(key, degree, keyMode); // 3音

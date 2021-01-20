@@ -20,12 +20,6 @@ namespace Meowziq.View {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Fields
 
-        static bool playing = false;
-
-        static bool played = false;
-
-        static bool stopping = false;
-
         static object locked = new object();
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -59,7 +53,7 @@ namespace Meowziq.View {
                     Log.Error(_message);
                     return;
                 }
-                if (playing || stopping) {
+                if (Sound.Playing || Sound.Stopping) {
                     return;
                 }
                 lock (locked) {
@@ -76,7 +70,7 @@ namespace Meowziq.View {
         /// </summary>
         void buttonStop_Click(object sender, EventArgs e) {
             try {
-                if (stopping || !played) {
+                if (Sound.Stopping || !Sound.Played) {
                     return;
                 }
                 lock (locked) {
@@ -133,18 +127,18 @@ namespace Meowziq.View {
         /// TODO: メッセージ送信のタイミングは独自実装出来るのでは？
         /// </summary>
         void sequencer_ChannelMessagePlayed(object sender, ChannelMessageEventArgs e) {
-            if (stopping) {
+            if (Sound.Stopping) {
                 return;
             }
             if (this.Visible) {
                 // TODO: カウント分はUIではマイナス表示とする？
                 var _tick = sequencer.Position - 1; // NOTE: Position が 1, 31 と来るので予め1引く
-                Info.Beat = ((_tick / 480) + 1); // 0開始 ではなく 1開始として表示
-                Info.Meas = ((Info.Beat - 1) / 4 + 1);
+                State.Beat = ((_tick / 480) + 1); // 0開始 ではなく 1開始として表示
+                State.Meas = ((State.Beat - 1) / 4 + 1);
                 // UI情報更新
-                var _itemDictionary = Info.ItemDictionary;
-                if (_itemDictionary.ContainsKey(_tick)) { // FIXME: ContainsKey 大丈夫？
-                    var _item = _itemDictionary[_tick];
+                var _dictionary = State.Dictionary;
+                if (_dictionary.ContainsKey(_tick)) { // FIXME: ContainsKey 大丈夫？
+                    var _item = _dictionary[_tick];
                     Invoke(updateDisplay(_item));
                 }
                 // MIDIメッセージ処理
@@ -158,7 +152,7 @@ namespace Meowziq.View {
                         }
                     });
                 }
-                played = true;
+                Sound.Played = true;
             }
         }
 
@@ -231,7 +225,7 @@ namespace Meowziq.View {
                 var _songName = await buildSong(true);
                 var _songDir = targetPath.Split(Path.DirectorySeparatorChar).Last();
                 Message.Invert(); // データ生成後にフラグ反転
-                for (var _idx = 0; Message.HasNext(_idx); _idx++) { // tick を 30間隔でループさせます
+                for (var _idx = 0; Message.Has(_idx); _idx++) { // tick を 30間隔でループさせます
                     var _tick = _idx * 30; // 30 tick を手動生成
                     var _list = Message.GetBy(_tick); // メッセージのリストを取得
                     if (_list != null) {
@@ -261,8 +255,8 @@ namespace Meowziq.View {
                 sequencer.Position = 0;
                 sequencer.Start();
                 labelPlay.ForeColor = Color.Lime;
-                playing = true;
-                played = false;
+                Sound.Playing = true;
+                Sound.Played = false;
                 Log.Info("start! :D");
             });
         }
@@ -272,12 +266,12 @@ namespace Meowziq.View {
         /// </summary>
         async void stopSound() {
             await Task.Run(() => {
-                stopping = true;
+                Sound.Stopping = true;
                 for (int _idx = 0; _idx < 15; _idx++) { // All sound off.
                     midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, _idx, 120));
                 }
-                stopping = false;
-                playing = false;
+                Sound.Stopping = false;
+                Sound.Playing = false;
                 sequencer.Stop();
                 sequence.Clear();
                 Invoke(resetDisplay());
@@ -288,14 +282,14 @@ namespace Meowziq.View {
         /// <summary>
         /// UI表示を更新します
         /// </summary>
-        MethodInvoker updateDisplay(Info.Item item) {
+        MethodInvoker updateDisplay(State.Item16beat item) {
             return () => {
-                textBoxBeat.Text = Info.Beat.ToString();
-                textBoxMeas.Text = Info.Meas.ToString();
+                textBoxBeat.Text = State.Beat.ToString();
+                textBoxMeas.Text = State.Meas.ToString();
                 textBoxKey.Text = item.Key;
                 textBoxDegree.Text = item.Degree;
                 textBoxKeyMode.Text = item.KeyMode;
-                textBoxCode.Text = Utils.GetSimpleCodeName(
+                textBoxCode.Text = Utils.ToSimpleCodeName(
                     Key.Enum.Parse(item.Key),
                     Degree.Enum.Parse(item.Degree),
                     Mode.Enum.Parse(item.KeyMode),
@@ -303,7 +297,7 @@ namespace Meowziq.View {
                     item.AutoMode
                 );
                 if (item.AutoMode) { // 自動旋法適用の場合
-                    var _autoMode = Utils.GetSpanModeBy(
+                    var _autoMode = Utils.ToModeSpan(
                         Degree.Enum.Parse(item.Degree),
                         Mode.Enum.Parse(item.KeyMode)
                     );
@@ -311,7 +305,7 @@ namespace Meowziq.View {
                     labelModulation.ForeColor = Color.DimGray;
                 } else { // Spanの旋法適用の場合
                     textBoxMode.Text = item.SpanMode;
-                    var _keyMode = Utils.GeyModeKeyBy(
+                    var _keyMode = Utils.ToModeKey(
                         Key.Enum.Parse(item.Key),
                         Degree.Enum.Parse(item.Degree),
                         Mode.Enum.Parse(item.KeyMode),
@@ -338,6 +332,53 @@ namespace Meowziq.View {
                 textBoxMode.Text = "---";
                 textBoxCode.Text = "---";
             };
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // inner Classes
+
+        /// <summary>
+        /// FormMain オブジェクトの状態を保持するクラス
+        /// </summary>
+        static class Sound {
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // static Fields
+
+            static bool playing;
+
+            static bool played;
+
+            static bool stopping;
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // static Constructor
+
+            static Sound() {
+                playing = false;
+                played = false;
+                stopping = false;
+            }
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // static Properties [noun, adjective] 
+
+            // TODO: フラグを同時に判定操作する
+
+            public static bool Playing { // TODO: block ?
+                get => playing;
+                set => playing = value;
+            }
+
+            public static bool Played { // TODO: block ?
+                get => played;
+                set => played = value;
+            }
+
+            public static bool Stopping { // TODO: block ?
+                get => stopping;
+                set => stopping = value;
+            }
         }
     }
 }
