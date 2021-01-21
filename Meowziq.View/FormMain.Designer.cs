@@ -414,6 +414,7 @@
             this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "FormMain";
             this.Text = "© STUDIO MeowToon";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.formMain_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
         }

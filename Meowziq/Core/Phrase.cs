@@ -173,7 +173,7 @@ namespace Meowziq.Core {
                     }
                     break;
                 case Way.Multi:
-                    for (var _idx = 0; _idx < data.NoteArray.Length; _idx++) {
+                    for (var _idx = 0; _idx < data.NoteArray.Length; _idx++) { // TODO: for の置き換え
                         var _param = new Param(
                             new Value.Note(data.NoteArray[_idx], data.OctArray[_idx]),
                             new Value.Exp(data.PreArray[_idx], data.PostArray[_idx]),
@@ -183,7 +183,7 @@ namespace Meowziq.Core {
                     }
                     break;
                 case Way.Drum:
-                    for (var _idx = 0; _idx < data.NoteArray.Length; _idx++) {
+                    for (var _idx = 0; _idx < data.NoteArray.Length; _idx++) { // TODO: for の置き換え
                         var _param = new Param(
                             new Value.Note(data.NoteArray[_idx], 0),
                             (int) data.PercussionArray[_idx],

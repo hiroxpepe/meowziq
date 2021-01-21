@@ -359,6 +359,8 @@ namespace Meowziq.Value {
 
         /// <summary>
         /// ノート記述用パラメータ
+        /// MEMO: メロディ、ハモリ記述と共用出来る？ ⇒ 多少無駄があっても別々で組んで後で統合した方が現状の破壊が少ない
+        /// 
         /// </summary>
         public Param(Note note, Exp exp, Way way) {
             Note = note;

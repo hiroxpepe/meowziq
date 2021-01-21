@@ -18,11 +18,6 @@ namespace Meowziq.View {
     public partial class FormMain : Form {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // static Fields
-
-        static object locked = new object();
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
         Midi midi;
@@ -45,7 +40,7 @@ namespace Meowziq.View {
         /// <summary>
         /// 演奏を開始します
         /// </summary>
-        void buttonPlay_Click(object sender, EventArgs e) {
+        async void buttonPlay_Click(object sender, EventArgs e) {
             try {
                 if (textBoxSongName.Text.Equals("------------")) {
                     var _message = "please load a song.";
@@ -56,31 +51,27 @@ namespace Meowziq.View {
                 if (Sound.Playing || Sound.Stopping) {
                     return;
                 }
-                lock (locked) {
-                    startSound();
-                }
+                await startSound();
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 Log.Error(ex.Message);
-                stopSound();
+                await stopSound();
             }
         }
 
         /// <summary>
         /// 演奏を停止します
         /// </summary>
-        void buttonStop_Click(object sender, EventArgs e) {
+        async void buttonStop_Click(object sender, EventArgs e) {
             try {
                 if (Sound.Stopping || !Sound.Played) {
                     return;
                 }
-                lock (locked) {
-                    stopSound();
-                }
+                await stopSound();
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 Log.Error(ex.Message);
-                stopSound();
+                await stopSound();
             }
         }
 
@@ -98,7 +89,7 @@ namespace Meowziq.View {
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 Log.Error(ex.Message);
-                stopSound();
+                await stopSound();
             }
         }
 
@@ -119,8 +110,18 @@ namespace Meowziq.View {
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 Log.Error(ex.Message);
-                stopSound();
+                await stopSound();
             }
+        }
+
+        /// <summary>
+        /// TODO: 動作確認 ⇒ NG
+        /// </summary>
+        /*async*/ void formMain_FormClosing(object sender, FormClosingEventArgs e) {
+            //var _result = await stopSound();
+            //if (_result) {
+            //    Close();
+            //}
         }
 
         /// <summary>
@@ -254,8 +255,8 @@ namespace Meowziq.View {
         /// <summary>
         /// 演奏開始
         /// </summary>
-        async void startSound() {
-            await Task.Run(async () => {
+        async Task<bool> startSound() {
+            return await Task.Run(async () => {
                 Message.Clear();
                 textBoxSongName.Text = await buildSong();
                 sequence.Load("./data/conductor.mid");
@@ -265,24 +266,26 @@ namespace Meowziq.View {
                 Sound.Playing = true;
                 Sound.Played = false;
                 Log.Info("start! :D");
+                return true;
             });
         }
 
         /// <summary>
         /// 演奏停止
         /// </summary>
-        async void stopSound() {
-            await Task.Run(() => {
+        async Task<bool> stopSound() {
+            return await Task.Run(() => {
                 Sound.Stopping = true;
-                for (int _idx = 0; _idx < 15; _idx++) { // All sound off.
-                    midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, _idx, 120));
-                }
+                Enumerable.Range(0, 15).ToList().ForEach(
+                    x => midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, x, 120))
+                );
                 Sound.Stopping = false;
                 Sound.Playing = false;
                 sequencer.Stop();
                 sequence.Clear();
                 Invoke(resetDisplay());
                 Log.Info("stop. :|");
+                return true;
             });
         }
 
@@ -329,6 +332,9 @@ namespace Meowziq.View {
         /// </summary>
         MethodInvoker resetDisplay() {
             return () => {
+                Enumerable.Range(0, 88).ToList().ForEach(
+                    x => pianoControl.Send(new ChannelMessage(ChannelCommand.NoteOff, 1, x, 0))
+                );
                 labelPlay.ForeColor = Color.DimGray;
                 labelModulation.ForeColor = Color.DimGray;
                 textBoxBeat.Text = "0";

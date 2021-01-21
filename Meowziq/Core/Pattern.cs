@@ -89,9 +89,9 @@ namespace Meowziq.Core {
             // Span を分解して1拍毎に追加する
             this.spanList = new List<Span>();
             spanList.ForEach(x => {
-                for (var _idx = 0; _idx < x.Beat; _idx++) {
-                    this.spanList.Add(new Span(1, x.Degree, x.SpanMode));
-                }
+                Enumerable.Range(0, x.Beat).ToList().ForEach(
+                    _x => this.spanList.Add(new Span(1, x.Degree, x.SpanMode))
+                );
             });
         }
 
