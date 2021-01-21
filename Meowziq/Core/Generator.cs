@@ -45,6 +45,10 @@ namespace Meowziq.Core {
                         );
                         _noteNumArray = applyRange(_noteNumArray, param.Chord.Range); // コード展開形の範囲を適用
                     }
+                    // TODO: メロディ記述：key旋法判定後に Degree I 固定
+                    // TODO: ハモリ記述：メロディ記述の noteNum に対して メロの旋法 に Degree と上下パラメータ？ で算出  
+                    // MEMO: ブルーノートは？ ⇒ 音を任意に+,-出来る設定(帯)を持たせる
+
                     // この音の音価を調査する
                     var _gate = new Gete(_16beatIdx.Idx, beatCount);
                     for (; _gate.HasNextSearch; _gate.IncrementSearch()) { // +1 は数値文字の分

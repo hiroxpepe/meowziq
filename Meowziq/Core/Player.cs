@@ -204,6 +204,8 @@ namespace Meowziq.Core {
 
             /// <summary>
             /// この Pattern の長さ分 Head(tick) を移動します
+            /// NOTE: ここが回され tick と比較する数値が作成される
+            /// TODO: 範囲外と判明したらループから抜ける判定を追加？
             /// </summary>
             public void Next() {
                 tickOfPatternHead += patternLength; // Pattern の長さ分 Pattern 開始 tick を移動する

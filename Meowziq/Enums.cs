@@ -10,6 +10,8 @@ namespace Meowziq {
         Mono = 0,
         Multi = 1,
         Chord = 2,
+        Melody = 5,
+        Harmony = 6,
         Drum = 3,
         Sequence = 4,
     }

@@ -84,7 +84,7 @@ namespace Meowziq.Loader {
         }
 
         static Json loadJson(string targetPath) {
-            using (var _stream = new FileStream(targetPath, FileMode.Open)) {
+            using (var _stream = new FileStream(targetPath, FileMode.Open)) { // FIXME: ファイルが読めなかったとき
                 var _serializer = new DataContractJsonSerializer(typeof(Json));
                 return (Json) _serializer.ReadObject(_stream);
             }

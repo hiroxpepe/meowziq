@@ -69,15 +69,15 @@ namespace Meowziq {
             if (!hashSet.Add(tick)) {
                 return; // 既に処理した tick なので無視する
             }
-            // tick が1小節ごとに切り替え
-            if (tick % (Length.Of4beat.Int32() * 4) == 0) {
+            // tick が1小節ごとに切り替え TODO: 処理の最適化をして * 1 にする
+            if (tick % (Length.Of4beat.Int32() * 4) == 0) { // MEMO: ここを * 2 にすれば 2拍毎、* 1 にすれば 1拍毎に切り替えれる
                 change();
                 load(tick);
             }
         }
 
         /// <summary>
-        /// プログラムNo(音色)を ChannelMessage として適用します TODO: バンクセレクト
+        /// プログラムNo(音色)を ChannelMessage として適用します
         /// </summary>
         public static void Apply(int midiCh, int tick, int programNum ) {
             add(tick, new ChannelMessage(ChannelCommand.ProgramChange, midiCh, programNum, 127)); // プログラムチェンジ
