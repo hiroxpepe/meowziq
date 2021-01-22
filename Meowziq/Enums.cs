@@ -6,6 +6,10 @@ namespace Meowziq {
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // public Enums [noun]
 
+    public enum Env {
+        MaxMeas = 12,
+    }
+
     public enum Way {
         Mono = 0,
         Multi = 1,
@@ -309,12 +313,16 @@ namespace Meowziq {
     /// </summary>
     public static class Extensions {
 
-        public static int Int32(this Length self) {
-            return (int) self;
+        public static int Int32(this Env source) {
+            return (int) source;
         }
 
-        public static void Validate(this Key self) {
-            switch (self) {
+        public static int Int32(this Length source) {
+            return (int) source;
+        }
+
+        public static void Validate(this Key source) {
+            switch (source) {
                 case Key.Undefined:
                     throw new ArgumentException("not key.");
                 case Key.Enum:
@@ -322,7 +330,7 @@ namespace Meowziq {
             }
         }
 
-        public static Key Parse(this Key self, string target) {
+        public static Key Parse(this Key source, string target) {
             switch (target.ToLower()) {
                 case "e":
                     return Key.E;
@@ -353,7 +361,7 @@ namespace Meowziq {
             }
         }
 
-        public static Key Parse(this Key self, int target) { // TODO: 拡張メソッド
+        public static Key Parse(this Key source, int target) { // TODO: 拡張メソッド
             if (target > 75) {
                 target -= 12; // オクターブ調節
             }
@@ -387,8 +395,8 @@ namespace Meowziq {
             }
         }
 
-        public static void Validate(this Degree self) {
-            switch (self) {
+        public static void Validate(this Degree source) {
+            switch (source) {
                 case Degree.Undefined:
                     throw new ArgumentException("not degree.");
                 case Degree.Enum:
@@ -396,7 +404,7 @@ namespace Meowziq {
             }
         }
 
-        public static Degree Parse(this Degree self, string target) {
+        public static Degree Parse(this Degree source, string target) {
             switch (target) {
                 case "I":
                     return Degree.I;
@@ -417,8 +425,8 @@ namespace Meowziq {
             }
         }
 
-        public static void Validate(this Mode self) {
-            switch (self) {
+        public static void Validate(this Mode source) {
+            switch (source) {
                 case Mode.Undefined:
                     throw new ArgumentException("not mode.");
                 case Mode.Enum:
@@ -426,7 +434,7 @@ namespace Meowziq {
             }
         }
 
-        public static Mode Parse(this Mode self, string target) {
+        public static Mode Parse(this Mode source, string target) {
             switch (target.ToLower()) {
                 case "lyd":
                     return Mode.Lyd;
@@ -447,7 +455,7 @@ namespace Meowziq {
             }
         }
 
-        public static MidiChannel Parse(this MidiChannel self, string target) {
+        public static MidiChannel Parse(this MidiChannel source, string target) {
             switch (target) {
                 case "0":
                     return MidiChannel.ch1;
@@ -486,7 +494,7 @@ namespace Meowziq {
             }
         }
 
-        public static Instrument Parse(this Instrument self, string target) {
+        public static Instrument Parse(this Instrument source, string target) {
             switch (target) {
                 // Piano
                 case "Acoustic_Grand_Piano":
@@ -765,7 +773,7 @@ namespace Meowziq {
             }
         }
 
-        public static DrumKit Parse(this DrumKit self, string target) {
+        public static DrumKit Parse(this DrumKit source, string target) {
             switch (target) {
                 case "Standard":
                     return DrumKit.Standard;
@@ -790,7 +798,7 @@ namespace Meowziq {
             }
         }
 
-        public static Percussion Parse(this Percussion self, string target) {
+        public static Percussion Parse(this Percussion source, string target) {
             switch (target) {
                 case "Acoustic_Bass_Drum":
                     return Percussion.Acoustic_Bass_Drum;
