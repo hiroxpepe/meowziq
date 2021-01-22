@@ -43,6 +43,10 @@ namespace Meowziq.Core {
             set => data.Note.Text = value;
         }
 
+        public string Auto {
+            set => data.Auto.Text = value;
+        }
+
         public int Oct {
             set => data.Note.Oct = value; // デフォルト値は 0
         }

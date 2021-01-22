@@ -16,15 +16,21 @@ namespace Meowziq.Value {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        Note note;
+        Note note; // note記述：Key 旋法の度数指定 ⇒ 歌メロなどを想定
+
+        Auto auto; // auto記述：Span 旋法の度数指定 ⇒ ベースラインなどを想定
 
         Chord chord;
 
         Exp exp;
 
-        Percussion[] percussionArray;
+        Percussion[] percussionArray; // data記述：ドラム Track パーカッション　Note No
 
-        string[] noteArray;
+        string[] beatArray; // data記述：ドラム音符
+
+        string[] noteArray; // data記述：Key 旋法の度数指定 ⇒ 歌メロなどを想定
+
+        string[] autoArray; // data記述：Span 旋法の度数指定 ⇒ ベースラインなどを想定
 
         int[] octArray;
 
@@ -37,6 +43,7 @@ namespace Meowziq.Value {
 
         public Data() {
             this.note = new Note();
+            this.auto = new Auto();
             this.chord = new Chord();
             this.exp = new Exp();
         }
@@ -47,6 +54,11 @@ namespace Meowziq.Value {
         public Note Note {
             get => note;
             set => note = value;
+        }
+
+        public Auto Auto {
+            get => auto;
+            set => auto = value;
         }
 
         public Chord Chord {
@@ -74,6 +86,14 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
+        /// Beat テキストの配列
+        /// </summary>
+        public string[] BeatArray {
+            get => beatArray;
+            set => beatArray = value;
+        }
+
+        /// <summary>
         /// Note テキストの配列
         /// </summary>
         public string[] NoteArray {
@@ -82,7 +102,15 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// Note テキストのオクターブ設定
+        /// Auto テキストの配列
+        /// </summary>
+        public string[] AutoArray {
+            get => autoArray;
+            set => autoArray = value;
+        }
+
+        /// <summary>
+        /// Note, Auto テキストのオクターブ設定
         /// </summary>
         public int[] OctArray {
             get => octArray;
@@ -94,14 +122,13 @@ namespace Meowziq.Value {
                 } else if (value.Length != noteArray.Length) {
                     throw new ArgumentException("noteOctArray must be same count as noteTextArray.");
                 } else {
-                    // TODO: バリデーション
-                    octArray = value;
+                    octArray = value; // TODO: バリデーション
                 }
             }
         }
 
         /// <summary>
-        /// Note テキストの前方音価設定
+        /// Note, Auto テキストの前方音価設定
         /// </summary>
         public string[] PreArray {
             get => preArray;
@@ -119,7 +146,7 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// Note テキストの後方音価設定
+        /// Note, Auto テキストの後方音価設定
         /// </summary>
         public string[] PostArray {
             get => postArray;
@@ -273,7 +300,7 @@ namespace Meowziq.Value {
     }
 
     /// <summary>
-    /// NOTE: 個別にプロパティ設定が必要
+    /// Keyの旋法で度数数値を Note No に変換します
     /// </summary>
     public class Note {
 
@@ -286,6 +313,49 @@ namespace Meowziq.Value {
         }
 
         public Note(string text, int oct) {
+            Text = text;
+            Oct = oct;
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Properties [noun, adjective] 
+
+        public string Text {
+            get; set;
+        }
+
+        public int Oct {
+            get; set;
+        }
+
+        public int Interval {
+            get => Oct * 12; // オクターブを音程差に変換
+        }
+
+        public char[] TextCharArray {
+            get {
+                if (Text == "") {
+                    return null;
+                }
+                return Utils.Filter(Text).ToCharArray();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Spanの旋法で度数数値を Note No に変換します
+    /// </summary>
+    public class Auto {
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Constructor
+
+        public Auto() {
+            Text = "";
+            Oct = 0;
+        }
+
+        public Auto(string text, int oct) {
             Text = text;
             Oct = oct;
         }
@@ -410,6 +480,9 @@ namespace Meowziq.Value {
             get;
         }
 
+        /// <summary>
+        /// MEMO: ここで char 配列が返せれば Generator 側は問題ない
+        /// </summary>
         public char[] TextCharArray {
             get {
                 if (Way == Way.Mono || Way == Way.Multi || Way == Way.Drum) {

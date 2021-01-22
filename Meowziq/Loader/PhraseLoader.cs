@@ -31,18 +31,21 @@ namespace Meowziq.Loader {
             _phrase.Type = phrase.Type;
             _phrase.Name = phrase.Name;
             _phrase.Note = validateValue(phrase.Note); // TODO: バリデートの移動
+            _phrase.Auto = validateValue(phrase.Auto); // TODO: バリデートの移動
             _phrase.Oct = phrase.Oct;
             _phrase.Chord = phrase.Chord;
             _phrase.Range = phrase.Range;
             _phrase.Pre = phrase.Pre;
             _phrase.Post = phrase.Post;
             if (phrase.Data != null) { // 複合データがある場合
-                _phrase.Data.NoteArray = phrase.Data.NoteArray.Select(x => validateValue(x)).ToArray();
+                _phrase.Data.NoteArray = phrase.Data.NoteArray.Select(x => validateValue(x)).ToArray(); // TODO: バリデートの移動
+                _phrase.Data.AutoArray = phrase.Data.AutoArray;
                 _phrase.Data.OctArray = phrase.Data.OctArray;
                 _phrase.Data.PreArray = phrase.Data.PreArray;
                 _phrase.Data.PostArray = phrase.Data.PostArray;
                 if (phrase.Data.InstArray != null) { // ドラム用音名データがある場合
                     _phrase.Data.PercussionArray = phrase.Data.InstArray.Select(x => Percussion.Enum.Parse(x)).ToArray();
+                    _phrase.Data.BeatArray = phrase.Data.BeatArray;
                 }
             }
             return _phrase;
@@ -109,6 +112,10 @@ namespace Meowziq.Loader {
             public string Note {
                 get; set;
             }
+            [DataMember(Name = "auto")]
+            public string Auto {
+                get; set;
+            }
             [DataMember(Name = "oct")]
             public int Oct {
                 get; set;
@@ -137,8 +144,16 @@ namespace Meowziq.Loader {
             public string[] InstArray {
                 get; set;
             }
+            [DataMember(Name = "beat")]
+            public string[] BeatArray {
+                get; set;
+            }
             [DataMember(Name = "note")]
             public string[] NoteArray {
+                get; set;
+            }
+            [DataMember(Name = "auto")]
+            public string[] AutoArray {
                 get; set;
             }
             [DataMember(Name = "oct")]

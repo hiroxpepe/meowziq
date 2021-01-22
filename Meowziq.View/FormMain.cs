@@ -156,7 +156,7 @@ namespace Meowziq.View {
                             pianoControl.Send(x); // ドラム以外はピアノロールに表示
                         }
                         if (x.MidiChannel == 2) {
-                            Log.Info($"Data1: {x.Data1} Data2: {x.Data2}");
+                            Log.Debug($"Data1: {x.Data1} Data2: {x.Data2}");
                         }
                     });
                 }
@@ -199,7 +199,7 @@ namespace Meowziq.View {
                     x.Song = _song; // Song データを設定
                     x.Build(tick); // MIDI データを構築
                 });
-                Log.Info("load! :)");
+                Log.Debug("load! :)");
             });
         }
 

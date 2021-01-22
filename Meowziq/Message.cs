@@ -69,8 +69,8 @@ namespace Meowziq {
             if (!hashSet.Add(tick)) {
                 return; // 既に処理した tick なので無視する
             }
-            // tick が1小節ごとに切り替え TODO: 処理の最適化をして * 1 にする
-            if (tick % (Length.Of4beat.Int32() * 4) == 0) { // MEMO: ここを * 2 にすれば 2拍毎、* 1 にすれば 1拍毎に切り替えれる
+            // tick が2拍ごとに切り替え MEMO: * 4 にすれば 1小節毎、* 1 にすれば 1拍毎に切り替えれる
+            if (tick % (Length.Of4beat.Int32() * 2) == 0) {
                 change();
                 load(tick);
             }
