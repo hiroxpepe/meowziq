@@ -7,6 +7,53 @@ using Sanford.Multimedia.Midi;
 using Meowziq.Core;
 
 namespace Meowziq {
+
+    /// <summary>
+    /// Item クラス
+    /// </summary>
+    public class Item : Dictionary<int, List<ChannelMessage>> {　// TODO: TValue
+
+        HashSet<int> hashSet = new HashSet<int>();
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Indexers [this]
+
+        public new List<ChannelMessage> this[int key] {
+            get {
+                // TODO: key がない時 null を返す
+                if (true) {
+                    // MEMO: どうやって？ hashSet には Add 出来ない　⇒ 例外捕捉
+                }
+                return base[key];
+            }
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Methods [verb]
+
+        public bool NeedlessKey(int key) {
+            return !ContainsKey(key); // key があれば必要ない
+        }
+
+        public new void Add(int key, List<ChannelMessage> value) {
+            hashSet.Add(key);
+            base.Add(key, value);
+        }
+
+        /// <summary>
+        /// key があれば true、なければ false を返します
+        /// </summary>
+        public new bool ContainsKey(int key) {
+            return !hashSet.Add(key);　// HashSet に Add 出来た時には true を返すから
+        }
+
+        public new void Clear() {
+            hashSet.Clear();
+            base.Clear();
+        }
+
+    }
+
     /// <summary>
     /// Sanford.Multimedia.Midi を使用した Message クラス
     /// </summary>
@@ -180,7 +227,7 @@ namespace Meowziq {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Fields
 
-            static Dictionary<int, List<ChannelMessage>> item = new Dictionary<int, List<ChannelMessage>>(); // Tick 毎の メッセージのリスト
+            static Item item = new Item(); // Tick 毎の メッセージのリスト
 
             static HashSet<int> hashSet = new HashSet<int>(); // ※Dictionary.ContainsKey() が遅いのでその対策
 
@@ -196,7 +243,7 @@ namespace Meowziq {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Properties [noun, adjective] 
 
-            public static Dictionary<int, List<ChannelMessage>> Item {
+            public static Item Item {
                 get => item;
                 set => item = value;
             }
@@ -226,7 +273,7 @@ namespace Meowziq {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Fields
 
-            static Dictionary<int, List<ChannelMessage>> item = new Dictionary<int, List<ChannelMessage>>(); // Tick 毎の メッセージのリスト
+            static Item item = new Item(); // Tick 毎の メッセージのリスト
 
             static HashSet<int> hashSet = new HashSet<int>(); // ※Dictionary.ContainsKey() が遅いのでその対策
 
@@ -242,7 +289,7 @@ namespace Meowziq {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Properties [noun, adjective] 
 
-            public static Dictionary<int, List<ChannelMessage>> Item {
+            public static Item Item {
                 get => item;
                 set => item = value;
             }

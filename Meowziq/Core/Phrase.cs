@@ -6,6 +6,10 @@ using System.Linq;
 using Meowziq.Value;
 
 namespace Meowziq.Core {
+
+    public class Item : Dictionary<int, List<Note>> {
+    }
+
     /// <summary>
     /// Phrase クラス
     ///     + キーと旋法は外部から与えられる
@@ -18,7 +22,11 @@ namespace Meowziq.Core {
 
         Data data; // json から読み込んだデータを格納
 
-        List<Note> noteList; // Pattern の設定回数分の Note を格納
+        List<Note> noteList; // Pattern の設定回数分の Note を格納　TODO: tick キーのディクショナリ化？
+
+        Item noteItem = new Item(); // Tick 毎の Note のリスト
+
+        HashSet<int> hashSet = new HashSet<int>(); // ※Dictionary.ContainsKey() が遅いのでその対策
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
@@ -26,6 +34,8 @@ namespace Meowziq.Core {
         public Phrase() {
             this.data = new Data(); // json から詰められるデータ
             this.noteList = new List<Note>();
+            this.noteItem = new Item();
+            this.hashSet = new HashSet<int>();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -137,6 +147,8 @@ namespace Meowziq.Core {
 
         /// <summary>
         /// シンコペーションで被る Note を除外します
+        /// NOTE: all sound off された後の tick の note を消せばよい
+        /// 
         /// TODO: この処理の高速化が必要：List が遅い？ LINQ が遅い？
         /// </summary>
         public void RemoveBy(Note target) {
