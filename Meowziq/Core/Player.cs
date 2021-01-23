@@ -160,7 +160,7 @@ namespace Meowziq.Core {
 
             int length; // 処理してる Pattern の長さ
 
-            int max; // 処理してる Pattern の総定する最大の長さ　※　Pattern　は最大16小節まで
+            int max; // 処理してる Pattern の想定する最大の長さ ※ Pattern は最大16小節まで
 
             string previousName; // 前回処理した Pattern の名前
 

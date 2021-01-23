@@ -10,33 +10,58 @@ namespace Meowziq {
 
     /// <summary>
     /// Item クラス
+    /// NOTE: Add された Value を一度だけ取り出す Dictionary
     /// </summary>
-    public class Item : Dictionary<int, List<ChannelMessage>> {　// TODO: TValue
+    public class Item<TValue> : Dictionary<int, List<TValue>> {
 
-        HashSet<int> hashSet = new HashSet<int>();
+        HashSet<int> toAddHashSet; // 追加した判定
+
+        HashSet<int> takeOutHashSet; // 取り出した判定
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Indexers [this]
+        // Constructor
 
-        public new List<ChannelMessage> this[int key] {
-            get {
-                // TODO: key がない時 null を返す
-                if (true) {
-                    // MEMO: どうやって？ hashSet には Add 出来ない　⇒ 例外捕捉
-                }
-                return base[key];
-            }
+        public Item() {
+            toAddHashSet = new HashSet<int>(); // 追加した判定
+            takeOutHashSet = new HashSet<int>(); // 取り出した判定
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
 
-        public bool NeedlessKey(int key) {
-            return !ContainsKey(key); // key があれば必要ない
+        /// <summary>
+        /// key の List に value を追加します
+        /// </summary>
+        public void Add(int key, TValue value) {
+            if (!ContainsKey(key)) { // key がなければ
+                var _newList = new List<TValue>(); // List を新規作成
+                _newList.Add(value); // List に value を追加
+                Add(key, _newList); // Item に新規追加
+            } else {
+                var _list = this[key];　// Item から key の List を取得
+                _list.Add(value); // List に value を追加
+            }
         }
 
-        public new void Add(int key, List<ChannelMessage> value) {
-            hashSet.Add(key);
+        /// <summary>
+        /// 1回だけ key の Value を返します
+        /// </summary>
+        public List<TValue> GetOnce(int key) {
+            if (!takeOutHashSet.Add(key)) { // 取り出したことを判定する hashSet で false なら
+                return null; // 既に1回取り出したので null を返す
+            }
+            if (!ContainsKey(key)) {
+                return null; // key に存在しない場合は null を返す
+            }
+            return this[key]; // 初回なら key の value を返す
+        }
+
+        /// <summary>
+        /// key と value を追加します
+        /// TODO: 重複 key は？
+        /// </summary>
+        public new void Add(int key, List<TValue> value) {
+            toAddHashSet.Add(key); // key を追加したフラグを追加
             base.Add(key, value);
         }
 
@@ -44,14 +69,17 @@ namespace Meowziq {
         /// key があれば true、なければ false を返します
         /// </summary>
         public new bool ContainsKey(int key) {
-            return !hashSet.Add(key);　// HashSet に Add 出来た時には true を返すから
+            return toAddHashSet.Contains(key); // HashSet.Contains() は高速
         }
 
+        /// <summary>
+        /// 内容を初期化します
+        /// </summary>
         public new void Clear() {
-            hashSet.Clear();
+            toAddHashSet.Clear();
+            takeOutHashSet.Clear();
             base.Clear();
         }
-
     }
 
     /// <summary>
@@ -78,24 +106,14 @@ namespace Meowziq {
 
         /// <summary>
         /// 引数の tick の ChannelMessage のリストを返します
+        /// NOTE: 引数 tick の ChannelMessage のリストが存在しなければ null を返します
         /// </summary>
         public static List<ChannelMessage> GetBy(int tick) {
             if (flag) { // Prime スタートで実行
-                if (!Prime.HashSet.Add(tick)) {
-                    return null; // 既に処理した tick なので無視する
-                }
-                if (Prime.Item.ContainsKey(tick)) { // その tick が存在するかどうか
-                    return Prime.Item[tick];
-                }
+                return Prime.Item.GetOnce(tick);
             } else {
-                if (!Second.HashSet.Add(tick)) {
-                    return null; // 既に処理した tick なので無視する
-                }
-                if (Second.Item.ContainsKey(tick)) { // その tick が存在するかどうか
-                    return Second.Item[tick];
-                }
+                return Second.Item.GetOnce(tick);
             }
-            return null;
         }
 
         /// <summary>
@@ -137,7 +155,7 @@ namespace Meowziq {
             if (!flag) {
                 if (note.StopPre) { // ノートが優先発音の場合
                     var _noteOffTick = note.Tick - Length.Of32beat.Int32(); // 念のため32分音符前に停止
-                    if (Prime.AllNoteOffHashsetArray[midiCh].Add(_noteOffTick)) { // MIDI ch 毎にこの tick のノート強制停止は一回のみ 
+                    if (Prime.AllNoteOffToAddArray[midiCh].Add(_noteOffTick)) { // MIDI ch 毎にこの tick のノート強制停止は一回のみ 
                         if (midiCh != 9) { // ドラム以外
                             add(_noteOffTick, new ChannelMessage(ChannelCommand.Controller, midiCh, 120));
                         }
@@ -148,7 +166,7 @@ namespace Meowziq {
             } else { // Second スタートで実行
                 if (note.StopPre) { // ノートが優先発音の場合
                     var _noteOffTick = note.Tick - Length.Of32beat.Int32(); // 念のため32分音符前に停止
-                    if (Second.AllNoteOffHashsetArray[midiCh].Add(_noteOffTick)) { // MIDI ch 毎にこの tick のノート強制停止は一回のみ 
+                    if (Second.AllNoteOffToAddArray[midiCh].Add(_noteOffTick)) { // MIDI ch 毎にこの tick のノート強制停止は一回のみ 
                         if (midiCh != 9) { // ドラム以外
                             add(_noteOffTick, new ChannelMessage(ChannelCommand.Controller, midiCh, 120));
                         }
@@ -185,23 +203,9 @@ namespace Meowziq {
         /// </summary>
         static void add(int tick, ChannelMessage channelMessage) {
             if (!flag) {
-                if (!Prime.Item.ContainsKey(tick)) {
-                    var _newList = new List<ChannelMessage>();
-                    _newList.Add(channelMessage);
-                    Prime.Item.Add(tick, _newList); // 新規追加
-                } else {
-                    var _list = Prime.Item[tick];
-                    _list.Add(channelMessage); // 追加
-                }
+                Prime.Item.Add(tick, channelMessage);
             } else { // Second スタートで実行
-                if (!Second.Item.ContainsKey(tick)) {
-                    var _newList = new List<ChannelMessage>();
-                    _newList.Add(channelMessage);
-                    Second.Item.Add(tick, _newList); // 新規追加
-                } else {
-                    var _list = Second.Item[tick];
-                    _list.Add(channelMessage); // 追加
-                }
+                Second.Item.Add(tick, channelMessage);
             }
         }
 
@@ -227,35 +231,28 @@ namespace Meowziq {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Fields
 
-            static Item item = new Item(); // Tick 毎の メッセージのリスト
+            static Item<ChannelMessage> item = new Item<ChannelMessage>(); // Tick 毎の メッセージのリスト
 
-            static HashSet<int> hashSet = new HashSet<int>(); // ※Dictionary.ContainsKey() が遅いのでその対策
-
-            static HashSet<int>[] allNoteOffHashsetArray = new HashSet<int>[16]; // ノート強制停止用配列
+            static HashSet<int>[] allNoteOffToAddArray = new HashSet<int>[16]; // ノート強制停止用配列
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Constructor
 
             static Prime() {
-                allNoteOffHashsetArray = allNoteOffHashsetArray.Select(x => x = new HashSet<int>()).ToArray();
+                allNoteOffToAddArray = allNoteOffToAddArray.Select(x => x = new HashSet<int>()).ToArray();
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Properties [noun, adjective] 
 
-            public static Item Item {
+            public static Item<ChannelMessage> Item {
                 get => item;
                 set => item = value;
             }
 
-            public static HashSet<int> HashSet {
-                get => hashSet;
-                set => hashSet = value;
-            }
-
-            public static HashSet<int>[] AllNoteOffHashsetArray {
-                get => allNoteOffHashsetArray;
-                set => allNoteOffHashsetArray = value;
+            public static HashSet<int>[] AllNoteOffToAddArray {
+                get => allNoteOffToAddArray;
+                set => allNoteOffToAddArray = value;
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
@@ -263,8 +260,7 @@ namespace Meowziq {
 
             public static void Clear() {
                 item.Clear();
-                hashSet.Clear();
-                allNoteOffHashsetArray.ToList().ForEach(x => x.Clear());
+                allNoteOffToAddArray.ToList().ForEach(x => x.Clear());
             }
         }
 
@@ -273,35 +269,28 @@ namespace Meowziq {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Fields
 
-            static Item item = new Item(); // Tick 毎の メッセージのリスト
+            static Item<ChannelMessage> item = new Item<ChannelMessage>(); // Tick 毎の メッセージのリスト
 
-            static HashSet<int> hashSet = new HashSet<int>(); // ※Dictionary.ContainsKey() が遅いのでその対策
-
-            static HashSet<int>[] allNoteOffHashsetArray = new HashSet<int>[16]; // ノート強制停止用配列
+            static HashSet<int>[] allNoteOffToAddArray = new HashSet<int>[16]; // ノート強制停止用配列
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Constructor
 
             static Second() {
-                allNoteOffHashsetArray = allNoteOffHashsetArray.Select(x => x = new HashSet<int>()).ToArray();
+                allNoteOffToAddArray = allNoteOffToAddArray.Select(x => x = new HashSet<int>()).ToArray();
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Properties [noun, adjective] 
 
-            public static Item Item {
+            public static Item<ChannelMessage> Item {
                 get => item;
                 set => item = value;
             }
 
-            public static HashSet<int> HashSet {
-                get => hashSet;
-                set => hashSet = value;
-            }
-
-            public static HashSet<int>[] AllNoteOffHashsetArray {
-                get => allNoteOffHashsetArray;
-                set => allNoteOffHashsetArray = value;
+            public static HashSet<int>[] AllNoteOffToAddArray {
+                get => allNoteOffToAddArray;
+                set => allNoteOffToAddArray = value;
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
@@ -309,8 +298,7 @@ namespace Meowziq {
 
             public static void Clear() {
                 item.Clear();
-                hashSet.Clear();
-                allNoteOffHashsetArray.ToList().ForEach(x => x.Clear());
+                allNoteOffToAddArray.ToList().ForEach(x => x.Clear());
             }
         }
     }
