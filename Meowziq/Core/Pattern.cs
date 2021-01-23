@@ -24,8 +24,8 @@ namespace Meowziq.Core {
         /// NOTE: コンストラクタだけが作成する唯一の方法
         /// </summary>
         public Pattern(string name, List<Meas> measList) {
-            if (measList.Count > Env.MaxMeas.Int32()) {
-                throw new ArgumentException($"measure counts are until {Env.MaxMeas.Int32()}."); // 1パターンは12小節まで
+            if (measList.Count > Env.MeasMax.Int32()) {
+                throw new ArgumentException($"measure counts are until {Env.MeasMax.Int32()}."); // 1パターンは12小節まで
             }
             this.name = name;
             this.measList = measList;

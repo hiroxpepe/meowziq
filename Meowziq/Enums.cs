@@ -7,7 +7,7 @@ namespace Meowziq {
     // public Enums [noun]
 
     public enum Env {
-        MaxMeas = 12,
+        MeasMax = 12,
     }
 
     public enum Way {

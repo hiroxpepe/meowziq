@@ -66,6 +66,8 @@ namespace Meowziq.Core {
         /// MIDI ノートを生成します
         /// NOTE: Phrase は前後の関連があるのでシンコペーションなどで MIDI 化前に Note を調整する必要あり
         /// NOTE: Player と Phrase の type が一致ものしか入ってない
+        /// 
+        /// MEMO: SMF出力の場合はここは1回呼ぶだけで良い
         /// </summary>
         public void Build(int tick, bool save = false) {
             // 音色変更
@@ -171,7 +173,7 @@ namespace Meowziq.Core {
                 this.currentTick = tick;
                 this.headTick = 0;
                 this.length = 0;
-                this.max = tick + Length.Of4beat.Int32() * 4 * Env.MaxMeas.Int32(); // Pattern の最大の長さ ※最大12小節まで
+                this.max = tick + Length.Of4beat.Int32() * 4 * Env.MeasMax.Int32(); // Pattern の最大の長さ ※最大12小節まで
                 this.previousName = "";
                 this.save = save;
             }
