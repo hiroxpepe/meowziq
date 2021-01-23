@@ -7,9 +7,6 @@ using Meowziq.Value;
 
 namespace Meowziq.Core {
 
-    public class Item : Dictionary<int, List<Note>> {
-    }
-
     /// <summary>
     /// Phrase クラス
     ///     + キーと旋法は外部から与えられる
@@ -24,9 +21,9 @@ namespace Meowziq.Core {
 
         List<Note> noteList; // Pattern の設定回数分の Note を格納　TODO: tick キーのディクショナリ化？
 
-        Item noteItem = new Item(); // Tick 毎の Note のリスト
+        Item<Note> noteItem; // Tick 毎の Note のリスト
 
-        HashSet<int> hashSet = new HashSet<int>(); // ※Dictionary.ContainsKey() が遅いのでその対策
+        HashSet<int> hashSet; // ※Dictionary.ContainsKey() が遅いのでその対策
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
@@ -34,7 +31,7 @@ namespace Meowziq.Core {
         public Phrase() {
             this.data = new Data(); // json から詰められるデータ
             this.noteList = new List<Note>();
-            this.noteItem = new Item();
+            this.noteItem = new Item<Note>();
             this.hashSet = new HashSet<int>();
         }
 
