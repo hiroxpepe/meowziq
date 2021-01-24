@@ -44,6 +44,16 @@ namespace Meowziq {
         }
 
         /// <summary>
+        /// key の Value を返します
+        /// </summary>
+        public List<TValue> Get(int key) {
+            if (!ContainsKey(key)) {
+                return null; // key に存在しない場合は null を返す
+            }
+            return this[key]; // 初回なら key の value を返す
+        }
+
+        /// <summary>
         /// 1回だけ key の Value を返します
         /// </summary>
         public List<TValue> GetOnce(int key) {
@@ -54,6 +64,14 @@ namespace Meowziq {
                 return null; // key に存在しない場合は null を返す
             }
             return this[key]; // 初回なら key の value を返す
+        }
+
+        /// <summary>
+        /// key の value を置き換えます
+        /// </summary>
+        public void Set(int key, List<TValue> value) {
+            this.Remove(key);
+            this.Add(key, value);
         }
 
         /// <summary>
@@ -153,7 +171,7 @@ namespace Meowziq {
         /// </summary>
         public static void Apply(int midiCh, Note note) {
             if (!flag) {
-                if (note.StopPre) { // ノートが優先発音の場合
+                if (note.HasPre) { // ノートが優先発音の場合
                     var _noteOffTick = note.Tick - Length.Of32beat.Int32(); // 念のため32分音符前に停止
                     if (Prime.AllNoteOffToAddArray[midiCh].Add(_noteOffTick)) { // MIDI ch 毎にこの tick のノート強制停止は一回のみ 
                         if (midiCh != 9) { // ドラム以外
@@ -162,9 +180,9 @@ namespace Meowziq {
                     }
                 }
                 add(note.Tick, new ChannelMessage(ChannelCommand.NoteOn, midiCh, note.Num, 127)); // ノートON
-                add(note.Tick + note.Gate, new ChannelMessage(ChannelCommand.NoteOff, midiCh, note.Num, 0)); // ノートOFF
+                add(note.Tick + note.Gate, new ChannelMessage(ChannelCommand.NoteOff, midiCh, note.Num, 0)); // ノートOFF ※この位置
             } else { // Second スタートで実行
-                if (note.StopPre) { // ノートが優先発音の場合
+                if (note.HasPre) { // ノートが優先発音の場合
                     var _noteOffTick = note.Tick - Length.Of32beat.Int32(); // 念のため32分音符前に停止
                     if (Second.AllNoteOffToAddArray[midiCh].Add(_noteOffTick)) { // MIDI ch 毎にこの tick のノート強制停止は一回のみ 
                         if (midiCh != 9) { // ドラム以外
@@ -173,7 +191,7 @@ namespace Meowziq {
                     }
                 }
                 add(note.Tick, new ChannelMessage(ChannelCommand.NoteOn, midiCh, note.Num, 127)); // ノートON
-                add(note.Tick + note.Gate, new ChannelMessage(ChannelCommand.NoteOff, midiCh, note.Num, 0)); // ノートOFF
+                add(note.Tick + note.Gate, new ChannelMessage(ChannelCommand.NoteOff, midiCh, note.Num, 0)); // ノートOFF ※この位置
             }
         }
 

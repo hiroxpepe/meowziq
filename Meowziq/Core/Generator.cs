@@ -14,13 +14,13 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        List<Note> noteList;
+        Item<Note> noteItem;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
-        public Generator(List<Note> noteList) {
-            this.noteList = noteList;
+        public Generator(Item<Note> noteItem) {
+            this.noteItem = noteItem;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -68,8 +68,9 @@ namespace Meowziq.Core {
                     }
                     if (param.Exp.HasPost) { // TODO: post設定があれば ロングノート
                     }
-                    _noteNumArray.Where(x => x != -1).ToList().ForEach(x => add(new Note(
-                        _gate.Pre + tick + Utils.To16beatLength(_16beatIdx.Idx), x + param.Interval, _gate.Value, 127, _gate.StopPre
+                    var _tick = _gate.PreLength + tick + Utils.To16beatLength(_16beatIdx.Idx);
+                    _noteNumArray.Where(x => x != -1).ToList().ForEach(x => 
+                        add(_tick, new Note(_tick, x + param.Interval, _gate.Value, 127, _gate.PreCount
                     )));
                 }
             }
@@ -89,9 +90,8 @@ namespace Meowziq.Core {
                             _gate.ApplyPre(_pre.ToString());
                         }
                     }
-                    add(new Note(
-                        _gate.Pre + tick + Utils.To16beatLength(_16beatIdx.Idx), param.PercussionNoteNum, _gate.Value, 127, _gate.StopPre
-                    ));
+                    var _tick = _gate.PreLength + tick + Utils.To16beatLength(_16beatIdx.Idx);
+                    add(_tick, new Note(_tick, param.PercussionNoteNum, _gate.Value, 127, _gate.PreCount));
                 }
             }
         }
@@ -103,9 +103,8 @@ namespace Meowziq.Core {
             for (var _16beatIdx = new Index(beatCount); _16beatIdx.HasNext; _16beatIdx.Increment()) {
                 var _span = spanList[_16beatIdx.SpanIdx]; // 16beat 4個で1拍進む
                 var _note = Utils.ToNoteRandom(_span.Key, _span.Degree, _span.KeyMode, _span.SpanMode, _span.AutoMode); // 16の倍数
-                add(new Note(
-                    tick + Utils.To16beatLength(_16beatIdx.Idx), _note, 30, 127
-                )); // gate 短め
+                var _tick = tick + Utils.To16beatLength(_16beatIdx.Idx);
+                add(_tick, new Note(_tick, _note, 30, 127)); // gate 短め
             }
         }
 
@@ -155,8 +154,8 @@ namespace Meowziq.Core {
         /// <summary>
         /// Note リストに追加します
         /// </summary>
-        void add(Note note) {
-            noteList.Add(note);
+        void add(int tick, Note note) {
+            noteItem.Add(tick, note);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -178,7 +177,7 @@ namespace Meowziq.Core {
 
             int preLength;
 
-            bool stopPre;
+            int preCount;
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Constructor
@@ -188,13 +187,13 @@ namespace Meowziq.Core {
                 this.searchIdx = searchIdx + 1; // +1 はテキスト数値文字の分
                 this.gateCount = 0;
                 this.preLength = 0;
-                this.stopPre = false;
+                this.preCount = 0;
             }
 
             public Gete() {
                 this.gateCount = 0;
                 this.preLength = 0;
-                this.stopPre = false;
+                this.preCount = 0;
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
@@ -217,15 +216,18 @@ namespace Meowziq.Core {
             }
 
             /// <summary>
-            /// Note を前方に移動する数値を返します
+            /// Note を前方に移動する数値 tick を返します
             /// NOTE: シンコペーション
             /// </summary>
-            public int Pre {
+            public int PreLength {
                 get => preLength;
             }
 
-            public bool StopPre {
-                get => stopPre;
+            /// <summary>
+            /// シンコペーションの数値設定
+            /// </summary>
+            public int PreCount {
+                get => preCount;
             }
 
             public int Value {
@@ -243,7 +245,7 @@ namespace Meowziq.Core {
                 gateCount += _preInt; // pre の数値を音価に加算
                 preLength = -Utils.To16beatLength(_preInt); // pre の数値 * 16beat分前にする
                 if (preLength != 0) {
-                    stopPre = true; // シンコぺがある場合は優先発音フラグON
+                    this.preCount = _preInt; // シンコペーションの数値設定
                 }
             }
 

@@ -80,14 +80,14 @@ namespace Meowziq.Core {
                     _locate.BeatCount = _pattern.BeatCount;
                     _pattern.AllMeas.ForEach(x => x.AllSpan.ForEach(_x => { _x.Key = _section.Key; _x.KeyMode = _section.KeyMode; })); // Span に この Section のキーと旋法を追加
                     if (_locate.Changed) { // 演奏 tick とデータ処理の tick が一致した ⇒ パターン切り替え
-                        Log.Info($"pattarn changed. tick: {tick} {_pattern.Name} {type}");
+                        Log.Trace($"pattarn changed. tick: {tick} {_pattern.Name} {type}");
                     }
                     foreach (var _phrase in phraseList.Where(x => x.Name.Equals(_pattern.Name))) { // Pattern の名前で Phrase を引き当てる
                         if (save) { // NOTE: 全て Build 
                             _phrase.Build(_locate.Head, _pattern); // SMF出力モードの場合全ての tick で処理ログ出力無し
                         } else if (_locate.NeedBuild) { // この tick が含まれてる、かつ _tickOfPatternHead に16小節(パターン最大長)を足した長さ以下 pattern のみ Build する 
                             _phrase.Build(_locate.Head, _pattern); // Note データを作成：tick 毎に数回分の Pattern のデータが作成される
-                            Log.Info($"Build: tick: {tick} head: {_locate.Head} to end: {_locate.end} {_pattern.Name} {type}");
+                            Log.Trace($"Build: tick: {tick} head: {_locate.Head} to end: {_locate.end} {_pattern.Name} {type}");
                         }
                         if (!_locate.Name.Equals("") && (save || _locate.NeedBuild)) {　//　FIXME: tick で判定しないと全検索になってる
                             var _previousPhraseList = phraseList.Where(x => x.Name.Equals(_locate.Name)).ToList(); // 一つ前の Phrase を引き当てる 
@@ -102,19 +102,17 @@ namespace Meowziq.Core {
                     _locate.Next(); // Pattern の長さ分 Pattern 開始 tick を移動する
                 }
             }
-            // Note データ適用のループ
-            foreach (var _pattern in song.AllPattern) { // 演奏順に並んだ Pattern のリスト
-                foreach (var _phrase in phraseList.Where(x => x.Name.Equals(_pattern.Name))) { // Pattern の名前で Phrase を引き当てる
-                    var _noteList = _phrase.AllNote;
-                    var _hashSet = new HashSet<int>();
-                    foreach (Note _note in _noteList) {
-                        Message.Apply(midiCh, _note); // message に適用
-                        if (_hashSet.Add(_note.Tick)) { // tick につき1回だけ
-                            Message.Apply(midiCh, _note.Tick, programNum); // 音色変更:演奏中 FIXME: なぜここでないとNG?
-                        }
+            // Note データ適用のループ NOTE: Pattern を回す必要はない
+            foreach (var _phrase in phraseList) {
+                var _noteList = _phrase.AllNote;
+                var _hashSet = new HashSet<int>();
+                foreach (Note _note in _noteList) {
+                    Message.Apply(midiCh, _note); // message に適用
+                    if (_hashSet.Add(_note.Tick)) { // tick につき1回だけ
+                        Message.Apply(midiCh, _note.Tick, programNum); // 音色変更:演奏中 FIXME: なぜここでないとNG?
                     }
-                    _noteList.Clear(); // 必要
                 }
+                _noteList.Clear(); // 必要
             }
         }
 
@@ -132,7 +130,7 @@ namespace Meowziq.Core {
         ///       or 最初から Dictionary のリストを返すメソッドを実装しておく？
         /// </summary>
         void optimize(Phrase previous, Phrase current) {
-            foreach (var _stopNote in current.AllNote.Where(x => x.StopPre)) { // 優先ノートのリスト
+            foreach (var _stopNote in current.AllNote.Where(x => x.HasPre)) { // 優先ノートのリスト
                 foreach (var _note in previous.AllNote) { // 直前のフレーズの全てのノートの中で
                     if (_note.Tick == _stopNote.Tick) { // 優先ノートと発音タイミングがかぶったら
                         previous.RemoveBy(_note); // ノートを削除
