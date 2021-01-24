@@ -19,9 +19,7 @@ namespace Meowziq.Core {
 
         Data data; // json から読み込んだデータを格納
 
-        List<Note> noteList; // Pattern の設定回数分の Note を格納　TODO: tick キーのディクショナリ化？
-
-        Item<Note> noteItem; // Tick 毎の Note のリスト
+        Item<Note> noteItem; // Tick 毎の Note のリスト、Pattern の設定回数分の Note を格納
 
         HashSet<int> hashSet; // ※Dictionary.ContainsKey() が遅いのでその対策
 
@@ -30,7 +28,6 @@ namespace Meowziq.Core {
 
         public Phrase() {
             this.data = new Data(); // json から詰められるデータ
-            this.noteList = new List<Note>();
             this.noteItem = new Item<Note>();
             this.hashSet = new HashSet<int>();
         }
@@ -124,10 +121,11 @@ namespace Meowziq.Core {
         /// </summary>
         public List<Note> AllNote {
             get {
+                // TODO: 返すたびに optimize 必要？ ⇒ 必要ない：修正が必要
                 if (!Type.ToLower().Contains("drum")) { // ドラム以外 TODO: これで良いか確認
                     optimize(); // 最適化する
                 }
-                return noteList;
+                return noteItem.SelectMany(x => x.Value).Select(x => x).ToList();
             }
         }
 
@@ -145,17 +143,21 @@ namespace Meowziq.Core {
         /// <summary>
         /// シンコペーションで被る Note を除外します
         /// NOTE: all sound off された後の tick の note を消せばよい
-        /// 
         /// TODO: この処理の高速化が必要：List が遅い？ LINQ が遅い？
+        /// FIXME: バグあり ⇒ シンコペーションは小節の頭だけ許可する
         /// </summary>
         public void RemoveBy(Note target) {
-            noteList = noteList
-                .Where(x => !(!x.StopPre && x.Tick == target.Tick)) // FIXME: ドラムは音毎？
-                .ToList(); // 優先ノートではなく tick が同じものを削除
-            if (target.Gate > Length.Of8beat.Int32()) { // シンコぺが 符点8分音符 の場合
-                noteList = noteList
-                    .Where(x => !(!x.StopPre && x.Tick == target.Tick + Length.Of16beat.Int32())) // さらに被る16音符を削除
-                    .ToList();
+            var _tick1 = target.Tick;
+            var _noteList1 = noteItem.Get(_tick1);
+            _noteList1 = _noteList1.Where(x => !(!x.HasPre && x.Tick == _tick1)).ToList(); // 優先ノートではなく tick が同じものを削除 // FIXME: ドラムは音毎？
+            noteItem.Set(_tick1, _noteList1);
+            if (target.PreCount > 1) { // さらにシンコぺの設定値が2の場合
+                var _tick2 = target.Tick + Length.Of16beat.Int32();
+                var _noteList2 = noteItem.Get(_tick2);
+                if (_noteList2 != null) {
+                    _noteList2 = _noteList2.Where(x => !(!x.HasPre && x.Tick == _tick2)).ToList(); // さらに被る16音符を削除
+                    noteItem.Set(_tick2, _noteList2);
+                }
             }
         }
 
@@ -170,7 +172,7 @@ namespace Meowziq.Core {
             //    throw new ArgumentException("invalid beatCount.");
             //}
             // NOTE: Way で分岐 TODO: プラグイン拡張出来るように
-            var _generator = new Generator(noteList); // NOTE: コンストラクタで生成ではNG
+            var _generator = new Generator(noteItem); // NOTE: コンストラクタで生成ではNG
             var _way = defineWay();
             switch (_way) {
                 case Way.Mono:
@@ -225,8 +227,9 @@ namespace Meowziq.Core {
         ///       current の シンコペ Note () ← 判定済み
         /// </summary>
         void optimize() {
-            foreach (var _stopNote in noteList.Where(x => x.StopPre)) { // 優先ノートのリスト
-                foreach (var _note in noteList) { // このフレーズの全てのノートの中で
+            var _noteList = noteItem.SelectMany(x => x.Value).Select(x => x).ToList();
+            foreach (var _stopNote in _noteList.Where(x => x.HasPre)) { // 優先ノートのリスト
+                foreach (var _note in _noteList) { // このフレーズの全てのノートの中で
                     if (_note.Tick == _stopNote.Tick) { // 優先ノートと発音タイミングがかぶったら
                         RemoveBy(_note); // ノートを削除
                     }

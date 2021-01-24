@@ -18,7 +18,7 @@ namespace Meowziq.Core {
 
         int velo; // MIDI ノート強さ
 
-        bool stopPre; // 優先発音フラグ
+        int preCount; // シンコペーション設定
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
@@ -26,12 +26,12 @@ namespace Meowziq.Core {
         /// <summary>
         /// NOTE: 作成したら状態は変更できません
         /// </summary>
-        public Note(int tick, int num, int gate, int velo, bool stopPre = false) {
+        public Note(int tick, int num, int gate, int velo, int preCount = 0) {
             this.tick = tick;
             this.num = num;
             this.gate = gate;
             this.velo = velo;
-            this.stopPre = stopPre;
+            this.preCount = preCount;
             Log.Trace($"tick: {tick}");
         }
 
@@ -54,8 +54,12 @@ namespace Meowziq.Core {
             get => velo; // NOTE: 変更操作を提供しません
         }
 
-        public bool StopPre {
-            get => stopPre; // NOTE: 変更操作を提供しません
+        public bool HasPre {
+            get => preCount > 0; // NOTE: 変更操作を提供しません
+        }
+
+        public int PreCount {
+            get => preCount; // NOTE: 変更操作を提供しません
         }
     }
 }
