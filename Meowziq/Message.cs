@@ -69,7 +69,7 @@ namespace Meowziq {
         /// <summary>
         /// key の value を置き換えます
         /// </summary>
-        public void Set(int key, List<TValue> value) {
+        public void SetBy(int key, List<TValue> value) {
             this.Remove(key);
             this.Add(key, value);
         }

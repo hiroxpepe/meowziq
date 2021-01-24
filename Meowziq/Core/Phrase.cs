@@ -150,13 +150,13 @@ namespace Meowziq.Core {
             var _tick1 = target.Tick;
             var _noteList1 = noteItem.Get(_tick1);
             _noteList1 = _noteList1.Where(x => !(!x.HasPre && x.Tick == _tick1)).ToList(); // 優先ノートではなく tick が同じものを削除 // FIXME: ドラムは音毎？
-            noteItem.Set(_tick1, _noteList1);
+            noteItem.SetBy(_tick1, _noteList1);
             if (target.PreCount > 1) { // さらにシンコぺの設定値が2の場合
                 var _tick2 = target.Tick + Length.Of16beat.Int32();
                 var _noteList2 = noteItem.Get(_tick2);
                 if (_noteList2 != null) {
                     _noteList2 = _noteList2.Where(x => !(!x.HasPre && x.Tick == _tick2)).ToList(); // さらに被る16音符を削除
-                    noteItem.Set(_tick2, _noteList2);
+                    noteItem.SetBy(_tick2, _noteList2);
                 }
             }
         }
