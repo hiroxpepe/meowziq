@@ -50,7 +50,7 @@ namespace Meowziq.Loader {
                 .Select(x => x.Replace("  ", " ")) // 1空白を1空白に置き換え
                 .ToArray();
 
-            // 1小節4拍しかないので決め打ち
+            // 1小節4拍しかないので決め打ち // FIXME: 足りないパターンがある [V|V|II|V] とか
             var _spanList = new List<Span>();
             // 4拍全部 "I | | | "
             if (_beatArray[1].Equals(" ") && _beatArray[2].Equals(" ") && _beatArray[3].Equals(" ")) {
@@ -71,6 +71,12 @@ namespace Meowziq.Loader {
                 _spanList.Add(convertSpan(1, _beatArray[0])); // 1拍目
                 _spanList.Add(convertSpan(3, _beatArray[1])); // 2拍目
             }
+            // 1拍と2拍と4拍 "I |V| |V|"
+            else if (!_beatArray[1].Equals(" ") && _beatArray[2].Equals(" ") && !_beatArray[3].Equals(" ")) {
+                _spanList.Add(convertSpan(1, _beatArray[0])); // 1拍目
+                _spanList.Add(convertSpan(2, _beatArray[1])); // 2拍目
+                _spanList.Add(convertSpan(1, _beatArray[3])); // 4拍目
+            } // 4拍全部
             return _spanList;
         }
 
