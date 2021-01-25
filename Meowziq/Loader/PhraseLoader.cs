@@ -30,22 +30,26 @@ namespace Meowziq.Loader {
             var _phrase = new Core.Phrase();
             _phrase.Type = phrase.Type;
             _phrase.Name = phrase.Name;
-            _phrase.Note = validateValue(phrase.Note); // TODO: バリデートの移動
-            _phrase.Auto = validateValue(phrase.Auto); // TODO: バリデートの移動
+            if (phrase.Note != null) {
+                _phrase.Note = phrase.Note; // TODO: バリデート
+            } else if (phrase.Auto != null) {
+                _phrase.Note = phrase.Auto; // TODO: バリデート
+                _phrase.Auto = true;
+            }
             _phrase.Oct = phrase.Oct;
             _phrase.Chord = phrase.Chord;
             _phrase.Range = phrase.Range;
             _phrase.Pre = phrase.Pre;
             _phrase.Post = phrase.Post;
             if (phrase.Data != null) { // 複合データがある場合
-                _phrase.Data.NoteArray = phrase.Data.NoteArray.Select(x => validateValue(x)).ToArray(); // TODO: バリデートの移動
-                _phrase.Data.AutoArray = phrase.Data.AutoArray;
+                _phrase.Data.BeatArray = phrase.Data.BeatArray; // TODO: バリデートの移動
+                _phrase.Data.NoteArray = phrase.Data.NoteArray; // TODO: バリデートの移動
+                _phrase.Data.AutoArray = phrase.Data.AutoArray; // TODO: バリデートの移動
                 _phrase.Data.OctArray = phrase.Data.OctArray;
                 _phrase.Data.PreArray = phrase.Data.PreArray;
                 _phrase.Data.PostArray = phrase.Data.PostArray;
                 if (phrase.Data.InstArray != null) { // ドラム用音名データがある場合
                     _phrase.Data.PercussionArray = phrase.Data.InstArray.Select(x => Percussion.Enum.Parse(x)).ToArray();
-                    _phrase.Data.BeatArray = phrase.Data.BeatArray;
                 }
             }
             return _phrase;

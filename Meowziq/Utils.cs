@@ -24,7 +24,7 @@ namespace Meowziq {
         public static int To16beatLength(int index) {
             return Length.Of16beat.Int32() * index;
         }
-        
+
         /// <summary>
         /// 引数の count 値(1拍)における 16beat の数を返します
         /// </summary>
@@ -43,16 +43,17 @@ namespace Meowziq {
                 Mode _modeDegree = modeSpanBy(degree, keyMode); // キーの旋法と度数から旋法に対応したその度数の旋法を取得
                 _scale7 = scale7By(Key.Enum.Parse(_noteDegree), _modeDegree); // そのルート音の旋法スケールを取得
             } else { // Span の旋法
-                _scale7 = scale7By(Key.Enum.Parse(_noteDegree), spanMode); // そのルート音の旋法スケールを取得※Span に設定した旋法を使用
+                _scale7 = scale7By(Key.Enum.Parse(_noteDegree), spanMode); // そのルート音の旋法スケールを取得 ※Span に設定した旋法を使用
             }
             return noteArryBy(index, _scale7); // 旋法スケールから引数indexに対応したコード構成音の配列を返す
         }
 
         /// <summary>
         /// 1～7の Phrase ノート記法から Note No を取得します
-        /// ※自動的に旋法を決定、Span の旋法両対応
+        /// ※ "auto": 自動的に旋法を決定、Span の旋法両対応
+        /// ※ "note": キーの旋法を自動判定し、その旋法の ノート記法の対応 Note No を返す
         /// </summary>
-        public static int ToNote(Key key, Degree degree, Mode keyMode, Mode spanMode, int index, bool autoMode = true) {
+        public static int ToNote(Key key, Degree degree, Mode keyMode, Mode spanMode, int index, bool autoMode = true, bool autoNote = true) {
             int _noteDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
             int[] _scale7;
             if (autoMode) { // 自動旋法
@@ -60,6 +61,13 @@ namespace Meowziq {
                 _scale7 = scale7By(Key.Enum.Parse(_noteDegree), _modeDegree); // そのルート音の旋法スケールを取得
             } else { // Span の旋法
                 _scale7 = scale7By(Key.Enum.Parse(_noteDegree), spanMode); // そのルート音の旋法スケールを取得※Span に設定した旋法を使用
+            }
+            if (!autoNote) { // 別でキーの旋法を自動判定
+                var _mode = spanMode == Mode.Undefined ? modeSpanBy(degree, keyMode) : spanMode;
+                var _currentKeyMode = ToModeKey(key, degree, keyMode, _mode);
+                if (!_currentKeyMode.ToString().Equals("Undefined")) { // 旋法が判定出来れば
+                    _scale7 = scale7By(key, _currentKeyMode); // 判定した曲の旋法を取得
+                }
             }
             return _scale7[index - 1]; // 0基底のスケール配列から引数添え字のノートを返す
         }
