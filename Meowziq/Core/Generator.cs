@@ -37,7 +37,7 @@ namespace Meowziq.Core {
                     var _noteNumArray = (new int[7]).Select(x => -1).ToArray();  // ノート記述を -1 で初期化: 後ではじく為
                     if (param.IsNote) { // ノート記述
                         _noteNumArray[0] = Utils.ToNote(
-                            _span.Key, _span.Degree, _span.KeyMode, _span.SpanMode, int.Parse(_text.ToString()), _span.AutoMode
+                            _span.Key, _span.Degree, _span.KeyMode, _span.SpanMode, int.Parse(_text.ToString()), _span.AutoMode, param.AutoNote
                         );
                     } else if (param.IsChord) { // コード記述
                         _noteNumArray = Utils.ToNoteArray(

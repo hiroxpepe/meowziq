@@ -16,11 +16,11 @@ namespace Meowziq.Value {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        Note note; // note記述：Key 旋法の度数指定 ⇒ 歌メロなどを想定
+        Note note; // note記述：Key 旋法の度数指定 ⇒ 歌メロなどを想定、auto記述：Span 旋法の度数指定 ⇒ ベースラインなどを想定
 
-        Auto auto; // auto記述：Span 旋法の度数指定 ⇒ ベースラインなどを想定
+        bool auto; // auto記述かどうか
 
-        Chord chord;
+        Chord chord; // chord記述
 
         Exp exp;
 
@@ -43,7 +43,7 @@ namespace Meowziq.Value {
 
         public Data() {
             this.note = new Note();
-            this.auto = new Auto();
+            this.auto = false;
             this.chord = new Chord();
             this.exp = new Exp();
         }
@@ -56,7 +56,7 @@ namespace Meowziq.Value {
             set => note = value;
         }
 
-        public Auto Auto {
+        public bool Auto {
             get => auto;
             set => auto = value;
         }
@@ -77,8 +77,8 @@ namespace Meowziq.Value {
         public Percussion[] PercussionArray {
             get => percussionArray;
             set {
-                if (value.Length != noteArray.Length) {
-                    throw new ArgumentException("percussionArray must be same count as noteTextArray.");
+                if (value.Length != arrayLength) {
+                    throw new ArgumentException("percussionArray must be same count as beatArray.");
                 } else {
                     percussionArray = value;
                 }
@@ -86,7 +86,7 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// Beat テキストの配列
+        /// "beat" テキストの配列
         /// </summary>
         public string[] BeatArray {
             get => beatArray;
@@ -94,7 +94,7 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// Note テキストの配列
+        /// "note" テキストの配列
         /// </summary>
         public string[] NoteArray {
             get => noteArray;
@@ -102,25 +102,30 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// Auto テキストの配列
+        /// "auto" テキストの配列
         /// </summary>
         public string[] AutoArray {
             get => autoArray;
-            set => autoArray = value;
+            set {
+                autoArray = value;
+                if (value != null) {
+                    auto = true;
+                }
+            }
         }
 
         /// <summary>
-        /// Note, Auto テキストのオクターブ設定
+        /// "note", "auto" テキストのオクターブ設定
         /// </summary>
         public int[] OctArray {
             get => octArray;
             set {
                 checkValue();
                 if (value == null) {
-                    octArray = new int[noteArray.Length];
+                    octArray = new int[arrayLength];
                     octArray.Select(x => x = 0); // オクターブの設定を自動生成
-                } else if (value.Length != noteArray.Length) {
-                    throw new ArgumentException("noteOctArray must be same count as noteTextArray.");
+                } else if (value.Length != arrayLength) {
+                    throw new ArgumentException("noteOctArray must be same count as noteArray or autoArray.");
                 } else {
                     octArray = value; // TODO: バリデーション
                 }
@@ -128,17 +133,17 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// Note, Auto テキストの前方音価設定
+        /// "beat", "note", "auto" テキストの前方音価設定
         /// </summary>
         public string[] PreArray {
             get => preArray;
             set {
                 checkValue();
                 if (value == null) {
-                    preArray = new string[noteArray.Length];
+                    preArray = new string[arrayLength];
                     preArray.Select(x => x = null); // 初期設定を自動生成
-                } else if (value.Length != noteArray.Length) {
-                    throw new ArgumentException("preArray must be same count as noteTextArray.");
+                } else if (value.Length != arrayLength) {
+                    throw new ArgumentException("preArray must be same count as beatArray or noteArray or autoArray.");
                 } else {
                     preArray = value; // TODO: バリデーション
                 }
@@ -146,20 +151,173 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// Note, Auto テキストの後方音価設定
+        /// "note", "auto" テキストの後方音価設定
         /// </summary>
         public string[] PostArray {
             get => postArray;
             set {
                 checkValue();
                 if (value == null) {
-                    postArray = new string[noteArray.Length];
+                    postArray = new string[arrayLength];
                     postArray.Select(x => x = null); // 初期設定を自動生成
-                } else if (value.Length != noteArray.Length) {
-                    throw new ArgumentException("postArray must be same count as noteTextArray.");
+                } else if (value.Length != arrayLength) {
+                    throw new ArgumentException("postArray must be same count as noteArray or autoArray.");
                 } else {
                     postArray = value; // TODO: バリデーション
                 }
+            }
+        }
+
+        /// <summary>
+        /// "beat" 記述のデータを持つかどうか
+        /// </summary>
+        public bool HasBeat {
+            get {
+                if (!hasNote && !hasAuto && !hasChord && hasBeatArray && !hasNoteArray && !hasAutoArray) {
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// "chord" 記述のデータを持つかどうか
+        /// </summary>
+        public bool HasChord {
+            get {
+                if (!hasNote && !hasAuto && hasChord && !hasBeatArray && !hasNoteArray && !hasAutoArray) {
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// "note" 記述のデータを持つかどうか
+        /// </summary>
+        public bool HasNote {
+            get {
+                if ((hasNote || hasNoteArray) && !hasAuto && !hasChord && !hasBeatArray && !hasAutoArray) {
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// "auto" 記述のデータを持つかどうか
+        /// </summary>
+        public bool HasAuto {
+            get {
+                if (!hasNote && !hasNoteArray && (hasAuto || hasAutoArray) && !hasChord && !hasBeatArray) {
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Array 記述のデータを持つかどうか
+        /// </summary>
+        public bool HasMulti {
+            get {
+                if (!hasNote && !hasAuto && !hasChord && (hasBeatArray || hasNoteArray || hasAutoArray)) {
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// データを持たないかどうか
+        /// </summary>
+        public bool HasNoData {
+            get {
+                if (!hasNote && !hasAuto && !hasChord && !hasBeatArray && !hasNoteArray && !hasAutoArray) {
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private Properties [noun, adjective] 
+
+        int arrayLength {
+            get {
+                if (beatArray != null) {
+                    return beatArray.Length;
+                }
+                if (noteArray != null) {
+                    return noteArray.Length;
+                }
+                if (autoArray != null) {
+                    return autoArray.Length;
+                }
+                return 0;
+            }
+        }
+
+        bool hasAnyArray {
+            get {
+                if (beatArray != null || noteArray != null || autoArray != null) { // 何かは持つ
+                    return true;
+                }
+                return false; // beat、note、auto いずれも持たない
+            }
+        }
+
+        public bool hasBeatArray {
+            get {
+                if (beatArray != null) {
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        public bool hasNoteArray {
+            get {
+                if (noteArray != null && auto == false) {
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        public bool hasAutoArray {
+            get {
+                if (autoArray != null && auto == true) {
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        bool hasNote {
+            get {
+                if (!note.Text.Equals("") && auto == false) {
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        bool hasAuto {
+            get {
+                if (!note.Text.Equals("") && auto == true) {
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        bool hasChord {
+            get {
+                if (chord.Text != null) {
+                    return true;
+                }
+                return false;
             }
         }
 
@@ -167,8 +325,8 @@ namespace Meowziq.Value {
         // private Methods [verb]
 
         void checkValue() {
-            if (noteArray == null) {
-                throw new ArgumentException("must set noteTextArray.");
+            if (!hasAnyArray) {
+                throw new ArgumentException("must set beatArray or noteArray or autoArray.");
             }
         }
 
@@ -300,7 +458,8 @@ namespace Meowziq.Value {
     }
 
     /// <summary>
-    /// Keyの旋法で度数数値を Note No に変換します
+    /// note: Keyの旋法で度数数値を Note No に変換します
+    /// auto: Spanの旋法で度数数値を Note No に変換します
     /// </summary>
     public class Note {
 
@@ -343,60 +502,9 @@ namespace Meowziq.Value {
     }
 
     /// <summary>
-    /// Spanの旋法で度数数値を Note No に変換します
-    /// </summary>
-    public class Auto {
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Constructor
-
-        public Auto() {
-            Text = "";
-            Oct = 0;
-        }
-
-        public Auto(string text, int oct) {
-            Text = text;
-            Oct = oct;
-        }
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Properties [noun, adjective] 
-
-        public string Text {
-            get; set;
-        }
-
-        public int Oct {
-            get; set;
-        }
-
-        public int Interval {
-            get => Oct * 12; // オクターブを音程差に変換
-        }
-
-        public char[] TextCharArray {
-            get {
-                if (Text == "") {
-                    return null;
-                }
-                return Utils.Filter(Text).ToCharArray();
-            }
-        }
-    }
-
-    /// <summary>
     /// NOTE: 個別にプロパティ設定が必要
     /// </summary>
     public class Chord {
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Constructor
-
-        //public Chord(string text, Range range) {
-        //    Text = text;
-        //    Range = range;
-        //}
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjective] 
@@ -432,17 +540,18 @@ namespace Meowziq.Value {
         /// MEMO: メロディ、ハモリ記述と共用出来る？ ⇒ 多少無駄があっても別々で組んで後で統合した方が現状の破壊が少ない
         /// 
         /// </summary>
-        public Param(Note note, Exp exp, Way way) {
-            Note = note;
+        public Param(Note note, Exp exp, Way way, bool autoNote = true) {
+            this.note = note;
             Exp = exp;
             Way = way;
+            AutoNote = autoNote;
         }
 
         /// <summary>
         /// ドラム記述用パラメータ
         /// </summary>
         public Param(Note note, int percussionNoteNum, Exp exp, Way way) {
-            Note = note;
+            this.note = note;
             PercussionNoteNum = percussionNoteNum;
             Exp = exp;
             Way = way;
@@ -460,12 +569,8 @@ namespace Meowziq.Value {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjective] 
 
-        public Note Note {
-            get;
-        }
-
         public Chord Chord {
-            get;
+            get; // NOTE: Range が Generator から使用される
         }
 
         public Exp Exp {
@@ -481,12 +586,12 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// MEMO: ここで char 配列が返せれば Generator 側は問題ない
+        /// NOTE: ここで char 配列が返せれば Generator 側は問題ない
         /// </summary>
         public char[] TextCharArray {
             get {
                 if (Way == Way.Mono || Way == Way.Multi || Way == Way.Drum) {
-                    return Note.TextCharArray;
+                    return note.TextCharArray;
                 } else if (Way == Way.Chord) {
                     return Chord.TextCharArray;
                 }
@@ -497,7 +602,7 @@ namespace Meowziq.Value {
         public int Interval {
             get {
                 if (Way == Way.Mono || Way == Way.Multi) {
-                    return Note.Interval;
+                    return note.Interval;
                 }
                 return 0; // Chord はインターバルなし
             }
@@ -521,6 +626,13 @@ namespace Meowziq.Value {
             }
         }
 
+        /// <summary>
+        /// Span の旋法で　Note No を取得
+        /// </summary>
+        public bool AutoNote {
+            get; set;
+        }
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
 
@@ -533,6 +645,13 @@ namespace Meowziq.Value {
                 return target.ToString().Equals("x");
             }
             return false;
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private Properties [noun, adjective] 
+
+        Note note {
+            get;
         }
     }
 }

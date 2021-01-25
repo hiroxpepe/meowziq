@@ -47,8 +47,8 @@ namespace Meowziq.Core {
             set => data.Note.Text = value;
         }
 
-        public string Auto {
-            set => data.Auto.Text = value;
+        public bool Auto {
+            set => data.Auto = value;
         }
 
         public int Oct {
@@ -175,7 +175,7 @@ namespace Meowziq.Core {
             var _generator = new Generator(noteItem); // NOTE: コンストラクタで生成ではNG
             var _way = defineWay();
             switch (_way) {
-                case Way.Mono:
+                case Way.Mono: // TODO: "note", "auto" データ判定
                     {
                         var _param = new Param(data.Note, data.Exp, _way);
                         _generator.ApplyNote(tick, pattern.BeatCount, pattern.AllSpan, _param);
@@ -188,19 +188,21 @@ namespace Meowziq.Core {
                     }
                     break;
                 case Way.Multi:
-                    for (var _idx = 0; _idx < data.NoteArray.Length; _idx++) { // TODO: for の置き換え
+                    var _stringArray = data.Auto ? data.AutoArray : data.NoteArray;
+                    for (var _idx = 0; _idx < _stringArray.Length; _idx++) { // TODO: for の置き換え
                         var _param = new Param(
-                            new Value.Note(data.NoteArray[_idx], data.OctArray[_idx]),
+                            new Value.Note(_stringArray[_idx], data.OctArray[_idx]),
                             new Value.Exp(data.PreArray[_idx], data.PostArray[_idx]),
-                            _way
+                            _way,
+                            data.Auto
                         );
                         _generator.ApplyNote(tick, pattern.BeatCount, pattern.AllSpan, _param);
                     }
                     break;
                 case Way.Drum:
-                    for (var _idx = 0; _idx < data.NoteArray.Length; _idx++) { // TODO: for の置き換え
+                    for (var _idx = 0; _idx < data.BeatArray.Length; _idx++) { // TODO: for の置き換え
                         var _param = new Param(
-                            new Value.Note(data.NoteArray[_idx], 0),
+                            new Value.Note(data.BeatArray[_idx], 0), // オクターブは常に 0
                             (int) data.PercussionArray[_idx],
                             new Value.Exp(data.PreArray[_idx], ""),
                             _way
@@ -241,15 +243,19 @@ namespace Meowziq.Core {
         /// json に記述されたデータのタイプを判定します
         /// </summary>
         Way defineWay() {
-            if (data.NoteArray == null && data.Note.Text != null && data.Chord.Text == null && data.PercussionArray == null) {
+            if (!data.HasMulti && (data.HasNote || data.HasAuto)) {
                 return Way.Mono; // 単体ノート記述 
-            } else if (data.NoteArray != null && data.Note.Text == null && data.Chord.Text == null && data.PercussionArray == null) {
+            }
+            else if (data.HasMulti && (data.HasNote || data.HasAuto)) {
                 return Way.Multi; // 複合ノート記述
-            } else if (data.NoteArray == null && data.Note.Text == null && data.Chord.Text != null && data.PercussionArray == null) {
+            }
+            else if (data.HasChord) {
                 return Way.Chord; // コード記述
-            } else if (data.NoteArray != null && data.Note.Text == null && data.Chord.Text == null && data.PercussionArray != null) {
+            }
+            else if (data.HasBeat) {
                 return Way.Drum; // ドラム記述 
-            } else if (data.NoteArray == null && data.Note.Text == null && data.Chord.Text == null && data.PercussionArray == null) {
+            }
+            else if (data.HasNoData) {
                 return Way.Sequence; // TODO: 暫定
             }
             throw new ArgumentException("not understandable Way.");
