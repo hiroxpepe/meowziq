@@ -14,8 +14,6 @@ namespace Meowziq {
         Mono = 0,
         Multi = 1,
         Chord = 2,
-        Melody = 5,
-        Harmony = 6,
         Drum = 3,
         Sequence = 4,
     }
@@ -309,9 +307,13 @@ namespace Meowziq {
     }
 
     /// <summary>
-    /// Enum 用拡張メソッド
+    /// 汎用拡張メソッド
     /// </summary>
     public static class Extensions {
+
+        public static int Int32(this char source) {
+            return int.Parse(source.ToString()); // TODO: 0～9 以外判定
+        }
 
         public static int Int32(this Env source) {
             return (int) source;
