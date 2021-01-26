@@ -27,28 +27,26 @@ namespace Meowziq.Core {
         // public Methods [verb]
 
         /// <summary>
-        /// Note を適用します
+        /// Note オブジェクトを作成して適用します
+        /// TODO: ハモリ記述：メロディ記述の noteNum に対して メロの旋法 に Degree と上下パラメータ？ で算出  
+        /// TODO: ブルーノートは？ ⇒ 音を任意に+,-出来る設定(帯)を持たせる
         /// </summary>
         public void ApplyNote(int tick, int beatCount, List<Span> spanList, Param param) {
             for (var _16beatIdx = new Index(beatCount); _16beatIdx.HasNext; _16beatIdx.Increment()) {
                 var _text = param.TextCharArray[_16beatIdx.Idx];
                 if (param.IsMatch(_text)) {
                     var _span = spanList[_16beatIdx.SpanIdx]; // 16beat 4個で1拍進む
-                    var _noteNumArray = (new int[7]).Select(x => -1).ToArray();  // ノート記述を -1 で初期化: 後ではじく為
-                    if (param.IsNote) { // ノート記述
+                    var _noteNumArray = (new int[7]).Select(x => -1).ToArray();  // ノートNo 配列を -1 で初期化: 後ではじく為
+                    if (param.IsNote) { // "note", "auto" 記述
                         _noteNumArray[0] = Utils.ToNote(
-                            _span.Key, _span.Degree, _span.KeyMode, _span.SpanMode, int.Parse(_text.ToString()), _span.AutoMode, param.AutoNote
+                            _span.Key, _span.Degree, _span.KeyMode, _span.SpanMode, _text.Int32()/*int.Parse(_text.ToString())*/, _span.AutoMode, param.AutoNote
                         );
-                    } else if (param.IsChord) { // コード記述
+                    } else if (param.IsChord) { // "chord" 記述
                         _noteNumArray = Utils.ToNoteArray(
-                            _span.Key, _span.Degree, _span.KeyMode, _span.SpanMode, int.Parse(_text.ToString()), _span.AutoMode
+                            _span.Key, _span.Degree, _span.KeyMode, _span.SpanMode, _text.Int32()/*int.Parse(_text.ToString())*/, _span.AutoMode
                         );
                         _noteNumArray = applyRange(_noteNumArray, param.Chord.Range); // コード展開形の範囲を適用
                     }
-                    // TODO: メロディ記述：key旋法判定後に Degree I 固定
-                    // TODO: ハモリ記述：メロディ記述の noteNum に対して メロの旋法 に Degree と上下パラメータ？ で算出  
-                    // MEMO: ブルーノートは？ ⇒ 音を任意に+,-出来る設定(帯)を持たせる
-
                     // この音の音価を調査する
                     var _gate = new Gete(_16beatIdx.Idx, beatCount);
                     for (; _gate.HasNextSearch; _gate.IncrementSearch()) { // +1 は数値文字の分
@@ -77,7 +75,7 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// ドラム用 Note を適用します
+        /// ドラム用 Note オブジェクトを作成して適用します
         /// </summary>
         public void ApplyDrumNote(int tick, int beatCount, Param param) {
             for (var _16beatIdx = new Index(beatCount); _16beatIdx.HasNext; _16beatIdx.Increment()) {
@@ -97,7 +95,7 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// シーケンス用 ランダム Note を適用します
+        /// シーケンス用 Note オブジェクトを作成して適用します
         /// </summary>
         public void ApplyRandomNote(int tick, int beatCount, List<Span> spanList) {
             for (var _16beatIdx = new Index(beatCount); _16beatIdx.HasNext; _16beatIdx.Increment()) {
@@ -144,8 +142,7 @@ namespace Meowziq.Core {
                     _newArray[_idx] = target[_idx];
                 }
             }
-            // 全てのノートが範囲指定以内
-            if ((target.Min() >= range.Min) && (target.Max() <= range.Max)) {
+            if ((target.Min() >= range.Min) && (target.Max() <= range.Max)) { // 全てのノートが範囲指定以内
                 return _newArray;
             }
             return applyRange(_newArray, range); // 再帰処理

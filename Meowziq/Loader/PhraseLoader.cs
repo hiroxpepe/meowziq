@@ -31,20 +31,20 @@ namespace Meowziq.Loader {
             _phrase.Type = phrase.Type;
             _phrase.Name = phrase.Name;
             if (phrase.Note != null) {
-                _phrase.Note = phrase.Note; // TODO: バリデート
+                _phrase.Data.Note.Text = phrase.Note;
             } else if (phrase.Auto != null) {
-                _phrase.Note = phrase.Auto; // TODO: バリデート
-                _phrase.Auto = true;
+                _phrase.Data.Note.Text = phrase.Auto;
+                _phrase.Data.Auto = true;
             }
-            _phrase.Oct = phrase.Oct;
-            _phrase.Chord = phrase.Chord;
+            _phrase.Data.Note.Oct = phrase.Oct;
+            _phrase.Data.Chord.Text = phrase.Chord;
             _phrase.Range = phrase.Range;
-            _phrase.Pre = phrase.Pre;
-            _phrase.Post = phrase.Post;
+            _phrase.Data.Exp.Pre = phrase.Pre;
+            _phrase.Data.Exp.Post = phrase.Post;
             if (phrase.Data != null) { // 複合データがある場合
-                _phrase.Data.BeatArray = phrase.Data.BeatArray; // TODO: バリデートの移動
-                _phrase.Data.NoteArray = phrase.Data.NoteArray; // TODO: バリデートの移動
-                _phrase.Data.AutoArray = phrase.Data.AutoArray; // TODO: バリデートの移動
+                _phrase.Data.BeatArray = phrase.Data.BeatArray;
+                _phrase.Data.NoteArray = phrase.Data.NoteArray;
+                _phrase.Data.AutoArray = phrase.Data.AutoArray;
                 _phrase.Data.OctArray = phrase.Data.OctArray;
                 _phrase.Data.PreArray = phrase.Data.PreArray;
                 _phrase.Data.PostArray = phrase.Data.PostArray;
@@ -53,31 +53,6 @@ namespace Meowziq.Loader {
                 }
             }
             return _phrase;
-        }
-
-        /// <summary>
-        /// FIXME: バリデーターは Loader ではなく Value クラスに移動する
-        /// TODO: 使用可能な文字
-        /// </summary>
-        static string validateValue(string target) {
-            if (target == null) {
-                return target; // 値がなければそのまま返す FIXME:
-            }
-            // 拍のデータの数が4文字かどうか
-            var _target1 = target;
-            // 文字の置き換え
-            _target1 = _target1.Replace("[", "|").Replace("]", "|");
-            // 区切り文字で切り分ける
-            var _array1 = _target1.Split('|')
-                .Where(x => !string.IsNullOrWhiteSpace(x)) // 空文字以外
-                .Where(x => x.Length != 4) // データが4文字ではない
-                .ToArray();
-            // そのデータがあれば例外を投げる
-            if (_array1.Length != 0) {
-                throw new FormatException("data count must be 4.");
-            }
-            // バリデーションOKなら元々の文字列を返す
-            return target;
         }
 
         static Json loadJson(string targetPath) {

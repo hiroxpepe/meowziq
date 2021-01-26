@@ -8,6 +8,47 @@ using System.Text.RegularExpressions;
 /// </summary>
 namespace Meowziq.Value {
     /// <summary>
+    /// NOTE: 入力値バリデーション クラス
+    /// </summary>
+    internal class Validate {
+        /// <summary>
+        /// TODO: 使用可能な文字の判定
+        /// </summary>
+        internal static string PhraseValue(string target) {
+            if (target == null) {
+                return target; // 値がなければそのまま返す FIXME:
+            }
+            // 拍のデータの数が4文字かどうか
+            var _target1 = target;
+            // 文字の置き換え
+            _target1 = _target1.Replace("[", "|").Replace("]", "|");
+            // 区切り文字で切り分ける
+            var _array1 = _target1.Split('|')
+                .Where(x => !string.IsNullOrWhiteSpace(x)) // 空文字以外
+                .Where(x => x.Length != 4) // データが4文字ではない
+                .ToArray();
+            // そのデータがあれば例外を投げる
+            if (_array1.Length != 0) {
+                throw new FormatException("data count must be 4.");
+            }
+            // バリデーションOKなら元々の文字列を返す
+            return target;
+        }
+    }
+
+    /// <summary>
+    /// NOTE: 入力値用の Utils クラス
+    /// </summary>
+    internal class Utils {
+        /// <summary>
+        /// 不要文字 "[", "]", "|", を削除します
+        /// </summary>
+        internal static string Filter(string target) {
+            return target.Replace("|", "").Replace("[", "").Replace("]", ""); // 不要文字削除
+        }
+    }
+
+    /// <summary>
     /// Phrase クラスの Data クラス
     /// NOTE: Loader クラスから操作されるので公開必須
     /// </summary>
@@ -90,7 +131,12 @@ namespace Meowziq.Value {
         /// </summary>
         public string[] BeatArray {
             get => beatArray;
-            set => beatArray = value;
+            set {
+                if (value != null) {
+                    value.ToList().ForEach(x => Value.Validate.PhraseValue(x));
+                }
+                beatArray = value;
+            }
         }
 
         /// <summary>
@@ -98,7 +144,12 @@ namespace Meowziq.Value {
         /// </summary>
         public string[] NoteArray {
             get => noteArray;
-            set => noteArray = value;
+            set {
+                if (value != null) {
+                    value.ToList().ForEach(x => Value.Validate.PhraseValue(x));
+                }
+                noteArray = value;
+            }
         }
 
         /// <summary>
@@ -107,6 +158,9 @@ namespace Meowziq.Value {
         public string[] AutoArray {
             get => autoArray;
             set {
+                if (value != null) {
+                    value.ToList().ForEach(x => Value.Validate.PhraseValue(x));
+                }
                 autoArray = value;
                 if (value != null) {
                     auto = true;
@@ -145,7 +199,8 @@ namespace Meowziq.Value {
                 } else if (value.Length != arrayLength) {
                     throw new ArgumentException("preArray must be same count as beatArray or noteArray or autoArray.");
                 } else {
-                    preArray = value; // TODO: バリデーション
+                    value.ToList().ForEach(x => Value.Validate.PhraseValue(x));
+                    preArray = value;
                 }
             }
         }
@@ -163,7 +218,8 @@ namespace Meowziq.Value {
                 } else if (value.Length != arrayLength) {
                     throw new ArgumentException("postArray must be same count as noteArray or autoArray.");
                 } else {
-                    postArray = value; // TODO: バリデーション
+                    value.ToList().ForEach(x => Value.Validate.PhraseValue(x));
+                    postArray = value;
                 }
             }
         }
@@ -172,72 +228,42 @@ namespace Meowziq.Value {
         /// "beat" 記述のデータを持つかどうか
         /// </summary>
         public bool HasBeat {
-            get {
-                if (!hasNote && !hasAuto && !hasChord && hasBeatArray && !hasNoteArray && !hasAutoArray) {
-                    return true;
-                }
-                return false;
-            }
+            get => !hasNote && !hasAuto && !hasChord && hasBeatArray && !hasNoteArray && !hasAutoArray;
         }
 
         /// <summary>
         /// "chord" 記述のデータを持つかどうか
         /// </summary>
         public bool HasChord {
-            get {
-                if (!hasNote && !hasAuto && hasChord && !hasBeatArray && !hasNoteArray && !hasAutoArray) {
-                    return true;
-                }
-                return false;
-            }
+            get => !hasNote && !hasAuto && hasChord && !hasBeatArray && !hasNoteArray && !hasAutoArray;
         }
 
         /// <summary>
         /// "note" 記述のデータを持つかどうか
         /// </summary>
         public bool HasNote {
-            get {
-                if ((hasNote || hasNoteArray) && !hasAuto && !hasChord && !hasBeatArray && !hasAutoArray) {
-                    return true;
-                }
-                return false;
-            }
+            get => (hasNote || hasNoteArray) && !hasAuto && !hasChord && !hasBeatArray && !hasAutoArray;
         }
 
         /// <summary>
         /// "auto" 記述のデータを持つかどうか
         /// </summary>
         public bool HasAuto {
-            get {
-                if (!hasNote && !hasNoteArray && (hasAuto || hasAutoArray) && !hasChord && !hasBeatArray) {
-                    return true;
-                }
-                return false;
-            }
+            get => !hasNote && !hasNoteArray && (hasAuto || hasAutoArray) && !hasChord && !hasBeatArray;
         }
 
         /// <summary>
         /// Array 記述のデータを持つかどうか
         /// </summary>
         public bool HasMulti {
-            get {
-                if (!hasNote && !hasAuto && !hasChord && (hasBeatArray || hasNoteArray || hasAutoArray)) {
-                    return true;
-                }
-                return false;
-            }
+            get => !hasNote && !hasAuto && !hasChord && (hasBeatArray || hasNoteArray || hasAutoArray);
         }
 
         /// <summary>
         /// データを持たないかどうか
         /// </summary>
         public bool HasNoData {
-            get {
-                if (!hasNote && !hasAuto && !hasChord && !hasBeatArray && !hasNoteArray && !hasAutoArray) {
-                    return true;
-                }
-                return false;
-            }
+            get => !hasNote && !hasAuto && !hasChord && !hasBeatArray && !hasNoteArray && !hasAutoArray;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -268,57 +294,27 @@ namespace Meowziq.Value {
         }
 
         public bool hasBeatArray {
-            get {
-                if (beatArray != null) {
-                    return true;
-                }
-                return false;
-            }
+            get => beatArray != null;
         }
 
         public bool hasNoteArray {
-            get {
-                if (noteArray != null && auto == false) {
-                    return true;
-                }
-                return false;
-            }
+            get => noteArray != null && auto == false;
         }
 
         public bool hasAutoArray {
-            get {
-                if (autoArray != null && auto == true) {
-                    return true;
-                }
-                return false;
-            }
+            get => autoArray != null && auto == true;
         }
 
         bool hasNote {
-            get {
-                if (!note.Text.Equals("") && auto == false) {
-                    return true;
-                }
-                return false;
-            }
+            get => !note.Text.Equals("") && auto == false;
         }
 
         bool hasAuto {
-            get {
-                if (!note.Text.Equals("") && auto == true) {
-                    return true;
-                }
-                return false;
-            }
+            get => !note.Text.Equals("") && auto == true;
         }
 
         bool hasChord {
-            get {
-                if (chord.Text != null) {
-                    return true;
-                }
-                return false;
-            }
+            get => chord.Text != null;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -328,32 +324,6 @@ namespace Meowziq.Value {
             if (!hasAnyArray) {
                 throw new ArgumentException("must set beatArray or noteArray or autoArray.");
             }
-        }
-
-        // TODO: このバリデーションを使う
-        /// <summary>
-        /// FIXME: バリデーターは Loader ではなく Value クラスに移動する
-        /// TODO: 使用可能な文字
-        /// </summary>
-        static string validateValue(string target) {
-            if (target == null) {
-                return target; // 値がなければそのまま返す FIXME:
-            }
-            // 拍のデータの数が4文字かどうか
-            var _target1 = target;
-            // 文字の置き換え
-            _target1 = _target1.Replace("[", "|").Replace("]", "|");
-            // 区切り文字で切り分ける
-            var _array1 = _target1.Split('|')
-                .Where(x => !string.IsNullOrWhiteSpace(x)) // 空文字以外
-                .Where(x => x.Length != 4) // データが4文字ではない
-                .ToArray();
-            // そのデータがあれば例外を投げる
-            if (_array1.Length != 0) {
-                throw new FormatException("data count must be 4.");
-            }
-            // バリデーションOKなら元々の文字列を返す
-            return target;
         }
     }
 
@@ -464,6 +434,11 @@ namespace Meowziq.Value {
     public class Note {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Fields
+
+        string text;
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
         public Note() {
@@ -480,7 +455,8 @@ namespace Meowziq.Value {
         // Properties [noun, adjective] 
 
         public string Text {
-            get; set;
+            get => text;
+            set => text = Value.Validate.PhraseValue(value);
         }
 
         public int Oct {
@@ -507,10 +483,16 @@ namespace Meowziq.Value {
     public class Chord {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Fields
+
+        string text;
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjective] 
 
         public string Text {
-            get; set;
+            get => text;
+            set => text = Value.Validate.PhraseValue(value);
         }
 
         public Range Range {

@@ -66,17 +66,22 @@ namespace Meowziq.Loader {
                 _spanList.Add(convertSpan(2, _beatArray[0])); // 1拍目
                 _spanList.Add(convertSpan(2, _beatArray[2])); // 3拍目
             }
+            // TODO: // 2拍と1拍と1拍 "I | |V |I "
+
             // 1拍と3拍 "I |V | | "
             else if (!_beatArray[1].Equals(" ") && _beatArray[2].Equals(" ") && _beatArray[3].Equals(" ")) {
                 _spanList.Add(convertSpan(1, _beatArray[0])); // 1拍目
                 _spanList.Add(convertSpan(3, _beatArray[1])); // 2拍目
             }
-            // 1拍と2拍と4拍 "I |V| |V|"
+            // 1拍と2拍と1拍 "I |V | |I |"
             else if (!_beatArray[1].Equals(" ") && _beatArray[2].Equals(" ") && !_beatArray[3].Equals(" ")) {
                 _spanList.Add(convertSpan(1, _beatArray[0])); // 1拍目
                 _spanList.Add(convertSpan(2, _beatArray[1])); // 2拍目
                 _spanList.Add(convertSpan(1, _beatArray[3])); // 4拍目
-            } // 4拍全部
+            }
+            // TODO: // 1拍と1拍と2拍 "I |V |I | |"
+
+            // TODO: // 1拍と1拍と1拍と1拍 "I |V |I |V "
             return _spanList;
         }
 

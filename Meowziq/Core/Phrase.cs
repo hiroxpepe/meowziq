@@ -6,7 +6,6 @@ using System.Linq;
 using Meowziq.Value;
 
 namespace Meowziq.Core {
-
     /// <summary>
     /// Phrase クラス
     ///     + キーと旋法は外部から与えられる
@@ -21,15 +20,12 @@ namespace Meowziq.Core {
 
         Item<Note> noteItem; // Tick 毎の Note のリスト、Pattern の設定回数分の Note を格納
 
-        HashSet<int> hashSet; // ※Dictionary.ContainsKey() が遅いのでその対策
-
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
         public Phrase() {
             this.data = new Data(); // json から詰められるデータ
             this.noteItem = new Item<Note>();
-            this.hashSet = new HashSet<int>();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -43,26 +39,15 @@ namespace Meowziq.Core {
             get; set;
         }
 
-        public string Note {
-            set => data.Note.Text = value;
-        }
-
-        public bool Auto {
-            set => data.Auto = value;
-        }
-
-        public int Oct {
-            set => data.Note.Oct = value; // デフォルト値は 0
-        }
-
-        public string Chord {
-            set => data.Chord.Text = value;
+        public Data Data {
+            get => data;
+            set => data = value;
         }
 
         /// <summary>
         /// TODO: default レンジ
         /// </summary>
-        public string Range {
+        public string Range { // TODO: Data 内でバリデーション
             set {
                 if (value == null) return;
                 var _rangeText = value;
@@ -86,19 +71,6 @@ namespace Meowziq.Core {
                     throw new ArgumentException($"invalid range length,\r\nmust set {data.Chord.Range.Min}:{_okMax} or {_okMin}:{data.Chord.Range.Max}.");
                 }
             }
-        }
-
-        public string Pre {
-            set => data.Exp.Pre = value;
-        }
-
-        public string Post {
-            set => data.Exp.Post = value;
-        }
-
-        public Data Data {
-            get => data;
-            set => data = value;
         }
 
         /// <summary>
@@ -175,9 +147,9 @@ namespace Meowziq.Core {
             var _generator = new Generator(noteItem); // NOTE: コンストラクタで生成ではNG
             var _way = defineWay();
             switch (_way) {
-                case Way.Mono: // TODO: "note", "auto" データ判定
+                case Way.Mono:
                     {
-                        var _param = new Param(data.Note, data.Exp, _way);
+                        var _param = new Param(data.Note, data.Exp, _way); // NOTE: "note", "auto" データ判定済
                         _generator.ApplyNote(tick, pattern.BeatCount, pattern.AllSpan, _param);
                     }
                     break;
@@ -244,16 +216,16 @@ namespace Meowziq.Core {
         /// </summary>
         Way defineWay() {
             if (!data.HasMulti && (data.HasNote || data.HasAuto)) {
-                return Way.Mono; // 単体ノート記述 
+                return Way.Mono; // 単体 "note", "auto" ノート記述 
             }
             else if (data.HasMulti && (data.HasNote || data.HasAuto)) {
-                return Way.Multi; // 複合ノート記述
+                return Way.Multi; // 複合 "note", "auto" 記述
             }
             else if (data.HasChord) {
-                return Way.Chord; // コード記述
+                return Way.Chord; // "chord" 記述
             }
             else if (data.HasBeat) {
-                return Way.Drum; // ドラム記述 
+                return Way.Drum; // "beat" 記述 
             }
             else if (data.HasNoData) {
                 return Way.Sequence; // TODO: 暫定

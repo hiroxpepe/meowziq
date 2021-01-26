@@ -155,8 +155,8 @@ namespace Meowziq.View {
                         if (x.MidiChannel != 9 && x.MidiChannel != 1) { // FIXME: 暫定:シーケンス除外
                             pianoControl.Send(x); // ドラム以外はピアノロールに表示
                         }
-                        if (x.MidiChannel == 2) { // パッド
-                            Log.Info($"tick: {_tick} Data1: {x.Data1} Data2: {x.Data2}");
+                        if (x.MidiChannel == 2) {
+                            Log.Debug($"Data1: {x.Data1} Data2: {x.Data2}");
                         }
                     });
                 }
