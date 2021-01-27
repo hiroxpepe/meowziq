@@ -29,7 +29,7 @@ namespace Meowziq.Core {
         /// <summary>
         /// Note オブジェクトを作成して適用します
         /// TODO: ハモリ記述：メロディ記述の noteNum に対して メロの旋法 に Degree と上下パラメータ？ で算出  
-        /// TODO: ブルーノートは？ ⇒ 音を任意に+,-出来る設定(帯)を持たせる
+        /// TODO: ブルーノートは？ ⇒ 音を任意に+,-出来る設定(帯)を持たせる？
         /// </summary>
         public void ApplyNote(int tick, int beatCount, List<Span> spanList, Param param) {
             for (var _16beatIdx = new Index(beatCount); _16beatIdx.HasNext; _16beatIdx.Increment()) {
@@ -39,11 +39,11 @@ namespace Meowziq.Core {
                     var _noteNumArray = (new int[7]).Select(x => -1).ToArray();  // ノートNo 配列を -1 で初期化: 後ではじく為
                     if (param.IsNote) { // "note", "auto" 記述
                         _noteNumArray[0] = Utils.ToNote(
-                            _span.Key, _span.Degree, _span.KeyMode, _span.SpanMode, _text.Int32()/*int.Parse(_text.ToString())*/, _span.AutoMode, param.AutoNote
+                            _span.Key, _span.Degree, _span.KeyMode, _span.SpanMode, _text.Int32(), param.AutoNote
                         );
                     } else if (param.IsChord) { // "chord" 記述
                         _noteNumArray = Utils.ToNoteArray(
-                            _span.Key, _span.Degree, _span.KeyMode, _span.SpanMode, _text.Int32()/*int.Parse(_text.ToString())*/, _span.AutoMode
+                            _span.Key, _span.Degree, _span.KeyMode, _span.SpanMode, _text.Int32()
                         );
                         _noteNumArray = applyRange(_noteNumArray, param.Chord.Range); // コード展開形の範囲を適用
                     }
@@ -100,7 +100,7 @@ namespace Meowziq.Core {
         public void ApplyRandomNote(int tick, int beatCount, List<Span> spanList) {
             for (var _16beatIdx = new Index(beatCount); _16beatIdx.HasNext; _16beatIdx.Increment()) {
                 var _span = spanList[_16beatIdx.SpanIdx]; // 16beat 4個で1拍進む
-                var _note = Utils.ToNoteRandom(_span.Key, _span.Degree, _span.KeyMode, _span.SpanMode, _span.AutoMode); // 16の倍数
+                var _note = Utils.ToNoteRandom(_span.Key, _span.Degree, _span.KeyMode, _span.SpanMode); // 16の倍数
                 var _tick = tick + Utils.To16beatLength(_16beatIdx.Idx);
                 add(_tick, new Note(_tick, _note, 30, 127)); // gate 短め
             }
@@ -149,7 +149,7 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// Note リストに追加します
+        /// Note を Item オブジェクトに追加します
         /// </summary>
         void add(int tick, Note note) {
             noteItem.Add(tick, note);

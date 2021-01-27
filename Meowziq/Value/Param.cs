@@ -15,24 +15,20 @@ namespace Meowziq.Value {
         /// TODO: 使用可能な文字の判定
         /// </summary>
         internal static string PhraseValue(string target) {
-            if (target == null) {
+            if (target is null) {
                 return target; // 値がなければそのまま返す FIXME:
             }
             // 拍のデータの数が4文字かどうか
             var _target1 = target;
-            // 文字の置き換え
-            _target1 = _target1.Replace("[", "|").Replace("]", "|");
-            // 区切り文字で切り分ける
-            var _array1 = _target1.Split('|')
-                .Where(x => !string.IsNullOrWhiteSpace(x)) // 空文字以外
-                .Where(x => x.Length != 4) // データが4文字ではない
+            _target1 = _target1.Replace("[", "|").Replace("]", "|"); // 文字の置き換え
+            var _array1 = _target1.Split('|') // 区切り文字で切り分ける
+                .Where(x => !string.IsNullOrWhiteSpace(x)) // 空文字以外が対象で
+                .Where(x => x.Length != 4) // そのデータが4文字ではないものを抽出
                 .ToArray();
-            // そのデータがあれば例外を投げる
-            if (_array1.Length != 0) {
+            if (_array1.Length != 0) { // そのデータがあれば例外を投げる
                 throw new FormatException("data count must be 4.");
             }
-            // バリデーションOKなら元々の文字列を返す
-            return target;
+            return target; // バリデーションOKなら元々の文字列を返す
         }
     }
 
@@ -132,7 +128,7 @@ namespace Meowziq.Value {
         public string[] BeatArray {
             get => beatArray;
             set {
-                if (value != null) {
+                if (!(value is null)) {
                     value.ToList().ForEach(x => Value.Validate.PhraseValue(x));
                 }
                 beatArray = value;
@@ -145,7 +141,7 @@ namespace Meowziq.Value {
         public string[] NoteArray {
             get => noteArray;
             set {
-                if (value != null) {
+                if (!(value is null)) {
                     value.ToList().ForEach(x => Value.Validate.PhraseValue(x));
                 }
                 noteArray = value;
@@ -158,11 +154,11 @@ namespace Meowziq.Value {
         public string[] AutoArray {
             get => autoArray;
             set {
-                if (value != null) {
+                if (!(value is null)) {
                     value.ToList().ForEach(x => Value.Validate.PhraseValue(x));
                 }
                 autoArray = value;
-                if (value != null) {
+                if (!(value is null)) {
                     auto = true;
                 }
             }
@@ -174,8 +170,8 @@ namespace Meowziq.Value {
         public int[] OctArray {
             get => octArray;
             set {
-                checkValue();
-                if (value == null) {
+                checkTextArray();
+                if (value is null) {
                     octArray = new int[arrayLength];
                     octArray.Select(x => x = 0); // オクターブの設定を自動生成
                 } else if (value.Length != arrayLength) {
@@ -192,8 +188,8 @@ namespace Meowziq.Value {
         public string[] PreArray {
             get => preArray;
             set {
-                checkValue();
-                if (value == null) {
+                checkTextArray();
+                if (value is null) {
                     preArray = new string[arrayLength];
                     preArray.Select(x => x = null); // 初期設定を自動生成
                 } else if (value.Length != arrayLength) {
@@ -211,8 +207,8 @@ namespace Meowziq.Value {
         public string[] PostArray {
             get => postArray;
             set {
-                checkValue();
-                if (value == null) {
+                checkTextArray();
+                if (value is null) {
                     postArray = new string[arrayLength];
                     postArray.Select(x => x = null); // 初期設定を自動生成
                 } else if (value.Length != arrayLength) {
@@ -320,7 +316,7 @@ namespace Meowziq.Value {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private Methods [verb]
 
-        void checkValue() {
+        void checkTextArray() {
             if (!hasAnyArray) {
                 throw new ArgumentException("must set beatArray or noteArray or autoArray.");
             }
@@ -337,6 +333,17 @@ namespace Meowziq.Value {
         // Constructor
 
         public Range(int min, int max) {
+            if (min < 0) {
+                throw new ArgumentException("invalid range min.");
+            }
+            if (max > 127) {
+                throw new ArgumentException("invalid range max.");
+            }
+            if (max - min != 11) { // オクターブの範囲外
+                var _okMax = min + 11;
+                var _okMin = max - 11;
+                throw new ArgumentException($"invalid range length,\r\nmust set {min}:{_okMax} or {_okMin}:{max}.");
+            }
             Min = min;
             Max = max;
         }
@@ -385,7 +392,7 @@ namespace Meowziq.Value {
 
         public bool HasPre {
             get {
-                if (Pre == null) {
+                if (Pre is null) {
                     return false;
                 }
                 return !Pre.Equals("");
@@ -394,7 +401,7 @@ namespace Meowziq.Value {
 
         public bool HasPost {
             get {
-                if (Post == null) {
+                if (Post is null) {
                     return false;
                 }
                 return !Post.Equals("");
@@ -403,7 +410,7 @@ namespace Meowziq.Value {
 
         public char[] PreCharArray {
             get {
-                if (Pre == "") {
+                if (Pre.Equals("")) {
                     return null;
                 }
                 return Utils.Filter(Pre).ToCharArray();
@@ -412,7 +419,7 @@ namespace Meowziq.Value {
 
         public char[] PostCharArray {
             get {
-                if (Post == "") {
+                if (Post.Equals("")) {
                     return null;
                 }
                 return Utils.Filter(Post).ToCharArray();
@@ -469,7 +476,7 @@ namespace Meowziq.Value {
 
         public char[] TextCharArray {
             get {
-                if (Text == "") {
+                if (Text.Equals("")) {
                     return null;
                 }
                 return Utils.Filter(Text).ToCharArray();
@@ -501,7 +508,7 @@ namespace Meowziq.Value {
 
         public char[] TextCharArray {
             get {
-                if (Text == "") {
+                if (Text.Equals("")) {
                     return null;
                 }
                 return Utils.Filter(Text).ToCharArray();
@@ -572,9 +579,9 @@ namespace Meowziq.Value {
         /// </summary>
         public char[] TextCharArray {
             get {
-                if (Way == Way.Mono || Way == Way.Multi || Way == Way.Drum) {
+                if (Way is Way.Mono || Way is Way.Multi || Way is Way.Drum) {
                     return note.TextCharArray;
-                } else if (Way == Way.Chord) {
+                } else if (Way is Way.Chord) {
                     return Chord.TextCharArray;
                 }
                 return null;
@@ -583,7 +590,7 @@ namespace Meowziq.Value {
 
         public int Interval {
             get {
-                if (Way == Way.Mono || Way == Way.Multi) {
+                if (Way is Way.Mono || Way is Way.Multi) {
                     return note.Interval;
                 }
                 return 0; // Chord はインターバルなし
@@ -592,7 +599,7 @@ namespace Meowziq.Value {
 
         public bool IsNote {
             get {
-                if (Way == Way.Mono || Way == Way.Multi) {
+                if (Way is Way.Mono || Way is Way.Multi) {
                     return true;
                 }
                 return false;
@@ -601,7 +608,7 @@ namespace Meowziq.Value {
 
         public bool IsChord {
             get {
-                if (Way == Way.Chord) {
+                if (Way is Way.Chord) {
                     return true;
                 }
                 return false;
@@ -619,11 +626,11 @@ namespace Meowziq.Value {
         // public Methods [verb]
 
         public bool IsMatch(char target) {
-            if (Way == Way.Mono || Way == Way.Multi) {
+            if (Way is Way.Mono || Way is Way.Multi) {
                 return Regex.IsMatch(target.ToString(), @"^[1-7]+$"); // 1～7まで度数の数値がある時
-            } else if (Way == Way.Chord) {
+            } else if (Way is Way.Chord) {
                 return Regex.IsMatch(target.ToString(), @"^[1-9]+$"); // chord モードは1～9
-            } else if (Way == Way.Drum) {
+            } else if (Way is Way.Drum) {
                 return target.ToString().Equals("x");
             }
             return false;

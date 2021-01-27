@@ -168,14 +168,5 @@ namespace Meowziq.Core {
         public Mode SpanMode {
             get => spanMode; // 一度設定した spanMode は変更しない
         }
-
-        public bool AutoMode {
-            get {
-                if (spanMode == Mode.Undefined) {
-                    return true;
-                }
-                return false;
-            }
-        }
     }
 }

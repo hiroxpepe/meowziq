@@ -34,39 +34,33 @@ namespace Meowziq {
 
         /// <summary>
         /// 1～9の Phrase コード記法から Note No の配列を取得します
-        /// ※自動的に旋法を決定、Span の旋法両対応
+        ///     Span に旋法なし：キーの旋法と度数から旋法に対応したその度数の旋法を取得
+        ///     Span に旋法あり：Span に設定した旋法を使用
         /// </summary>
-        public static int[] ToNoteArray(Key key, Degree degree, Mode keyMode, Mode spanMode, int index, bool autoMode = true) {
+        public static int[] ToNoteArray(Key key, Degree degree, Mode keyMode, Mode spanMode, int index) {
             int _noteDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
-            int[] _scale7;
-            if (autoMode) { // 自動旋法
-                Mode _modeDegree = modeSpanBy(degree, keyMode); // キーの旋法と度数から旋法に対応したその度数の旋法を取得
-                _scale7 = scale7By(Key.Enum.Parse(_noteDegree), _modeDegree); // そのルート音の旋法スケールを取得
-            } else { // Span の旋法
-                _scale7 = scale7By(Key.Enum.Parse(_noteDegree), spanMode); // そのルート音の旋法スケールを取得 ※Span に設定した旋法を使用
-            }
+            var _mode = spanMode is Mode.Undefined ? modeSpanBy(degree, keyMode) : spanMode; // Span に旋法がなければ自動旋法
+            int[] _scale7 = scale7By(Key.Enum.Parse(_noteDegree), _mode); // そのルート音の旋法スケールを取得
             return noteArryBy(index, _scale7); // 旋法スケールから引数indexに対応したコード構成音の配列を返す
         }
 
         /// <summary>
         /// 1～7の Phrase ノート記法から Note No を取得します
         /// ※ "auto": 自動的に旋法を決定、Span の旋法両対応
+        ///     Span に旋法なし：キーの旋法と度数から旋法に対応したその度数の旋法を取得
+        ///     Span に旋法あり：Span に設定した旋法を使用
         /// ※ "note": キーの旋法を自動判定し、その旋法の ノート記法の対応 Note No を返す
         /// </summary>
-        public static int ToNote(Key key, Degree degree, Mode keyMode, Mode spanMode, int index, bool autoMode = true, bool autoNote = true) {
+        public static int ToNote(Key key, Degree degree, Mode keyMode, Mode spanMode, int index, bool autoNote = true) {
             int _noteDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
-            int[] _scale7;
-            if (autoMode) { // 自動旋法
-                Mode _modeDegree = modeSpanBy(degree, keyMode); // キーの旋法と度数から旋法に対応したその度数の旋法を取得
-                _scale7 = scale7By(Key.Enum.Parse(_noteDegree), _modeDegree); // そのルート音の旋法スケールを取得
-            } else { // Span の旋法
-                _scale7 = scale7By(Key.Enum.Parse(_noteDegree), spanMode); // そのルート音の旋法スケールを取得※Span に設定した旋法を使用
-            }
-            if (!autoNote) { // 別でキーの旋法を自動判定
-                var _mode = spanMode == Mode.Undefined ? modeSpanBy(degree, keyMode) : spanMode;
-                var _currentKeyMode = ToModeKey(key, degree, keyMode, _mode);
-                if (!_currentKeyMode.ToString().Equals("Undefined")) { // 旋法が判定出来れば
-                    _scale7 = scale7By(key, _currentKeyMode); // 判定した曲の旋法を取得
+            var _mode = spanMode is Mode.Undefined ? modeSpanBy(degree, keyMode) : spanMode; // Span に旋法がなければ自動旋法
+            int[] _scale7 = null;
+            if (autoNote) { // Span ベースの旋法(自動・設定)
+                _scale7 = scale7By(Key.Enum.Parse(_noteDegree), _mode); // そのルート音の旋法スケールを取得
+            } else { // キーの旋法を自動判定してそちらから取得
+                var _modeCurrentKey = ToModeKey(key, degree, keyMode, _mode);
+                if (!_modeCurrentKey.ToString().Equals("Undefined")) { // 旋法が判定出来れば
+                    _scale7 = scale7By(key, _modeCurrentKey); // 判定した曲の旋法を取得
                 }
             }
             return _scale7[index - 1]; // 0基底のスケール配列から引数添え字のノートを返す
@@ -75,8 +69,8 @@ namespace Meowziq {
         /// <summary>
         /// FIXME: テキスト設定からランダムアルぺジエーター
         /// </summary>
-        public static int ToNoteRandom(Key key, Degree degree, Mode keyMode, Mode spanMode, bool autoMode) {
-            return noteOfRandom3By(key, degree, keyMode, spanMode, autoMode);
+        public static int ToNoteRandom(Key key, Degree degree, Mode keyMode, Mode spanMode) {
+            return noteOfRandom3By(key, degree, keyMode, spanMode);
         }
 
         /// <summary>
@@ -733,13 +727,9 @@ namespace Meowziq {
         /// <summary>
         /// そのキーの旋法の度数の構成音をランダムで返す
         /// </summary>
-        static int noteOfRandom3By(Key key, Degree degree, Mode keyMode, Mode spanMode, bool autoMode = true) {
-            int[] _scale;
-            if (autoMode) {
-                _scale = noteArray3By(key, degree, keyMode); // 3音
-            } else {
-                _scale = noteArray3By(key, degree, spanMode); // 3音
-            }
+        static int noteOfRandom3By(Key key, Degree degree, Mode keyMode, Mode spanMode) {
+            var _mode = spanMode is Mode.Undefined ? modeSpanBy(degree, keyMode) : spanMode; // Span に旋法がなければ自動旋法
+            int[] _scale = noteArray3By(key, degree, _mode/*keyMode*/); // 3音
             int _random = random.Next(0, 3);
             return _scale[_random]; // 0 から 2
         }
