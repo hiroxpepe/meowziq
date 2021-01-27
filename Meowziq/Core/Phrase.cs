@@ -47,29 +47,23 @@ namespace Meowziq.Core {
         /// <summary>
         /// TODO: default レンジ
         /// </summary>
-        public string Range { // TODO: Data 内でバリデーション
+        public string Range {
             set {
-                if (value == null) return;
+                if (value is null) {
+                    return;
+                }
                 var _rangeText = value;
                 if (!_rangeText.Contains(":")) {
                     throw new ArgumentException("invalid range format.");
                 }
                 var _rangeArray = _rangeText.Split(':');
+                if (_rangeArray.Length != 2) {
+                    throw new ArgumentException("invalid range format.");
+                }
                 data.Chord.Range = new Range(
                     int.Parse(_rangeArray[0]),
                     int.Parse(_rangeArray[1])
                 );
-                if (data.Chord.Range.Min < 0) {
-                    throw new ArgumentException("invalid range min.");
-                }
-                if (data.Chord.Range.Max > 127) {
-                    throw new ArgumentException("invalid range max.");
-                }
-                if (data.Chord.Range.Max - data.Chord.Range.Min != 11) { // オクターブの範囲外
-                    var _okMax = data.Chord.Range.Min + 11;
-                    var _okMin = data.Chord.Range.Max - 11;
-                    throw new ArgumentException($"invalid range length,\r\nmust set {data.Chord.Range.Min}:{_okMax} or {_okMin}:{data.Chord.Range.Max}.");
-                }
             }
         }
 
@@ -116,7 +110,7 @@ namespace Meowziq.Core {
         /// シンコペーションで被る Note を除外します
         /// NOTE: all sound off された後の tick の note を消せばよい
         /// TODO: この処理の高速化が必要：List が遅い？ LINQ が遅い？
-        /// FIXME: バグあり ⇒ シンコペーションは小節の頭だけ許可する
+        /// FIXME: バグあり ⇒ シンコペーションは小節の頭だけ許可する？
         /// </summary>
         public void RemoveBy(Note target) {
             var _tick1 = target.Tick;
