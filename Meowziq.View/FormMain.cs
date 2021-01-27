@@ -158,7 +158,7 @@ namespace Meowziq.View {
                         if (x.MidiChannel == 2) {
                             Log.Debug($"Data1: {x.Data1} Data2: {x.Data2}");
                         }
-                    });
+                    }); // MEMO: Parallel.ForEach では逆に遅かった
                 }
                 Sound.Played = true;
             }
@@ -168,7 +168,7 @@ namespace Meowziq.View {
         // private Methods [verb]
 
         /// <summary>
-        /// ソングをロード
+        /// 停止中ソングをロード
         /// </summary>
         async Task<string> buildSong(bool save = false) {
             var _name = "------------";
@@ -187,20 +187,24 @@ namespace Meowziq.View {
         }
 
         /// <summary>
-        /// ソングをロード
+        /// 演奏中ソングをロード
         /// NOTE: Message クラスから呼ばれます
         /// </summary>
         async void loadSong(int tick) {
-            await Task.Run(() => {
-                SongLoader.PatternList = PatternLoader.Build($"{targetPath}/pattern.json"); // Pattern と Song をロード
-                var _song = SongLoader.Build($"{targetPath}/song.json");
-                PlayerLoader.PhraseList = PhraseLoader.Build($"{targetPath}/phrase.json"); // Phrase と Player をロード
-                PlayerLoader.Build($"{targetPath}/player.json").ForEach(x => {
-                    x.Song = _song; // Song データを設定
-                    x.Build(tick); // MIDI データを構築
+            try {
+                await Task.Run(() => {
+                    SongLoader.PatternList = PatternLoader.Build($"{targetPath}/pattern.json"); // Pattern と Song をロード
+                    var _song = SongLoader.Build($"{targetPath}/song.json");
+                    PlayerLoader.PhraseList = PhraseLoader.Build($"{targetPath}/phrase.json"); // Phrase と Player をロード
+                    PlayerLoader.Build($"{targetPath}/player.json").ForEach(x => {
+                        x.Song = _song; // Song データを設定
+                        x.Build(tick); // MIDI データを構築
+                    });
+                    Log.Trace("load! :)");
                 });
-                Log.Trace("load! :)");
-            });
+            } catch {
+                Log.Fatal("load failed.. :("); // TODO: リカバー処理
+            }
         }
 
         /// <summary>

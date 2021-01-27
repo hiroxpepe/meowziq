@@ -63,7 +63,7 @@ namespace Meowziq {
             if (!ContainsKey(key)) {
                 return null; // key に存在しない場合は null を返す
             }
-            return this[key]; // 初回なら key の value を返す
+            return this[key]; // 初回なら key の value を返す // TODO: ソート： ドラム優先、メロ後：ソートパラメータが必要？
         }
 
         /// <summary>
@@ -155,7 +155,7 @@ namespace Meowziq {
             // tick が2拍ごとに切り替え MEMO: * 4 にすれば 1小節毎、* 1 にすれば 1拍毎に切り替えれる
             if (tick % (Length.Of4beat.Int32() * 2) == 0) {
                 change();
-                load(tick);
+                load(tick); // TODO: load に失敗したらキャッシュを読む
             }
         }
 
