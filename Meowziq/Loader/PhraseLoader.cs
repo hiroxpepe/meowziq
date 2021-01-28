@@ -17,10 +17,20 @@ namespace Meowziq.Loader {
 
         /// <summary>
         /// Phrase のリストを作成します
+        ///     + ファイル読み込み
         /// </summary>
         public static List<Core.Phrase> Build(string targetPath) {
             // Core.Phrase のリストに変換
             return loadJson(targetPath).PhraseArray.Select(x => convertPhrase(x)).ToList();
+        }
+
+        /// <summary>
+        /// Phrase のリストを作成します
+        ///     + キャッシュした文字列
+        /// </summary>
+        public static List<Core.Phrase> Build(Stream target) {
+            // Core.Phrase のリストに変換
+            return loadJson(target).PhraseArray.Select(x => convertPhrase(x)).ToList();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,6 +70,11 @@ namespace Meowziq.Loader {
                 var _serializer = new DataContractJsonSerializer(typeof(Json));
                 return (Json) _serializer.ReadObject(_stream);
             }
+        }
+
+        static Json loadJson(Stream target) {
+            var _serializer = new DataContractJsonSerializer(typeof(Json));
+            return (Json) _serializer.ReadObject(target);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

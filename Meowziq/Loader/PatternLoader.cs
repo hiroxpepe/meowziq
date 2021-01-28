@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
-
+using System.Text;
 using Meowziq.Core;
 
 namespace Meowziq.Loader {
@@ -18,10 +18,20 @@ namespace Meowziq.Loader {
 
         /// <summary>
         /// Pattern のリストを作成します
+        ///     + ファイル読み込み
         /// </summary>
         public static List<Core.Pattern> Build(string targetPath) {
             // Core.Pattern のリストに変換
             return loadJson(targetPath).PatternArray.Select(x => convertPattern(x)).ToList();
+        }
+
+        /// <summary>
+        /// Pattern のリストを作成します
+        ///     + キャッシュした文字列
+        /// </summary>
+        public static List<Core.Pattern> Build(Stream target) {
+            // Core.Pattern のリストに変換
+            return loadJson(target).PatternArray.Select(x => convertPattern(x)).ToList();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -99,6 +109,11 @@ namespace Meowziq.Loader {
                 var _serializer = new DataContractJsonSerializer(typeof(Json));
                 return (Json) _serializer.ReadObject(_stream);
             }
+        }
+
+        static Json loadJson(Stream target) {
+            var _serializer = new DataContractJsonSerializer(typeof(Json));
+            return (Json) _serializer.ReadObject(target);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
