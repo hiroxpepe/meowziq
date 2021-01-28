@@ -27,7 +27,9 @@ namespace Meowziq.View {
 
         Cache cache;
 
-        string exMessage = "";
+        string exMessage;
+
+        DialogResult result;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
@@ -211,18 +213,20 @@ namespace Meowziq.View {
                         x.Build(tick); // MIDI データを構築
                     });
                     cache.Update(); // 正常に読み込めたらキャッシュとして採用
-                    exMessage = ""; // TODO: これでOK?
+                    exMessage = "";
                     Log.Trace("load! :)");
                 });
             } catch (Exception ex) { // NOTE: ここで ファイル読み込み ⇒ Build() までの全ての例外を捕捉する
-                if (ex.Message != exMessage) {
-                    _ = Task.Factory.StartNew(() => {
-                        MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                if (!exMessage.Equals(ex.Message)) { // エラーメッセージが違う場合
+                    _ = Task.Factory.StartNew(() => { // エラーダイアログ表示
+                        result = MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                        if (result is DialogResult.OK) { // OKで閉じられたら
+                            exMessage = ""; // フラグを初期化して必要なら再度ダイアログを表示
+                        }
                     });
                 }
                 exMessage = ex.Message;
                 await Task.Run(() => {
-                    // TODO: メッセージダイアログを表示する
                     Log.Fatal("load failed.. :(");
                     SongLoader.PatternList = PatternLoader.Build(cache.ValidPattern);
                     var _song = SongLoader.Build(cache.ValidSong);
