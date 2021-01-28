@@ -1,7 +1,5 @@
 ﻿
 using System;
-using System.IO;
-using System.Text;
 
 namespace Meowziq {
 
@@ -312,10 +310,6 @@ namespace Meowziq {
     /// 汎用拡張メソッド
     /// </summary>
     public static class Extensions {
-
-        public static MemoryStream MemoryStream(this string source, Encoding encoding) {
-            return new MemoryStream(encoding.GetBytes(source));
-        }
 
         public static int Int32(this char source) {
             return int.Parse(source.ToString()); // TODO: 0～9 以外判定

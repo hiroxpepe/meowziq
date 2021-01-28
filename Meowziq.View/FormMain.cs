@@ -4,11 +4,11 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sanford.Multimedia.Midi;
 
+using Meowziq.IO;
 using Meowziq.Loader;
 
 namespace Meowziq.View {
@@ -26,6 +26,8 @@ namespace Meowziq.View {
         string targetPath;
 
         Cache cache;
+
+        string exMessage = "";
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
@@ -180,15 +182,14 @@ namespace Meowziq.View {
         async Task<string> buildSong(bool save = false) {
             var _name = "------------";
             await Task.Run(() => {
-                SongLoader.PatternList = PatternLoader.Build($"{targetPath}/pattern.json"); // Pattern と Song をロード
+                SongLoader.PatternList = PatternLoader.Build($"{targetPath}/pattern.json");
                 var _song = SongLoader.Build($"{targetPath}/song.json");
-                PlayerLoader.PhraseList = PhraseLoader.Build($"{targetPath}/phrase.json"); // Phrase と Player をロード
+                PlayerLoader.PhraseList = PhraseLoader.Build($"{targetPath}/phrase.json");
                 PlayerLoader.Build($"{targetPath}/player.json").ForEach(x => {
                     x.Song = _song; // Song データを設定
                     x.Build(0, save); // MIDI データを構築
                 });
                 _name = _song.Name;
-                //loadAsCache(); // キャッシュとして読み込み
                 Log.Info("load! :)");
             });
             return _name; // Song の名前を返す
@@ -201,30 +202,35 @@ namespace Meowziq.View {
         async void loadSong(int tick) {
             try {
                 await Task.Run(() => {
-                    // MEMO: ファイルパスを渡すのではなくもう文字列として読んでおく
-                    cache.Load(targetPath);
-                    SongLoader.PatternList = PatternLoader.Build(cache.CurrentPattern.MemoryStream(Encoding.UTF8)); // Pattern と Song をロード
-                    var _song = SongLoader.Build(cache.CurrentSong.MemoryStream(Encoding.UTF8));
-                    PlayerLoader.PhraseList = PhraseLoader.Build(cache.CurrentPhrase.MemoryStream(Encoding.UTF8)); // Phrase と Player をロード
-                    PlayerLoader.Build(cache.CurrentPlayer.MemoryStream(Encoding.UTF8)).ForEach(x => {
+                    cache.Load(targetPath); // json ファイルを読み込む
+                    SongLoader.PatternList = PatternLoader.Build(cache.CurrentPattern);
+                    var _song = SongLoader.Build(cache.CurrentSong);
+                    PlayerLoader.PhraseList = PhraseLoader.Build(cache.CurrentPhrase);
+                    PlayerLoader.Build(cache.CurrentPlayer).ForEach(x => {
                         x.Song = _song; // Song データを設定
                         x.Build(tick); // MIDI データを構築
                     });
-                    cache.Update(); // 正常に読み込めたらキャッシュとして適用
+                    cache.Update(); // 正常に読み込めたらキャッシュとして採用
+                    exMessage = ""; // TODO: これでOK?
                     Log.Trace("load! :)");
                 });
-            } catch {
-                // NOTE: ここで ファイル読み込み ⇒ Build() までの全ての例外を捕捉します
-                // TODO: メッセージダイアログを表示する
-                Log.Fatal("load failed.. :(");
-                // 前回のキャッシュを Build する
-                // TODO: 一度 Message を初期化？
-                SongLoader.PatternList = PatternLoader.Build(cache.ValidPattern.MemoryStream(Encoding.UTF8)); // Pattern と Song をロード
-                var _song = SongLoader.Build(cache.ValidSong.MemoryStream(Encoding.UTF8));
-                PlayerLoader.PhraseList = PhraseLoader.Build(cache.ValidPhrase.MemoryStream(Encoding.UTF8)); // Phrase と Player をロード
-                PlayerLoader.Build(cache.ValidPlayer.MemoryStream(Encoding.UTF8)).ForEach(x => {
-                    x.Song = _song; // Song データを設定
-                    x.Build(tick); // MIDI データを構築
+            } catch (Exception ex) { // NOTE: ここで ファイル読み込み ⇒ Build() までの全ての例外を捕捉する
+                if (ex.Message != exMessage) {
+                    _ = Task.Factory.StartNew(() => {
+                        MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    });
+                }
+                exMessage = ex.Message;
+                await Task.Run(() => {
+                    // TODO: メッセージダイアログを表示する
+                    Log.Fatal("load failed.. :(");
+                    SongLoader.PatternList = PatternLoader.Build(cache.ValidPattern);
+                    var _song = SongLoader.Build(cache.ValidSong);
+                    PlayerLoader.PhraseList = PhraseLoader.Build(cache.ValidPhrase);
+                    PlayerLoader.Build(cache.ValidPlayer).ForEach(x => {
+                        x.Song = _song; // Song データを設定
+                        x.Build(tick); // MIDI データを構築　※前回のキャッシュを Build する
+                    });
                 });
             }
         }
@@ -271,7 +277,7 @@ namespace Meowziq.View {
                 sequence.Clear();
                 sequence.Add(_track);
                 sequence.Save($"./data/{_songDir}/{_songName}.mid");
-                Invoke((MethodInvoker) (() => textBoxSongName.Text = _songName));// Song 名戻す
+                Invoke((MethodInvoker) (() => textBoxSongName.Text = _songName));// Song 名を戻す
                 _disposer.Dispose(); // タイマー破棄
                 Log.Info("save! :D");
                 return true;
@@ -375,80 +381,6 @@ namespace Meowziq.View {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // inner Classes
-
-        /// <summary>
-        /// TODO: Loader のパッケージへ移動
-        /// </summary>
-        class Cache {
-            DataSet current;
-            DataSet valid;
-            internal Cache() {
-                current = new DataSet();
-                valid = new DataSet();
-            }
-            internal void Load(string targetPath) {
-                using (var _stream1 = new StreamReader($"{targetPath}/pattern.json")) {
-                    current.Pattern = _stream1.ReadToEnd();
-                }
-                using (var _stream2 = new StreamReader($"{targetPath}/song.json")) {
-                    current.Song = _stream2.ReadToEnd();
-                }
-                using (var _stream3 = new StreamReader($"{targetPath}/phrase.json")) {
-                    current.Phrase = _stream3.ReadToEnd();
-                }
-                using (var _stream4 = new StreamReader($"{targetPath}/player.json")) {
-                    current.Player = _stream4.ReadToEnd();
-                }
-            }
-            internal void Update() {
-                valid.Pattern = current.Pattern;
-                valid.Song = current.Song;
-                valid.Phrase = current.Phrase;
-                valid.Player = current.Player;
-            }
-            internal string CurrentPattern {
-                get => current.Pattern;
-            }
-            internal string CurrentSong {
-                get => current.Song;
-            }
-            internal string CurrentPhrase {
-                get => current.Phrase;
-            }
-            internal string CurrentPlayer {
-                get => current.Player;
-            }
-            internal string ValidPattern {
-                get => valid.Pattern;
-            }
-            internal string ValidSong {
-                get => valid.Song;
-            }
-            internal string ValidPhrase {
-                get => valid.Phrase;
-            }
-            internal string ValidPlayer {
-                get => valid.Player;
-            }
-
-            ///////////////////////////////////////////////////////////////////////////////////////////
-            // inner Classes
-
-            class DataSet {
-                internal string Pattern {
-                    get; set;
-                }
-                internal string Song {
-                    get; set;
-                }
-                internal string Phrase {
-                    get; set;
-                }
-                internal string Player {
-                    get; set;
-                }
-            }
-        }
 
         /// <summary>
         /// FormMain オブジェクトの状態を保持するクラス
