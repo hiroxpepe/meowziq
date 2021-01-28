@@ -31,6 +31,7 @@ namespace Meowziq.Loader {
 
         /// <summary>
         /// Song を作成します
+        ///     + ファイル読み込み
         /// </summary>
         public static Core.Song Build(string targetPath) {
             if (patternList == null) {
@@ -41,6 +42,27 @@ namespace Meowziq.Loader {
                 new Core.Section(
                     Key.Enum.Parse(x.Key), 
                     Mode.Enum.Parse(x.Mode), 
+                    x.PatternArray.Select(_x => searchPattern(_x)).ToList()
+            )).ToList();
+            return new Core.Song(
+                _song.Name,
+                _sectionList
+            );
+        }
+
+        /// <summary>
+        /// Song を作成します
+        ///     + キャッシュした文字列
+        /// </summary>
+        public static Core.Song Build(Stream target) {
+            if (patternList == null) {
+                throw new ArgumentException("need patternList.");
+            }
+            var _song = loadJson(target).Song;
+            var _sectionList = _song.Section.Select(x =>
+                new Core.Section(
+                    Key.Enum.Parse(x.Key),
+                    Mode.Enum.Parse(x.Mode),
                     x.PatternArray.Select(_x => searchPattern(_x)).ToList()
             )).ToList();
             return new Core.Song(
@@ -65,6 +87,11 @@ namespace Meowziq.Loader {
                 var _serializer = new DataContractJsonSerializer(typeof(Json));
                 return (Json) _serializer.ReadObject(_stream);
             }
+        }
+
+        static Json loadJson(Stream target) {
+            var _serializer = new DataContractJsonSerializer(typeof(Json));
+            return (Json) _serializer.ReadObject(target);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
