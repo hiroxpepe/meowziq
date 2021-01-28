@@ -122,8 +122,21 @@ namespace Meowziq.IO {
     /// IO系拡張メソッド
     /// </summary>
     public static class Extensions {
+
         public static MemoryStream ToMemoryStream(this string source) {
             return new MemoryStream(Encoding.UTF8.GetBytes(source));
+        }
+
+        public static bool Is(this string source, string target) {
+            return source == target;
+        }
+
+        public static void Set(this string source, string target) {
+            source = target;
+        }
+
+        public static void Clear(this string source) {
+            source = "";
         }
     }
 }
