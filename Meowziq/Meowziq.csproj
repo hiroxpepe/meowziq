@@ -67,6 +67,7 @@
     <Compile Include="Core\Song.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="IO\Cache.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Midi.cs" />
