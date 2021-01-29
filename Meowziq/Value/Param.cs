@@ -10,11 +10,11 @@ namespace Meowziq.Value {
     /// <summary>
     /// NOTE: 入力値バリデーション クラス
     /// </summary>
-    internal class Validate {
+    public static class Validate {
         /// <summary>
         /// TODO: 使用可能な文字の判定
         /// </summary>
-        internal static string PhraseValue(string target) {
+        public static string PhraseValue(string target) {
             if (target is null) {
                 return target; // 値がなければそのまま返す FIXME:
             }
@@ -41,6 +41,21 @@ namespace Meowziq.Value {
         /// </summary>
         internal static string Filter(string target) {
             return target.Replace("|", "").Replace("[", "").Replace("]", ""); // 不要文字削除
+        }
+    }
+
+    public static class Inheritor {
+
+        public static Data Excute(Data target, Data baze) {
+            return null;
+        }
+
+        static string excute(string target, string baze) {
+            return "";
+        }
+
+        static string[] excute(string[] target, string[] baze) {
+            return null;
         }
     }
 
