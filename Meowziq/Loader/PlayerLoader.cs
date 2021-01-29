@@ -34,11 +34,10 @@ namespace Meowziq.Loader {
         ///     + ファイル読み込み
         /// </summary>
         public static List<Core.Player> Build(string targetPath) {
-            if (phraseList == null) {
+            if (phraseList is null) {
                 throw new ArgumentException("need phraseList.");
             }
-            // Core.Player のリストに変換
-            return loadJson(targetPath).PlayerArray.Select(x => convertPlayer(x)).ToList();
+            return loadJson(targetPath).PlayerArray.Select(x => convertPlayer(x)).ToList(); // Core.Player のリストに変換
         }
 
         /// <summary>
@@ -46,11 +45,10 @@ namespace Meowziq.Loader {
         ///     + キャッシュした文字列
         /// </summary>
         public static List<Core.Player> Build(Stream target) {
-            if (phraseList == null) {
+            if (phraseList is null) {
                 throw new ArgumentException("need phraseList.");
             }
-            // Core.Player のリストに変換
-            return loadJson(target).PlayerArray.Select(x => convertPlayer(x)).ToList();
+            return loadJson(target).PlayerArray.Select(x => convertPlayer(x)).ToList(); // Core.Player のリストに変換
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -59,7 +57,7 @@ namespace Meowziq.Loader {
         static Core.Player convertPlayer(Player player) {
             var _player = new Core.Player();
             _player.MidiCh = MidiChannel.Enum.Parse(player.Midi);
-            if (int.Parse(player.Midi) == 9) { // FIXME: 10ch 以外のドラムを可能にする
+            if (int.Parse(player.Midi) is 9) { // FIXME: 10ch 以外のドラムを可能にする
                 _player.DrumKit = DrumKit.Enum.Parse(player.Inst); // FIXME: 設定が違う場合
             } else {
                 _player.Instrument = Instrument.Enum.Parse(player.Inst); // FIXME: 設定が違う場合

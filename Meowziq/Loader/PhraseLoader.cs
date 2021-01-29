@@ -1,5 +1,4 @@
 ﻿
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,8 +19,7 @@ namespace Meowziq.Loader {
         ///     + ファイル読み込み
         /// </summary>
         public static List<Core.Phrase> Build(string targetPath) {
-            // Core.Phrase のリストに変換
-            return loadJson(targetPath).PhraseArray.Select(x => convertPhrase(x)).ToList();
+            return loadJson(targetPath).PhraseArray.Select(x => convertPhrase(x)).ToList(); // Core.Phrase のリストに変換
         }
 
         /// <summary>
@@ -29,8 +27,7 @@ namespace Meowziq.Loader {
         ///     + キャッシュした文字列
         /// </summary>
         public static List<Core.Phrase> Build(Stream target) {
-            // Core.Phrase のリストに変換
-            return loadJson(target).PhraseArray.Select(x => convertPhrase(x)).ToList();
+            return loadJson(target).PhraseArray.Select(x => convertPhrase(x)).ToList(); // Core.Phrase のリストに変換
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

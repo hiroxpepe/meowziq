@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
-using System.Text;
 using Meowziq.Core;
 
 namespace Meowziq.Loader {
@@ -21,8 +20,7 @@ namespace Meowziq.Loader {
         ///     + ファイル読み込み
         /// </summary>
         public static List<Core.Pattern> Build(string targetPath) {
-            // Core.Pattern のリストに変換
-            return loadJson(targetPath).PatternArray.Select(x => convertPattern(x)).ToList();
+            return loadJson(targetPath).PatternArray.Select(x => convertPattern(x)).ToList(); // Core.Pattern のリストに変換
         }
 
         /// <summary>
@@ -30,25 +28,39 @@ namespace Meowziq.Loader {
         ///     + キャッシュした文字列
         /// </summary>
         public static List<Core.Pattern> Build(Stream target) {
-            // Core.Pattern のリストに変換
-            return loadJson(target).PatternArray.Select(x => convertPattern(x)).ToList();
+            return loadJson(target).PatternArray.Select(x => convertPattern(x)).ToList(); // Core.Pattern のリストに変換
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private static Methods [verb]
 
         static Core.Pattern convertPattern(Pattern pattern) {
-            // Core.Pattern に変換
-            return new Core.Pattern(pattern.Name, convertMeasList(pattern.Data));
+            return new Core.Pattern(pattern.Name, convertMeasList(pattern.Data)); // Core.Pattern に変換
         }
 
         static List<Meas> convertMeasList(string patternString) {
+            // 旋法の省略記述を変換
+            patternString = interpretModePrefix(patternString);
             // 小節に切り出す "[I:Aeo| | | ][IV| | | ][I| | | ][IV| | | ]"
             var _measStringArray = patternString.Replace("][", "@")  // まず "][" を "@" に置き換え
                 .Split('@') // 小節で切り分ける
                 .Select(x => x.Replace("[", "").Replace("]", "")).ToArray(); // 不要文字削除
             // Span リストに変換してから Meas を作成してリストに変換
             return _measStringArray.Select(x => new Meas(convertSpanList(x))).ToList();
+        }
+
+        /// <summary>
+        /// 旋法の省略記法を解釈します
+        /// </summary>
+        static string interpretModePrefix(string target) {
+            target = target.Replace(":l", ":Lyd");
+            target = target.Replace(":i", ":Ion");
+            target = target.Replace(":m", ":Mix");
+            target = target.Replace(":d", ":Dor");
+            target = target.Replace(":a", ":Aeo");
+            target = target.Replace(":p", ":Phr");
+            target = target.Replace(":o", ":Loc");
+            return target;
         }
 
         static List<Span> convertSpanList(string measString) {

@@ -127,7 +127,7 @@ namespace Meowziq.IO {
             return new MemoryStream(Encoding.UTF8.GetBytes(source));
         }
 
-        public static bool Is(this string source, string target) {
+        public static bool Is(this string source, string target) { // is でいい？
             return source == target;
         }
 
