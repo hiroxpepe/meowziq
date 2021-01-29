@@ -26,7 +26,7 @@ namespace Meowziq.Value {
                 .Where(x => x.Length != 4) // そのデータが4文字ではないものを抽出
                 .ToArray();
             if (_array1.Length != 0) { // そのデータがあれば例外を投げる
-                throw new FormatException("data count must be 4.");
+                throw new FormatException("a beat data count must be 4.");
             }
             return target; // バリデーションOKなら元々の文字列を返す
         }
@@ -44,18 +44,68 @@ namespace Meowziq.Value {
         }
     }
 
+    /// <summary>
+    /// Phrase のデータを継承する為のクラス
+    /// </summary>
     public static class Inheritor {
 
-        public static Data Excute(Data target, Data baze) {
-            return null;
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Methods [verb]
+
+        /// <summary>
+        /// target のデータが '*' の箇所を baze のデータで置き換えます
+        /// </summary>
+        public static Data Apply(Data target, Data baze) {
+            target.Note.Text = applyString(target.Note.Text, baze.Note.Text);
+            target.Note.Oct = baze.Note.Oct; // baze 継承
+            target.Auto = baze.Auto; // baze 継承
+            target.Chord.Text = applyString(target.Chord.Text, baze.Chord.Text);
+            target.Chord.Range = target.Chord.Range; // baze 継承
+            target.Exp.Pre = applyString(target.Exp.Pre, baze.Exp.Pre);
+            target.Exp.Post = applyString(target.Exp.Post, baze.Exp.Post);
+            if (baze.PercussionArray != null) {
+                target.PercussionArray = baze.PercussionArray; // baze 継承
+            }
+            target.BeatArray = applyArray(target.BeatArray, baze.BeatArray);
+            target.NoteArray = applyArray(target.NoteArray, baze.NoteArray);
+            target.AutoArray = applyArray(target.AutoArray, baze.AutoArray);
+            if (target.HasMulti) {
+                target.OctArray = baze.OctArray; // baze 継承
+                target.PreArray = applyArray(target.PreArray, baze.PreArray);
+                target.PostArray = applyArray(target.PostArray, baze.PostArray);
+            }
+            return target;
         }
 
-        static string excute(string target, string baze) {
-            return "";
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private Methods [verb]
+
+        /// <summary>
+        /// target のデータが '*' なら baze のデータと置き換えます
+        /// </summary>
+        static string applyString(string target, string baze) {
+            if (target.Equals("") || target is null) { // target が空文字 or null なら baze を返す
+                return baze;
+            }
+            if (target.Count() != baze.Count()) { // target と baze のデータは同じ数
+                throw new FormatException("inherited data count must be the same as the base.");
+            }
+            var _result = target.Select((x, idx) => x.Equals('*') ? baze.ToArray()[idx] : x).ToArray();
+            return new string(_result);
         }
 
-        static string[] excute(string[] target, string[] baze) {
-            return null;
+        /// <summary>
+        /// target の string 配列の中のデータが '*' なら、baze の string 配列のデータと置き換えます
+        /// </summary>
+        static string[] applyArray(string[] target, string[] baze) {
+            if (target is null) { // target が null なら baze を返す
+                return baze;
+            }
+            if (target.Count() != baze.Count()) { // target と baze のデータは同じ数
+                throw new FormatException("inherited arrray count must be the same as the base.");
+            }
+            var _result = target.Select((x, idx) => applyString(x, baze[idx])).ToArray();
+            return _result;
         }
     }
 
@@ -508,6 +558,13 @@ namespace Meowziq.Value {
         // Fields
 
         string text;
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Constructor
+
+        public Chord() {
+            Text = "";
+        }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjective] 
