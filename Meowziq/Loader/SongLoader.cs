@@ -34,7 +34,7 @@ namespace Meowziq.Loader {
         ///     + ファイル読み込み
         /// </summary>
         public static Core.Song Build(string targetPath) {
-            if (patternList == null) {
+            if (patternList is null) {
                 throw new ArgumentException("need patternList.");
             }
             var _song = loadJson(targetPath).Song;
@@ -55,7 +55,7 @@ namespace Meowziq.Loader {
         ///     + キャッシュした文字列
         /// </summary>
         public static Core.Song Build(Stream target) {
-            if (patternList == null) {
+            if (patternList is null) {
                 throw new ArgumentException("need patternList.");
             }
             var _song = loadJson(target).Song;
@@ -77,7 +77,7 @@ namespace Meowziq.Loader {
         static Pattern searchPattern(string patternName) {
             try {
                 return patternList.Where(x => x.Name.Equals(patternName)).First(); // MEMO: 名前が一致した最初の要素
-            } catch (Exception e) {
+            } catch {
                 throw new ArgumentException("undefined pattern.");
             }
         }
