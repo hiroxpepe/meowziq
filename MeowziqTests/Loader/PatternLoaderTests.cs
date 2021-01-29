@@ -10,7 +10,7 @@ namespace Meowziq.Loader.Tests {
 
         [TestMethod()]
         public void BuildTest() {
-            var list = PatternLoader.Build(@"./data/pattern.json"); // デバッグ用
+            var _list = PatternLoader.Build(@"./data/pattern.json"); // デバッグ用
         }
     }
 }
