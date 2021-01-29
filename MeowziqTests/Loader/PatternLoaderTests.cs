@@ -1,16 +1,16 @@
 ﻿
-using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Meowziq.Loader.Tests {
     [TestClass()]
     public class PatternLoaderTests {
 
-        // BuildPatternList
-
+        /// <summary>
+        /// デバッグで使用
+        /// </summary>
         [TestMethod()]
         public void BuildTest() {
-            var _list = PatternLoader.Build(@"./data/pattern.json"); // デバッグ用
+            var _list = PatternLoader.Build(@"./data/pattern.json");
         }
     }
 }
