@@ -85,7 +85,7 @@ namespace Meowziq.Core {
                         Log.Trace($"pattarn changed. tick: {tick} {_pattern.Name} {type}");
                     }
                     foreach (var _phrase in phraseList.Where(x => x.Name.Equals(_pattern.Name))) { // Pattern の名前で Phrase を引き当てる
-                        if (save) { // NOTE: 全て Build 
+                        if (save) { // NOTE: 全て Build
                             _phrase.Build(_locate.Head, _pattern); // SMF出力モードの場合全ての tick で処理ログ出力無し
                         } else if (_locate.NeedBuild) { // この tick が含まれてる、かつ _tickOfPatternHead に16小節(パターン最大長)を足した長さ以下 pattern のみ Build する 
                             _phrase.Build(_locate.Head, _pattern); // Note データを作成：tick 毎に数回分の Pattern のデータが作成される
