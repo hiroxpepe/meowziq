@@ -110,8 +110,8 @@ namespace Meowziq.Core {
                 var _hashSet = new HashSet<int>();
                 foreach (Note _note in _noteList) {
                     Message.Apply(midiCh, _note); // message に適用
-                    if (_hashSet.Add(_note.Tick)) { // tick につき1回だけ
-                        Message.Apply(midiCh, _note.Tick, programNum); // 音色変更:演奏中 FIXME: なぜここでないとNG?
+                    if (_hashSet.Add(_note.Tick) && _note.Tick % (480 * 4) == 0) { // tick につき、かつ1小節に1回だけ
+                        Message.Apply(midiCh, _note.Tick, programNum); // 音色変更:演奏中
                     }
                 }
                 _noteList.Clear(); // 必要
