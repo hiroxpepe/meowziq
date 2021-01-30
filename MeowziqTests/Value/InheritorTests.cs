@@ -75,14 +75,14 @@ namespace Meowziq.Value.Tests {
         /// </summary>
         [TestMethod()]
         public void ApplyTest() {
-            var _target = new Data();
-            _target.Note.Text   = "[****|1**3|****|****][****|****|>>1>|--3-]";
-            var _baze = new Data();
-            _baze.Note.Text     = "[7>--|4>>5|>>7>|>>5>][7>--|4>>5|>>7>|>>5>]";
-            var _expected = new Data();
-            _expected.Note.Text = "[7>--|1>>3|>>7>|>>5>][7>--|4>>5|>>1>|--3-]";
+            var _target = new Core.Phrase();
+            _target.Data.Note.Text   = "[****|1**3|****|****][****|****|>>1>|--3-]";
+            var _baze = new Core.Phrase();
+            _baze.Data.Note.Text     = "[7>--|4>>5|>>7>|>>5>][7>--|4>>5|>>7>|>>5>]";
+            var _expected = new Core.Phrase();
+            _expected.Data.Note.Text = "[7>--|1>>3|>>7>|>>5>][7>--|4>>5|>>1>|--3-]";
             var _result = Inheritor.Apply(_target, _baze);
-            Assert.AreEqual(_result.Note.Text, _expected.Note.Text);
+            Assert.AreEqual(_result.Data.Note.Text, _expected.Data.Note.Text);
         }
     }
 }
