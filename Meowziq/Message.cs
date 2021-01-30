@@ -135,13 +135,13 @@ namespace Meowziq {
         }
 
         /// <summary>
-        /// 引数 index 値のアイテムを持つかどうかを返します
+        /// 引数 tick のアイテムを持つかどうかを返します
         /// </summary>
-        public static bool Has(int idx) {
+        public static bool Has(int tick) {
             if (flag) { // Prime スタートで実行
-                return Prime.Item.Count() > idx;
+                return Prime.Item.Select(x => x.Key).Max() > tick;
             } else {
-                return Second.Item.Count() > idx;
+                return Second.Item.Select(x => x.Key).Max() > tick;
             }
         }
 

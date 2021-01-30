@@ -264,7 +264,7 @@ namespace Meowziq.View {
                 var _songName = await buildSong(true);
                 var _songDir = targetPath.Split(Path.DirectorySeparatorChar).Last();
                 Message.Invert(); // データ生成後にフラグ反転
-                for (var _idx = 0; Message.Has(_idx); _idx++) { // tick を 30間隔でループさせます
+                for (var _idx = 0; Message.Has(_idx * 30); _idx++) { // tick を 30間隔でループさせます
                     var _tick = _idx * 30; // 30 tick を手動生成
                     var _list = Message.GetBy(_tick); // メッセージのリストを取得
                     if (_list != null) {
@@ -290,6 +290,7 @@ namespace Meowziq.View {
             return await Task.Run(async () => {
                 Message.Clear();
                 textBoxSongName.Text = await buildSong();
+                Facade.CreateConductor(sequence);
                 sequence.Load("./data/conductor.mid");
                 sequencer.Position = 0;
                 sequencer.Start();
@@ -385,26 +386,26 @@ namespace Meowziq.View {
         /// 処理用のフロントクラス
         /// </summary>
         static class Facade {
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // public static Methods [verb]
+
             /// <summary>
-            /// テンポ制御用の MIDI ファイルを作成して出力します
+            /// テンポ制御用の SMF ファイルを作成して出力します
             /// </summary>
-            public static void CreateConductor() {
-                // テンポ追加
-                byte[] _data = new byte[3]{ // TODO: 120BPM 暫定
-                    Convert.ToByte("07", 16),
-                    Convert.ToByte("A1", 16),
-                    Convert.ToByte("20", 16)
-                };
-                var _tempo = new MetaMessage(MetaType.Tempo, _data);
+            public static void CreateConductor(Sequence sequence) {
+                var _tempo = new MetaMessage(MetaType.Tempo, Value.Converter.ToByteTempo(State.Tempo));
                 var _track = new Track();
                 _track.Insert(0, _tempo);
-                for (var _idx = 0; Message.Has(_idx); _idx++) { // tick を 30間隔でループさせます
+                for (var _idx = 0; _idx < 100000; _idx++) { // tick を 30間隔でループさせます // TODO: ループ回数
                     var _tick = _idx * 30; // 30 tick を手動生成
-                    //var _list = Message.GetBy(_tick); // メッセージのリストを取得
-                    if (_list != null) {
-                        _list.ForEach(x => _track.Insert(_tick, x));
-                    }
+                    _track.Insert(_tick, new ChannelMessage(ChannelCommand.NoteOn, 0, 64, 0));
+                    _track.Insert(_tick + 30, new ChannelMessage(ChannelCommand.NoteOff, 0, 64, 0));
                 }
+                sequence.Load("./data/conductor.mid"); // テンポ制御用 SMF ファイル書き出し
+                sequence.Clear();
+                sequence.Add(_track);
+                sequence.Save($"./data/conductor.mid");
             }
         }
 
