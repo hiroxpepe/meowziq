@@ -1,9 +1,12 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
+
+using Meowziq.Value;
 
 namespace Meowziq.Loader {
     /// <summary>
@@ -16,18 +19,26 @@ namespace Meowziq.Loader {
 
         /// <summary>
         /// Phrase のリストを作成します
+        /// NOTE: Core.Phrase のリストに変換します
+        /// NOTE: "base": 指定がある場合 Phrase を継承します
         ///     + ファイル読み込み
         /// </summary>
         public static List<Core.Phrase> Build(string targetPath) {
-            return loadJson(targetPath).PhraseArray.Select(x => convertPhrase(x)).ToList(); // Core.Phrase のリストに変換
+            var _list = loadJson(targetPath).PhraseArray.Select(x => convertPhrase(x)).ToList();
+            return _list.Select(x => x = !(x.Base is null) ? Inheritor.Apply(x, searchBasePhrase(x.Type, x.Base, _list)) : x)
+                .ToList();
         }
 
         /// <summary>
         /// Phrase のリストを作成します
+        /// NOTE: Core.Phrase のリストに変換します
+        /// NOTE: "base": 指定がある場合 Phrase を継承します
         ///     + キャッシュした文字列
         /// </summary>
         public static List<Core.Phrase> Build(Stream target) {
-            return loadJson(target).PhraseArray.Select(x => convertPhrase(x)).ToList(); // Core.Phrase のリストに変換
+            var _list = loadJson(target).PhraseArray.Select(x => convertPhrase(x)).ToList();
+            return _list.Select(x => x = !(x.Base is null) ? Inheritor.Apply(x, searchBasePhrase(x.Type, x.Base, _list)) : x)
+                .ToList();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -37,6 +48,7 @@ namespace Meowziq.Loader {
             var _phrase = new Core.Phrase();
             _phrase.Type = phrase.Type;
             _phrase.Name = phrase.Name;
+            _phrase.Base = phrase.Base;
             if (phrase.Note != null) {
                 _phrase.Data.Note.Text = phrase.Note;
             } else if (phrase.Auto != null) {
@@ -60,6 +72,14 @@ namespace Meowziq.Loader {
                 }
             }
             return _phrase;
+        }
+
+        static Core.Phrase searchBasePhrase(string phraseType, string phraseName, List<Core.Phrase> list) {
+            try {
+                return list.Where(x => x.Type.Equals(phraseType) && x.Name.Equals(phraseName)).First();
+            } catch {
+                throw new ArgumentException("undefined pattern.");
+            }
         }
 
         static Json loadJson(string targetPath) {
@@ -93,6 +113,10 @@ namespace Meowziq.Loader {
             }
             [DataMember(Name = "name")]
             public string Name {
+                get; set;
+            }
+            [DataMember(Name = "base")]
+            public string Base {
                 get; set;
             }
             [DataMember(Name = "data")]

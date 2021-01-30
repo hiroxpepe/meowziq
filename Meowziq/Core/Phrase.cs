@@ -39,6 +39,10 @@ namespace Meowziq.Core {
             get; set;
         }
 
+        public string Base {
+            get; set;
+        }
+
         public Data Data {
             get => data;
             set => data = value;

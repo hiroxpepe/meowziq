@@ -55,24 +55,24 @@ namespace Meowziq.Value {
         /// <summary>
         /// target のデータが '*' の箇所を baze のデータで置き換えます
         /// </summary>
-        public static Data Apply(Data target, Data baze) {
-            target.Note.Text = applyString(target.Note.Text, baze.Note.Text);
-            target.Note.Oct = baze.Note.Oct; // baze 継承
-            target.Auto = baze.Auto; // baze 継承
-            target.Chord.Text = applyString(target.Chord.Text, baze.Chord.Text);
-            target.Chord.Range = target.Chord.Range; // baze 継承
-            target.Exp.Pre = applyString(target.Exp.Pre, baze.Exp.Pre);
-            target.Exp.Post = applyString(target.Exp.Post, baze.Exp.Post);
-            if (baze.PercussionArray != null) {
-                target.PercussionArray = baze.PercussionArray; // baze 継承
+        public static Core.Phrase Apply(Core.Phrase target, Core.Phrase baze) {
+            target.Data.Note.Text = applyString(target.Data.Note.Text, baze.Data.Note.Text);
+            target.Data.Note.Oct = baze.Data.Note.Oct; // baze 継承
+            target.Data.Auto = baze.Data.Auto; // baze 継承
+            target.Data.Chord.Text = applyString(target.Data.Chord.Text, baze.Data.Chord.Text);
+            target.Data.Chord.Range = target.Data.Chord.Range; // baze 継承
+            target.Data.Exp.Pre = applyString(target.Data.Exp.Pre, baze.Data.Exp.Pre);
+            target.Data.Exp.Post = applyString(target.Data.Exp.Post, baze.Data.Exp.Post);
+            target.Data.BeatArray = applyArray(target.Data.BeatArray, baze.Data.BeatArray);
+            target.Data.NoteArray = applyArray(target.Data.NoteArray, baze.Data.NoteArray);
+            target.Data.AutoArray = applyArray(target.Data.AutoArray, baze.Data.AutoArray);
+            if (baze.Data.PercussionArray != null) {
+                target.Data.PercussionArray = baze.Data.PercussionArray; // baze 継承
             }
-            target.BeatArray = applyArray(target.BeatArray, baze.BeatArray);
-            target.NoteArray = applyArray(target.NoteArray, baze.NoteArray);
-            target.AutoArray = applyArray(target.AutoArray, baze.AutoArray);
-            if (target.HasMulti) {
-                target.OctArray = baze.OctArray; // baze 継承
-                target.PreArray = applyArray(target.PreArray, baze.PreArray);
-                target.PostArray = applyArray(target.PostArray, baze.PostArray);
+            if (target.Data.HasMulti) {
+                target.Data.OctArray = baze.Data.OctArray; // baze 継承
+                target.Data.PreArray = applyArray(target.Data.PreArray, baze.Data.PreArray);
+                target.Data.PostArray = applyArray(target.Data.PostArray, baze.Data.PostArray);
             }
             return target;
         }
@@ -84,7 +84,7 @@ namespace Meowziq.Value {
         /// target のデータが '*' なら baze のデータと置き換えます
         /// </summary>
         static string applyString(string target, string baze) {
-            if (target.Equals("") || target is null) { // target が空文字 or null なら baze を返す
+            if (target is null || target.Equals("")) { // target が空文字 or null なら baze を返す
                 return baze;
             }
             if (target.Count() != baze.Count()) { // target と baze のデータは同じ数
