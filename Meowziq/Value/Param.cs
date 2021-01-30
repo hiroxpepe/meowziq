@@ -45,6 +45,28 @@ namespace Meowziq.Value {
     }
 
     /// <summary>
+    /// 変換用クラス
+    /// </summary>
+    public static class Converter {
+        /// <summary>
+        /// 数値 BPM を SMF 用のTEMPO情報に変換します
+        ///     BPM = 120 (1分あたり四分音符が120個)の場合、
+        ///     四分音符の長さは 60 x 106 / 120 = 500,000 (μsec)
+        ///     これを16進にすると 0x07A120 ⇒ 3バイトで "07", "A1", "20"
+        /// </summary>
+        public static byte[] ToByteTempo(int tempo) {
+            var _double = 60 * Math.Pow(10, 6) / tempo;
+            var _hex = int.Parse(Math.Round(_double).ToString()).ToString("X6"); // 16進数6桁変換
+            var _charArray = _hex.ToCharArray();
+            return new byte[3]{ // 3byte で返す
+                Convert.ToByte(_charArray[0].ToString() + _charArray[1].ToString(), 16),
+                Convert.ToByte(_charArray[2].ToString() + _charArray[3].ToString(), 16),
+                Convert.ToByte(_charArray[4].ToString() + _charArray[5].ToString(), 16)
+            };
+        }
+    }
+
+    /// <summary>
     /// Phrase のデータを継承する為のクラス
     /// </summary>
     public static class Inheritor {

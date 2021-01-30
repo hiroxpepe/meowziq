@@ -15,13 +15,16 @@ namespace Meowziq.Core {
 
         string name;
 
+        int tempo;
+
         List<Section> sectionList;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
-        public Song(string name, List<Section> sectionList) {
+        public Song(string name, int tempo, List<Section> sectionList) {
             this.name = name;
+            this.tempo = tempo;
             this.sectionList = sectionList;
         }
 
@@ -33,6 +36,13 @@ namespace Meowziq.Core {
         /// </summary>
         public string Name {
             get => name;
+        }
+
+        /// <summary>
+        /// 曲のテンポ
+        /// </summary>
+        public int Tempo {
+            get => tempo;
         }
 
         /// <summary>

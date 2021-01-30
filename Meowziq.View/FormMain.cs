@@ -255,13 +255,8 @@ namespace Meowziq.View {
                         textBoxSongName.Text = $"{_message} {_dot}";
                     }));
                 });
-                // テンポ追加
-                byte[] _data = new byte[3]{ // TODO: 120BPM 暫定
-                    Convert.ToByte("07", 16),
-                    Convert.ToByte("A1", 16),
-                    Convert.ToByte("20", 16) 
-                };
-                var _tempo = new MetaMessage(MetaType.Tempo, _data);
+                // テンポ設定
+                var _tempo = new MetaMessage(MetaType.Tempo, Value.Converter.ToByteTempo(State.Tempo));
                 var _track = new Track();
                 _track.Insert(0, _tempo);
                 // MIDI データ生成
@@ -386,8 +381,31 @@ namespace Meowziq.View {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // inner Classes
 
-        class Facade {
-
+        /// <summary>
+        /// 処理用のフロントクラス
+        /// </summary>
+        static class Facade {
+            /// <summary>
+            /// テンポ制御用の MIDI ファイルを作成して出力します
+            /// </summary>
+            public static void CreateConductor() {
+                // テンポ追加
+                byte[] _data = new byte[3]{ // TODO: 120BPM 暫定
+                    Convert.ToByte("07", 16),
+                    Convert.ToByte("A1", 16),
+                    Convert.ToByte("20", 16)
+                };
+                var _tempo = new MetaMessage(MetaType.Tempo, _data);
+                var _track = new Track();
+                _track.Insert(0, _tempo);
+                for (var _idx = 0; Message.Has(_idx); _idx++) { // tick を 30間隔でループさせます
+                    var _tick = _idx * 30; // 30 tick を手動生成
+                    //var _list = Message.GetBy(_tick); // メッセージのリストを取得
+                    if (_list != null) {
+                        _list.ForEach(x => _track.Insert(_tick, x));
+                    }
+                }
+            }
         }
 
         /// <summary>

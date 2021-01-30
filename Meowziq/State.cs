@@ -19,6 +19,10 @@ namespace Meowziq {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Properties [noun, adjective] 
 
+        public static int Tempo {
+            get; set;
+        }
+
         public static int Beat {
             get; set;
         }

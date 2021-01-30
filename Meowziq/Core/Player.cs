@@ -66,10 +66,12 @@ namespace Meowziq.Core {
         /// MIDI ノートを生成します
         /// NOTE: Phrase は前後の関連があるのでシンコペーションなどで MIDI 化前に Note を調整する必要あり
         /// NOTE: Player と Phrase の type が一致ものしか入ってない
-        /// 
         /// MEMO: SMF出力の場合はここは1回呼ぶだけで良い
         /// </summary>
         public void Build(int tick, bool save = false) {
+            // テンポ設定 FIXME: 全プレイヤーが設定しているが？
+            State.Tempo = song.Tempo;
+
             // 音色変更
             Message.Apply(midiCh, 0, programNum); // 初回
 

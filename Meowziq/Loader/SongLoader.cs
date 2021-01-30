@@ -46,6 +46,7 @@ namespace Meowziq.Loader {
             )).ToList();
             return new Core.Song(
                 _song.Name,
+                int.Parse(_song.Tempo),
                 _sectionList
             );
         }
@@ -67,6 +68,7 @@ namespace Meowziq.Loader {
             )).ToList();
             return new Core.Song(
                 _song.Name,
+                int.Parse(_song.Tempo),
                 _sectionList
             );
         }
