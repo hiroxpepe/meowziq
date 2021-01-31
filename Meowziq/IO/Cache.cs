@@ -103,6 +103,14 @@ namespace Meowziq.IO {
             valid.Mixer = current.Mixer;
         }
 
+        /// <summary>
+        /// 内容を初期化します
+        /// </summary>
+        public void Clear() {
+            this.current = new DataSet();
+            this.valid = new DataSet();
+        }
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // inner Classes
 

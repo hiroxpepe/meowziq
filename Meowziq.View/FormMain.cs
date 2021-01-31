@@ -184,6 +184,7 @@ namespace Meowziq.View {
         async Task<string> buildSong(bool save = false) {
             var _name = "------------";
             await Task.Run(() => {
+                cache.Clear();
                 MixerLoader.Build($"{targetPath}/mixer.json");
                 SongLoader.PatternList = PatternLoader.Build($"{targetPath}/pattern.json");
                 var _song = SongLoader.Build($"{targetPath}/song.json");

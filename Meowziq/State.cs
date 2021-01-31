@@ -24,8 +24,8 @@ namespace Meowziq {
             HashSet = new HashSet<int>(); // ※Dictionary.ContainsKey() が遅いのでその対策
             ItemDictionary = new Dictionary<int, Item16beat>();
             TrackDictionary = new Dictionary<int, Track>();
-            name = "Undefined";
-            copyright = "Undefined";
+            name = "Undefined"; // TODO: 別の曲を読み込んだ時
+            copyright = "Undefined"; // TODO: 別の曲を読み込んだ時
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -77,6 +77,7 @@ namespace Meowziq {
             Meas = 0;
             HashSet.Clear();
             ItemDictionary.Clear();
+            TrackDictionary.Clear();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
