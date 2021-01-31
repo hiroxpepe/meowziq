@@ -64,6 +64,10 @@ namespace Meowziq.Value {
                 Convert.ToByte(_charArray[4].ToString() + _charArray[5].ToString(), 16)
             };
         }
+
+        public static byte[] ToByteText(string target) {
+            return target.ToCharArray().Select(x => Convert.ToByte(x)).ToArray();
+        }
     }
 
     /// <summary>
