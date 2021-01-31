@@ -18,6 +18,7 @@ namespace Meowziq.Loader {
         ///     + ファイル読み込み
         /// </summary>
         public static void Build(string targetPath) {
+            Core.Mixer.Clear();
             if (!File.Exists(targetPath)) {
                 return;
             }

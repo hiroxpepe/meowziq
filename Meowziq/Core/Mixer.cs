@@ -4,14 +4,10 @@ using System.Linq;
 
 namespace Meowziq.Core {
     /// <summary>
-    /// PAさんクラス
+    /// PA クラス
     ///     + ボリューム調整、パン、ミュートとか
     ///     + 全体のエフェクトとか
-    ///     + 曲の演奏者について責任を持つ
-    /// + MIDI側にメッセージを渡すのをどうするか
-    ///     + 必要なデータをラップするクラス
-    ///     + こちらのタイミングでイベントを呼ぶ？
-    ///         + 初期実装ではイニシャルの処理で良い
+    ///     + TODO: 曲の演奏者について責任を持つ
     /// </summary>
     public static class Mixer {
 
@@ -38,6 +34,9 @@ namespace Meowziq.Core {
             set => use = value;
         }
 
+        /// <summary>
+        /// NOTE: 演奏中に値が変更される可能性あり
+        /// </summary>
         public static List<Fader> FaderList {
             get => faderList;
             set {
@@ -50,6 +49,19 @@ namespace Meowziq.Core {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
+
+        /// <summary>
+        /// NOTE: 初回に1回だけ実行
+        /// </summary>
+        public static void Clear() {
+            faderList.Clear();
+            use = false;
+            Enumerable.Range(0, 15).ToList().ForEach( x => {
+                Message.ApplyVolume(x, 0, 100);
+                Message.ApplyPan(x, 0, Pan.Center);
+                Message.ApplyMute(x, 0, false);
+            });
+        }
 
         public static Fader GetBy(string type) {
             return faderList.Where(x => x.Type.Equals(type)).First(); // TODO: ない時
