@@ -11,12 +11,21 @@ namespace Meowziq {
     public static class State {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Fields
+
+        static string name;
+
+        static string copyright;
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
         // static　Constructor
 
         static State() {
             HashSet = new HashSet<int>(); // ※Dictionary.ContainsKey() が遅いのでその対策
             ItemDictionary = new Dictionary<int, Item16beat>();
             TrackDictionary = new Dictionary<int, Track>();
+            name = "Undefined";
+            copyright = "Undefined";
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -35,11 +44,13 @@ namespace Meowziq {
         }
 
         public static string Name {
-            get; set;
+            get => name;
+            set => name = value;
         }
 
         public static string Copyright {
-            get; set;
+            get => copyright;
+            set => copyright = value;
         }
 
         public static HashSet<int> HashSet {
@@ -96,6 +107,19 @@ namespace Meowziq {
             public string Instrument {
                 get; set;
             }
+
+            public int Vol {
+                get; set;
+            }
+
+            public int Pan {
+                get; set;
+            }
+
+            public bool Mute {
+                get; set;
+            }
+
         }
 
         /// <summary>
