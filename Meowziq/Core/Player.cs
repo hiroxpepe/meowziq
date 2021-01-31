@@ -77,13 +77,15 @@ namespace Meowziq.Core {
         /// MEMO: SMF出力の場合はここは1回呼ぶだけで良い
         /// </summary>
         public void Build(int tick, bool save = false) {
-            // テンポ設定 FIXME: 全プレイヤーが設定しているが？
+            // テンポ・曲名設定 FIXME: 全プレイヤーが設定しているが？
             State.Tempo = song.Tempo;
-            // 曲名設定 FIXME: 全プレイヤーが設定しているが？
             State.Name = song.Name;
 
-            // 音色変更
+            // 初期設定
             Message.ApplyProgramChange(midiCh, 0, programNum); // 初回
+            Message.ApplyVolume(midiCh, 30, Mixer.GetBy(Type).Vol);
+            Message.ApplyPan(midiCh, 30, Mixer.GetBy(Type).Pan);
+            Message.ApplyMute(midiCh, 30, Mixer.GetBy(Type).Mute);
 
             // Note データ作成のループ
             var _locate = new Locate(tick, save);
@@ -121,11 +123,11 @@ namespace Meowziq.Core {
                 foreach (Note _note in _noteList) {
                     Message.ApplyNote(midiCh, _note); // message に適用
                     if (_hashSet.Add(_note.Tick) && _note.Tick % (480 * 4) == 0) { // tick につき、かつ1小節に1回だけ
-                        Message.ApplyProgramChange(midiCh, _note.Tick, programNum); // 音色変更:演奏中
+                        Message.ApplyProgramChange(midiCh, _note.Tick, programNum); // 音色変更:演奏中 // TODO: 変化があれば
                         if (Mixer.Use) { // ボリューム、PAN、ミュート設定
-                            Message.ApplyVolume(midiCh, _note.Tick, Mixer.GetBy(Type).Vol);
-                            Message.ApplyPan(midiCh, _note.Tick, Mixer.GetBy(Type).Pan);
-                            Message.ApplyMute(midiCh, _note.Tick, Mixer.GetBy(Type).Mute);
+                            Message.ApplyVolume(midiCh, _note.Tick, Mixer.GetBy(Type).Vol); // TODO: 変化があれば
+                            Message.ApplyPan(midiCh, _note.Tick, Mixer.GetBy(Type).Pan); // TODO: 変化があれば
+                            Message.ApplyMute(midiCh, _note.Tick, Mixer.GetBy(Type).Mute); // TODO: 変化があれば
                         }
                     }
                 }

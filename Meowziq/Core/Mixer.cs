@@ -76,10 +76,17 @@ namespace Meowziq.Core {
 
         public class Fader {
 
+            ///////////////////////////////////////////////////////////////////////////////////////////////
+            // Fields
+
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Properties [noun, adjective]
 
             public string Type {
+                get; set;
+            }
+
+            public int ProgramNum {
                 get; set;
             }
 
