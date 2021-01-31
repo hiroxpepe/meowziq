@@ -219,7 +219,7 @@ namespace Meowziq {
             if (!mute) {
                 return;
             }
-            add(tick, new ChannelMessage(ChannelCommand.Controller, midiCh, 123, 0));
+            add(tick, new ChannelMessage(ChannelCommand.Controller, midiCh, 7, 0));
         }
 
         /// <summary>
