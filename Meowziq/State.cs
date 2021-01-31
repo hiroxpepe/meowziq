@@ -1,5 +1,7 @@
 ﻿
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 
 namespace Meowziq {
     /// <summary>
@@ -13,7 +15,8 @@ namespace Meowziq {
 
         static State() {
             HashSet = new HashSet<int>(); // ※Dictionary.ContainsKey() が遅いのでその対策
-            Dictionary = new Dictionary<int, Item16beat>();
+            ItemDictionary = new Dictionary<int, Item16beat>();
+            TrackDictionary = new Dictionary<int, Track>();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -31,12 +34,28 @@ namespace Meowziq {
             get; set;
         }
 
+        public static string Name {
+            get; set;
+        }
+
+        public static string Copyright {
+            get; set;
+        }
+
         public static HashSet<int> HashSet {
             get; set;
         }
 
-        public static Dictionary<int, Item16beat> Dictionary {
-            get; set; // TODO: 他の Dictionary が必要になったら？
+        public static Dictionary<int, Item16beat> ItemDictionary {
+            get; set;
+        }
+
+        public static Dictionary<int, Track> TrackDictionary {
+            get; set;
+        }
+
+        public static List<Track> TrackList {
+            get => TrackDictionary.Select(x => x.Value).ToList();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -46,11 +65,38 @@ namespace Meowziq {
             Beat = 0;
             Meas = 0;
             HashSet.Clear();
-            Dictionary.Clear();
+            ItemDictionary.Clear();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // inner Classes
+
+        /// <summary>
+        /// SMF 出力用のトラック情報を保持
+        /// </summary>
+        public class Track {
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // Fields
+
+            string name;
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // Properties [noun, adjective]
+
+            public int MidiCh {
+                get; set;
+            }
+
+            public string Name {
+                get => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name); 
+                set => name = value;
+            }
+
+            public string Instrument {
+                get; set;
+            }
+        }
 
         /// <summary>
         /// どのようなキー、度数、旋法で演奏されているかを表す情報
@@ -64,7 +110,7 @@ namespace Meowziq {
             string spanMode; // TODO: Mode 型に変更
 
             ///////////////////////////////////////////////////////////////////////////////////////////
-            // static Properties [noun, adjective] 
+            // Properties [noun, adjective]
 
             public int Tick {
                 get; set;

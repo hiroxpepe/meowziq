@@ -19,6 +19,8 @@ namespace Meowziq.Core {
 
         int programNum;
 
+        string instrumentName;
+
         string type;
 
         List<Phrase> phraseList;
@@ -42,11 +44,17 @@ namespace Meowziq.Core {
         }
 
         public Instrument Instrument {
-            set => programNum = (int) value;
+            set {
+                programNum = (int) value;
+                instrumentName = value.ToString();
+            }
         }
 
         public DrumKit DrumKit {
-            set => programNum = (int) value;
+            set {
+                programNum = (int) value;
+                instrumentName = value.ToString();
+            }
         }
 
         public string Type {
@@ -71,6 +79,8 @@ namespace Meowziq.Core {
         public void Build(int tick, bool save = false) {
             // テンポ設定 FIXME: 全プレイヤーが設定しているが？
             State.Tempo = song.Tempo;
+            // 曲名設定 FIXME: 全プレイヤーが設定しているが？
+            State.Name = song.Name;
 
             // 音色変更
             Message.Apply(midiCh, 0, programNum); // 初回
@@ -115,6 +125,10 @@ namespace Meowziq.Core {
                     }
                 }
                 _noteList.Clear(); // 必要
+            }
+            // SMF 出力時用の情報 NOTE: 1回だけ呼ばれる
+            if (save) {
+                State.TrackDictionary.Add(midiCh, new State.Track(){ MidiCh = midiCh, Name = type, Instrument = instrumentName });
             }
         }
 

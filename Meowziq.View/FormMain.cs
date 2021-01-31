@@ -166,7 +166,7 @@ namespace Meowziq.View {
                 // UI情報更新
                 State.Beat = ((_tick / 480) + 1); // 0開始 ではなく 1開始として表示
                 State.Meas = ((State.Beat - 1) / 4 + 1);
-                var _dictionary = State.Dictionary;
+                var _dictionary = State.ItemDictionary;
                 if (_dictionary.ContainsKey(_tick)) { // FIXME: ContainsKey 大丈夫？
                     var _item = _dictionary[_tick];
                     Invoke(updateDisplay(_item));
@@ -257,24 +257,34 @@ namespace Meowziq.View {
                 });
                 // テンポ設定
                 var _tempo = new MetaMessage(MetaType.Tempo, Value.Converter.ToByteTempo(State.Tempo));
-                var _track = new Track();
-                _track.Insert(0, _tempo);
+                var _conductorTrack = new Track();
+                _conductorTrack.Insert(0, _tempo);
+                // MEMO: MetaType.TrackName:曲名、MetaType.Copyright: 著作権 は入る
+                var _text = new MetaMessage(MetaType.TrackName, Value.Converter.ToByteText(State.Name));
+                _conductorTrack.Insert(0, _text); // TODO: 著作権: null の場合
                 // MIDI データ生成
                 Message.Clear();
                 var _songName = await buildSong(true);
                 var _songDir = targetPath.Split(Path.DirectorySeparatorChar).Last();
                 Message.Invert(); // データ生成後にフラグ反転
+                State.TrackList.ForEach(x => {
+                    var _chTrack = Multi.Get(x.MidiCh);
+                    _chTrack.Insert(0, new MetaMessage(MetaType.TrackName, Value.Converter.ToByteText(x.Name)));
+                    _chTrack.Insert(0, new MetaMessage(MetaType.InstrumentName, Value.Converter.ToByteText(x.Instrument))); // TODO: 反映されない？
+                });
                 for (var _idx = 0; Message.Has(_idx * 30); _idx++) { // tick を 30間隔でループさせます
                     var _tick = _idx * 30; // 30 tick を手動生成
                     var _list = Message.GetBy(_tick); // メッセージのリストを取得
                     if (_list != null) {
-                        _list.ForEach(x => _track.Insert(_tick, x));
+                        _list.ForEach(x => Multi.Get(x.MidiChannel).Insert(_tick, x));
                     }
                 }
                 // SMF ファイル書き出し
                 sequence.Load("./data/conductor.mid");
                 sequence.Clear();
-                sequence.Add(_track);
+                sequence.Format = 1;
+                sequence.Add(_conductorTrack);
+                Multi.List.ForEach(x => sequence.Add(x));
                 sequence.Save($"./data/{_songDir}/{_songName}.mid");
                 Invoke((MethodInvoker) (() => textBoxSongName.Text = _songName));// Song 名を戻す
                 _disposer.Dispose(); // タイマー破棄
