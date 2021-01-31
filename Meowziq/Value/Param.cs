@@ -46,6 +46,7 @@ namespace Meowziq.Value {
 
     /// <summary>
     /// 変換用クラス
+    /// TODO: 拡張メソッドで十分？
     /// </summary>
     public static class Converter {
         /// <summary>
@@ -65,6 +66,9 @@ namespace Meowziq.Value {
             };
         }
 
+        /// <summary>
+        /// 文字列を byte 配列に変換します
+        /// </summary>
         public static byte[] ToByteText(string target) {
             return target.ToCharArray().Select(x => Convert.ToByte(x)).ToArray();
         }

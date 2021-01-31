@@ -255,13 +255,11 @@ namespace Meowziq.View {
                         textBoxSongName.Text = $"{_message} {_dot}";
                     }));
                 });
-                // テンポ設定
-                var _tempo = new MetaMessage(MetaType.Tempo, Value.Converter.ToByteTempo(State.Tempo));
+                // 曲情報設定
                 var _conductorTrack = new Track();
-                _conductorTrack.Insert(0, _tempo);
-                // MEMO: MetaType.TrackName:曲名、MetaType.Copyright: 著作権 は入る
-                var _text = new MetaMessage(MetaType.TrackName, Value.Converter.ToByteText(State.Name));
-                _conductorTrack.Insert(0, _text); // TODO: 著作権: null の場合
+                _conductorTrack.Insert(0, new MetaMessage(MetaType.Tempo, Value.Converter.ToByteTempo(State.Tempo)));
+                _conductorTrack.Insert(0, new MetaMessage(MetaType.TrackName, Value.Converter.ToByteText(State.Name)));
+                _conductorTrack.Insert(0, new MetaMessage(MetaType.Copyright, Value.Converter.ToByteText(State.Copyright)));
                 // MIDI データ生成
                 Message.Clear();
                 var _songName = await buildSong(true);
