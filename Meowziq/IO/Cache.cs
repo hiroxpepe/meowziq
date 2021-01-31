@@ -42,6 +42,10 @@ namespace Meowziq.IO {
             get => current.Player.ToMemoryStream();
         }
 
+        public Stream CurrentMixer {
+            get => current.Mixer is null ? null : current.Mixer.ToMemoryStream();
+        }
+
         public Stream ValidPattern {
             get => valid.Pattern.ToMemoryStream();
         }
@@ -56,6 +60,10 @@ namespace Meowziq.IO {
 
         public Stream ValidPlayer {
             get => valid.Player.ToMemoryStream();
+        }
+
+        public Stream ValidMixer {
+            get => valid.Mixer is null ? null : valid.Mixer.ToMemoryStream();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -77,6 +85,11 @@ namespace Meowziq.IO {
             using (var _stream = new StreamReader($"{targetPath}/player.json")) {
                 current.Player = _stream.ReadToEnd();
             }
+            if (File.Exists($"{targetPath}/mixer.json")) {
+                using (var _stream = new StreamReader($"{targetPath}/mixer.json")) {
+                    current.Mixer = _stream.ReadToEnd();
+                }
+            }
         }
 
         /// <summary>
@@ -87,6 +100,7 @@ namespace Meowziq.IO {
             valid.Song = current.Song;
             valid.Phrase = current.Phrase;
             valid.Player = current.Player;
+            valid.Mixer = current.Mixer;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -113,6 +127,10 @@ namespace Meowziq.IO {
             }
 
             internal string Player {
+                get; set;
+            }
+
+            internal string Mixer {
                 get; set;
             }
         }

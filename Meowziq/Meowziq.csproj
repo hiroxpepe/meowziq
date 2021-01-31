@@ -71,6 +71,7 @@
     <Compile Include="Log.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Midi.cs" />
+    <Compile Include="Loader\MixerLoader.cs" />
     <Compile Include="Loader\PatternLoader.cs" />
     <Compile Include="Loader\PlayerLoader.cs" />
     <Compile Include="Loader\PhraseLoader.cs" />
