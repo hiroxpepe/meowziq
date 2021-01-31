@@ -148,7 +148,7 @@ namespace Meowziq.View {
                 // TODO: カウント分はUIではマイナス表示とする？
                 var _tick = sequencer.Position - 1; // NOTE: Position が 1, 31 と来るので予め1引く
                 // MIDIメッセージ処理
-                Message.Apply(_tick, loadSong); // 1小節ごとに切り替える MEMO: シンコぺを考慮する
+                Message.ApplyTick(_tick, loadSong); // 1小節ごとに切り替える MEMO: シンコぺを考慮する
                 var _list = Message.GetBy(_tick); // MIDIメッセージのリストを取得
                 if (_list != null) {
                     _list.ForEach(x => {
@@ -184,6 +184,7 @@ namespace Meowziq.View {
         async Task<string> buildSong(bool save = false) {
             var _name = "------------";
             await Task.Run(() => {
+                MixerLoader.Build($"{targetPath}/mixer.json");
                 SongLoader.PatternList = PatternLoader.Build($"{targetPath}/pattern.json");
                 var _song = SongLoader.Build($"{targetPath}/song.json");
                 PlayerLoader.PhraseList = PhraseLoader.Build($"{targetPath}/phrase.json");
@@ -205,6 +206,7 @@ namespace Meowziq.View {
             try {
                 await Task.Run(() => {
                     cache.Load(targetPath); // json ファイルを読み込む
+                    MixerLoader.Build(cache.CurrentMixer);
                     SongLoader.PatternList = PatternLoader.Build(cache.CurrentPattern);
                     var _song = SongLoader.Build(cache.CurrentSong);
                     PlayerLoader.PhraseList = PhraseLoader.Build(cache.CurrentPhrase);
@@ -228,6 +230,7 @@ namespace Meowziq.View {
                 exMessage = ex.Message;
                 await Task.Run(() => {
                     Log.Fatal("load failed.. :(");
+                    MixerLoader.Build(cache.ValidMixer);
                     SongLoader.PatternList = PatternLoader.Build(cache.ValidPattern);
                     var _song = SongLoader.Build(cache.ValidSong);
                     PlayerLoader.PhraseList = PhraseLoader.Build(cache.ValidPhrase);
@@ -268,7 +271,7 @@ namespace Meowziq.View {
                 State.TrackList.ForEach(x => {
                     var _chTrack = Multi.Get(x.MidiCh);
                     _chTrack.Insert(0, new MetaMessage(MetaType.TrackName, Value.Converter.ToByteText(x.Name)));
-                    _chTrack.Insert(0, new MetaMessage(MetaType.InstrumentName, Value.Converter.ToByteText(x.Instrument))); // TODO: 反映されない？
+                    _chTrack.Insert(0, new MetaMessage(MetaType.ProgramName, Value.Converter.ToByteText(x.Instrument))); // TODO: 反映されない？
                 });
                 for (var _idx = 0; Message.Has(_idx * 30); _idx++) { // tick を 30間隔でループさせます
                     var _tick = _idx * 30; // 30 tick を手動生成

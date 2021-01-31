@@ -18,6 +18,16 @@ namespace Meowziq {
         Sequence = 4,
     }
 
+    public enum Pan {
+        Left = 0,
+        MidLeft = 32,
+        Center = 64,
+        MidRight = 96,
+        Right = 127,
+        // for Extension Method
+        Enum = -128,
+    }
+
     public enum Length {
         Of4beat = 480,
         Of8beat = 240,
@@ -329,6 +339,23 @@ namespace Meowziq {
                     throw new ArgumentException("not key.");
                 case Key.Enum:
                     throw new ArgumentException("not key.");
+            }
+        }
+
+        public static Pan Parse(this Pan source, string target) {
+            switch (target.ToLower()) {
+                case "left":
+                    return Pan.Left;
+                case "midleft":
+                    return Pan.MidLeft;
+                case "center":
+                    return Pan.Center;
+                case "midright":
+                    return Pan.MidRight;
+                case "right":
+                    return Pan.Right;
+                default:
+                    throw new ArgumentException("not pan.");
             }
         }
 

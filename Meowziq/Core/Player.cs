@@ -83,7 +83,7 @@ namespace Meowziq.Core {
             State.Name = song.Name;
 
             // 音色変更
-            Message.Apply(midiCh, 0, programNum); // 初回
+            Message.ApplyProgramChange(midiCh, 0, programNum); // 初回
 
             // Note データ作成のループ
             var _locate = new Locate(tick, save);
@@ -119,9 +119,14 @@ namespace Meowziq.Core {
                 var _noteList = _phrase.AllNote;
                 var _hashSet = new HashSet<int>();
                 foreach (Note _note in _noteList) {
-                    Message.Apply(midiCh, _note); // message に適用
+                    Message.ApplyNote(midiCh, _note); // message に適用
                     if (_hashSet.Add(_note.Tick) && _note.Tick % (480 * 4) == 0) { // tick につき、かつ1小節に1回だけ
-                        Message.Apply(midiCh, _note.Tick, programNum); // 音色変更:演奏中
+                        Message.ApplyProgramChange(midiCh, _note.Tick, programNum); // 音色変更:演奏中
+                        if (Mixer.Use) { // ボリューム、PAN、ミュート設定
+                            Message.ApplyVolume(midiCh, _note.Tick, Mixer.GetBy(Type).Vol);
+                            Message.ApplyPan(midiCh, _note.Tick, Mixer.GetBy(Type).Pan);
+                            Message.ApplyMute(midiCh, _note.Tick, Mixer.GetBy(Type).Mute);
+                        }
                     }
                 }
                 _noteList.Clear(); // 必要

@@ -180,7 +180,7 @@ namespace Meowziq {
         /// <summary>
         /// 引数の tick を起点にして切り替え処理を行います
         /// </summary>
-        public static void Apply(int tick, Action<int> load) {
+        public static void ApplyTick(int tick, Action<int> load) {
             if (!hashSet.Add(tick)) {
                 return; // 既に処理した tick なので無視する
             }
@@ -194,14 +194,38 @@ namespace Meowziq {
         /// <summary>
         /// プログラムNo(音色)を ChannelMessage として適用します
         /// </summary>
-        public static void Apply(int midiCh, int tick, int programNum ) {
+        public static void ApplyProgramChange(int midiCh, int tick, int programNum ) {
             add(tick, new ChannelMessage(ChannelCommand.ProgramChange, midiCh, programNum, 127)); // プログラムチェンジ
+        }
+
+        /// <summary>
+        /// ボリュームを ChannelMessage として適用します
+        /// </summary>
+        public static void ApplyVolume(int midiCh, int tick, int volume) {
+            add(tick, new ChannelMessage(ChannelCommand.Controller, midiCh, 7, volume));
+        }
+
+        /// <summary>
+        /// PAN (パン)を ChannelMessage として適用します
+        /// </summary>
+        public static void ApplyPan(int midiCh, int tick, Pan pan) {
+            add(tick, new ChannelMessage(ChannelCommand.Controller, midiCh, 10, (int) pan));
+        }
+
+        /// <summary>
+        /// ミュートを ChannelMessage として適用します
+        /// </summary>
+        public static void ApplyMute(int midiCh, int tick, bool mute) {
+            if (!mute) {
+                return;
+            }
+            add(tick, new ChannelMessage(ChannelCommand.Controller, midiCh, 123, 0));
         }
 
         /// <summary>
         /// Note を ChannelMessage として適用します
         /// </summary>
-        public static void Apply(int midiCh, Note note) {
+        public static void ApplyNote(int midiCh, Note note) {
             if (!flag) {
                 if (note.HasPre) { // ノートが優先発音の場合
                     var _noteOffTick = note.Tick - Length.Of32beat.Int32(); // 念のため32分音符前に停止
