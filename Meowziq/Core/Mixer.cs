@@ -16,7 +16,9 @@ namespace Meowziq.Core {
 
         static bool use;
 
-        static List<Fader> faderList;
+        static List<Fader> previousFaderList;
+
+        static List<Fader> currentFaderList;
 
         static IMessage<T, Note> message;
 
@@ -25,7 +27,8 @@ namespace Meowziq.Core {
 
         static Mixer() {
             use = false;
-            faderList = new List<Fader>();
+            previousFaderList = new List<Fader>();
+            currentFaderList = new List<Fader>();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -40,9 +43,10 @@ namespace Meowziq.Core {
         /// NOTE: 演奏中に値が変更される可能性あり
         /// </summary>
         public static List<Fader> FaderList {
-            get => faderList;
+            get => currentFaderList;
             set {
-                faderList = value;
+                previousFaderList = currentFaderList;
+                currentFaderList = value;
                 if (!(value is null)) {
                     use = true;
                 }
@@ -54,13 +58,14 @@ namespace Meowziq.Core {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Methods [verb]
+        // public static Methods [verb]
 
         /// <summary>
         /// NOTE: 初回に1回だけ実行
         /// </summary>
         public static void Clear() {
-            faderList.Clear();
+            previousFaderList.Clear();
+            currentFaderList.Clear();
             use = false;
             if (!(message is null)) {
                 Enumerable.Range(0, 15).ToList().ForEach(x => { // TODO: ProgramNum は？
@@ -72,11 +77,31 @@ namespace Meowziq.Core {
         }
 
         public static Fader GetBy(string type) {
-            return faderList.Where(x => x.Type.Equals(type)).First(); // TODO: ない時
+            return currentFaderList.Where(x => x.Type.Equals(type)).First(); // TODO: ない時
+        }
+
+        public static void SetVolumeBy(int midiCh, int tick, string type) {
+            if (!changedVol(type)) {
+                return;
+            }
+            message.ApplyVolume(midiCh, tick, currentFaderList.Where(x => x.Type.Equals(type)).First().Vol); // TODO: 変化があれば
         }
 
         public static void Add(Fader fader) {
-            faderList.Add(fader);
+            currentFaderList.Add(fader);
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private static Methods [verb]
+
+        static bool changedVol(string type) {
+            var _previous = previousFaderList.Where(x => x.Type.Equals(type)).First().Vol;
+            var _current = currentFaderList.Where(x => x.Type.Equals(type)).First().Vol;
+            return _previous == _current ? false : true;
+        }
+ 
+        static int getVolby(string type) { // TODO: LINQ を回すより Dict
+            return currentFaderList.Where(x => x.Type.Equals(type)).First().Vol;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -86,6 +111,10 @@ namespace Meowziq.Core {
 
             ///////////////////////////////////////////////////////////////////////////////////////////////
             // Fields
+
+            int currentVol;
+
+            int previousVol;
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Properties [noun, adjective]
