@@ -126,7 +126,7 @@ namespace Meowziq.Core {
             foreach (var _phrase in phraseList) {
                 var _noteList = _phrase.AllNote;
                 var _hashSet = new HashSet<int>();
-                foreach (Note _note in _noteList) {
+                foreach (var _note in _noteList) {
                     message.ApplyNote(midiCh, _note); // message に適用
                     if (_hashSet.Add(_note.Tick) && _note.Tick % (480 * 4) == 0) { // tick につき、かつ1小節に1回だけ
                         message.ApplyProgramChange(midiCh, _note.Tick, programNum); // 音色変更:演奏中 // TODO: 変化があれば
