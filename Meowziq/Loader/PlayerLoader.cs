@@ -12,7 +12,7 @@ namespace Meowziq.Loader {
     /// <summary>
     /// Player のローダークラス
     /// </summary>
-    public static class PlayerLoader {
+    public static class PlayerLoader<T> {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Fields
@@ -33,7 +33,7 @@ namespace Meowziq.Loader {
         /// Player のリストを作成します
         ///     + ファイル読み込み
         /// </summary>
-        public static List<Core.Player> Build(string targetPath) {
+        public static List<Core.Player<T>> Build(string targetPath) {
             if (phraseList is null) {
                 throw new ArgumentException("need phraseList.");
             }
@@ -44,7 +44,7 @@ namespace Meowziq.Loader {
         /// Player のリストを作成します
         ///     + キャッシュした文字列
         /// </summary>
-        public static List<Core.Player> Build(Stream target) {
+        public static List<Core.Player<T>> Build(Stream target) {
             if (phraseList is null) {
                 throw new ArgumentException("need phraseList.");
             }
@@ -54,8 +54,8 @@ namespace Meowziq.Loader {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private static Methods [verb]
 
-        static Core.Player convertPlayer(Player player) {
-            var _player = new Core.Player();
+        static Core.Player<T> convertPlayer(Player player) {
+            var _player = new Core.Player<T>();
             _player.MidiCh = MidiChannel.Enum.Parse(player.Midi);
             if (int.Parse(player.Midi) is 9) { // FIXME: 10ch 以外のドラムを可能にする
                 _player.DrumKit = DrumKit.Enum.Parse(player.Inst); // FIXME: 設定が違う場合

@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Linq;
 
 namespace Meowziq.Value.Tests {
     [TestClass()]
@@ -36,10 +37,23 @@ namespace Meowziq.Value.Tests {
             CollectionAssert.AreEqual(_result, _expected);
         }
 
+        /// <summary>
+        /// 文字列を byte 配列で返す
+        /// </summary>
         [TestMethod()]
-        public void ToByteTextTest() {
-            var _text = "test";
-            var _result = Converter.ToByteText(_text);
+        public void ToByteArrayTest1() {
+            var _text = "Test";
+            var _expected = new byte[4]{
+                    Convert.ToByte("54", 16),
+                    Convert.ToByte("65", 16),
+                    Convert.ToByte("73", 16),
+                    Convert.ToByte("74", 16)
+                };
+            var _result = Converter.ToByteArray(_text);
+            _result.ToList().ForEach(x => {
+                var _tmp = string.Format("{0:X2}", x);  // 確認用
+            });
+            CollectionAssert.AreEqual(_result, _expected);
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
-namespace Meowziq {
+namespace Meowziq.Core {
     /// <summary>
     /// 曲がどのような状況で演奏されているかを表す情報を保持するクラス
     /// NOTE: 設定されて読み出させるだけ、これを状態を変更する目的で使わない

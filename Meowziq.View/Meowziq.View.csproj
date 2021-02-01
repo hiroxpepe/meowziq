@@ -118,6 +118,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Meowziq.Midi\Meowziq.Midi.csproj">
+      <Project>{a3562768-edbb-457a-ad96-f5cfb789dce0}</Project>
+      <Name>Meowziq.Midi</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Meowziq\Meowziq.csproj">
       <Project>{73e21602-e5fb-46bd-8fbc-c18e72e79089}</Project>
       <Name>Meowziq</Name>

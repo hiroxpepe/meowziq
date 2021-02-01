@@ -9,7 +9,7 @@ namespace Meowziq.Core {
     ///     + 全体のエフェクトとか
     ///     + TODO: 曲の演奏者について責任を持つ
     /// </summary>
-    public static class Mixer {
+    public static class Mixer<T> {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Fields
@@ -17,6 +17,8 @@ namespace Meowziq.Core {
         static bool use;
 
         static List<Fader> faderList;
+
+        static IMessage<T, Note> message;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Constructor
@@ -47,6 +49,10 @@ namespace Meowziq.Core {
             }
         }
 
+        public static IMessage<T, Note> Message {
+            set => message = value;
+        }
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
 
@@ -56,11 +62,13 @@ namespace Meowziq.Core {
         public static void Clear() {
             faderList.Clear();
             use = false;
-            Enumerable.Range(0, 15).ToList().ForEach( x => {
-                Message.ApplyVolume(x, 0, 100);
-                Message.ApplyPan(x, 0, Pan.Center);
-                Message.ApplyMute(x, 0, false);
-            });
+            if (!(message is null)) {
+                Enumerable.Range(0, 15).ToList().ForEach(x => {
+                    message.ApplyVolume(x, 0, 100);
+                    message.ApplyPan(x, 0, Pan.Center);
+                    message.ApplyMute(x, 0, false);
+                });
+            }
         }
 
         public static Fader GetBy(string type) {

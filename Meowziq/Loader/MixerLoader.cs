@@ -8,7 +8,7 @@ namespace Meowziq.Loader {
     /// <summary>
     /// Mixer のローダークラス
     /// </summary>
-    public static class MixerLoader {
+    public static class MixerLoader<T> {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]
@@ -18,12 +18,11 @@ namespace Meowziq.Loader {
         ///     + ファイル読み込み
         /// </summary>
         public static void Build(string targetPath) {
-            Core.Mixer.Clear();
+            Core.Mixer<T>.Clear();
             if (!File.Exists(targetPath)) {
                 return;
             }
-            var _mixer = loadJson(targetPath).Mixer;
-            Core.Mixer.FaderList = _mixer.Fader.ToList().Select(x => new Core.Mixer.Fader() {
+            Core.Mixer<T>.FaderList = loadJson(targetPath).Mixer.Fader.ToList().Select(x => new Core.Mixer<T>.Fader() {
                 Type = x.Type, Vol = x.Vol, Pan = Pan.Enum.Parse(x.Pan), Mute = x.Mute
             }).ToList();
         }
@@ -36,8 +35,7 @@ namespace Meowziq.Loader {
             if (target is null) {
                 return;
             }
-            var _mixer = loadJson(target).Mixer;
-            Core.Mixer.FaderList = _mixer.Fader.ToList().Select(x => new Core.Mixer.Fader() {
+            Core.Mixer<T>.FaderList = loadJson(target).Mixer.Fader.ToList().Select(x => new Core.Mixer<T>.Fader() {
                 Type = x.Type, Vol = x.Vol, Pan = Pan.Enum.Parse(x.Pan), Mute = x.Mute
             }).ToList();
         }

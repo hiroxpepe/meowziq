@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sanford.Multimedia.Midi;
 
+using Meowziq.Core;
 using Meowziq.IO;
 using Meowziq.Loader;
+using Meowziq.Midi;
 
 namespace Meowziq.View {
     /// <summary>
@@ -21,7 +23,7 @@ namespace Meowziq.View {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        Midi midi;
+        Midi.MidiManager midi;
 
         string targetPath;
 
@@ -38,7 +40,7 @@ namespace Meowziq.View {
             InitializeComponent();
 
             // MIDIデバイス準備
-            midi = new Midi();
+            midi = new Midi.MidiManager();
 
             cache = new Cache();
         }
@@ -148,8 +150,8 @@ namespace Meowziq.View {
                 // TODO: カウント分はUIではマイナス表示とする？
                 var _tick = sequencer.Position - 1; // NOTE: Position が 1, 31 と来るので予め1引く
                 // MIDIメッセージ処理
-                Message.ApplyTick(_tick, loadSong); // 1小節ごとに切り替える MEMO: シンコぺを考慮する
-                var _list = Message.GetBy(_tick); // MIDIメッセージのリストを取得
+                Midi.Message.ApplyTick(_tick, loadSong); // 1小節ごとに切り替える MEMO: シンコぺを考慮する
+                var _list = Midi.Message.GetBy(_tick); // MIDIメッセージのリストを取得
                 if (_list != null) {
                     _list.ForEach(x => {
                         midi.OutDevice.Send(x); // MIDIデバイスにメッセージを追加送信 MEMO: CCなどは直接ここで投げては？
@@ -185,11 +187,13 @@ namespace Meowziq.View {
             var _name = "------------";
             await Task.Run(() => {
                 cache.Clear();
-                MixerLoader.Build($"{targetPath}/mixer.json");
+                MixerLoader<ChannelMessage>.Build($"{targetPath}/mixer.json");
+                Mixer<ChannelMessage>.Message = Factory.CreateMessage();
                 SongLoader.PatternList = PatternLoader.Build($"{targetPath}/pattern.json");
                 var _song = SongLoader.Build($"{targetPath}/song.json");
-                PlayerLoader.PhraseList = PhraseLoader.Build($"{targetPath}/phrase.json");
-                PlayerLoader.Build($"{targetPath}/player.json").ForEach(x => {
+                PlayerLoader<ChannelMessage>.PhraseList = PhraseLoader.Build($"{targetPath}/phrase.json");
+                PlayerLoader<ChannelMessage>.Build($"{targetPath}/player.json").ForEach(x => {
+                    x.Message = Factory.CreateMessage();
                     x.Song = _song; // Song データを設定
                     x.Build(0, save); // MIDI データを構築
                 });
@@ -207,11 +211,13 @@ namespace Meowziq.View {
             try {
                 await Task.Run(() => {
                     cache.Load(targetPath); // json ファイルを読み込む
-                    MixerLoader.Build(cache.CurrentMixer);
+                    MixerLoader<ChannelMessage>.Build(cache.CurrentMixer);
+                    Mixer<ChannelMessage>.Message = Factory.CreateMessage();
                     SongLoader.PatternList = PatternLoader.Build(cache.CurrentPattern);
                     var _song = SongLoader.Build(cache.CurrentSong);
-                    PlayerLoader.PhraseList = PhraseLoader.Build(cache.CurrentPhrase);
-                    PlayerLoader.Build(cache.CurrentPlayer).ForEach(x => {
+                    PlayerLoader<ChannelMessage>.PhraseList = PhraseLoader.Build(cache.CurrentPhrase);
+                    PlayerLoader<ChannelMessage>.Build(cache.CurrentPlayer).ForEach(x => {
+                        x.Message = Factory.CreateMessage();
                         x.Song = _song; // Song データを設定
                         x.Build(tick); // MIDI データを構築
                     });
@@ -231,11 +237,13 @@ namespace Meowziq.View {
                 exMessage = ex.Message;
                 await Task.Run(() => {
                     Log.Fatal("load failed.. :(");
-                    MixerLoader.Build(cache.ValidMixer);
+                    MixerLoader<ChannelMessage>.Build(cache.ValidMixer);
+                    Mixer<ChannelMessage>.Message = Factory.CreateMessage();
                     SongLoader.PatternList = PatternLoader.Build(cache.ValidPattern);
                     var _song = SongLoader.Build(cache.ValidSong);
-                    PlayerLoader.PhraseList = PhraseLoader.Build(cache.ValidPhrase);
-                    PlayerLoader.Build(cache.ValidPlayer).ForEach(x => {
+                    PlayerLoader<ChannelMessage>.PhraseList = PhraseLoader.Build(cache.ValidPhrase);
+                    PlayerLoader<ChannelMessage>.Build(cache.ValidPlayer).ForEach(x => {
+                        x.Message = Factory.CreateMessage();
                         x.Song = _song; // Song データを設定
                         x.Build(tick); // MIDI データを構築　※前回のキャッシュを Build する
                     });
@@ -259,30 +267,31 @@ namespace Meowziq.View {
                         textBoxSongName.Text = $"{_message} {_dot}";
                     }));
                 });
+                // MIDI データ生成
+                Midi.Message.Clear();
+                var _songName = await buildSong(true);
+                var _songDir = targetPath.Split(Path.DirectorySeparatorChar).Last();
+                Midi.Message.Invert(); // データ生成後にフラグ反転
                 // 曲情報設定
                 var _conductorTrack = new Track();
                 _conductorTrack.Insert(0, new MetaMessage(MetaType.Tempo, Value.Converter.ToByteTempo(State.Tempo)));
-                _conductorTrack.Insert(0, new MetaMessage(MetaType.TrackName, Value.Converter.ToByteText(State.Name)));
-                _conductorTrack.Insert(0, new MetaMessage(MetaType.Copyright, Value.Converter.ToByteText(State.Copyright)));
-                // MIDI データ生成
-                Message.Clear();
-                var _songName = await buildSong(true);
-                var _songDir = targetPath.Split(Path.DirectorySeparatorChar).Last();
-                Message.Invert(); // データ生成後にフラグ反転
+                _conductorTrack.Insert(0, new MetaMessage(MetaType.TrackName, Value.Converter.ToByteArray(State.Name)));
+                _conductorTrack.Insert(0, new MetaMessage(MetaType.Copyright, Value.Converter.ToByteArray(State.Copyright)));
                 State.TrackList.ForEach(x => {
                     var _chTrack = Multi.Get(x.MidiCh);
-                    _chTrack.Insert(0, new MetaMessage(MetaType.TrackName, Value.Converter.ToByteText(x.Name)));
-                    _chTrack.Insert(0, new MetaMessage(MetaType.ProgramName, Value.Converter.ToByteText(x.Instrument))); // TODO: 反映されない？
+                    _chTrack.Insert(0, new MetaMessage(MetaType.TrackName, Value.Converter.ToByteArray(x.Name)));
+                    _chTrack.Insert(0, new MetaMessage(MetaType.ProgramName, Value.Converter.ToByteArray(x.Instrument))); // TODO: 反映されない？
                 });
-                for (var _idx = 0; Message.Has(_idx * 30); _idx++) { // tick を 30間隔でループさせます
+                // MIDI データ適用
+                for (var _idx = 0; Midi.Message.Has(_idx * 30); _idx++) { // tick を 30間隔でループさせます
                     var _tick = _idx * 30; // 30 tick を手動生成
-                    var _list = Message.GetBy(_tick); // メッセージのリストを取得
+                    var _list = Midi.Message.GetBy(_tick); // メッセージのリストを取得
                     if (_list != null) {
                         _list.ForEach(x => Multi.Get(x.MidiChannel).Insert(_tick, x));
                     }
                 }
                 // SMF ファイル書き出し
-                sequence.Load("./data/conductor.mid");
+                sequence.Load("./data/conductor.mid"); // TODO: 必要？
                 sequence.Clear();
                 sequence.Format = 1;
                 sequence.Add(_conductorTrack);
@@ -300,7 +309,7 @@ namespace Meowziq.View {
         /// </summary>
         async Task<bool> startSound() {
             return await Task.Run(async () => {
-                Message.Clear();
+                Midi.Message.Clear();
                 textBoxSongName.Text = await buildSong();
                 Facade.CreateConductor(sequence);
                 sequence.Load("./data/conductor.mid");
@@ -414,10 +423,10 @@ namespace Meowziq.View {
                     _track.Insert(_tick, new ChannelMessage(ChannelCommand.NoteOn, 0, 64, 0));
                     _track.Insert(_tick + 30, new ChannelMessage(ChannelCommand.NoteOff, 0, 64, 0));
                 }
-                sequence.Load("./data/conductor.mid"); // テンポ制御用 SMF ファイル書き出し
+                sequence.Load("./data/conductor.mid"); // TODO: 必要？
                 sequence.Clear();
                 sequence.Add(_track);
-                sequence.Save($"./data/conductor.mid");
+                sequence.Save($"./data/conductor.mid"); // テンポ制御用 SMF ファイル書き出し
             }
         }
 
