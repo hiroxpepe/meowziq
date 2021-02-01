@@ -8,7 +8,7 @@ namespace Meowziq.Core {
     ///     + Phrase オブジェクトのリストを管理
     ///     + Phrase オブジェクトを適切なタイミングで Build します
     /// </summary>
-    public class Player {
+    public class Player<T> {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
@@ -24,6 +24,8 @@ namespace Meowziq.Core {
         string type;
 
         List<Phrase> phraseList;
+
+        IMessage<T, Note> message;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
@@ -67,6 +69,10 @@ namespace Meowziq.Core {
             set => phraseList = value;
         }
 
+        public IMessage<T, Note> Message {
+            set => message = value;
+        }
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
 
@@ -82,10 +88,10 @@ namespace Meowziq.Core {
             State.Name = song.Name;
 
             // 初期設定
-            Message.ApplyProgramChange(midiCh, 0, programNum); // 初回
-            Message.ApplyVolume(midiCh, 30, Mixer.GetBy(Type).Vol);
-            Message.ApplyPan(midiCh, 30, Mixer.GetBy(Type).Pan);
-            Message.ApplyMute(midiCh, 30, Mixer.GetBy(Type).Mute);
+            message.ApplyProgramChange(midiCh, 0, programNum); // 初回
+            message.ApplyVolume(midiCh, 30, Mixer<T>.GetBy(Type).Vol);
+            message.ApplyPan(midiCh, 30, Mixer<T>.GetBy(Type).Pan);
+            message.ApplyMute(midiCh, 30, Mixer<T>.GetBy(Type).Mute);
 
             // Note データ作成のループ
             var _locate = new Locate(tick, save);
@@ -121,13 +127,13 @@ namespace Meowziq.Core {
                 var _noteList = _phrase.AllNote;
                 var _hashSet = new HashSet<int>();
                 foreach (Note _note in _noteList) {
-                    Message.ApplyNote(midiCh, _note); // message に適用
+                    message.ApplyNote(midiCh, _note); // message に適用
                     if (_hashSet.Add(_note.Tick) && _note.Tick % (480 * 4) == 0) { // tick につき、かつ1小節に1回だけ
-                        Message.ApplyProgramChange(midiCh, _note.Tick, programNum); // 音色変更:演奏中 // TODO: 変化があれば
-                        if (Mixer.Use) { // ボリューム、PAN、ミュート設定
-                            Message.ApplyVolume(midiCh, _note.Tick, Mixer.GetBy(Type).Vol); // TODO: 変化があれば
-                            Message.ApplyPan(midiCh, _note.Tick, Mixer.GetBy(Type).Pan); // TODO: 変化があれば
-                            Message.ApplyMute(midiCh, _note.Tick, Mixer.GetBy(Type).Mute); // TODO: 変化があれば
+                        message.ApplyProgramChange(midiCh, _note.Tick, programNum); // 音色変更:演奏中 // TODO: 変化があれば
+                        if (Mixer<T>.Use) { // ボリューム、PAN、ミュート設定
+                            message.ApplyVolume(midiCh, _note.Tick, Mixer<T>.GetBy(Type).Vol); // TODO: 変化があれば
+                            message.ApplyPan(midiCh, _note.Tick, Mixer<T>.GetBy(Type).Pan); // TODO: 変化があれば
+                            message.ApplyMute(midiCh, _note.Tick, Mixer<T>.GetBy(Type).Mute); // TODO: 変化があれば
                         }
                     }
                 }

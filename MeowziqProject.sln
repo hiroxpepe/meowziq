@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meowziq.View", "Meowziq.Vie
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeowziqTest", "MeowziqTests\MeowziqTest.csproj", "{020B8C9F-E580-4CC0-A3F5-693D6D50B9BB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meowziq.Midi", "Meowziq.Midi\Meowziq.Midi.csproj", "{A3562768-EDBB-457A-AD96-F5CFB789DCE0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{020B8C9F-E580-4CC0-A3F5-693D6D50B9BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{020B8C9F-E580-4CC0-A3F5-693D6D50B9BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{020B8C9F-E580-4CC0-A3F5-693D6D50B9BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3562768-EDBB-457A-AD96-F5CFB789DCE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3562768-EDBB-457A-AD96-F5CFB789DCE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3562768-EDBB-457A-AD96-F5CFB789DCE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3562768-EDBB-457A-AD96-F5CFB789DCE0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,11 +1,11 @@
 ﻿
 using Sanford.Multimedia.Midi;
 
-namespace Meowziq {
+namespace Meowziq.Midi {
     /// <summary>
     /// Sanford.Multimedia.Midi を使用した MIDI クラス
     /// </summary>
-    public class Midi {
+    public class MidiManager {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
@@ -17,7 +17,7 @@ namespace Meowziq {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
-        public Midi() {
+        public MidiManager() {
             this.outDevice = new OutputDevice(outDeviceID);
         }
 

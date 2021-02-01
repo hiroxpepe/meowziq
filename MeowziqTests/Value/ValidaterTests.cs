@@ -4,14 +4,14 @@ using System;
 
 namespace Meowziq.Value.Tests {
     [TestClass()]
-    public class ValidateTests {
+    public class ValidaterTests {
 
         /// <summary>
         /// 正常データと判定
         /// </summary>
         [TestMethod()]
         public void PhraseValueTest1() {
-            var result = new PrivateType(typeof(Validate)).InvokeStatic("PhraseValue", "[1111|----|5555|----]");
+            var result = new PrivateType(typeof(Validater)).InvokeStatic("PhraseValue", "[1111|----|5555|----]");
             Assert.AreEqual(result, "[1111|----|5555|----]");
         }
 
@@ -21,7 +21,7 @@ namespace Meowziq.Value.Tests {
         [TestMethod()]
         [ExpectedException(typeof(FormatException))]
         public void vPhraseValueTest2() {
-            new PrivateType(typeof(Validate)).InvokeStatic("PhraseValue", "[--1--|----|----|----]");
+            new PrivateType(typeof(Validater)).InvokeStatic("PhraseValue", "[--1--|----|----|----]");
         }
     }
 }
