@@ -46,7 +46,7 @@
   <ItemGroup>
     <Compile Include="Midi\Factory.cs" />
     <Compile Include="Midi\Message.cs" />
-    <Compile Include="Midi\Midi.cs" />
+    <Compile Include="Midi\MidiManager.cs" />
     <Compile Include="Midi\Multi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -89,9 +89,11 @@ namespace Meowziq.Core {
 
             // 初期設定
             message.ApplyProgramChange(midiCh, 0, programNum); // 初回
-            message.ApplyVolume(midiCh, 30, Mixer<T>.GetBy(Type).Vol);
-            message.ApplyPan(midiCh, 30, Mixer<T>.GetBy(Type).Pan);
-            message.ApplyMute(midiCh, 30, Mixer<T>.GetBy(Type).Mute);
+            if (Mixer<T>.Use) {
+                message.ApplyVolume(midiCh, 30, Mixer<T>.GetBy(Type).Vol);
+                message.ApplyPan(midiCh, 30, Mixer<T>.GetBy(Type).Pan);
+                message.ApplyMute(midiCh, 30, Mixer<T>.GetBy(Type).Mute);
+            }
 
             // Note データ作成のループ
             var _locate = new Locate(tick, save);
