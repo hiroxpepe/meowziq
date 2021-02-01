@@ -63,7 +63,7 @@ namespace Meowziq.Core {
             faderList.Clear();
             use = false;
             if (!(message is null)) {
-                Enumerable.Range(0, 15).ToList().ForEach(x => {
+                Enumerable.Range(0, 15).ToList().ForEach(x => { // TODO: ProgramNum は？
                     message.ApplyVolume(x, 0, 100);
                     message.ApplyPan(x, 0, Pan.Center);
                     message.ApplyMute(x, 0, false);

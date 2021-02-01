@@ -11,16 +11,16 @@ namespace Meowziq.IO {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        DataSet current; // この tick で読み込まれた json データの内容を保持
+        Resourse current; // この tick で読み込まれた json データの内容を保持
 
-        DataSet valid; // 全てのバリデーションを通過した json データの内容を保持
+        Resourse valid; // 全てのバリデーションを通過した json データの内容を保持
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
         public Cache() {
-            this.current = new DataSet();
-            this.valid = new DataSet();
+            this.current = new Resourse();
+            this.valid = new Resourse();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,8 +107,8 @@ namespace Meowziq.IO {
         /// 内容を初期化します
         /// </summary>
         public void Clear() {
-            this.current = new DataSet();
-            this.valid = new DataSet();
+            current.Clear();
+            valid.Clear();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -117,7 +117,7 @@ namespace Meowziq.IO {
         /// <summary>
         /// json ファイルの内容保持用 クラス
         /// </summary>
-        class DataSet {
+        class Resourse {
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // internal Properties [noun, adjective] 
@@ -141,6 +141,17 @@ namespace Meowziq.IO {
             internal string Mixer {
                 get; set;
             }
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////
+            // internal Methods [verb]
+
+            internal void Clear() {
+                Pattern = null;
+                Song = null;
+                Phrase = null;
+                Player = null;
+                Mixer = null;
+            }
         }
     }
 
@@ -158,11 +169,11 @@ namespace Meowziq.IO {
         }
 
         public static void Set(this string source, string target) {
-            source = target;
+            source = target; // FIXME: 値渡しなのでこれでは無理
         }
 
         public static void Clear(this string source) {
-            source = "";
+            source = ""; // FIXME: 値渡しなのでこれでは無理
         }
     }
 }
