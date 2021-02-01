@@ -8,6 +8,7 @@ namespace Meowziq.Core {
     ///     + ボリューム調整、パン、ミュートとか
     ///     + 全体のエフェクトとか
     ///     + TODO: 曲の演奏者について責任を持つ
+    ///     + TODO: 演奏中にパンやボリュームが指定できるように
     /// </summary>
     public static class Mixer<T> {
 
@@ -108,13 +109,6 @@ namespace Meowziq.Core {
         // inner Classes
 
         public class Fader {
-
-            ///////////////////////////////////////////////////////////////////////////////////////////////
-            // Fields
-
-            int currentVol;
-
-            int previousVol;
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Properties [noun, adjective]
