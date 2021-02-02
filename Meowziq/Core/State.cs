@@ -18,7 +18,7 @@ namespace Meowziq.Core {
         static string copyright;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // static　Constructor
+        // static Constructor
 
         static State() {
             HashSet = new HashSet<int>(); // ※Dictionary.ContainsKey() が遅いのでその対策
@@ -51,6 +51,13 @@ namespace Meowziq.Core {
         public static string Copyright {
             get => copyright;
             set => copyright = value;
+        }
+
+        public static (int tempo, string name) TempoAndName {
+            set {
+                Name = value.name;
+                Tempo = value.tempo;
+            }
         }
 
         public static HashSet<int> HashSet {

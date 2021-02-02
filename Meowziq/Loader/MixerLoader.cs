@@ -22,9 +22,14 @@ namespace Meowziq.Loader {
             if (!File.Exists(targetPath)) {
                 return;
             }
-            Core.Mixer<T>.FaderList = loadJson(targetPath).Mixer.Fader.ToList().Select(x => new Core.Mixer<T>.Fader() {
-                Type = x.Type, Vol = x.Vol, Pan = Pan.Enum.Parse(x.Pan), Mute = x.Mute
-            }).ToList();
+            loadJson(targetPath).Mixer.Fader.ToList().Select(x => 
+                new Core.Mixer<T>.Fader() {
+                    Type = x.Type,
+                    Vol = x.Vol,
+                    Pan = Pan.Enum.Parse(x.Pan),
+                    Mute = x.Mute
+                }
+            ).ToList().ForEach(x => Core.Mixer<T>.AddFader = x);
         }
 
         /// <summary>
@@ -35,9 +40,14 @@ namespace Meowziq.Loader {
             if (target is null) {
                 return;
             }
-            Core.Mixer<T>.FaderList = loadJson(target).Mixer.Fader.ToList().Select(x => new Core.Mixer<T>.Fader() {
-                Type = x.Type, Vol = x.Vol, Pan = Pan.Enum.Parse(x.Pan), Mute = x.Mute
-            }).ToList();
+            loadJson(target).Mixer.Fader.ToList().Select(x =>
+                new Core.Mixer<T>.Fader() {
+                    Type = x.Type,
+                    Vol = x.Vol,
+                    Pan = Pan.Enum.Parse(x.Pan),
+                    Mute = x.Mute
+                }
+            ).ToList().ForEach(x => Core.Mixer<T>.AddFader = x);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

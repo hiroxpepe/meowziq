@@ -9,7 +9,7 @@ namespace Meowziq {
     public static class Info {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // static　Constructor
+        // static Constructor
 
         static Info() {
             HashSet = new HashSet<int>(); // ※Dictionary.ContainsKey() が遅いのでその対策

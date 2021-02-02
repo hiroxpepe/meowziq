@@ -32,7 +32,7 @@ namespace Meowziq {
                 _newList.Add(value); // List に value を追加
                 Add(key, _newList); // Item に新規追加
             } else {
-                var _list = this[key];　// Item から key の List を取得
+                var _list = this[key]; // Item から key の List を取得
                 _list.Add(value); // List に value を追加
             }
         }

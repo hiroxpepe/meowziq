@@ -23,7 +23,7 @@ namespace Meowziq.View {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        Midi.MidiManager midi;
+        Midi.Manager midi;
 
         string targetPath;
 
@@ -40,7 +40,7 @@ namespace Meowziq.View {
             InitializeComponent();
 
             // MIDIデバイス準備
-            midi = new Midi.MidiManager();
+            midi = new Midi.Manager();
 
             cache = new Cache();
         }
@@ -245,7 +245,7 @@ namespace Meowziq.View {
                     PlayerLoader<ChannelMessage>.Build(cache.ValidPlayer).ForEach(x => {
                         x.Message = Factory.CreateMessage();
                         x.Song = _song; // Song データを設定
-                        x.Build(tick); // MIDI データを構築　※前回のキャッシュを Build する
+                        x.Build(tick); // MIDI データを構築 ※前回のキャッシュを Build する
                     });
                 });
             }

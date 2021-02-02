@@ -69,7 +69,7 @@ namespace Meowziq.Core {
             set => phraseList = value;
         }
 
-        public IMessage<T, Note> Message {
+        public IMessage<T, Note> Message { // TODO: message への依存はなくせる、T 型パラメータは残る
             set => message = value;
         }
 
@@ -84,16 +84,11 @@ namespace Meowziq.Core {
         /// </summary>
         public void Build(int tick, bool save = false) {
             // テンポ・曲名設定 FIXME: 全プレイヤーが設定しているが？
-            State.Tempo = song.Tempo;
-            State.Name = song.Name;
+            State.TempoAndName = (song.Tempo, song.Name);
 
             // 初期設定
-            message.ApplyProgramChange(midiCh, 0, programNum); // 初回
-            if (Mixer<T>.Use) {
-                message.ApplyVolume(midiCh, 30, Mixer<T>.GetBy(Type).Vol);
-                message.ApplyPan(midiCh, 30, Mixer<T>.GetBy(Type).Pan);
-                message.ApplyMute(midiCh, 30, Mixer<T>.GetBy(Type).Mute);
-            }
+            Mixer<T>.ProgramNum = (programNum, Type);
+            Mixer<T>.Apply(midiCh, 0, Type);
 
             // Note データ作成のループ
             var _locate = new Locate(tick, save);
@@ -111,7 +106,7 @@ namespace Meowziq.Core {
                             _phrase.Build(_locate.Head, _pattern); // Note データを作成：tick 毎に数回分の Pattern のデータが作成される
                             Log.Trace($"Build: tick: {tick} head: {_locate.Head} to end: {_locate.end} {_pattern.Name} {type}");
                         }
-                        if (!_locate.Name.Equals("") && (save || _locate.NeedBuild)) {　//　FIXME: tick で判定しないと全検索になってる
+                        if (!_locate.Name.Equals("") && (save || _locate.NeedBuild)) { // FIXME: tick で判定しないと全検索になってる
                             var _previousPhraseList = phraseList.Where(x => x.Name.Equals(_locate.Name)).ToList(); // 一つ前の Phrase を引き当てる 
                             if (_previousPhraseList.Count != 0) {
                                 if (!type.ToLower().Contains("drum")) { // ドラム以外
@@ -129,14 +124,10 @@ namespace Meowziq.Core {
                 var _noteList = _phrase.AllNote;
                 var _hashSet = new HashSet<int>();
                 foreach (var _note in _noteList) {
-                    message.ApplyNote(midiCh, _note); // message に適用
+                    message.ApplyNote(midiCh, _note); // message に適用 // TODO: Mixer.Apply 1回でいける
                     if (_hashSet.Add(_note.Tick) && _note.Tick % (480 * 4) == 0) { // tick につき、かつ1小節に1回だけ
-                        message.ApplyProgramChange(midiCh, _note.Tick, programNum); // 音色変更:演奏中 // TODO: 変化があれば
-                        if (Mixer<T>.Use) { // ボリューム、PAN、ミュート設定
-                            message.ApplyVolume(midiCh, _note.Tick, Mixer<T>.GetBy(Type).Vol); // TODO: 変化があれば
-                            message.ApplyPan(midiCh, _note.Tick, Mixer<T>.GetBy(Type).Pan); // TODO: 変化があれば
-                            message.ApplyMute(midiCh, _note.Tick, Mixer<T>.GetBy(Type).Mute); // TODO: 変化があれば
-                        }
+                        Mixer<T>.ProgramNum = (programNum, Type);
+                        Mixer<T>.Apply(midiCh, _note.Tick, Type);
                     }
                 }
                 _noteList.Clear(); // 必要
@@ -247,7 +238,7 @@ namespace Meowziq.Core {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // private Properties [noun, adjective] 
 
-            public　int end {
+            public int end {
                 get => headTick + length;
             }
 

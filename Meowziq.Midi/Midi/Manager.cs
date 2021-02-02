@@ -5,7 +5,7 @@ namespace Meowziq.Midi {
     /// <summary>
     /// Sanford.Multimedia.Midi を使用した MIDI クラス
     /// </summary>
-    public class MidiManager {
+    public class Manager {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
@@ -17,7 +17,7 @@ namespace Meowziq.Midi {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
-        public MidiManager() {
+        public Manager() {
             this.outDevice = new OutputDevice(outDeviceID);
         }
 
