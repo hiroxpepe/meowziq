@@ -105,7 +105,7 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// Span の旋法で　Note No を取得
+        /// Span の旋法で Note No を取得
         /// </summary>
         public bool AutoNote {
             get; set;

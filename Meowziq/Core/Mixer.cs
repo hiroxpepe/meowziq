@@ -9,6 +9,7 @@ namespace Meowziq.Core {
     ///     + 全体のエフェクトとか
     ///     + TODO: 曲の演奏者について責任を持つ
     ///     + TODO: 演奏中にパンやボリュームが指定できるように
+    ///     + MEMO: ここを唯一の IMessage へのインタフェースにしてはどうか？
     /// </summary>
     public static class Mixer<T> {
 
@@ -17,9 +18,9 @@ namespace Meowziq.Core {
 
         static bool use;
 
-        static List<Fader> previousFaderList;
+        static Dictionary<string, Fader> previousFaderDictionary;
 
-        static List<Fader> currentFaderList;
+        static Dictionary<string, Fader> currentFaderDictionary;
 
         static IMessage<T, Note> message;
 
@@ -28,8 +29,8 @@ namespace Meowziq.Core {
 
         static Mixer() {
             use = false;
-            previousFaderList = new List<Fader>();
-            currentFaderList = new List<Fader>();
+            previousFaderDictionary = new Dictionary<string, Fader>();
+            currentFaderDictionary = new Dictionary<string, Fader>();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -42,18 +43,44 @@ namespace Meowziq.Core {
 
         /// <summary>
         /// NOTE: 演奏中に値が変更される可能性あり
+        /// FIXME: SMF 出力でバグあり
         /// </summary>
-        public static List<Fader> FaderList {
-            get => currentFaderList;
+        public static Fader AddFader {
             set {
-                previousFaderList = currentFaderList;
-                currentFaderList = value;
-                if (!(value is null)) {
-                    use = true;
+                if (value is null) {
+                    return;
+                }
+                if (!previousFaderDictionary.ContainsKey(value.Type) && !currentFaderDictionary.ContainsKey(value.Type)) { // どちらもなければ初回設定
+                    previousFaderDictionary[value.Type] = new Fader() {
+                        Type = value.Type,
+                        Vol = -1,
+                        Pan = Pan.Enum,
+                        Mute = false
+                    };
+                    currentFaderDictionary[value.Type] = value;
+                } else {
+                    previousFaderDictionary[value.Type] = currentFaderDictionary[value.Type];
+                    currentFaderDictionary[value.Type] = value;
+                }
+                use = true;
+            }
+        }
+
+        public static (int programNum, string type) ProgramNum {
+            set {
+                if (!previousFaderDictionary.ContainsKey(value.type) && !currentFaderDictionary.ContainsKey(value.type)) { // どちらもなければ初回設定
+                    previousFaderDictionary[value.type].ProgramNum = -1;
+                    currentFaderDictionary[value.type].ProgramNum = value.programNum;
+                } else {
+                    previousFaderDictionary[value.type].ProgramNum = currentFaderDictionary[value.type].ProgramNum;
+                    currentFaderDictionary[value.type].ProgramNum = value.programNum;
                 }
             }
         }
 
+        /// <summary>
+        /// Message オブジェクトを設定します
+        /// </summary>
         public static IMessage<T, Note> Message {
             set => message = value;
         }
@@ -65,8 +92,8 @@ namespace Meowziq.Core {
         /// NOTE: 初回に1回だけ実行
         /// </summary>
         public static void Clear() {
-            previousFaderList.Clear();
-            currentFaderList.Clear();
+            previousFaderDictionary.Clear();
+            currentFaderDictionary.Clear();
             use = false;
             if (!(message is null)) {
                 Enumerable.Range(0, 15).ToList().ForEach(x => { // TODO: ProgramNum は？
@@ -77,32 +104,53 @@ namespace Meowziq.Core {
             }
         }
 
-        public static Fader GetBy(string type) {
-            return currentFaderList.Where(x => x.Type.Equals(type)).First(); // TODO: ない時
-        }
-
-        public static void SetVolumeBy(int midiCh, int tick, string type) {
-            if (!changedVol(type)) {
-                return;
-            }
-            message.ApplyVolume(midiCh, tick, currentFaderList.Where(x => x.Type.Equals(type)).First().Vol); // TODO: 変化があれば
-        }
-
-        public static void Add(Fader fader) {
-            currentFaderList.Add(fader);
+        /// <summary>
+        /// MEMO: 外部からはこれだけ呼ぶ
+        /// </summary>
+        public static void Apply(int midiCh, int tick, string type) {
+            applyProgramChangeBy(midiCh, tick, type);
+            applyVolumeBy(midiCh, tick, type);
+            applyPanBy(midiCh, tick, type);
+            applyMuteBy(midiCh, tick, type);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private static Methods [verb]
 
-        static bool changedVol(string type) {
-            var _previous = previousFaderList.Where(x => x.Type.Equals(type)).First().Vol;
-            var _current = currentFaderList.Where(x => x.Type.Equals(type)).First().Vol;
-            return _previous == _current ? false : true;
+        static void applyProgramChangeBy(int midiCh, int tick, string type) {
+            if (use && changedProgramNum(type)) {
+                message.ApplyProgramChange(midiCh, tick, currentFaderDictionary[type].ProgramNum);
+            }
         }
- 
-        static int getVolby(string type) { // TODO: LINQ を回すより Dict
-            return currentFaderList.Where(x => x.Type.Equals(type)).First().Vol;
+
+        static void applyVolumeBy(int midiCh, int tick, string type) {
+            if (use && changedVol(type)) {
+                message.ApplyVolume(midiCh, tick, currentFaderDictionary[type].Vol);
+            }
+        }
+
+        static void applyPanBy(int midiCh, int tick, string type) {
+            if (use && changedPan(type)) {
+                message.ApplyPan(midiCh, tick, currentFaderDictionary[type].Pan);
+            }
+        }
+
+        static void applyMuteBy(int midiCh, int tick, string type) {
+            if (use) {
+                message.ApplyMute(midiCh, tick, currentFaderDictionary[type].Mute);
+            }
+        }
+
+        static bool changedProgramNum(string type) {
+            return previousFaderDictionary[type].ProgramNum == currentFaderDictionary[type].ProgramNum ? false : true;
+        }
+
+        static bool changedVol(string type) {
+            return previousFaderDictionary[type].Vol == currentFaderDictionary[type].Vol ? false : true;
+        }
+
+        static bool changedPan(string type) {
+            return previousFaderDictionary[type].Pan == currentFaderDictionary[type].Pan ? false : true;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

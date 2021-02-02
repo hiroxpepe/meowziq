@@ -45,6 +45,9 @@
     <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\MSTest.TestFramework.2.1.1\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="Sanford.Multimedia.Midi, Version=6.6.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sanford.Multimedia.Midi.6.6.2\lib\net20\Sanford.Multimedia.Midi.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <Choose>
@@ -56,6 +59,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="Core\MixerTests.cs" />
     <Compile Include="Loader\Extensions.cs" />
     <Compile Include="Loader\PatternLoaderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -72,9 +76,7 @@
       <Name>Meowziq</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Core\" />
-  </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

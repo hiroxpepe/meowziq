@@ -21,7 +21,7 @@ namespace Meowziq.Value {
 
         Exp exp;
 
-        Percussion[] percussionArray; // data記述：ドラム Track パーカッション　Note No
+        Percussion[] percussionArray; // data記述：ドラム Track パーカッション Note No
 
         string[] beatArray; // data記述：ドラム音符
 

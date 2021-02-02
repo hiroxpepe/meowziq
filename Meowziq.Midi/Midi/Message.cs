@@ -20,7 +20,7 @@ namespace Meowziq.Midi {
         static bool flag;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // static　Constructor
+        // static Constructor
 
         static Message() {
             flag = true;
