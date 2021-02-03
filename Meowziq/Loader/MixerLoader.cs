@@ -15,25 +15,6 @@ namespace Meowziq.Loader {
 
         /// <summary>
         /// Mixer を作成します
-        ///     + ファイル読み込み
-        /// </summary>
-        public static void Build(string targetPath) {
-            Core.Mixer<T>.Clear();
-            if (!File.Exists(targetPath)) {
-                return;
-            }
-            loadJson(targetPath).Mixer.Fader.ToList().Select(x => 
-                new Core.Mixer<T>.Fader() {
-                    Type = x.Type,
-                    Vol = x.Vol,
-                    Pan = Pan.Enum.Parse(x.Pan),
-                    Mute = x.Mute
-                }
-            ).ToList().ForEach(x => Core.Mixer<T>.AddFader = x);
-        }
-
-        /// <summary>
-        /// Mixer を作成します
         ///     + キャッシュした文字列
         /// </summary>
         public static void Build(Stream target) {
@@ -43,6 +24,7 @@ namespace Meowziq.Loader {
             loadJson(target).Mixer.Fader.ToList().Select(x =>
                 new Core.Mixer<T>.Fader() {
                     Type = x.Type,
+                    Name = x.Name,
                     Vol = x.Vol,
                     Pan = Pan.Enum.Parse(x.Pan),
                     Mute = x.Mute
@@ -52,13 +34,6 @@ namespace Meowziq.Loader {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private static Methods [verb]
-
-        static Json loadJson(string targetPath) {
-            using (var _stream = new FileStream(targetPath, FileMode.Open)) {
-                var _serializer = new DataContractJsonSerializer(typeof(Json));
-                return (Json) _serializer.ReadObject(_stream);
-            }
-        }
 
         static Json loadJson(Stream target) {
             var _serializer = new DataContractJsonSerializer(typeof(Json));
@@ -88,6 +63,10 @@ namespace Meowziq.Loader {
         class Fader {
             [DataMember(Name = "type")]
             public string Type {
+                get; set;
+            }
+            [DataMember(Name = "name")]
+            public string Name {
                 get; set;
             }
             [DataMember(Name = "vol")]

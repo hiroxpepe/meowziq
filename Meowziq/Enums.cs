@@ -24,6 +24,7 @@ namespace Meowziq {
         Center = 64,
         MidRight = 96,
         Right = 127,
+        Undefined = -1,
         // for Extension Method
         Enum = -128,
     }

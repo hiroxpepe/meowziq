@@ -3,10 +3,18 @@ using System.Collections.Generic;
 
 namespace Meowziq {
     /// <summary>
-    /// Item クラス
-    /// NOTE: Add された Value を一度だけ取り出す Dictionary
+    /// Dictionary の名前が長いので Map と名付ける
+    /// NOTE: Meowziq 名前空間で使用される
     /// </summary>
-    public class Item<T> : Dictionary<int, List<T>> {
+    public class Map<K, V> : Dictionary<K, V> {
+    }
+
+    /// <summary>
+    /// Item クラス
+    /// NOTE: Add された Value を一度だけ取り出す Map(Dictionary)
+    /// NOTE: Meowziq 名前空間で使用される
+    /// </summary>
+    public class Item<T> : Map<int, List<T>> {
 
         HashSet<int> toAddHashSet; // 追加した判定
 

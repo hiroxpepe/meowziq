@@ -59,7 +59,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Generator.cs" />
-    <Compile Include="Core\IFactory.cs" />
     <Compile Include="Core\IMessage.cs" />
     <Compile Include="Core\Mixer.cs" />
     <Compile Include="Core\Note.cs" />

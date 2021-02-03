@@ -44,7 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Midi\Factory.cs" />
+    <Compile Include="Midi\MessageFactory.cs" />
     <Compile Include="Midi\Message.cs" />
     <Compile Include="Midi\Manager.cs" />
     <Compile Include="Midi\Multi.cs" />

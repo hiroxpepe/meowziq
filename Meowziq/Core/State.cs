@@ -22,8 +22,8 @@ namespace Meowziq.Core {
 
         static State() {
             HashSet = new HashSet<int>(); // ※Dictionary.ContainsKey() が遅いのでその対策
-            ItemDictionary = new Dictionary<int, Item16beat>();
-            TrackDictionary = new Dictionary<int, Track>();
+            ItemMap = new Map<int, Item16beat>();
+            TrackMap = new Map<int, Track>();
             name = "Undefined"; // TODO: 別の曲を読み込んだ時
             copyright = "Undefined"; // TODO: 別の曲を読み込んだ時
         }
@@ -64,16 +64,16 @@ namespace Meowziq.Core {
             get; set;
         }
 
-        public static Dictionary<int, Item16beat> ItemDictionary {
+        public static Map<int, Item16beat> ItemMap {
             get; set;
         }
 
-        public static Dictionary<int, Track> TrackDictionary {
+        public static Map<int, Track> TrackMap {
             get; set;
         }
 
         public static List<Track> TrackList {
-            get => TrackDictionary.Select(x => x.Value).ToList();
+            get => TrackMap.Select(x => x.Value).ToList();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,8 +83,8 @@ namespace Meowziq.Core {
             Beat = 0;
             Meas = 0;
             HashSet.Clear();
-            ItemDictionary.Clear();
-            TrackDictionary.Clear();
+            ItemMap.Clear();
+            TrackMap.Clear();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

@@ -114,7 +114,7 @@ namespace Meowziq.Core {
                 var _span = spanList[_16beatIdx.SpanIdx]; // 16beat 4個で1拍進む
                 var _tick = tick + Utils.To16beatLength(_16beatIdx.Idx); // 16beat の tick 毎に処理
                 if (State.HashSet.Add(_tick)) { // tick につき1度だけ
-                    State.ItemDictionary.Add(_tick, new State.Item16beat {
+                    State.ItemMap.Add(_tick, new State.Item16beat {
                         Tick = _tick,
                         Key = _span.Key.ToString(),
                         Degree = _span.Degree.ToString(),
