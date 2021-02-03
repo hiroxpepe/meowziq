@@ -25,6 +25,7 @@ namespace Meowziq.Loader {
                 new Core.Mixer<T>.Fader() {
                     Type = x.Type,
                     Name = x.Name,
+                    ProgramNum = drumInst(x.Inst) ? (int) DrumKit.Enum.Parse(x.Inst) : (int) Instrument.Enum.Parse(x.Inst),
                     Vol = x.Vol,
                     Pan = Pan.Enum.Parse(x.Pan),
                     Mute = x.Mute
@@ -38,6 +39,12 @@ namespace Meowziq.Loader {
         static Json loadJson(Stream target) {
             var _serializer = new DataContractJsonSerializer(typeof(Json));
             return (Json) _serializer.ReadObject(target);
+        }
+
+        static bool drumInst(string target) {
+            return (target.Equals("Standard") || target.Equals("Room") || target.Equals("Power") ||
+                target.Equals("Electronic") || target.Equals("Analog") || target.Equals("Jazz") ||
+                target.Equals("Brush") || target.Equals("SFX"));
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -67,6 +74,10 @@ namespace Meowziq.Loader {
             }
             [DataMember(Name = "name")]
             public string Name {
+                get; set;
+            }
+            [DataMember(Name = "inst")]
+            public string Inst {
                 get; set;
             }
             [DataMember(Name = "vol")]
