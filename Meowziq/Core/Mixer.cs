@@ -71,15 +71,6 @@ namespace Meowziq.Core {
             previousFaderMap.Clear();
             currentFaderMap.Clear();
             use = false;
-            if (!(message is null)) {
-                Enumerable.Range(0, 15).ToList().ForEach(x => {
-                    // TODO: ProgramNum は？
-                    message.ApplyVolume(x, 0, 100);
-                    message.ApplyPan(x, 0, Pan.Center);
-                    message.ApplyMute(x, 0, false);
-                    // TODO: ここを直接投げない？ ※初期化はここで良いのではないのか？
-                });
-            }
         }
 
         public static void ApplyNote(int tick, int midiCh, Note note) {
@@ -98,7 +89,6 @@ namespace Meowziq.Core {
                 return; // mixer.json 使用時で存在しないキー
             }
             playerProgramNum = (programNum, type, name);
-            // TODO: 初回には設定しなくてはいけない
             applyValueBy(tick, midiCh, type, name);
         }
 
@@ -106,7 +96,7 @@ namespace Meowziq.Core {
         // private Properties [noun, adjective] 
 
         /// <summary>
-        /// TODO: 必要
+        /// MEMO: 必要
         /// </summary>
         static (int programNum, string type, string name) playerProgramNum {
             set {
@@ -141,7 +131,7 @@ namespace Meowziq.Core {
             if (!use) {
                 name = "default"; // mixer.json なしは常に "default"
             }
-            if (use && changedVol(type, name)) {
+            if (changedVol(type, name)) {
                 message.ApplyVolume(tick, midiCh, currentFaderMap[$"{type}:{name}"].Vol);
             }
         }
@@ -150,7 +140,7 @@ namespace Meowziq.Core {
             if (!use) {
                 name = "default"; // mixer.json なしは常に "default"
             }
-            if (use && changedPan(type, name)) {
+            if (changedPan(type, name)) {
                 message.ApplyPan(tick, midiCh, currentFaderMap[$"{type}:{name}"].Pan);
             }
         }
@@ -159,9 +149,7 @@ namespace Meowziq.Core {
             if (!use) {
                 name = "default"; // mixer.json なしは常に "default"
             }
-            if (use) {
-                message.ApplyMute(tick, midiCh, currentFaderMap[$"{type}:{name}"].Mute);
-            }
+            message.ApplyMute(tick, midiCh, currentFaderMap[$"{type}:{name}"].Mute);
         }
 
         static bool changedProgramNum(string type, string name) {
