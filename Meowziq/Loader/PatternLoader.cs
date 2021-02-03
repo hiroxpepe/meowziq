@@ -18,14 +18,6 @@ namespace Meowziq.Loader {
 
         /// <summary>
         /// Pattern のリストを作成します
-        ///     + ファイル読み込み
-        /// </summary>
-        public static List<Core.Pattern> Build(string targetPath) {
-            return loadJson(targetPath).PatternArray.Select(x => convertPattern(x)).ToList(); // Core.Pattern のリストに変換
-        }
-
-        /// <summary>
-        /// Pattern のリストを作成します
         ///     + キャッシュした文字列
         /// </summary>
         public static List<Core.Pattern> Build(Stream target) {
@@ -114,13 +106,6 @@ namespace Meowziq.Loader {
                 return new Span(beat, Degree.Enum.Parse(_part[0].Trim()));
             } else {
                 return new Span(beat, Degree.Enum.Parse(_part[0].Trim()), Mode.Enum.Parse(_part[1].Trim())); // 旋法指定あり
-            }
-        }
-
-        static Json loadJson(string targetPath) {
-            using (var _stream = new FileStream(targetPath, FileMode.Open)) { // FIXME: ファイルが読めなかったとき
-                var _serializer = new DataContractJsonSerializer(typeof(Json));
-                return (Json) _serializer.ReadObject(_stream);
             }
         }
 

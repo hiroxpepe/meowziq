@@ -62,35 +62,35 @@ namespace Meowziq.Midi {
             // tick が2拍ごとに切り替え MEMO: * 4 にすれば 1小節毎、* 1 にすれば 1拍毎に切り替えれる
             if (tick % (Length.Of4beat.Int32() * 2) == 0) {
                 change();
-                load(tick); // TODO: load に失敗したらキャッシュを読む
+                load(tick); // load に失敗したらキャッシュを読む
             }
         }
 
         /// <summary>
         /// プログラムNo(音色)を ChannelMessage として適用します
         /// </summary>
-        public static void ApplyProgramChange(int midiCh, int tick, int programNum ) {
+        public static void ApplyProgramChange(int tick, int midiCh, int programNum ) {
             add(tick, new ChannelMessage(ChannelCommand.ProgramChange, midiCh, programNum, 127)); // プログラムチェンジ
         }
 
         /// <summary>
         /// ボリュームを ChannelMessage として適用します
         /// </summary>
-        public static void ApplyVolume(int midiCh, int tick, int volume) {
+        public static void ApplyVolume(int tick, int midiCh, int volume) {
             add(tick, new ChannelMessage(ChannelCommand.Controller, midiCh, 7, volume));
         }
 
         /// <summary>
         /// PAN (パン)を ChannelMessage として適用します
         /// </summary>
-        public static void ApplyPan(int midiCh, int tick, Pan pan) {
+        public static void ApplyPan(int tick, int midiCh, Pan pan) {
             add(tick, new ChannelMessage(ChannelCommand.Controller, midiCh, 10, (int) pan));
         }
 
         /// <summary>
         /// ミュートを ChannelMessage として適用します
         /// </summary>
-        public static void ApplyMute(int midiCh, int tick, bool mute) {
+        public static void ApplyMute(int tick, int midiCh, bool mute) {
             if (!mute) {
                 return;
             }
@@ -100,29 +100,29 @@ namespace Meowziq.Midi {
         /// <summary>
         /// Note を ChannelMessage として適用します
         /// </summary>
-        public static void ApplyNote(int midiCh, Note note) {
+        public static void ApplyNote(int tick, int midiCh, Note note) { // TODO: tick を使用する
             if (!flag) {
                 if (note.HasPre) { // ノートが優先発音の場合
-                    var _noteOffTick = note.Tick - Length.Of32beat.Int32(); // 念のため32分音符前に停止
+                    var _noteOffTick = tick - Length.Of32beat.Int32(); // 念のため32分音符前に停止
                     if (Prime.AllNoteOffToAddArray[midiCh].Add(_noteOffTick)) { // MIDI ch 毎にこの tick のノート強制停止は一回のみ 
                         if (midiCh != 9) { // ドラム以外
                             add(_noteOffTick, new ChannelMessage(ChannelCommand.Controller, midiCh, 120));
                         }
                     }
                 }
-                add(note.Tick, new ChannelMessage(ChannelCommand.NoteOn, midiCh, note.Num, 127)); // ノートON
-                add(note.Tick + note.Gate, new ChannelMessage(ChannelCommand.NoteOff, midiCh, note.Num, 0)); // ノートOFF ※この位置
+                add(tick, new ChannelMessage(ChannelCommand.NoteOn, midiCh, note.Num, 127)); // ノートON
+                add(tick + note.Gate, new ChannelMessage(ChannelCommand.NoteOff, midiCh, note.Num, 0)); // ノートOFF ※この位置
             } else { // Second スタートで実行
                 if (note.HasPre) { // ノートが優先発音の場合
-                    var _noteOffTick = note.Tick - Length.Of32beat.Int32(); // 念のため32分音符前に停止
+                    var _noteOffTick = tick - Length.Of32beat.Int32(); // 念のため32分音符前に停止
                     if (Second.AllNoteOffToAddArray[midiCh].Add(_noteOffTick)) { // MIDI ch 毎にこの tick のノート強制停止は一回のみ 
                         if (midiCh != 9) { // ドラム以外
                             add(_noteOffTick, new ChannelMessage(ChannelCommand.Controller, midiCh, 120));
                         }
                     }
                 }
-                add(note.Tick, new ChannelMessage(ChannelCommand.NoteOn, midiCh, note.Num, 127)); // ノートON
-                add(note.Tick + note.Gate, new ChannelMessage(ChannelCommand.NoteOff, midiCh, note.Num, 0)); // ノートOFF ※この位置
+                add(tick, new ChannelMessage(ChannelCommand.NoteOn, midiCh, note.Num, 127)); // ノートON
+                add(tick + note.Gate, new ChannelMessage(ChannelCommand.NoteOff, midiCh, note.Num, 0)); // ノートOFF ※この位置
             }
         }
 

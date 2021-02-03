@@ -21,18 +21,6 @@ namespace Meowziq.Loader {
         /// Phrase のリストを作成します
         /// NOTE: Core.Phrase のリストに変換します
         /// NOTE: "base": 指定がある場合 Phrase を継承します
-        ///     + ファイル読み込み
-        /// </summary>
-        public static List<Core.Phrase> Build(string targetPath) {
-            var _list = loadJson(targetPath).PhraseArray.Select(x => convertPhrase(x)).ToList();
-            return _list.Select(x => x = !(x.Base is null) ? Inheritor.Apply(x, searchBasePhrase(x.Type, x.Base, _list)) : x)
-                .ToList();
-        }
-
-        /// <summary>
-        /// Phrase のリストを作成します
-        /// NOTE: Core.Phrase のリストに変換します
-        /// NOTE: "base": 指定がある場合 Phrase を継承します
         ///     + キャッシュした文字列
         /// </summary>
         public static List<Core.Phrase> Build(Stream target) {
@@ -79,13 +67,6 @@ namespace Meowziq.Loader {
                 return list.Where(x => x.Type.Equals(phraseType) && x.Name.Equals(phraseName)).First();
             } catch {
                 throw new ArgumentException("undefined pattern.");
-            }
-        }
-
-        static Json loadJson(string targetPath) {
-            using (var _stream = new FileStream(targetPath, FileMode.Open)) {
-                var _serializer = new DataContractJsonSerializer(typeof(Json));
-                return (Json) _serializer.ReadObject(_stream);
             }
         }
 

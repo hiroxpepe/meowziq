@@ -27,27 +27,27 @@ namespace Meowziq {
         /// <summary>
         /// プログラムNo(音色)を T1 として適用します
         /// </summary>
-        void ApplyProgramChange(int midiCh, int tick, int programNum);
+        void ApplyProgramChange(int tick, int midiCh, int programNum);
 
         /// <summary>
         /// ボリュームを T1 として適用します
         /// </summary>
-        void ApplyVolume(int midiCh, int tick, int volume);
+        void ApplyVolume(int tick, int midiCh, int volume);
 
         /// <summary>
         /// PAN (パン)を T1 として適用します
         /// </summary>
-        void ApplyPan(int midiCh, int tick, Pan pan);
+        void ApplyPan(int tick, int midiCh, Pan pan);
 
         /// <summary>
         /// ミュートを T1 として適用します
         /// </summary>
-        void ApplyMute(int midiCh, int tick, bool mute);
+        void ApplyMute(int tick, int midiCh, bool mute);
 
         /// <summary>
         /// T2 を T1 として適用します
         /// </summary>
-        void ApplyNote(int midiCh, T2 note);
+        void ApplyNote(int tick, int midiCh, T2 note);
 
         /// <summary>
         /// 状態を初期化します

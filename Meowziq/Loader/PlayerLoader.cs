@@ -31,17 +31,6 @@ namespace Meowziq.Loader {
 
         /// <summary>
         /// Player のリストを作成します
-        ///     + ファイル読み込み
-        /// </summary>
-        public static List<Core.Player<T>> Build(string targetPath) {
-            if (phraseList is null) {
-                throw new ArgumentException("need phraseList.");
-            }
-            return loadJson(targetPath).PlayerArray.Select(x => convertPlayer(x)).ToList(); // Core.Player のリストに変換
-        }
-
-        /// <summary>
-        /// Player のリストを作成します
         ///     + キャッシュした文字列
         /// </summary>
         public static List<Core.Player<T>> Build(Stream target) {
@@ -65,13 +54,6 @@ namespace Meowziq.Loader {
             _player.Type = player.Type;
             _player.PhraseList = phraseList.Where(x => x.Type.Equals(_player.Type)).ToList(); // Player と Phrase の type が一致したら
             return _player;
-        }
-
-        static Json loadJson(string targetPath) {
-            using (var _stream = new FileStream(targetPath, FileMode.Open)) {
-                var _serializer = new DataContractJsonSerializer(typeof(Json));
-                return (Json) _serializer.ReadObject(_stream);
-            }
         }
 
         static Json loadJson(Stream target) {
