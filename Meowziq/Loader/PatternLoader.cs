@@ -18,7 +18,6 @@ namespace Meowziq.Loader {
 
         /// <summary>
         /// Pattern のリストを作成します
-        ///     + キャッシュした文字列
         /// </summary>
         public static List<Core.Pattern> Build(Stream target) {
             return loadJson(target).PatternArray.Select(x => convertPattern(x)).ToList(); // Core.Pattern のリストに変換

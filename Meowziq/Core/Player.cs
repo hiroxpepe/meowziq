@@ -81,7 +81,7 @@ namespace Meowziq.Core {
             State.TempoAndName = (song.Tempo, song.Name);
 
             // 初期設定
-            if (tick is 0) {
+            if (tick is 0) { // TODO: player.json の音色を設定
                 Mixer<T>.ApplyVaule(0, midiCh, Type, "intro", programNum); // TODO: 必要？ and "intro" ？
             }
 
@@ -97,15 +97,11 @@ namespace Meowziq.Core {
                     foreach (var _phrase in phraseList.Where(x => x.Name.Equals(_pattern.Name))) { // Pattern の名前で Phrase を引き当てる
                         if (smf) { // NOTE: 全て Build
                             _phrase.Build(_locate.Head, _pattern); // SMF出力モードの場合全ての tick で処理ログ出力無し
-                            // TODO: Mixerもここで処理する必要がある：パターンに付き変更があれば一度実行
-                            //Mixer<T>.ApplyVaule(tick, midiCh, Type, _phrase.Name, programNum);
                         } else if (_locate.NeedBuild) { // この tick が含まれてる、かつ _tickOfPatternHead に16小節(パターン最大長)を足した長さ以下 pattern のみ Build する 
                             _phrase.Build(_locate.Head, _pattern); // Note データを作成：tick 毎に数回分の Pattern のデータが作成される
                             Log.Trace($"Build: tick: {tick} head: {_locate.Head} to end: {_locate.end} {_pattern.Name} {type}");
-                            // TODO: Mixerもここで処理する必要がある：パターンに付き変更があれば一度実行
-                            //Mixer<T>.ApplyVaule(tick, midiCh, Type, _phrase.Name, programNum);
                         }
-                        Mixer<T>.ApplyVaule(tick, midiCh, Type, _phrase.Name, programNum); // Mixer に値の変更を適用
+                        Mixer<T>.ApplyVaule(_locate.Head, midiCh, Type, _pattern.Name, programNum); // Mixer に値の変更を適用 NOTE: Note より先に設定することに意味がある
                         if (!_locate.Name.Equals("") && (smf || _locate.NeedBuild)) { // FIXME: tick で判定しないと全検索になってる
                             var _previousPhraseList = phraseList.Where(x => x.Name.Equals(_locate.Name)).ToList(); // 一つ前の Phrase を引き当てる 
                             if (_previousPhraseList.Count != 0) {
@@ -125,9 +121,6 @@ namespace Meowziq.Core {
                 var _hashSet = new HashSet<int>();
                 foreach (var _note in _noteList) {
                     Mixer<T>.ApplyNote(_note.Tick, midiCh, _note); // Note の適用
-                    //if (_hashSet.Add(_note.Tick) && _note.Tick % (480 * 4) == 0) { // tick につき、かつ1小節に1回だけ
-                    //    Mixer<T>.ApplyVaule(_note.Tick, midiCh, Type, _phrase.Name, programNum); // Player の楽器設定の変更は必要 TODO: 上記の記述でOKでは？
-                    //}
                 }
                 _noteList.Clear(); // 必要
             }
