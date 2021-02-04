@@ -17,7 +17,7 @@ namespace Meowziq.Loader {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Fields
 
-        static List<Phrase> phraseList; // 誰に何を渡すか
+        static List<Phrase> phraseList;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Properties [noun, adjective] 
@@ -31,7 +31,6 @@ namespace Meowziq.Loader {
 
         /// <summary>
         /// Player のリストを作成します
-        ///     + キャッシュした文字列
         /// </summary>
         public static List<Core.Player<T>> Build(Stream target) {
             if (phraseList is null) {

@@ -15,7 +15,6 @@ namespace Meowziq.Loader {
 
         /// <summary>
         /// Mixer を作成します
-        ///     + キャッシュした文字列
         /// </summary>
         public static void Build(Stream target) {
             if (target is null) {

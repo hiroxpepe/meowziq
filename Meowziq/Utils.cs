@@ -39,7 +39,7 @@ namespace Meowziq {
         /// </summary>
         public static int[] ToNoteArray(Key key, Degree degree, Mode keyMode, Mode spanMode, int index) {
             int _noteDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
-            var _mode = spanMode is Mode.Undefined ? modeSpanBy(degree, keyMode) : spanMode; // Span に旋法がなければ自動旋法
+            Mode _mode = spanMode is Mode.Undefined ? modeSpanBy(degree, keyMode) : spanMode; // Span に旋法がなければ自動旋法
             int[] _scale7 = scale7By(Key.Enum.Parse(_noteDegree), _mode); // そのルート音の旋法スケールを取得
             return noteArrayBy(index, _scale7); // 旋法スケールから引数indexに対応したコード構成音の配列を返す
         }
@@ -53,7 +53,7 @@ namespace Meowziq {
         /// </summary>
         public static int ToNote(Key key, Degree degree, Mode keyMode, Mode spanMode, int index, bool autoNote = true) {
             int _noteDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
-            var _mode = spanMode is Mode.Undefined ? modeSpanBy(degree, keyMode) : spanMode; // Span に旋法がなければ自動旋法
+            Mode _mode = spanMode is Mode.Undefined ? modeSpanBy(degree, keyMode) : spanMode; // Span に旋法がなければ自動旋法
             int[] _scale7 = null;
             if (autoNote) { // Span ベースの旋法(自動・設定)
                 _scale7 = scale7By(Key.Enum.Parse(_noteDegree), _mode); // そのルート音の旋法スケールを取得

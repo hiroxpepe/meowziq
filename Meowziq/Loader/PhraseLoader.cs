@@ -21,7 +21,6 @@ namespace Meowziq.Loader {
         /// Phrase のリストを作成します
         /// NOTE: Core.Phrase のリストに変換します
         /// NOTE: "base": 指定がある場合 Phrase を継承します
-        ///     + キャッシュした文字列
         /// </summary>
         public static List<Core.Phrase> Build(Stream target) {
             var _list = loadJson(target).PhraseArray.Select(x => convertPhrase(x)).ToList();

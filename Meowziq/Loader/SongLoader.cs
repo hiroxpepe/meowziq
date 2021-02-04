@@ -31,7 +31,6 @@ namespace Meowziq.Loader {
 
         /// <summary>
         /// Song を作成します
-        ///     + キャッシュした文字列
         /// </summary>
         public static Core.Song Build(Stream target) {
             if (patternList is null) {
