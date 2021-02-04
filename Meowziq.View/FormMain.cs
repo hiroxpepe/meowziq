@@ -27,8 +27,6 @@ namespace Meowziq.View {
 
         string targetPath;
 
-        Cache cache;
-
         string exMessage;
 
         DialogResult result;
@@ -41,8 +39,6 @@ namespace Meowziq.View {
 
             // MIDIデバイス準備
             midi = new Midi.Manager();
-
-            cache = new Cache();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -188,8 +184,8 @@ namespace Meowziq.View {
             var _name = "------------";
             await Task.Run(() => {
                 Mixer<ChannelMessage>.Clear(); // TODO: ここでOKか確認
-                cache.Clear();
-                cache.Load(targetPath);
+                Cache.Clear();
+                Cache.Load(targetPath);
                 buildResourse(0, true, smf);
                 _name = State.Name;
                 Log.Info("load! :)");
@@ -204,9 +200,9 @@ namespace Meowziq.View {
         async void loadSong(int tick) {
             try {
                 await Task.Run(() => {
-                    cache.Load(targetPath); // json ファイルを読み込む
+                    Cache.Load(targetPath); // json ファイルを読み込む
                     buildResourse(tick, true);
-                    cache.Update(); // 正常に読み込めたらキャッシュとして採用
+                    Cache.Update(); // 正常に読み込めたらキャッシュとして採用
                     exMessage = "";
                     Log.Trace("load! :)");
                 });
@@ -231,12 +227,12 @@ namespace Meowziq.View {
         /// リソースの json ファイルをメモリに読み込みます
         /// </summary>
         void buildResourse(int tick, bool current = true, bool smf = false) {
-            MixerLoader<ChannelMessage>.Build(current ? cache.CurrentMixer : cache.ValidMixer);
+            MixerLoader<ChannelMessage>.Build(current ? Cache.Current.MixerStream : Cache.Valid.MixerStream);
             Mixer<ChannelMessage>.Message = MessageFactory.CreateMessage();
-            SongLoader.PatternList = PatternLoader.Build(current ? cache.CurrentPattern : cache.ValidPattern);
-            var _song = SongLoader.Build(current ? cache.CurrentSong : cache.ValidSong);
-            PlayerLoader<ChannelMessage>.PhraseList = PhraseLoader.Build(current ? cache.CurrentPhrase : cache.ValidPhrase);
-            PlayerLoader<ChannelMessage>.Build(current ? cache.CurrentPlayer : cache.ValidPlayer).ForEach(x => {
+            SongLoader.PatternList = PatternLoader.Build(current ? Cache.Current.PatternStream : Cache.Valid.PatternStream);
+            var _song = SongLoader.Build(current ? Cache.Current.SongStream : Cache.Valid.SongStream);
+            PlayerLoader<ChannelMessage>.PhraseList = PhraseLoader.Build(current ? Cache.Current.PhraseStream : Cache.Valid.PhraseStream);
+            PlayerLoader<ChannelMessage>.Build(current ? Cache.Current.PlayerStream : Cache.Valid.PlayerStream).ForEach(x => {
                 x.Song = _song; // Song データを設定
                 x.Build(tick, smf); // MIDI データを構築
             });

@@ -65,6 +65,7 @@ namespace Meowziq.Core {
         // public static Methods [verb]
 
         /// <summary>
+        /// 状態を初期化します
         /// NOTE: 初回に1回だけ実行
         /// </summary>
         public static void Clear() {
@@ -73,12 +74,15 @@ namespace Meowziq.Core {
             use = false;
         }
 
+        /// <summary>
+        /// Message に対して Note を適用します
+        /// </summary>
         public static void ApplyNote(int tick, int midiCh, Note note) {
             message.ApplyNote(tick, midiCh, note);
         }
 
         /// <summary>
-        /// MEMO: 外部からはこれだけ呼ぶ
+        /// Message に対してプログラムチェンジ、ボリューム、Pan、その他の設定を適用します
         /// </summary>
         public static void ApplyVaule(int tick, int midiCh, string type, string name, int programNum) {
             if (!use && !currentFaderMap.ContainsKey($"{type}:default")) {
@@ -96,7 +100,7 @@ namespace Meowziq.Core {
         // private Properties [noun, adjective] 
 
         /// <summary>
-        /// MEMO: 必要
+        /// player.json に記述された 音色を設定します
         /// </summary>
         static (int programNum, string type, string name) playerProgramNum {
             set {
