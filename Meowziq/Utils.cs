@@ -41,7 +41,7 @@ namespace Meowziq {
             int _noteDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
             var _mode = spanMode is Mode.Undefined ? modeSpanBy(degree, keyMode) : spanMode; // Span に旋法がなければ自動旋法
             int[] _scale7 = scale7By(Key.Enum.Parse(_noteDegree), _mode); // そのルート音の旋法スケールを取得
-            return noteArryBy(index, _scale7); // 旋法スケールから引数indexに対応したコード構成音の配列を返す
+            return noteArrayBy(index, _scale7); // 旋法スケールから引数indexに対応したコード構成音の配列を返す
         }
 
         /// <summary>
@@ -150,7 +150,7 @@ namespace Meowziq {
         /// <summary>
         /// 1～9のコード記法から Note No の配列を返します
         /// </summary>
-        static int[] noteArryBy(int index, int[] scale7) {
+        static int[] noteArrayBy(int index, int[] scale7) {
             // TODO: バリデート
             int[] _note2 = new int[2]; // chord 構成音の2音
             int[] _note3 = new int[3]; // chord 構成音の3音
@@ -716,22 +716,16 @@ namespace Meowziq {
         }
 
         /// <summary>
-        /// 度数関係なくそのキーの旋法の構成音をランダムで返す
-        /// </summary>
-        static int noteOfRandomBy(Key key, Mode keyMode) {
-            int[] _scale = scale7By(key, keyMode);
-            int _random = random.Next(0, 7);
-            return _scale[_random]; // 0 から 6
-        }
-
-        /// <summary>
-        /// そのキーの旋法の度数の構成音をランダムで返す
+        /// そのキーの旋法の度数の3和音構成音をランダムで返す
         /// </summary>
         static int noteOfRandom3By(Key key, Degree degree, Mode keyMode, Mode spanMode) {
-            var _mode = spanMode is Mode.Undefined ? modeSpanBy(degree, keyMode) : spanMode; // Span に旋法がなければ自動旋法
-            int[] _scale = noteArray3By(key, degree, _mode/*keyMode*/); // 3音
-            int _random = random.Next(0, 3);
-            return _scale[_random]; // 0 から 2
+            Mode _mode = spanMode is Mode.Undefined ? modeSpanBy(degree, keyMode) : spanMode; // 自動旋法の場合度数とキーの旋法から対応したその度数の旋法を取得
+            int[] _scaleKey = scale7By(key, keyMode); // キーの旋法でスケールを取得
+            int _noteDegree = _scaleKey[(int) degree]; // そのスケールの度数の音を取得
+            int[] _scale7 = scale7By(Key.Enum.Parse(_noteDegree), _mode); // その音のこの旋法でのスケールを取得
+            int[] _noteArray3 = noteArrayBy(3, _scale7); // スケールから3和音を取得
+            int _random = random.Next(0, 3); // ランダム値作成: 0 から 2
+            return _noteArray3[_random]; // そのスケールの3音のどれかを取得
         }
 
         // MEMO: 展開コードでキーボードの範囲(ゾーン)を指定するのはどうか

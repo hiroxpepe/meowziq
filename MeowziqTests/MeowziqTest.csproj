@@ -60,9 +60,11 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Core\MixerTests.cs" />
+    <Compile Include="IO\ExtensionsTests.cs" />
     <Compile Include="Loader\Extensions.cs" />
     <Compile Include="Loader\PatternLoaderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UtilsTests.cs" />
     <Compile Include="Value\ConverterTests.cs" />
     <Compile Include="Value\InheritorTests.cs" />
     <Compile Include="Value\ValidaterTests.cs" />
@@ -71,6 +73,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Meowziq.Midi\Meowziq.Midi.csproj">
+      <Project>{a3562768-edbb-457a-ad96-f5cfb789dce0}</Project>
+      <Name>Meowziq.Midi</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Meowziq\Meowziq.csproj">
       <Project>{73E21602-E5FB-46BD-8FBC-C18E72E79089}</Project>
       <Name>Meowziq</Name>

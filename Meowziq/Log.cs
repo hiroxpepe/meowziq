@@ -6,12 +6,12 @@ namespace Meowziq {
     /// ログ用ファサードクラス
     /// NOTE: NLog を使用
     /// </summary>
-    public static  class Log {
+    public static class Log {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Fields
 
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        static Logger logger = LogManager.GetCurrentClassLogger();
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]
