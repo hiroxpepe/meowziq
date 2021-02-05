@@ -57,7 +57,7 @@ namespace Meowziq.Core {
         /// Span のリストを返す
         /// </summary>
         public List<Span> AllSpan {
-            get => measList.SelectMany(x => x.AllSpan).Select(x => x).ToList();
+            get => measList.SelectMany(x => x.AllSpan).ToList();
         }
     }
 

@@ -68,7 +68,7 @@ namespace Meowziq.Core {
                     }
                     var _tick = _gate.PreLength + tick + Utils.To16beatLength(_16beatIdx.Idx);
                     _noteNumArray.Where(x => x != -1).ToList().ForEach(x => 
-                        add(_tick, new Note(_tick, x + param.Interval, _gate.Value, 127, _gate.PreCount
+                        add(_tick, new Note(_tick, x + param.Interval, _gate.Value, 104, _gate.PreCount
                     )));
                 }
             }
@@ -89,7 +89,7 @@ namespace Meowziq.Core {
                         }
                     }
                     var _tick = _gate.PreLength + tick + Utils.To16beatLength(_16beatIdx.Idx);
-                    add(_tick, new Note(_tick, param.PercussionNoteNum, _gate.Value, 127, _gate.PreCount));
+                    add(_tick, new Note(_tick, param.PercussionNoteNum, _gate.Value, 104, _gate.PreCount));
                 }
             }
         }
@@ -97,12 +97,23 @@ namespace Meowziq.Core {
         /// <summary>
         /// シーケンス用 Note オブジェクトを作成して適用します
         /// </summary>
-        public void ApplyRandomNote(int tick, int beatCount, List<Span> spanList) {
+        public void ApplySequeNote(int tick, int beatCount, List<Span> spanList, Param param) {
             for (var _16beatIdx = new Index(beatCount); _16beatIdx.HasNext; _16beatIdx.Increment()) {
                 var _span = spanList[_16beatIdx.SpanIdx]; // 16beat 4個で1拍進む
                 var _note = Utils.ToNoteRandom(_span.Key, _span.Degree, _span.KeyMode, _span.SpanMode); // 16の倍数
-                var _tick = tick + Utils.To16beatLength(_16beatIdx.Idx);
-                add(_tick, new Note(_tick, _note, 30, 127)); // gate 短め
+                if (!(param.Seque.Range is null)) {
+                    _note = applyRange(new int[] { _note }, param.Seque.Range)[0]; // TODO: applyRange の単音 ver
+                }
+                if (param.HasTextCharArray) { // TODO: 判定方法の改善
+                    var _text = param.TextCharArray[_16beatIdx.Idx];
+                    if (param.Seque.Text.HasValue() && param.IsMatch(_text)) {
+                        var _tick = tick + Utils.To16beatLength(_16beatIdx.Idx);
+                        add(_tick, new Note(_tick, _note, Seque.ToGate(_text.ToString()), 104));
+                    }
+                } else {
+                    var _tick = tick + Utils.To16beatLength(_16beatIdx.Idx);
+                    add(_tick, new Note(_tick, _note, 30, 104)); // TODO: デフォルトの Text 記述を持たせればこの分岐は削除出来る：パターンの長さで自動生成
+                }
             }
         }
 

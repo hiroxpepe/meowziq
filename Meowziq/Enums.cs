@@ -15,7 +15,7 @@ namespace Meowziq {
         Multi = 1,
         Chord = 2,
         Drum = 3,
-        Sequence = 4,
+        Seque = 4,
     }
 
     public enum Pan {
@@ -320,11 +320,7 @@ namespace Meowziq {
     /// <summary>
     /// 汎用拡張メソッド
     /// </summary>
-    public static class Extensions {
-
-        public static int Int32(this char source) {
-            return int.Parse(source.ToString()); // TODO: 0～9 以外判定
-        }
+    public static class EnumExtensions {
 
         public static int Int32(this Env source) {
             return (int) source;

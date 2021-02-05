@@ -36,14 +36,15 @@ namespace Meowziq.Loader {
             _phrase.Type = phrase.Type;
             _phrase.Name = phrase.Name;
             _phrase.Base = phrase.Base;
-            if (phrase.Note != null) {
+            if (phrase.Note != null) { // キーの旋法を自動判定するモード
                 _phrase.Data.Note.Text = phrase.Note;
-            } else if (phrase.Auto != null) {
+            } else if (phrase.Auto != null) { // Spanの旋法を自動判定するモード
                 _phrase.Data.Note.Text = phrase.Auto;
                 _phrase.Data.Auto = true;
             }
             _phrase.Data.Note.Oct = phrase.Oct;
             _phrase.Data.Chord.Text = phrase.Chord;
+            _phrase.Data.Seque.Text = phrase.Gete;
             _phrase.Range = phrase.Range;
             _phrase.Data.Exp.Pre = phrase.Pre;
             _phrase.Data.Exp.Post = phrase.Post;
@@ -117,6 +118,10 @@ namespace Meowziq.Loader {
             }
             [DataMember(Name = "chord")]
             public string Chord {
+                get; set;
+            }
+            [DataMember(Name = "gete")]
+            public string Gete {
                 get; set;
             }
             [DataMember(Name = "range")]

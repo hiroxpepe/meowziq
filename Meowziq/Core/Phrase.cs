@@ -16,6 +16,8 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
+        string type;
+
         Data data; // json から読み込んだデータを格納
 
         Item<Note> noteItem; // Tick 毎の Note のリスト、Pattern の設定回数分の Note を格納
@@ -32,7 +34,13 @@ namespace Meowziq.Core {
         // Properties [noun, adjective] 
 
         public string Type {
-            get; set;
+            get => type;
+            set {
+                type = value;
+                if (type.Equals("seque")) {
+                    data.Seque.Use = true;
+                }
+            }
         }
 
         public string Name {
@@ -64,10 +72,17 @@ namespace Meowziq.Core {
                 if (_rangeArray.Length != 2) {
                     throw new ArgumentException("invalid range format.");
                 }
-                data.Chord.Range = new Range(
-                    int.Parse(_rangeArray[0]),
-                    int.Parse(_rangeArray[1])
-                );
+                if (data.HasChord) {
+                    data.Chord.Range = new Range(
+                        int.Parse(_rangeArray[0]),
+                        int.Parse(_rangeArray[1])
+                    );
+                } else if (data.HasSeque) {
+                    data.Seque.Range = new Range(
+                        int.Parse(_rangeArray[0]),
+                        int.Parse(_rangeArray[1])
+                    );
+                }
             }
         }
 
@@ -170,18 +185,18 @@ namespace Meowziq.Core {
                     }
                     break;
                 case Way.Drum:
-                    for (var _idx = 0; _idx < data.BeatArray.Length; _idx++) { // TODO: for の置き換え
-                        var _param = new Param(
-                            new Value.Note(data.BeatArray[_idx], 0), // オクターブは常に 0
-                            (int) data.PercussionArray[_idx],
-                            new Value.Exp(data.PreArray[_idx], ""),
-                            _way
-                        );
-                        _generator.ApplyDrumNote(tick, pattern.BeatCount, _param);
-                    }
+                    data.BeatArray.ToList().Select((x, idx) => new Param(
+                        new Value.Note(x, 0), // オクターブは常に 0
+                        (int) data.PercussionArray[idx],
+                        new Value.Exp(data.PreArray[idx], ""),
+                        _way
+                    )).ToList().ForEach(x => _generator.ApplyDrumNote(tick, pattern.BeatCount, x));
                     break;
-                case Way.Sequence:
-                    _generator.ApplyRandomNote(tick, pattern.BeatCount, pattern.AllSpan);
+                case Way.Seque:
+                    {
+                        var _param = new Param(data.Seque, _way);
+                        _generator.ApplySequeNote(tick, pattern.BeatCount, pattern.AllSpan, _param);
+                    }
                     break;
             }
             // UI 表示情報作成
@@ -225,8 +240,8 @@ namespace Meowziq.Core {
             else if (data.HasBeat) {
                 return Way.Drum; // "beat" 記述 
             }
-            else if (data.HasNoData) {
-                return Way.Sequence; // TODO: 暫定
+            else if (data.HasSeque) {
+                return Way.Seque; // "seque" 記述
             }
             throw new ArgumentException("not understandable Way.");
         }

@@ -59,6 +59,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="ExtensionsTests.cs" />
     <Compile Include="Core\MixerTests.cs" />
     <Compile Include="IO\ExtensionsTests.cs" />
     <Compile Include="Loader\Extensions.cs" />
