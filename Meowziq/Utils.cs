@@ -182,6 +182,7 @@ namespace Meowziq {
                     _note4[2] = scale7[5 - 1];
                     _note4[3] = scale7[7 - 1];
                     return _note4;
+                // TODO: 8で2音オクターブ？
                 case 9: // e.g. Cadd9, Cmadd9, Cm(b9), Cm(-5,b9)
                     _note4[0] = scale7[1 - 1];
                     _note4[1] = scale7[3 - 1];
@@ -303,7 +304,7 @@ namespace Meowziq {
         // TODO: 5音を取り出すメソッド：7モードのペンタトニック
 
         /// <summary>
-        /// MEMO: 有効？
+        /// MEMO: 有効？ 何の目的で使用？
         /// </summary>
         static int[] noteArray7By(Key key, Degree degree, Mode keyMode) {
             key.Validate();
@@ -463,7 +464,7 @@ namespace Meowziq {
         static Mode modeKeyMaybeBy(Degree degree, Mode spanMode) {
             spanMode.Validate();
             degree.Validate();
-            if (spanMode == Mode.Lyd) {
+            if (spanMode is Mode.Lyd) {
                 switch (degree) {
                     case Degree.I:
                         return Mode.Lyd;
@@ -480,7 +481,7 @@ namespace Meowziq {
                     case Degree.VII:
                         return Mode.Mix;
                 }
-            } else if (spanMode == Mode.Ion) {
+            } else if (spanMode is Mode.Ion) {
                 switch (degree) {
                     case Degree.I:
                         return Mode.Ion;
@@ -497,7 +498,7 @@ namespace Meowziq {
                     case Degree.VII:
                         return Mode.Dor;
                 }
-            } else if (spanMode == Mode.Mix) {
+            } else if (spanMode is Mode.Mix) {
                 switch (degree) {
                     case Degree.I:
                         return Mode.Mix;
@@ -514,7 +515,7 @@ namespace Meowziq {
                     case Degree.VII:
                         return Mode.Aeo;
                 }
-            } else if (spanMode == Mode.Dor) {
+            } else if (spanMode is Mode.Dor) {
                 switch (degree) {
                     case Degree.I:
                         return Mode.Dor;
@@ -531,7 +532,7 @@ namespace Meowziq {
                     case Degree.VII:
                         return Mode.Phr;
                 }
-            } else if (spanMode == Mode.Aeo) {
+            } else if (spanMode is Mode.Aeo) {
                 switch (degree) {
                     case Degree.I:
                         return Mode.Aeo;
@@ -548,7 +549,7 @@ namespace Meowziq {
                     case Degree.VII:
                         return Mode.Loc;
                 }
-            } else if (spanMode == Mode.Phr) {
+            } else if (spanMode is Mode.Phr) {
                 switch (degree) {
                     case Degree.I:
                         return Mode.Phr;
@@ -565,7 +566,7 @@ namespace Meowziq {
                     case Degree.VII:
                         return Mode.Lyd;
                 }
-            } else if (spanMode == Mode.Loc) {
+            } else if (spanMode is Mode.Loc) {
                 switch (degree) {
                     case Degree.I:
                         return Mode.Loc;
@@ -592,7 +593,7 @@ namespace Meowziq {
         static Mode modeSpanBy(Degree degree, Mode keyMode) {
             keyMode.Validate();
             degree.Validate();
-            if (keyMode == Mode.Lyd) {
+            if (keyMode is Mode.Lyd) {
                 switch (degree) {
                     case Degree.I:
                         return Mode.Lyd;
@@ -609,7 +610,7 @@ namespace Meowziq {
                     case Degree.VII:
                         return Mode.Phr;
                 }
-            } else if (keyMode == Mode.Ion) {
+            } else if (keyMode is Mode.Ion) {
                 switch (degree) {
                     case Degree.I:
                         return Mode.Ion;
@@ -626,7 +627,7 @@ namespace Meowziq {
                     case Degree.VII:
                         return Mode.Loc;
                 }
-            } else if (keyMode == Mode.Mix) {
+            } else if (keyMode is Mode.Mix) {
                 switch (degree) {
                     case Degree.I:
                         return Mode.Mix;
@@ -643,7 +644,7 @@ namespace Meowziq {
                     case Degree.VII:
                         return Mode.Lyd;
                 }
-            } else if (keyMode == Mode.Dor) {
+            } else if (keyMode is Mode.Dor) {
                 switch (degree) {
                     case Degree.I:
                         return Mode.Dor;
@@ -660,7 +661,7 @@ namespace Meowziq {
                     case Degree.VII:
                         return Mode.Ion;
                 }
-            } else if (keyMode == Mode.Aeo) {
+            } else if (keyMode is Mode.Aeo) {
                 switch (degree) {
                     case Degree.I:
                         return Mode.Aeo;
@@ -677,7 +678,7 @@ namespace Meowziq {
                     case Degree.VII:
                         return Mode.Mix;
                 }
-            } else if (keyMode == Mode.Phr) {
+            } else if (keyMode is Mode.Phr) {
                 switch (degree) {
                     case Degree.I:
                         return Mode.Phr;
@@ -694,7 +695,7 @@ namespace Meowziq {
                     case Degree.VII:
                         return Mode.Dor;
                 }
-            } else if (keyMode == Mode.Loc) {
+            } else if (keyMode is Mode.Loc) {
                 switch (degree) {
                     case Degree.I:
                         return Mode.Loc;

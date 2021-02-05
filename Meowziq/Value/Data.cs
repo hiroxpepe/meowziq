@@ -19,6 +19,8 @@ namespace Meowziq.Value {
 
         Chord chord; // chord記述
 
+        Seque seque; // seque記述
+
         Exp exp;
 
         Percussion[] percussionArray; // data記述：ドラム Track パーカッション Note No
@@ -42,6 +44,7 @@ namespace Meowziq.Value {
             this.note = new Note();
             this.auto = false;
             this.chord = new Chord();
+            this.seque = new Seque();
             this.exp = new Exp();
         }
 
@@ -61,6 +64,11 @@ namespace Meowziq.Value {
         public Chord Chord {
             get => chord;
             set => chord = value;
+        }
+
+        public Seque Seque {
+            get => seque;
+            set => seque = value;
         }
 
         public Exp Exp {
@@ -184,42 +192,49 @@ namespace Meowziq.Value {
         /// "beat" 記述のデータを持つかどうか
         /// </summary>
         public bool HasBeat {
-            get => !hasNote && !hasAuto && !hasChord && hasBeatArray && !hasNoteArray && !hasAutoArray;
+            get => !hasNote && !hasAuto && !hasChord && !hasSeque && hasBeatArray && !hasNoteArray && !hasAutoArray;
         }
 
         /// <summary>
         /// "chord" 記述のデータを持つかどうか
         /// </summary>
         public bool HasChord {
-            get => !hasNote && !hasAuto && hasChord && !hasBeatArray && !hasNoteArray && !hasAutoArray;
+            get => !hasNote && !hasAuto && hasChord && !hasSeque && !hasBeatArray && !hasNoteArray && !hasAutoArray;
+        }
+
+        /// <summary>
+        /// "seque" 記述のデータを持つかどうか
+        /// </summary>
+        public bool HasSeque {
+            get => !hasNote && !hasAuto && !hasChord && hasSeque && !hasBeatArray && !hasNoteArray && !hasAutoArray;
         }
 
         /// <summary>
         /// "note" 記述のデータを持つかどうか
         /// </summary>
         public bool HasNote {
-            get => (hasNote || hasNoteArray) && !hasAuto && !hasChord && !hasBeatArray && !hasAutoArray;
+            get => (hasNote || hasNoteArray) && !hasAuto && !hasChord && !hasSeque && !hasBeatArray && !hasAutoArray;
         }
 
         /// <summary>
         /// "auto" 記述のデータを持つかどうか
         /// </summary>
         public bool HasAuto {
-            get => !hasNote && !hasNoteArray && (hasAuto || hasAutoArray) && !hasChord && !hasBeatArray;
+            get => !hasNote && !hasNoteArray && (hasAuto || hasAutoArray) && !hasChord && !hasSeque && !hasBeatArray;
         }
 
         /// <summary>
         /// Array 記述のデータを持つかどうか
         /// </summary>
         public bool HasMulti {
-            get => !hasNote && !hasAuto && !hasChord && (hasBeatArray || hasNoteArray || hasAutoArray);
+            get => !hasNote && !hasAuto && !hasChord && !hasSeque && (hasBeatArray || hasNoteArray || hasAutoArray);
         }
 
         /// <summary>
         /// データを持たないかどうか
         /// </summary>
         public bool HasNoData {
-            get => !hasNote && !hasAuto && !hasChord && !hasBeatArray && !hasNoteArray && !hasAutoArray;
+            get => !hasNote && !hasAuto && !hasChord && !hasSeque && !hasBeatArray && !hasNoteArray && !hasAutoArray;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -270,7 +285,11 @@ namespace Meowziq.Value {
         }
 
         bool hasChord {
-            get => chord.Text != null;
+            get => chord.Text != null; // TODO: Text.Equals("") では？
+        }
+
+        bool hasSeque {
+            get => seque.Use;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -293,6 +312,8 @@ namespace Meowziq.Value {
         // Fields
 
         string text;
+
+        // TODO: gate で Bass のゴーストノートなどを表現 
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
@@ -324,12 +345,7 @@ namespace Meowziq.Value {
         }
 
         public char[] TextCharArray {
-            get {
-                if (Text.Equals("")) {
-                    return null;
-                }
-                return Utils.Filter(Text).ToCharArray();
-            }
+            get => Text.HasValue() ? Utils.Filter(Text).ToCharArray() : null;
         }
     }
 
@@ -363,12 +379,84 @@ namespace Meowziq.Value {
         }
 
         public char[] TextCharArray {
-            get {
-                if (Text.Equals("")) {
-                    return null;
-                }
-                return Utils.Filter(Text).ToCharArray();
+            get => Text.HasValue() ? Utils.Filter(Text).ToCharArray() : null;
+        }
+    }
+
+    /// <summary>
+    /// アルペジオ用設定
+    /// </summary>
+    public class Seque {
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Fields
+
+        /// <summary>
+        /// MEMO: 120 が16分音符、30:60:90:120 で4音価にするか？ ⇒ 100%音価は効果が薄いので必要ない
+        ///     '-' は無効の文字としてのみ使用されるべき
+        ///     '+*>' の3文字で設定: ⇒ -: 0%, +: 25%, *:50%, >75%
+        /// </summary>
+        string text; // gate 設定用
+
+        /// <summary>
+        /// NOTE: Chord 記述の数値と同じ概念
+        /// </summary>
+        int stack; // 何音コードにするか
+
+        bool use;
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Constructor
+
+        public Seque() {
+            Text = "";
+            stack = 3;
+            use = false;
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Properties [noun, adjective] 
+
+        public string Text {
+            get => text;
+            set => text = Value.Validater.PhraseValue(value);
+        }
+
+        public int Stack {
+            get; set;
+        }
+
+        /// <summary>
+        /// MEMO: Range(範囲)という概念は1オクターブとした方が扱いやすいが
+        /// </summary>
+        public Range Range {
+            get; set; // TODO: デフォルト範囲を設けた方が扱いやすいのでは？
+        }
+
+        public char[] TextCharArray {
+            get => Text.HasValue() ? Utils.Filter(Text).ToCharArray() : null;
+        }
+
+        public bool Use {
+            get => use;
+            set => use = value;
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public static Methods [verb]
+
+        /// <summary>
+        /// 音価に変換して返します
+        /// </summary>
+        public static int ToGate(string target) {
+            if (target.Equals("+")) {
+                return 30;
+            } else if (target.Equals("*")) {
+                return 60;
+            } else if (target.Equals(">")) {
+                return 90;
             }
+            return 0;
         }
     }
 

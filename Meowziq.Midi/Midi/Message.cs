@@ -110,7 +110,7 @@ namespace Meowziq.Midi {
                         }
                     }
                 }
-                add(tick, new ChannelMessage(ChannelCommand.NoteOn, midiCh, note.Num, 104)); // ノートON
+                add(tick, new ChannelMessage(ChannelCommand.NoteOn, midiCh, note.Num, note.Velo/*104*/)); // ノートON
                 add(tick + note.Gate, new ChannelMessage(ChannelCommand.NoteOff, midiCh, note.Num, 0)); // ノートOFF ※この位置
             } else { // Second スタートで実行
                 if (note.HasPre) { // ノートが優先発音の場合
@@ -121,7 +121,7 @@ namespace Meowziq.Midi {
                         }
                     }
                 }
-                add(tick, new ChannelMessage(ChannelCommand.NoteOn, midiCh, note.Num, 104)); // ノートON
+                add(tick, new ChannelMessage(ChannelCommand.NoteOn, midiCh, note.Num, note.Velo/*104*/)); // ノートON
                 add(tick + note.Gate, new ChannelMessage(ChannelCommand.NoteOff, midiCh, note.Num, 0)); // ノートOFF ※この位置
             }
         }

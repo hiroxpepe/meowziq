@@ -19,7 +19,10 @@ namespace Meowziq.Value {
             target.Data.Note.Oct = baze.Data.Note.Oct; // baze 継承
             target.Data.Auto = baze.Data.Auto; // baze 継承
             target.Data.Chord.Text = applyString(target.Data.Chord.Text, baze.Data.Chord.Text);
-            target.Data.Chord.Range = target.Data.Chord.Range; // baze 継承
+            target.Data.Chord.Range = baze.Data.Chord.Range; // baze 継承
+            // TODO: Seque 記述のこり
+            target.Data.Seque.Text = applyString(target.Data.Seque.Text, baze.Data.Seque.Text);
+            target.Data.Seque.Range = baze.Data.Seque.Range; // baze 継承
             target.Data.Exp.Pre = applyString(target.Data.Exp.Pre, baze.Data.Exp.Pre);
             target.Data.Exp.Post = applyString(target.Data.Exp.Post, baze.Data.Exp.Post);
             target.Data.BeatArray = applyArray(target.Data.BeatArray, baze.Data.BeatArray);
