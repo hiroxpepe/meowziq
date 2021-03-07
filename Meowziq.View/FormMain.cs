@@ -282,7 +282,7 @@ namespace Meowziq.View {
                 sequence.Clear();
                 sequence.Format = 1;
                 sequence.Add(_conductorTrack);
-                Multi.List.ForEach(x => sequence.Add(x));
+                Multi.List.Where(x => x.Length > 1).ToList().ForEach(x => sequence.Add(x));
                 sequence.Save($"./data/{_songDir}/{_songName}.mid");
                 Invoke((MethodInvoker) (() => textBoxSongName.Text = _songName));// Song 名を戻す
                 _disposer.Dispose(); // タイマー破棄
