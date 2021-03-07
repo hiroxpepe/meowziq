@@ -316,7 +316,7 @@ namespace Meowziq.View {
         async Task<bool> stopSound() {
             return await Task.Run(() => {
                 Sound.Stopping = true;
-                Enumerable.Range(0, 15).ToList().ForEach(
+                Enumerable.Range(0, 16).ToList().ForEach(
                     x => midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, x, 120))
                 );
                 Sound.Stopping = false;
