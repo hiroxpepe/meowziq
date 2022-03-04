@@ -15,13 +15,13 @@ namespace Meowziq.Value {
                 return target; // 値がなければそのまま返す FIXME:
             }
             // 拍のデータの数が4文字かどうか
-            var _target1 = target;
-            _target1 = _target1.Replace("[", "|").Replace("]", "|"); // 文字の置き換え
-            var _array1 = _target1.Split('|') // 区切り文字で切り分ける
+            var target1 = target;
+            target1 = target1.Replace("[", "|").Replace("]", "|"); // 文字の置き換え
+            var array1 = target1.Split('|') // 区切り文字で切り分ける
                 .Where(x => !string.IsNullOrWhiteSpace(x)) // 空文字以外が対象で
                 .Where(x => x.Length != 4) // そのデータが4文字ではないものを抽出
                 .ToArray();
-            if (_array1.Length != 0) { // そのデータがあれば例外を投げる
+            if (array1.Length != 0) { // そのデータがあれば例外を投げる
                 throw new FormatException("a beat data count must be 4.");
             }
             return target; // バリデーションOKなら元々の文字列を返す
@@ -52,13 +52,13 @@ namespace Meowziq.Value {
         ///     これを16進にすると 0x07A120 ⇒ 3バイトで表現すると "07", "A1", "20"
         /// </summary>
         public static byte[] ToByteTempo(int tempo) {
-            var _double = 60 * Math.Pow(10, 6) / tempo;
-            var _hex = int.Parse(Math.Round(_double).ToString()).ToString("X6"); // 16進数6桁変換
-            var _charArray = _hex.ToCharArray();
+            var doubleValue = 60 * Math.Pow(10, 6) / tempo;
+            var hex = int.Parse(Math.Round(doubleValue).ToString()).ToString("X6"); // 16進数6桁変換
+            var charArray = hex.ToCharArray();
             return new byte[3]{ // 3byte で返す
-                Convert.ToByte(_charArray[0].ToString() + _charArray[1].ToString(), 16),
-                Convert.ToByte(_charArray[2].ToString() + _charArray[3].ToString(), 16),
-                Convert.ToByte(_charArray[4].ToString() + _charArray[5].ToString(), 16)
+                Convert.ToByte(charArray[0].ToString() + charArray[1].ToString(), 16),
+                Convert.ToByte(charArray[2].ToString() + charArray[3].ToString(), 16),
+                Convert.ToByte(charArray[4].ToString() + charArray[5].ToString(), 16)
             };
         }
 

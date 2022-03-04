@@ -1,5 +1,7 @@
 ﻿
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using static Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
+
 using System;
 
 namespace Meowziq.Value.Tests {
@@ -20,8 +22,8 @@ namespace Meowziq.Value.Tests {
         /// </summary>
         [TestMethod()]
         public void applyStringTest2() {
-            var _result = new PrivateType(typeof(Inheritor)).InvokeStatic("applyString", "[****|****|****|x-x-]", "[xxxx|xxxx|xxxx|xxxx]");
-            Assert.AreEqual(_result, "[xxxx|xxxx|xxxx|x-x-]");
+            var result = new PrivateType(typeof(Inheritor)).InvokeStatic("applyString", "[****|****|****|x-x-]", "[xxxx|xxxx|xxxx|xxxx]");
+            AreEqual(result, "[xxxx|xxxx|xxxx|x-x-]");
         }
 
         /// <summary>
@@ -29,8 +31,8 @@ namespace Meowziq.Value.Tests {
         /// </summary>
         [TestMethod()]
         public void applyStringTest3() {
-            var _result = new PrivateType(typeof(Inheritor)).InvokeStatic("applyString", "", "[xxxx|xxxx|xxxx|xxxx]");
-            Assert.AreEqual(_result, "[xxxx|xxxx|xxxx|xxxx]");
+            var result = new PrivateType(typeof(Inheritor)).InvokeStatic("applyString", "", "[xxxx|xxxx|xxxx|xxxx]");
+            AreEqual(result, "[xxxx|xxxx|xxxx|xxxx]");
         }
 
         /// <summary>
@@ -39,14 +41,14 @@ namespace Meowziq.Value.Tests {
         [TestMethod()]
         [ExpectedException(typeof(FormatException))]
         public void applyArrrayTest1() {
-            var _target = new string[] {
+            var target = new string[] {
                 "[****|****|****|x-x-]"
             };
-            var _base = new string[] {
+            var baze = new string[] {
                 "[****|****|****|x-x-]",
                 "[****|****|****|-xx-]"
             };
-            new PrivateType(typeof(Inheritor)).InvokeStatic("applyArray", _target, _base);
+            new PrivateType(typeof(Inheritor)).InvokeStatic("applyArray", target, baze);
         }
 
         /// <summary>
@@ -54,20 +56,20 @@ namespace Meowziq.Value.Tests {
         /// </summary>
         [TestMethod()]
         public void applyArrrayTest2() {
-            var _target = new string[] {
+            var target = new string[] {
                 "[****|****|****|x-x-]",
                 "[x-x-|****|****|****]"
             };
-            var _base = new string[] {
+            var baze = new string[] {
                 "[xxxx|xxxx|xxxx|xxxx]",
                 "[xxxx|xxxx|xxxx|xxxx]"
             };
-            var _expected = new string[] {
+            var expected = new string[] {
                 "[xxxx|xxxx|xxxx|x-x-]",
                 "[x-x-|xxxx|xxxx|xxxx]"
             };
-            var _result = (string[]) new PrivateType(typeof(Inheritor)).InvokeStatic("applyArray", _target, _base);
-            CollectionAssert.AreEqual(_result, _expected);
+            var result = (string[]) new PrivateType(typeof(Inheritor)).InvokeStatic("applyArray", target, baze);
+            CollectionAssert.AreEqual(result, expected);
         }
 
         /// <summary>
@@ -75,14 +77,14 @@ namespace Meowziq.Value.Tests {
         /// </summary>
         [TestMethod()]
         public void ApplyTest() {
-            var _target = new Core.Phrase();
-            _target.Data.Note.Text   = "[****|1**3|****|****][****|****|>>1>|--3-]";
-            var _baze = new Core.Phrase();
-            _baze.Data.Note.Text     = "[7>--|4>>5|>>7>|>>5>][7>--|4>>5|>>7>|>>5>]";
-            var _expected = new Core.Phrase();
-            _expected.Data.Note.Text = "[7>--|1>>3|>>7>|>>5>][7>--|4>>5|>>1>|--3-]";
-            var _result = Inheritor.Apply(_target, _baze);
-            Assert.AreEqual(_result.Data.Note.Text, _expected.Data.Note.Text);
+            var target = new Core.Phrase();
+            target.Data.Note.Text   = "[****|1**3|****|****][****|****|>>1>|--3-]";
+            var baze = new Core.Phrase();
+            baze.Data.Note.Text     = "[7>--|4>>5|>>7>|>>5>][7>--|4>>5|>>7>|>>5>]";
+            var expected = new Core.Phrase();
+            expected.Data.Note.Text = "[7>--|1>>3|>>7>|>>5>][7>--|4>>5|>>1>|--3-]";
+            var result = Inheritor.Apply(target, baze);
+            AreEqual(result.Data.Note.Text, expected.Data.Note.Text);
         }
     }
 }

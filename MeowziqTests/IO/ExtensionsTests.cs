@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using static Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace Meowziq.IO.Tests {
     [TestClass()]
@@ -10,10 +11,10 @@ namespace Meowziq.IO.Tests {
         /// </summary>
         [TestMethod()]
         public void SetTest() {
-            var _text = "hoge";
-            var _target = "piyo";
-            _text.Set(_target);
-            Assert.AreEqual(_text, "hoge");
+            var text = "hoge";
+            var target = "piyo";
+            text.Set(target);
+            AreEqual(text, "hoge");
         }
 
         /// <summary>
@@ -21,9 +22,9 @@ namespace Meowziq.IO.Tests {
         /// </summary>
         [TestMethod()]
         public void ClearTest() {
-            var _text = "hoge";
-            _text.Clear();
-            Assert.AreEqual(_text, "hoge");
+            var text = "hoge";
+            text.Clear();
+            AreEqual(text, "hoge");
         }
     }
 }
