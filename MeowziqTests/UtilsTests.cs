@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using static Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace Meowziq.Tests {
     [TestClass()]
@@ -10,13 +11,13 @@ namespace Meowziq.Tests {
         /// </summary>
         [TestMethod()]
         public void ToNoteRandomTestKeyModeCIonI() {
-            var _note = Utils.ToNoteRandom(Key.C, Degree.I, Mode.Ion, Mode.Undefined);
-            var _noteToKey = Key.Enum.Parse(_note);
-            Log.Info($"note: {_noteToKey}");
-            Assert.IsTrue(
-                ((int) _noteToKey).ToString().Contains(((int) Key.C).ToString()) ||
-                ((int) _noteToKey).ToString().Contains(((int) Key.E).ToString()) ||
-                ((int) _noteToKey).ToString().Contains(((int) Key.G).ToString())
+            var note = Utils.ToNoteRandom(Key.C, Degree.I, Mode.Ion, Mode.Undefined);
+            var noteToKey = Key.Enum.Parse(note);
+            Log.Info($"note: {noteToKey}");
+            IsTrue(
+                ((int) noteToKey).ToString().Contains(((int) Key.C).ToString()) ||
+                ((int) noteToKey).ToString().Contains(((int) Key.E).ToString()) ||
+                ((int) noteToKey).ToString().Contains(((int) Key.G).ToString())
             );
         }
 
@@ -25,13 +26,13 @@ namespace Meowziq.Tests {
         /// </summary>
         [TestMethod()]
         public void ToNoteRandomTestKeyModeCIonII() {
-            var _note = Utils.ToNoteRandom(Key.C, Degree.II, Mode.Ion, Mode.Undefined);
-            var _noteToKey = Key.Enum.Parse(_note);
-            Log.Info($"note: {_noteToKey}");
-            Assert.IsTrue(
-                ((int) _noteToKey).ToString().Contains(((int) Key.D).ToString()) ||
-                ((int) _noteToKey).ToString().Contains(((int) Key.F).ToString()) ||
-                ((int) _noteToKey).ToString().Contains(((int) Key.A).ToString())
+            var note = Utils.ToNoteRandom(Key.C, Degree.II, Mode.Ion, Mode.Undefined);
+            var noteToKey = Key.Enum.Parse(note);
+            Log.Info($"note: {noteToKey}");
+            IsTrue(
+                ((int) noteToKey).ToString().Contains(((int) Key.D).ToString()) ||
+                ((int) noteToKey).ToString().Contains(((int) Key.F).ToString()) ||
+                ((int) noteToKey).ToString().Contains(((int) Key.A).ToString())
             );
         }
 
@@ -40,13 +41,13 @@ namespace Meowziq.Tests {
         /// </summary>
         [TestMethod()]
         public void ToNoteRandomTestKeyModeCIonIII() {
-            var _note = Utils.ToNoteRandom(Key.C, Degree.III, Mode.Ion, Mode.Undefined);
-            var _noteToKey = Key.Enum.Parse(_note);
-            Log.Info($"note: {_noteToKey}");
-            Assert.IsTrue(
-                ((int) _noteToKey).ToString().Contains(((int) Key.E).ToString()) ||
-                ((int) _noteToKey).ToString().Contains(((int) Key.G).ToString()) ||
-                ((int) _noteToKey).ToString().Contains(((int) Key.B).ToString())
+            var note = Utils.ToNoteRandom(Key.C, Degree.III, Mode.Ion, Mode.Undefined);
+            var noteToKey = Key.Enum.Parse(note);
+            Log.Info($"note: {noteToKey}");
+            IsTrue(
+                ((int) noteToKey).ToString().Contains(((int) Key.E).ToString()) ||
+                ((int) noteToKey).ToString().Contains(((int) Key.G).ToString()) ||
+                ((int) noteToKey).ToString().Contains(((int) Key.B).ToString())
             );
         }
 
@@ -55,13 +56,13 @@ namespace Meowziq.Tests {
         /// </summary>
         [TestMethod()]
         public void ToNoteRandomTestKeyModeCIonIV() {
-            var _note = Utils.ToNoteRandom(Key.C, Degree.IV, Mode.Ion, Mode.Undefined);
-            var _noteToKey = Key.Enum.Parse(_note);
-            Log.Info($"note: {_noteToKey}");
-            Assert.IsTrue(
-                ((int) _noteToKey).ToString().Contains(((int) Key.F).ToString()) ||
-                ((int) _noteToKey).ToString().Contains(((int) Key.A).ToString()) ||
-                ((int) _noteToKey).ToString().Contains(((int) Key.C).ToString())
+            var note = Utils.ToNoteRandom(Key.C, Degree.IV, Mode.Ion, Mode.Undefined);
+            var noteToKey = Key.Enum.Parse(note);
+            Log.Info($"note: {noteToKey}");
+            IsTrue(
+                ((int) noteToKey).ToString().Contains(((int) Key.F).ToString()) ||
+                ((int) noteToKey).ToString().Contains(((int) Key.A).ToString()) ||
+                ((int) noteToKey).ToString().Contains(((int) Key.C).ToString())
             );
         }
 
@@ -70,13 +71,13 @@ namespace Meowziq.Tests {
         /// </summary>
         [TestMethod()]
         public void ToNoteRandomTestKeyModeCIonV() {
-            var _note = Utils.ToNoteRandom(Key.C, Degree.V, Mode.Ion, Mode.Undefined);
-            var _noteToKey = Key.Enum.Parse(_note);
-            Log.Info($"note: {_noteToKey}");
-            Assert.IsTrue(
-                ((int) _noteToKey).ToString().Contains(((int) Key.G).ToString()) ||
-                ((int) _noteToKey).ToString().Contains(((int) Key.B).ToString()) ||
-                ((int) _noteToKey).ToString().Contains(((int) Key.D).ToString())
+            var note = Utils.ToNoteRandom(Key.C, Degree.V, Mode.Ion, Mode.Undefined);
+            var noteToKey = Key.Enum.Parse(note);
+            Log.Info($"note: {noteToKey}");
+            IsTrue(
+                ((int) noteToKey).ToString().Contains(((int) Key.G).ToString()) ||
+                ((int) noteToKey).ToString().Contains(((int) Key.B).ToString()) ||
+                ((int) noteToKey).ToString().Contains(((int) Key.D).ToString())
             );
         }
 
@@ -85,13 +86,13 @@ namespace Meowziq.Tests {
         /// </summary>
         [TestMethod()]
         public void ToNoteRandomTestKeyModeCIonVI() {
-            var _note = Utils.ToNoteRandom(Key.C, Degree.VI, Mode.Ion, Mode.Undefined);
-            var _noteToKey = Key.Enum.Parse(_note);
-            Log.Info($"note: {_noteToKey}");
-            Assert.IsTrue(
-                ((int) _noteToKey).ToString().Contains(((int) Key.A).ToString()) ||
-                ((int) _noteToKey).ToString().Contains(((int) Key.C).ToString()) ||
-                ((int) _noteToKey).ToString().Contains(((int) Key.E).ToString())
+            var note = Utils.ToNoteRandom(Key.C, Degree.VI, Mode.Ion, Mode.Undefined);
+            var noteToKey = Key.Enum.Parse(note);
+            Log.Info($"note: {noteToKey}");
+            IsTrue(
+                ((int) noteToKey).ToString().Contains(((int) Key.A).ToString()) ||
+                ((int) noteToKey).ToString().Contains(((int) Key.C).ToString()) ||
+                ((int) noteToKey).ToString().Contains(((int) Key.E).ToString())
             );
         }
 
@@ -100,13 +101,13 @@ namespace Meowziq.Tests {
         /// </summary>
         [TestMethod()]
         public void ToNoteRandomTestKeyModeCIonVII() {
-            var _note = Utils.ToNoteRandom(Key.C, Degree.VII, Mode.Ion, Mode.Undefined);
-            var _noteToKey = Key.Enum.Parse(_note);
-            Log.Info($"note: {_noteToKey}");
-            Assert.IsTrue(
-                ((int) _noteToKey).ToString().Contains(((int) Key.B).ToString()) ||
-                ((int) _noteToKey).ToString().Contains(((int) Key.D).ToString()) ||
-                ((int) _noteToKey).ToString().Contains(((int) Key.F).ToString())
+            var note = Utils.ToNoteRandom(Key.C, Degree.VII, Mode.Ion, Mode.Undefined);
+            var noteToKey = Key.Enum.Parse(note);
+            Log.Info($"note: {noteToKey}");
+            IsTrue(
+                ((int) noteToKey).ToString().Contains(((int) Key.B).ToString()) ||
+                ((int) noteToKey).ToString().Contains(((int) Key.D).ToString()) ||
+                ((int) noteToKey).ToString().Contains(((int) Key.F).ToString())
             );
         }
 
@@ -117,13 +118,13 @@ namespace Meowziq.Tests {
         /// </summary>
         [TestMethod()]
         public void ToNoteRandomTestSpanModeCIonI() {
-            var _note = Utils.ToNoteRandom(Key.C, Degree.I, Mode.Aeo, Mode.Ion);
-            var _noteToKey = Key.Enum.Parse(_note);
-            Log.Info($"note: {_noteToKey}");
-            Assert.IsTrue(
-                ((int) _noteToKey).ToString().Contains(((int) Key.C).ToString()) ||
-                ((int) _noteToKey).ToString().Contains(((int) Key.E).ToString()) ||
-                ((int) _noteToKey).ToString().Contains(((int) Key.G).ToString())
+            var note = Utils.ToNoteRandom(Key.C, Degree.I, Mode.Aeo, Mode.Ion);
+            var noteToKey = Key.Enum.Parse(note);
+            Log.Info($"note: {noteToKey}");
+            IsTrue(
+                ((int) noteToKey).ToString().Contains(((int) Key.C).ToString()) ||
+                ((int) noteToKey).ToString().Contains(((int) Key.E).ToString()) ||
+                ((int) noteToKey).ToString().Contains(((int) Key.G).ToString())
             );
         }
 
@@ -132,13 +133,13 @@ namespace Meowziq.Tests {
         /// </summary>
         [TestMethod()]
         public void ToNoteRandomTestSpanModeCIonII() {
-            var _note = Utils.ToNoteRandom(Key.C, Degree.II, Mode.Aeo, Mode.Ion);
-            var _noteToKey = Key.Enum.Parse(_note);
-            Log.Info($"note: {_noteToKey}");
-            Assert.IsTrue(
-                ((int) _noteToKey).ToString().Contains(((int) Key.D).ToString()) ||
-                ((int) _noteToKey).ToString().Contains(((int) Key.Gb).ToString()) ||
-                ((int) _noteToKey).ToString().Contains(((int) Key.A).ToString())
+            var note = Utils.ToNoteRandom(Key.C, Degree.II, Mode.Aeo, Mode.Ion);
+            var noteToKey = Key.Enum.Parse(note);
+            Log.Info($"note: {noteToKey}");
+            IsTrue(
+                ((int) noteToKey).ToString().Contains(((int) Key.D).ToString()) ||
+                ((int) noteToKey).ToString().Contains(((int) Key.Gb).ToString()) ||
+                ((int) noteToKey).ToString().Contains(((int) Key.A).ToString())
             );
         }
 
@@ -147,13 +148,13 @@ namespace Meowziq.Tests {
         /// </summary>
         [TestMethod()]
         public void ToNoteRandomTestSpanModeCIonIII() {
-            var _note = Utils.ToNoteRandom(Key.C, Degree.III, Mode.Aeo, Mode.Ion);
-            var _noteToKey = Key.Enum.Parse(_note);
-            Log.Info($"note: {_noteToKey}");
-            Assert.IsTrue(
-                ((int) _noteToKey).ToString().Contains(((int) Key.Eb).ToString()) ||
-                ((int) _noteToKey).ToString().Contains(((int) Key.G).ToString()) ||
-                ((int) _noteToKey).ToString().Contains(((int) Key.Bb).ToString())
+            var note = Utils.ToNoteRandom(Key.C, Degree.III, Mode.Aeo, Mode.Ion);
+            var noteToKey = Key.Enum.Parse(note);
+            Log.Info($"note: {noteToKey}");
+            IsTrue(
+                ((int) noteToKey).ToString().Contains(((int) Key.Eb).ToString()) ||
+                ((int) noteToKey).ToString().Contains(((int) Key.G).ToString()) ||
+                ((int) noteToKey).ToString().Contains(((int) Key.Bb).ToString())
             );
         }
 
@@ -162,13 +163,13 @@ namespace Meowziq.Tests {
         /// </summary>
         [TestMethod()]
         public void ToNoteRandomTestSpanModeCIonIV() {
-            var _note = Utils.ToNoteRandom(Key.C, Degree.IV, Mode.Aeo, Mode.Ion);
-            var _noteToKey = Key.Enum.Parse(_note);
-            Log.Info($"note: {_noteToKey}");
-            Assert.IsTrue(
-                ((int) _noteToKey).ToString().Contains(((int) Key.F).ToString()) ||
-                ((int) _noteToKey).ToString().Contains(((int) Key.A).ToString()) ||
-                ((int) _noteToKey).ToString().Contains(((int) Key.C).ToString())
+            var note = Utils.ToNoteRandom(Key.C, Degree.IV, Mode.Aeo, Mode.Ion);
+            var noteToKey = Key.Enum.Parse(note);
+            Log.Info($"note: {noteToKey}");
+            IsTrue(
+                ((int) noteToKey).ToString().Contains(((int) Key.F).ToString()) ||
+                ((int) noteToKey).ToString().Contains(((int) Key.A).ToString()) ||
+                ((int) noteToKey).ToString().Contains(((int) Key.C).ToString())
             );
         }
 
@@ -177,13 +178,13 @@ namespace Meowziq.Tests {
         /// </summary>
         [TestMethod()]
         public void ToNoteRandomTestSpanModeCIonV() {
-            var _note = Utils.ToNoteRandom(Key.C, Degree.V, Mode.Aeo, Mode.Ion);
-            var _noteToKey = Key.Enum.Parse(_note);
-            Log.Info($"note: {_noteToKey}");
-            Assert.IsTrue(
-                ((int) _noteToKey).ToString().Contains(((int) Key.G).ToString()) ||
-                ((int) _noteToKey).ToString().Contains(((int) Key.B).ToString()) ||
-                ((int) _noteToKey).ToString().Contains(((int) Key.D).ToString())
+            var note = Utils.ToNoteRandom(Key.C, Degree.V, Mode.Aeo, Mode.Ion);
+            var noteToKey = Key.Enum.Parse(note);
+            Log.Info($"note: {noteToKey}");
+            IsTrue(
+                ((int) noteToKey).ToString().Contains(((int) Key.G).ToString()) ||
+                ((int) noteToKey).ToString().Contains(((int) Key.B).ToString()) ||
+                ((int) noteToKey).ToString().Contains(((int) Key.D).ToString())
             );
         }
 
@@ -192,13 +193,13 @@ namespace Meowziq.Tests {
         /// </summary>
         [TestMethod()]
         public void ToNoteRandomTestSpanModeCIonVI() {
-            var _note = Utils.ToNoteRandom(Key.C, Degree.VI, Mode.Aeo, Mode.Ion);
-            var _noteToKey = Key.Enum.Parse(_note);
-            Log.Info($"note: {_noteToKey}");
-            Assert.IsTrue(
-                ((int) _noteToKey).ToString().Contains(((int) Key.Ab).ToString()) ||
-                ((int) _noteToKey).ToString().Contains(((int) Key.C).ToString()) ||
-                ((int) _noteToKey).ToString().Contains(((int) Key.Eb).ToString())
+            var note = Utils.ToNoteRandom(Key.C, Degree.VI, Mode.Aeo, Mode.Ion);
+            var noteToKey = Key.Enum.Parse(note);
+            Log.Info($"note: {noteToKey}");
+            IsTrue(
+                ((int) noteToKey).ToString().Contains(((int) Key.Ab).ToString()) ||
+                ((int) noteToKey).ToString().Contains(((int) Key.C).ToString()) ||
+                ((int) noteToKey).ToString().Contains(((int) Key.Eb).ToString())
             );
         }
 
@@ -207,13 +208,13 @@ namespace Meowziq.Tests {
         /// </summary>
         [TestMethod()]
         public void ToNoteRandomTestSpanModeCIonVII() {
-            var _note = Utils.ToNoteRandom(Key.C, Degree.VII, Mode.Aeo, Mode.Ion);
-            var _noteToKey = Key.Enum.Parse(_note);
-            Log.Info($"note: {_noteToKey}");
-            Assert.IsTrue(
-                ((int) _noteToKey).ToString().Contains(((int) Key.Bb).ToString()) ||
-                ((int) _noteToKey).ToString().Contains(((int) Key.D).ToString()) ||
-                ((int) _noteToKey).ToString().Contains(((int) Key.F).ToString())
+            var note = Utils.ToNoteRandom(Key.C, Degree.VII, Mode.Aeo, Mode.Ion);
+            var noteToKey = Key.Enum.Parse(note);
+            Log.Info($"note: {noteToKey}");
+            IsTrue(
+                ((int) noteToKey).ToString().Contains(((int) Key.Bb).ToString()) ||
+                ((int) noteToKey).ToString().Contains(((int) Key.D).ToString()) ||
+                ((int) noteToKey).ToString().Contains(((int) Key.F).ToString())
             );
         }
     }

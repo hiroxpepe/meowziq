@@ -10,15 +10,15 @@ namespace Meowziq.Midi {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        OutputDevice outDevice;
+        OutputDevice _outDevice;
 
-        int outDeviceID = 0; // TODO: 選択出来るように
+        int _outDeviceID = 0; // TODO: 選択出来るように
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
         public Manager() {
-            this.outDevice = new OutputDevice(outDeviceID);
+            this._outDevice = new OutputDevice(_outDeviceID);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@ namespace Meowziq.Midi {
 
         public OutputDevice OutDevice {
             get {
-                return outDevice;
+                return _outDevice;
             }
         }
     }

@@ -13,19 +13,19 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        string name;
+        string _name;
 
-        int tempo;
+        int _tempo;
 
-        List<Section> sectionList;
+        List<Section> _sectionList;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
         public Song(string name, int tempo, List<Section> sectionList) {
-            this.name = name;
-            this.tempo = tempo;
-            this.sectionList = sectionList;
+            _name = name;
+            _tempo = tempo;
+            _sectionList = sectionList;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -35,14 +35,14 @@ namespace Meowziq.Core {
         /// 曲の名前
         /// </summary>
         public string Name {
-            get => name;
+            get => _name;
         }
 
         /// <summary>
         /// 曲のテンポ
         /// </summary>
         public int Tempo {
-            get => tempo;
+            get => _tempo;
         }
 
         /// <summary>
@@ -50,9 +50,9 @@ namespace Meowziq.Core {
         /// </summary>
         public List<Pattern> AllPattern {
             get {
-                var _newPatternList = new List<Pattern>();
-                sectionList.ForEach(x => x.AllPattern.ForEach(_x => _newPatternList.Add(_x)));
-                return _newPatternList;
+                var newPatternList = new List<Pattern>();
+                _sectionList.ForEach(x => x.AllPattern.ForEach(_x => newPatternList.Add(_x)));
+                return newPatternList;
             }
         }
 
@@ -60,7 +60,7 @@ namespace Meowziq.Core {
         /// 全ての Section
         /// </summary>
         public List<Section> AllSection {
-            get => sectionList;
+            get => _sectionList;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -86,19 +86,19 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        Key key; // NOTE: ここは単体で良い
+        Key _key; // NOTE: ここは単体で良い
 
-        Mode keyMode; // NOTE: ここは単体で良い
+        Mode _keyMode; // NOTE: ここは単体で良い
 
-        List<Pattern> patternList;
+        List<Pattern> _patternList;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
         public Section(Key key, Mode keyMode, List<Pattern> patternList) {
-            this.key = key;
-            this.keyMode = keyMode;
-            this.patternList = patternList;
+            _key = key;
+            _keyMode = keyMode;
+            _patternList = patternList;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -108,21 +108,21 @@ namespace Meowziq.Core {
         /// この Section のキー
         /// </summary>
         public Key Key {
-            get => key; // NOTE: 後から変更できない
+            get => _key; // NOTE: 後から変更できない
         }
 
         /// <summary>
         /// この Section の旋法
         /// </summary>
         public Mode KeyMode {
-            get => keyMode; // NOTE: 後から変更できない
+            get => _keyMode; // NOTE: 後から変更できない
         }
 
         /// <summary>
         /// 全ての Pattern
         /// </summary>
         public List<Pattern> AllPattern {
-            get => patternList;
+            get => _patternList;
         }
     }
 }

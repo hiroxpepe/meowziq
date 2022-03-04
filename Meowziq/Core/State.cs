@@ -13,9 +13,9 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        static string name;
+        static string _name;
 
-        static string copyright;
+        static string _copyright;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Constructor
@@ -24,8 +24,8 @@ namespace Meowziq.Core {
             HashSet = new HashSet<int>(); // ※Dictionary.ContainsKey() が遅いのでその対策
             ItemMap = new Map<int, Item16beat>();
             TrackMap = new Map<int, Track>();
-            name = "Undefined"; // TODO: 別の曲を読み込んだ時
-            copyright = "Undefined"; // TODO: 別の曲を読み込んだ時
+            _name = "Undefined"; // TODO: 別の曲を読み込んだ時
+            _copyright = "Undefined"; // TODO: 別の曲を読み込んだ時
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -44,13 +44,13 @@ namespace Meowziq.Core {
         }
 
         public static string Name {
-            get => name;
-            set => name = value;
+            get => _name;
+            set => _name = value;
         }
 
         public static string Copyright {
-            get => copyright;
-            set => copyright = value;
+            get => _copyright;
+            set => _copyright = value;
         }
 
         public static (int tempo, string name) TempoAndName {
@@ -98,7 +98,7 @@ namespace Meowziq.Core {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Fields
 
-            string name;
+            string _name;
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Properties [noun, adjective]
@@ -108,8 +108,8 @@ namespace Meowziq.Core {
             }
 
             public string Name {
-                get => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name); 
-                set => name = value;
+                get => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(_name); 
+                set => _name = value;
             }
 
             public string Instrument {
@@ -127,7 +127,6 @@ namespace Meowziq.Core {
             public bool Mute {
                 get; set;
             }
-
         }
 
         /// <summary>
@@ -139,7 +138,7 @@ namespace Meowziq.Core {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Fields
 
-            string spanMode; // TODO: Mode 型に変更
+            string _spanMode; // TODO: Mode 型に変更
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Properties [noun, adjective]
@@ -162,17 +161,17 @@ namespace Meowziq.Core {
 
             public string SpanMode {
                 get {
-                    if (spanMode.Equals("Undefined")) {
+                    if (_spanMode.Equals("Undefined")) {
                         return KeyMode;
                     }
-                    return spanMode;
+                    return _spanMode;
                 } 
-                set => spanMode = value;
+                set => _spanMode = value;
             }
 
             public bool AutoMode {
                 get {
-                    if (spanMode.Equals("Undefined")) {
+                    if (_spanMode.Equals("Undefined")) {
                         return true;
                     }
                     return false;
