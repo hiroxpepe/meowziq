@@ -7,8 +7,8 @@ using static Meowziq.Utils;
 
 namespace Meowziq.Core {
     /// <summary>
-    /// Generator クラス
-    ///     + Note データを生成します
+    /// Generator Class
+    /// generate note data
     /// </summary>
     public class Generator {
 
@@ -28,9 +28,7 @@ namespace Meowziq.Core {
         // public Methods [verb]
 
         /// <summary>
-        /// Note オブジェクトを作成して適用します
-        /// TODO: ハモリ記述：メロディ記述の noteNum に対して メロの旋法 に Degree と上下パラメータ？ で算出  
-        /// TODO: ブルーノートは？ ⇒ 音を任意に+,-出来る設定(帯)を持たせる？
+        /// create and apply a note object.
         /// </summary>
         public void ApplyNote(int tick, int beatCount, List<Span> spanList, Param param) {
             for (var _16beatIdx = new Index(beatCount); _16beatIdx.HasNext; _16beatIdx.Increment()) {
@@ -48,7 +46,7 @@ namespace Meowziq.Core {
                         );
                         _noteNumArray = applyRange(_noteNumArray, param.Chord.Range); // コード展開形の範囲を適用
                     }
-                    // この音の音価を調査する
+                    // check the note value of this sound
                     var _gate = new Gete(_16beatIdx.Idx, beatCount);
                     for (; _gate.HasNextSearch; _gate.IncrementSearch()) { // +1 は数値文字の分
                         var _search = param.TextCharArray[_gate.SearchIdx];
@@ -322,7 +320,7 @@ namespace Meowziq.Core {
             // public Methods [verb]
 
             public void Increment() {
-                Idx++; // 16beat をインクリメントする
+                Idx++; // increments 16 beats
                 idxFor16beat++; // 16beat のカウントをインクリメント
                 if (idxFor16beat == 4) { // 4カウント溜まったら
                     idxFor16beat = 0;
