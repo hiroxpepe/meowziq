@@ -19,21 +19,21 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Fields
 
-        static bool use;
+        static bool _use;
 
-        static Map<string, Fader> previousFaderMap; // key は "type" 形式とする
+        static Map<string, Fader> _previousFaderMap; // key は "type" 形式とする
 
-        static Map<string, Fader> currentFaderMap; // key は "type:name" 形式とする
+        static Map<string, Fader> _currentFaderMap; // key は "type:name" 形式とする
 
-        static IMessage<T, Note> message;
+        static IMessage<T, Note> _message;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Constructor
 
         static Mixer() {
-            use = false;
-            previousFaderMap = new Map<string, Fader>();
-            currentFaderMap = new Map<string, Fader>();
+            _use = false;
+            _previousFaderMap = new Map<string, Fader>();
+            _currentFaderMap = new Map<string, Fader>();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -48,9 +48,9 @@ namespace Meowziq.Core {
                 if (value is null) {
                     return;
                 }
-                currentFaderMap[$"{value.Type}:{value.Name}"] = value;
-                previousFaderMap[value.Type] = Fader.NoVaule(value.Type);
-                use = true; // Fader を追加された、つまり mixier.json が存在する
+                _currentFaderMap[$"{value.Type}:{value.Name}"] = value;
+                _previousFaderMap[value.Type] = Fader.NoVaule(value.Type);
+                _use = true; // Fader を追加された、つまり mixier.json が存在する
             }
         }
 
@@ -58,7 +58,7 @@ namespace Meowziq.Core {
         /// Message オブジェクトを設定します
         /// </summary>
         public static IMessage<T, Note> Message {
-            set => message = value;
+            set => _message = value;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -69,27 +69,27 @@ namespace Meowziq.Core {
         /// NOTE: 初回に1回だけ実行
         /// </summary>
         public static void Clear() {
-            previousFaderMap.Clear();
-            currentFaderMap.Clear();
-            use = false;
+            _previousFaderMap.Clear();
+            _currentFaderMap.Clear();
+            _use = false;
         }
 
         /// <summary>
         /// Message に対して Note を適用します
         /// </summary>
         public static void ApplyNote(int tick, int midiCh, Note note) {
-            message.ApplyNote(tick, midiCh, note);
+            _message.ApplyNote(tick, midiCh, note);
         }
 
         /// <summary>
         /// Message に対してプログラムチェンジ、ボリューム、Pan、その他の設定を適用します
         /// </summary>
         public static void ApplyVaule(int tick, int midiCh, string type, string name, int programNum) {
-            if (!use && !currentFaderMap.ContainsKey($"{type}:default")) {
-                previousFaderMap[type] = Fader.NoVaule(type);
-                currentFaderMap[$"{type}:default"] = Fader.Default(type); // mixer.json なしの初回
+            if (!_use && !_currentFaderMap.ContainsKey($"{type}:default")) {
+                _previousFaderMap[type] = Fader.NoVaule(type);
+                _currentFaderMap[$"{type}:default"] = Fader.Default(type); // mixer.json なしの初回
             }
-            if (use && !currentFaderMap.ContainsKey($"{type}:{name}")) {
+            if (_use && !_currentFaderMap.ContainsKey($"{type}:{name}")) {
                 return; // mixer.json 使用時で存在しないキー
             }
             playerProgramNum = (programNum, type, name);
@@ -104,10 +104,10 @@ namespace Meowziq.Core {
         /// </summary>
         static (int programNum, string type, string name) playerProgramNum {
             set {
-                if (!use) {
+                if (!_use) {
                     value.name = "default"; // mixer.json なしは常に "default"
                 }
-                currentFaderMap[$"{value.type}:{value.name}"].PlayerProgramNum = value.programNum;
+                _currentFaderMap[$"{value.type}:{value.name}"].PlayerProgramNum = value.programNum;
             }
         }
 
@@ -122,69 +122,69 @@ namespace Meowziq.Core {
         }
 
         static void applyProgramChangeBy(int tick, int midiCh, string type, string name) {
-            if (!use) {
+            if (!_use) {
                 name = "default"; // mixer.json なしは常に "default"
             }
             if (changedProgramNum(type, name)) {
-                var _programNum = use ? currentFaderMap[$"{type}:{name}"].ProgramNum : currentFaderMap[$"{type}:{name}"].PlayerProgramNum;
-                message.ApplyProgramChange(tick, midiCh, _programNum);
+                var programNum = _use ? _currentFaderMap[$"{type}:{name}"].ProgramNum : _currentFaderMap[$"{type}:{name}"].PlayerProgramNum;
+                _message.ApplyProgramChange(tick, midiCh, programNum);
             }
         }
 
         static void applyVolumeBy(int tick, int midiCh, string type, string name) {
-            if (!use) {
+            if (!_use) {
                 name = "default"; // mixer.json なしは常に "default"
             }
             if (changedVol(type, name)) {
-                message.ApplyVolume(tick, midiCh, currentFaderMap[$"{type}:{name}"].Vol);
+                _message.ApplyVolume(tick, midiCh, _currentFaderMap[$"{type}:{name}"].Vol);
             }
         }
 
         static void applyPanBy(int tick, int midiCh, string type, string name) {
-            if (!use) {
+            if (!_use) {
                 name = "default"; // mixer.json なしは常に "default"
             }
             if (changedPan(type, name)) {
-                message.ApplyPan(tick, midiCh, currentFaderMap[$"{type}:{name}"].Pan);
+                _message.ApplyPan(tick, midiCh, _currentFaderMap[$"{type}:{name}"].Pan);
             }
         }
 
         static void applyMuteBy(int tick, int midiCh, string type, string name) {
-            if (!use) {
+            if (!_use) {
                 name = "default"; // mixer.json なしは常に "default"
             }
-            message.ApplyMute(tick, midiCh, currentFaderMap[$"{type}:{name}"].Mute);
+            _message.ApplyMute(tick, midiCh, _currentFaderMap[$"{type}:{name}"].Mute);
         }
 
         static bool changedProgramNum(string type, string name) {
-            var _programNum = use ? currentFaderMap[$"{type}:{name}"].ProgramNum : currentFaderMap[$"{type}:{name}"].PlayerProgramNum;
-            if (previousFaderMap[type].ProgramNum != _programNum) {
-                previousFaderMap[type].ProgramNum = _programNum;
+            var programNum = _use ? _currentFaderMap[$"{type}:{name}"].ProgramNum : _currentFaderMap[$"{type}:{name}"].PlayerProgramNum;
+            if (_previousFaderMap[type].ProgramNum != programNum) {
+                _previousFaderMap[type].ProgramNum = programNum;
                 return true; // 値の更新あり
             } 
-            else if (previousFaderMap[type].ProgramNum == _programNum) {
+            else if (_previousFaderMap[type].ProgramNum == programNum) {
                 return false; // 値の更新なし
             }
             throw new ArgumentException("not ProgramNum.");
         }
 
         static bool changedVol(string type, string name) {
-            var _vol = currentFaderMap[$"{type}:{name}"].Vol;
-            if (previousFaderMap[type].Vol != _vol) {
-                previousFaderMap[type].Vol = _vol;
+            var vol = _currentFaderMap[$"{type}:{name}"].Vol;
+            if (_previousFaderMap[type].Vol != vol) {
+                _previousFaderMap[type].Vol = vol;
                 return true; // 値の更新あり
-            } else if (previousFaderMap[type].Vol == _vol) {
+            } else if (_previousFaderMap[type].Vol == vol) {
                 return false; // 値の更新なし
             }
             throw new ArgumentException("not Vol.");
         }
 
         static bool changedPan(string type, string name) {
-            var _pan = currentFaderMap[$"{type}:{name}"].Pan;
-            if (previousFaderMap[type].Pan != _pan) {
-                previousFaderMap[type].Pan = _pan;
+            var pan = _currentFaderMap[$"{type}:{name}"].Pan;
+            if (_previousFaderMap[type].Pan != pan) {
+                _previousFaderMap[type].Pan = pan;
                 return true; // 値の更新あり
-            } else if (previousFaderMap[type].Pan == _pan) {
+            } else if (_previousFaderMap[type].Pan == pan) {
                 return false; // 値の更新なし
             }
             throw new ArgumentException("not Pan.");
@@ -198,7 +198,7 @@ namespace Meowziq.Core {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Fields
 
-            bool mute = false;
+            bool _mute = false;
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Properties [noun, adjective]
@@ -240,8 +240,8 @@ namespace Meowziq.Core {
             }
 
             public bool Mute {
-                get => mute;
-                set => mute = value;
+                get => _mute;
+                set => _mute = value;
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////

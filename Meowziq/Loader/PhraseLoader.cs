@@ -23,8 +23,8 @@ namespace Meowziq.Loader {
         /// NOTE: "base": 指定がある場合 Phrase を継承します
         /// </summary>
         public static List<Core.Phrase> Build(Stream target) {
-            var _list = loadJson(target).PhraseArray.Select(x => convertPhrase(x)).ToList();
-            return _list.Select(x => x = !(x.Base is null) ? Inheritor.Apply(x, searchBasePhrase(x.Type, x.Base, _list)) : x)
+            var list = loadJson(target).PhraseArray.Select(x => convertPhrase(x)).ToList();
+            return list.Select(x => x = !(x.Base is null) ? Inheritor.Apply(x, searchBasePhrase(x.Type, x.Base, list)) : x)
                 .ToList();
         }
 
@@ -32,34 +32,34 @@ namespace Meowziq.Loader {
         // private static Methods [verb]
 
         static Core.Phrase convertPhrase(Phrase phrase) {
-            var _phrase = new Core.Phrase();
-            _phrase.Type = phrase.Type;
-            _phrase.Name = phrase.Name;
-            _phrase.Base = phrase.Base;
+            var newPhrase = new Core.Phrase();
+            newPhrase.Type = phrase.Type;
+            newPhrase.Name = phrase.Name;
+            newPhrase.Base = phrase.Base;
             if (phrase.Note != null) { // キーの旋法を自動判定するモード
-                _phrase.Data.Note.Text = phrase.Note;
+                newPhrase.Data.Note.Text = phrase.Note;
             } else if (phrase.Auto != null) { // Spanの旋法を自動判定するモード
-                _phrase.Data.Note.Text = phrase.Auto;
-                _phrase.Data.Auto = true;
+                newPhrase.Data.Note.Text = phrase.Auto;
+                newPhrase.Data.Auto = true;
             }
-            _phrase.Data.Note.Oct = phrase.Oct;
-            _phrase.Data.Chord.Text = phrase.Chord;
-            _phrase.Data.Seque.Text = phrase.Gete;
-            _phrase.Range = phrase.Range;
-            _phrase.Data.Exp.Pre = phrase.Pre;
-            _phrase.Data.Exp.Post = phrase.Post;
+            newPhrase.Data.Note.Oct = phrase.Oct;
+            newPhrase.Data.Chord.Text = phrase.Chord;
+            newPhrase.Data.Seque.Text = phrase.Gete;
+            newPhrase.Range = phrase.Range;
+            newPhrase.Data.Exp.Pre = phrase.Pre;
+            newPhrase.Data.Exp.Post = phrase.Post;
             if (phrase.Data != null) { // 複合データがある場合
-                _phrase.Data.BeatArray = phrase.Data.BeatArray;
-                _phrase.Data.NoteArray = phrase.Data.NoteArray;
-                _phrase.Data.AutoArray = phrase.Data.AutoArray;
-                _phrase.Data.OctArray = phrase.Data.OctArray;
-                _phrase.Data.PreArray = phrase.Data.PreArray;
-                _phrase.Data.PostArray = phrase.Data.PostArray;
+                newPhrase.Data.BeatArray = phrase.Data.BeatArray;
+                newPhrase.Data.NoteArray = phrase.Data.NoteArray;
+                newPhrase.Data.AutoArray = phrase.Data.AutoArray;
+                newPhrase.Data.OctArray = phrase.Data.OctArray;
+                newPhrase.Data.PreArray = phrase.Data.PreArray;
+                newPhrase.Data.PostArray = phrase.Data.PostArray;
                 if (phrase.Data.InstArray != null) { // ドラム用音名データがある場合
-                    _phrase.Data.PercussionArray = phrase.Data.InstArray.Select(x => Percussion.Enum.Parse(x)).ToArray();
+                    newPhrase.Data.PercussionArray = phrase.Data.InstArray.Select(x => Percussion.Enum.Parse(x)).ToArray();
                 }
             }
-            return _phrase;
+            return newPhrase;
         }
 
         static Core.Phrase searchBasePhrase(string phraseType, string phraseName, List<Core.Phrase> list) {
@@ -71,8 +71,8 @@ namespace Meowziq.Loader {
         }
 
         static Json loadJson(Stream target) {
-            var _serializer = new DataContractJsonSerializer(typeof(Json));
-            return (Json) _serializer.ReadObject(target);
+            var serializer = new DataContractJsonSerializer(typeof(Json));
+            return (Json) serializer.ReadObject(target);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

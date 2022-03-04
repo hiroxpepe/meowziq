@@ -13,7 +13,7 @@ namespace Meowziq {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        static Random random = new Random();
+        static Random _random = new Random();
 
         ///////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]
@@ -38,10 +38,10 @@ namespace Meowziq {
         ///     Span に旋法あり：Span に設定した旋法を使用
         /// </summary>
         public static int[] ToNoteArray(Key key, Degree degree, Mode keyMode, Mode spanMode, int index) {
-            int _noteDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
-            Mode _mode = spanMode is Mode.Undefined ? modeSpanBy(degree, keyMode) : spanMode; // Span に旋法がなければ自動旋法
-            int[] _scale7 = scale7By(Key.Enum.Parse(_noteDegree), _mode); // そのルート音の旋法スケールを取得
-            return noteArrayBy(index, _scale7); // 旋法スケールから引数indexに対応したコード構成音の配列を返す
+            int noteDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
+            Mode mode = spanMode is Mode.Undefined ? modeSpanBy(degree, keyMode) : spanMode; // Span に旋法がなければ自動旋法
+            int[] scale7 = scale7By(Key.Enum.Parse(noteDegree), mode); // そのルート音の旋法スケールを取得
+            return noteArrayBy(index, scale7); // 旋法スケールから引数indexに対応したコード構成音の配列を返す
         }
 
         /// <summary>
@@ -52,18 +52,18 @@ namespace Meowziq {
         /// ※ "note": キーの旋法を自動判定し、その旋法の ノート記法の対応 Note No を返す
         /// </summary>
         public static int ToNote(Key key, Degree degree, Mode keyMode, Mode spanMode, int index, bool autoNote = true) {
-            int _noteDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
-            Mode _mode = spanMode is Mode.Undefined ? modeSpanBy(degree, keyMode) : spanMode; // Span に旋法がなければ自動旋法
-            int[] _scale7 = null;
+            int noteDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
+            Mode mode = spanMode is Mode.Undefined ? modeSpanBy(degree, keyMode) : spanMode; // Span に旋法がなければ自動旋法
+            int[] scale7 = null;
             if (autoNote) { // Span ベースの旋法(自動・設定)
-                _scale7 = scale7By(Key.Enum.Parse(_noteDegree), _mode); // そのルート音の旋法スケールを取得
+                scale7 = scale7By(Key.Enum.Parse(noteDegree), mode); // そのルート音の旋法スケールを取得
             } else { // キーの旋法を自動判定してそちらから取得
-                var _modeCurrentKey = ToModeKey(key, degree, keyMode, _mode);
-                if (!_modeCurrentKey.ToString().Equals("Undefined")) { // 旋法が判定出来れば
-                    _scale7 = scale7By(key, _modeCurrentKey); // 判定した曲の旋法を取得
+                var modeCurrentKey = ToModeKey(key, degree, keyMode, mode);
+                if (!modeCurrentKey.ToString().Equals("Undefined")) { // 旋法が判定出来れば
+                    scale7 = scale7By(key, modeCurrentKey); // 判定した曲の旋法を取得
                 }
             }
-            return _scale7[index - 1]; // 0基底のスケール配列から引数添え字のノートを返す
+            return scale7[index - 1]; // 0基底のスケール配列から引数添え字のノートを返す
         }
 
         /// <summary>
@@ -86,30 +86,30 @@ namespace Meowziq {
         public static Mode ToModeKey(Key key, Degree degree, Mode keyMode, Mode spanMode) {
             // NOTE: 旋法チェンジ判定不能なものをはねる
             // MEMO: C キーにおける A の表示の仕方は後で考える
-            Mode _modeKeyMaybe = modeKeyMaybeBy(degree, spanMode); // span の度数と旋法からこの旋法と推測される
-            int[] _scaleKey = scale7By(key, _modeKeyMaybe); // この旋法と曲キーで作成したスケールの構成音が同じになるはずである
-            int _noteDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
-            int[] _scaleSpan = scale7By(Key.Enum.Parse(_noteDegree), spanMode); // span の度数と旋法でもスケールを作成してみる
-            if (!compareScale(_scaleKey, _scaleSpan)) { // 比較して構成音は同じはず
+            Mode modeKeyMaybe = modeKeyMaybeBy(degree, spanMode); // span の度数と旋法からこの旋法と推測される
+            int[] scaleKey = scale7By(key, modeKeyMaybe); // この旋法と曲キーで作成したスケールの構成音が同じになるはずである
+            int noteDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
+            int[] scaleSpan = scale7By(Key.Enum.Parse(noteDegree), spanMode); // span の度数と旋法でもスケールを作成してみる
+            if (!compareScale(scaleKey, scaleSpan)) { // 比較して構成音は同じはず
                 return Mode.Undefined; // 構成音が違う場合
             }
-            return _modeKeyMaybe; // TODO: これで正しいかテストを作成して確認
+            return modeKeyMaybe; // TODO: これで正しいかテストを作成して確認
         }
 
         /// <summary>
         /// メジャーかマイナーかシンプルなコードネームを返します
         /// </summary>
         public static string ToSimpleCodeName(Key key, Degree degree, Mode keyMode, Mode spanMode, bool autoMode = true) {
-            int _noteDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
-            string _codeBase = Key.Enum.Parse(_noteDegree).ToString(); // コードネームの基本取得
-            Mode _mode;
+            int noteDegree = noteRootBy(key, degree, keyMode); // 曲のキーの度数と旋法から度数のルート音を取得
+            string codeBase = Key.Enum.Parse(noteDegree).ToString(); // コードネームの基本取得
+            Mode mode;
             if (autoMode) { // 自動旋法取得
-                _mode = modeSpanBy(degree, keyMode);
+                mode = modeSpanBy(degree, keyMode);
             } else {
-                _mode = spanMode; // Spanの旋法適用
+                mode = spanMode; // Spanの旋法適用
             }
-            string _majorOrMinerString = majorOrMiner(_mode) ? "" : "m";
-            return _codeBase + _majorOrMinerString;
+            string majorOrMinerString = majorOrMiner(mode) ? "" : "m";
+            return codeBase + majorOrMinerString;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -119,10 +119,10 @@ namespace Meowziq {
         /// スケールの構成音を比較します
         /// </summary>
         static bool compareScale(int[] scale1, int[] scale2) {
-            List<Key> _list1 = scale1.Select(x => Key.Enum.Parse(x)).OrderBy(x => x).ToList();
-            List<Key> _list2 = scale2.Select(x => Key.Enum.Parse(x)).OrderBy(x => x).ToList();
-            var _result = _list1.Where(x => !_list2.Contains(x));
-            if (_result.Count() == 0) {
+            List<Key> list1 = scale1.Select(x => Key.Enum.Parse(x)).OrderBy(x => x).ToList();
+            List<Key> list2 = scale2.Select(x => Key.Enum.Parse(x)).OrderBy(x => x).ToList();
+            var result = list1.Where(x => !list2.Contains(x));
+            if (result.Count() == 0) {
                 return true; // 構成音が一致
             }
             return false; // 構成音が異なる
@@ -131,8 +131,8 @@ namespace Meowziq {
         /// <summary>
         /// その旋法がメジャーかマイナーかbool値を返します
         /// </summary>
-        static bool majorOrMiner(Mode _mode) {
-            switch (_mode) {
+        static bool majorOrMiner(Mode mode) {
+            switch (mode) {
                 case Mode.Lyd:
                 case Mode.Ion:
                 case Mode.Mix:
@@ -152,43 +152,43 @@ namespace Meowziq {
         /// </summary>
         static int[] noteArrayBy(int index, int[] scale7) {
             // TODO: バリデート
-            int[] _note2 = new int[2]; // chord 構成音の2音
-            int[] _note3 = new int[3]; // chord 構成音の3音
-            int[] _note4 = new int[4]; // chord 構成音の4音
+            int[] note2 = new int[2]; // chord 構成音の2音
+            int[] note3 = new int[3]; // chord 構成音の3音
+            int[] note4 = new int[4]; // chord 構成音の4音
             switch (index) {
                 case 3: // e.g. C, Cm, Cm(b5)
-                    _note3[0] = scale7[1 - 1];
-                    _note3[1] = scale7[3 - 1];
-                    _note3[2] = scale7[5 - 1];
-                    return _note3;
+                    note3[0] = scale7[1 - 1];
+                    note3[1] = scale7[3 - 1];
+                    note3[2] = scale7[5 - 1];
+                    return note3;
                 case 4: // e.g. C(#4), Csus4, Csus4(-5)
-                    _note3[0] = scale7[1 - 1];
-                    _note3[1] = scale7[4 - 1];
-                    _note3[2] = scale7[5 - 1];
-                    return _note3;
+                    note3[0] = scale7[1 - 1];
+                    note3[1] = scale7[4 - 1];
+                    note3[2] = scale7[5 - 1];
+                    return note3;
                 case 5: // e.g. C5(no3), C(-5,no3)
-                    _note2[0] = scale7[1 - 1];
-                    _note2[1] = scale7[5 - 1];
-                    return _note2;
+                    note2[0] = scale7[1 - 1];
+                    note2[1] = scale7[5 - 1];
+                    return note2;
                 case 6: // e.g. C6, Cm6, Cm(b6), Cm(-5,b6)
-                    _note4[0] = scale7[1 - 1];
-                    _note4[1] = scale7[3 - 1];
-                    _note4[2] = scale7[5 - 1];
-                    _note4[3] = scale7[6 - 1];
-                    return _note4;
+                    note4[0] = scale7[1 - 1];
+                    note4[1] = scale7[3 - 1];
+                    note4[2] = scale7[5 - 1];
+                    note4[3] = scale7[6 - 1];
+                    return note4;
                 case 7: // e.g. CM7, C7, Cm7, Cm7(-5)
-                    _note4[0] = scale7[1 - 1];
-                    _note4[1] = scale7[3 - 1];
-                    _note4[2] = scale7[5 - 1];
-                    _note4[3] = scale7[7 - 1];
-                    return _note4;
+                    note4[0] = scale7[1 - 1];
+                    note4[1] = scale7[3 - 1];
+                    note4[2] = scale7[5 - 1];
+                    note4[3] = scale7[7 - 1];
+                    return note4;
                 // TODO: 8で2音オクターブ？
                 case 9: // e.g. Cadd9, Cmadd9, Cm(b9), Cm(-5,b9)
-                    _note4[0] = scale7[1 - 1];
-                    _note4[1] = scale7[3 - 1];
-                    _note4[2] = scale7[5 - 1];
-                    _note4[3] = scale7[2 - 1] + 12; // 1オクターブ上: FIXME: Range の対応外
-                    return _note4;
+                    note4[0] = scale7[1 - 1];
+                    note4[1] = scale7[3 - 1];
+                    note4[2] = scale7[5 - 1];
+                    note4[3] = scale7[2 - 1] + 12; // 1オクターブ上: FIXME: Range の対応外
+                    return note4;
                 default:
                     throw new ArgumentException("invalid index.");
             }
@@ -198,107 +198,107 @@ namespace Meowziq {
             key.Validate();
             degree.Validate();
             keyMode.Validate();
-            int[] _scale7 = scale7By(key, keyMode);
-            return _scale7[(int) degree];
+            int[] scale7 = scale7By(key, keyMode);
+            return scale7[(int) degree];
         }
 
         static int[] noteArray3By(Key key, Degree degree, Mode keyMode) {
             key.Validate();
             degree.Validate();
             keyMode.Validate();
-            int[] _scale7 = scale7By(key, keyMode);
-            int[] _note3 = new int[3]; // コード構成音の3音を抽出
+            int[] scale7 = scale7By(key, keyMode);
+            int[] note3 = new int[3]; // コード構成音の3音を抽出
             switch (degree) {
                 case Degree.I:
-                    _note3[0] = _scale7[1 - 1];
-                    _note3[1] = _scale7[3 - 1];
-                    _note3[2] = _scale7[5 - 1];
+                    note3[0] = scale7[1 - 1];
+                    note3[1] = scale7[3 - 1];
+                    note3[2] = scale7[5 - 1];
                     break;
                 case Degree.II:
-                    _note3[0] = _scale7[2 - 1];
-                    _note3[1] = _scale7[4 - 1];
-                    _note3[2] = _scale7[6 - 1];
+                    note3[0] = scale7[2 - 1];
+                    note3[1] = scale7[4 - 1];
+                    note3[2] = scale7[6 - 1];
                     break;
                 case Degree.III:
-                    _note3[0] = _scale7[3 - 1];
-                    _note3[1] = _scale7[5 - 1];
-                    _note3[2] = _scale7[7 - 1];
+                    note3[0] = scale7[3 - 1];
+                    note3[1] = scale7[5 - 1];
+                    note3[2] = scale7[7 - 1];
                     break;
                 case Degree.IV:
-                    _note3[0] = _scale7[4 - 1];
-                    _note3[1] = _scale7[6 - 1];
-                    _note3[2] = _scale7[1 - 1];
+                    note3[0] = scale7[4 - 1];
+                    note3[1] = scale7[6 - 1];
+                    note3[2] = scale7[1 - 1];
                     break;
                 case Degree.V:
-                    _note3[0] = _scale7[5 - 1];
-                    _note3[1] = _scale7[7 - 1];
-                    _note3[2] = _scale7[2 - 1];
+                    note3[0] = scale7[5 - 1];
+                    note3[1] = scale7[7 - 1];
+                    note3[2] = scale7[2 - 1];
                     break;
                 case Degree.VI:
-                    _note3[0] = _scale7[6 - 1];
-                    _note3[1] = _scale7[1 - 1];
-                    _note3[2] = _scale7[3 - 1];
+                    note3[0] = scale7[6 - 1];
+                    note3[1] = scale7[1 - 1];
+                    note3[2] = scale7[3 - 1];
                     break;
                 case Degree.VII:
-                    _note3[0] = _scale7[7 - 1];
-                    _note3[1] = _scale7[2 - 1];
-                    _note3[2] = _scale7[4 - 1];
+                    note3[0] = scale7[7 - 1];
+                    note3[1] = scale7[2 - 1];
+                    note3[2] = scale7[4 - 1];
                     break;
             }
-            return _note3;
+            return note3;
         }
 
         static int[] noteArray4By(Key key, Degree degree, Mode keyMode) {
             key.Validate();
             degree.Validate();
             keyMode.Validate();
-            int[] _scale7 = scale7By(key, keyMode);
-            int[] _note4 = new int[4]; // コード構成音の4音を抽出
+            int[] scale7 = scale7By(key, keyMode);
+            int[] note4 = new int[4]; // コード構成音の4音を抽出
             switch (degree) {
                 case Degree.I:
-                    _note4[0] = _scale7[1 - 1];
-                    _note4[1] = _scale7[3 - 1];
-                    _note4[2] = _scale7[5 - 1];
-                    _note4[3] = _scale7[7 - 1];
+                    note4[0] = scale7[1 - 1];
+                    note4[1] = scale7[3 - 1];
+                    note4[2] = scale7[5 - 1];
+                    note4[3] = scale7[7 - 1];
                     break;
                 case Degree.II:
-                    _note4[0] = _scale7[2 - 1];
-                    _note4[1] = _scale7[4 - 1];
-                    _note4[2] = _scale7[6 - 1];
-                    _note4[3] = _scale7[1 - 1];
+                    note4[0] = scale7[2 - 1];
+                    note4[1] = scale7[4 - 1];
+                    note4[2] = scale7[6 - 1];
+                    note4[3] = scale7[1 - 1];
                     break;
                 case Degree.III:
-                    _note4[0] = _scale7[3 - 1];
-                    _note4[1] = _scale7[5 - 1];
-                    _note4[2] = _scale7[7 - 1];
-                    _note4[3] = _scale7[2 - 1];
+                    note4[0] = scale7[3 - 1];
+                    note4[1] = scale7[5 - 1];
+                    note4[2] = scale7[7 - 1];
+                    note4[3] = scale7[2 - 1];
                     break;
                 case Degree.IV:
-                    _note4[0] = _scale7[4 - 1];
-                    _note4[1] = _scale7[6 - 1];
-                    _note4[2] = _scale7[1 - 1];
-                    _note4[3] = _scale7[3 - 1];
+                    note4[0] = scale7[4 - 1];
+                    note4[1] = scale7[6 - 1];
+                    note4[2] = scale7[1 - 1];
+                    note4[3] = scale7[3 - 1];
                     break;
                 case Degree.V:
-                    _note4[0] = _scale7[5 - 1];
-                    _note4[1] = _scale7[7 - 1];
-                    _note4[2] = _scale7[2 - 1];
-                    _note4[3] = _scale7[4 - 1];
+                    note4[0] = scale7[5 - 1];
+                    note4[1] = scale7[7 - 1];
+                    note4[2] = scale7[2 - 1];
+                    note4[3] = scale7[4 - 1];
                     break;
                 case Degree.VI:
-                    _note4[0] = _scale7[6 - 1];
-                    _note4[1] = _scale7[1 - 1];
-                    _note4[2] = _scale7[3 - 1];
-                    _note4[3] = _scale7[5 - 1];
+                    note4[0] = scale7[6 - 1];
+                    note4[1] = scale7[1 - 1];
+                    note4[2] = scale7[3 - 1];
+                    note4[3] = scale7[5 - 1];
                     break;
                 case Degree.VII:
-                    _note4[0] = _scale7[7 - 1];
-                    _note4[1] = _scale7[2 - 1];
-                    _note4[2] = _scale7[4 - 1];
-                    _note4[3] = _scale7[6 - 1];
+                    note4[0] = scale7[7 - 1];
+                    note4[1] = scale7[2 - 1];
+                    note4[2] = scale7[4 - 1];
+                    note4[3] = scale7[6 - 1];
                     break;
             }
-            return _note4;
+            return note4;
         }
 
         // TODO: 5音を取り出すメソッド：7モードのペンタトニック
@@ -310,74 +310,74 @@ namespace Meowziq {
             key.Validate();
             degree.Validate();
             keyMode.Validate();
-            int[] _scale7 = scale7By(key, keyMode);
-            int[] _note7 = new int[7]; // コード構成音の7音を抽出
+            int[] scale7 = scale7By(key, keyMode);
+            int[] note7 = new int[7]; // コード構成音の7音を抽出
             switch (degree) {
                 case Degree.I:
-                    _note7[0] = _scale7[1 - 1];
-                    _note7[1] = _scale7[3 - 1];
-                    _note7[2] = _scale7[5 - 1];
-                    _note7[3] = _scale7[7 - 1];
-                    _note7[4] = _scale7[2 - 1];
-                    _note7[5] = _scale7[4 - 1];
-                    _note7[6] = _scale7[6 - 1];
+                    note7[0] = scale7[1 - 1];
+                    note7[1] = scale7[3 - 1];
+                    note7[2] = scale7[5 - 1];
+                    note7[3] = scale7[7 - 1];
+                    note7[4] = scale7[2 - 1];
+                    note7[5] = scale7[4 - 1];
+                    note7[6] = scale7[6 - 1];
                     break;
                 case Degree.II:
-                    _note7[0] = _scale7[2 - 1];
-                    _note7[1] = _scale7[4 - 1];
-                    _note7[2] = _scale7[6 - 1];
-                    _note7[3] = _scale7[1 - 1];
-                    _note7[4] = _scale7[3 - 1];
-                    _note7[5] = _scale7[5 - 1];
-                    _note7[6] = _scale7[7 - 1];
+                    note7[0] = scale7[2 - 1];
+                    note7[1] = scale7[4 - 1];
+                    note7[2] = scale7[6 - 1];
+                    note7[3] = scale7[1 - 1];
+                    note7[4] = scale7[3 - 1];
+                    note7[5] = scale7[5 - 1];
+                    note7[6] = scale7[7 - 1];
                     break;
                 case Degree.III:
-                    _note7[0] = _scale7[3 - 1];
-                    _note7[1] = _scale7[5 - 1];
-                    _note7[2] = _scale7[7 - 1];
-                    _note7[3] = _scale7[2 - 1];
-                    _note7[4] = _scale7[4 - 1];
-                    _note7[5] = _scale7[6 - 1];
-                    _note7[6] = _scale7[1 - 1];
+                    note7[0] = scale7[3 - 1];
+                    note7[1] = scale7[5 - 1];
+                    note7[2] = scale7[7 - 1];
+                    note7[3] = scale7[2 - 1];
+                    note7[4] = scale7[4 - 1];
+                    note7[5] = scale7[6 - 1];
+                    note7[6] = scale7[1 - 1];
                     break;
                 case Degree.IV:
-                    _note7[0] = _scale7[4 - 1];
-                    _note7[1] = _scale7[6 - 1];
-                    _note7[2] = _scale7[1 - 1];
-                    _note7[3] = _scale7[3 - 1];
-                    _note7[4] = _scale7[5 - 1];
-                    _note7[5] = _scale7[7 - 1];
-                    _note7[6] = _scale7[2 - 1];
+                    note7[0] = scale7[4 - 1];
+                    note7[1] = scale7[6 - 1];
+                    note7[2] = scale7[1 - 1];
+                    note7[3] = scale7[3 - 1];
+                    note7[4] = scale7[5 - 1];
+                    note7[5] = scale7[7 - 1];
+                    note7[6] = scale7[2 - 1];
                     break;
                 case Degree.V:
-                    _note7[0] = _scale7[5 - 1];
-                    _note7[1] = _scale7[7 - 1];
-                    _note7[2] = _scale7[2 - 1];
-                    _note7[3] = _scale7[4 - 1];
-                    _note7[4] = _scale7[6 - 1];
-                    _note7[5] = _scale7[1 - 1];
-                    _note7[6] = _scale7[3 - 1];
+                    note7[0] = scale7[5 - 1];
+                    note7[1] = scale7[7 - 1];
+                    note7[2] = scale7[2 - 1];
+                    note7[3] = scale7[4 - 1];
+                    note7[4] = scale7[6 - 1];
+                    note7[5] = scale7[1 - 1];
+                    note7[6] = scale7[3 - 1];
                     break;
                 case Degree.VI:
-                    _note7[0] = _scale7[6 - 1];
-                    _note7[1] = _scale7[1 - 1];
-                    _note7[2] = _scale7[3 - 1];
-                    _note7[3] = _scale7[5 - 1];
-                    _note7[4] = _scale7[7 - 1];
-                    _note7[5] = _scale7[2 - 1];
-                    _note7[6] = _scale7[4 - 1];
+                    note7[0] = scale7[6 - 1];
+                    note7[1] = scale7[1 - 1];
+                    note7[2] = scale7[3 - 1];
+                    note7[3] = scale7[5 - 1];
+                    note7[4] = scale7[7 - 1];
+                    note7[5] = scale7[2 - 1];
+                    note7[6] = scale7[4 - 1];
                     break;
                 case Degree.VII:
-                    _note7[0] = _scale7[7 - 1];
-                    _note7[1] = _scale7[2 - 1];
-                    _note7[2] = _scale7[4 - 1];
-                    _note7[3] = _scale7[6 - 1];
-                    _note7[4] = _scale7[1 - 1];
-                    _note7[5] = _scale7[3 - 1];
-                    _note7[6] = _scale7[5 - 1];
+                    note7[0] = scale7[7 - 1];
+                    note7[1] = scale7[2 - 1];
+                    note7[2] = scale7[4 - 1];
+                    note7[3] = scale7[6 - 1];
+                    note7[4] = scale7[1 - 1];
+                    note7[5] = scale7[3 - 1];
+                    note7[6] = scale7[5 - 1];
                     break;
             }
-            return _note7;
+            return note7;
         }
 
         /// <summary>
@@ -386,74 +386,74 @@ namespace Meowziq {
         static int[] scale7By(Key key, Mode keyMode) {
             key.Validate();
             keyMode.Validate();
-            int _noteRoot = (int) key;
-            int[] _scale7 = new int[7]; // 7音の旋法を作成
+            int noteRoot = (int) key;
+            int[] scale7 = new int[7]; // 7音の旋法を作成
             switch (keyMode) {
                 case Mode.Lyd:
-                    _scale7[0] = _noteRoot; // 1
-                    _scale7[1] = _noteRoot + 2; // 2
-                    _scale7[2] = _noteRoot + 4; // 3
-                    _scale7[3] = _noteRoot + 6; // #4
-                    _scale7[4] = _noteRoot + 7; // 5
-                    _scale7[5] = _noteRoot + 9; // 6
-                    _scale7[6] = _noteRoot + 11; // 7
+                    scale7[0] = noteRoot; // 1
+                    scale7[1] = noteRoot + 2; // 2
+                    scale7[2] = noteRoot + 4; // 3
+                    scale7[3] = noteRoot + 6; // #4
+                    scale7[4] = noteRoot + 7; // 5
+                    scale7[5] = noteRoot + 9; // 6
+                    scale7[6] = noteRoot + 11; // 7
                     break;
                 case Mode.Ion:
-                    _scale7[0] = _noteRoot; // 1
-                    _scale7[1] = _noteRoot + 2; // 2
-                    _scale7[2] = _noteRoot + 4; // 3
-                    _scale7[3] = _noteRoot + 5; // 4
-                    _scale7[4] = _noteRoot + 7; // 5
-                    _scale7[5] = _noteRoot + 9; // 6
-                    _scale7[6] = _noteRoot + 11; // 7
+                    scale7[0] = noteRoot; // 1
+                    scale7[1] = noteRoot + 2; // 2
+                    scale7[2] = noteRoot + 4; // 3
+                    scale7[3] = noteRoot + 5; // 4
+                    scale7[4] = noteRoot + 7; // 5
+                    scale7[5] = noteRoot + 9; // 6
+                    scale7[6] = noteRoot + 11; // 7
                     break;
                 case Mode.Mix:
-                    _scale7[0] = _noteRoot; // 1
-                    _scale7[1] = _noteRoot + 2; // 2
-                    _scale7[2] = _noteRoot + 4; // 3
-                    _scale7[3] = _noteRoot + 5; // 4
-                    _scale7[4] = _noteRoot + 7; // 5
-                    _scale7[5] = _noteRoot + 9; // 6
-                    _scale7[6] = _noteRoot + 10; // b7
+                    scale7[0] = noteRoot; // 1
+                    scale7[1] = noteRoot + 2; // 2
+                    scale7[2] = noteRoot + 4; // 3
+                    scale7[3] = noteRoot + 5; // 4
+                    scale7[4] = noteRoot + 7; // 5
+                    scale7[5] = noteRoot + 9; // 6
+                    scale7[6] = noteRoot + 10; // b7
                     break;
                 case Mode.Dor:
-                    _scale7[0] = _noteRoot; // 1
-                    _scale7[1] = _noteRoot + 2; // 2
-                    _scale7[2] = _noteRoot + 3; // b3
-                    _scale7[3] = _noteRoot + 5; // 4
-                    _scale7[4] = _noteRoot + 7; // 5
-                    _scale7[5] = _noteRoot + 9; // 6
-                    _scale7[6] = _noteRoot + 10; // b7
+                    scale7[0] = noteRoot; // 1
+                    scale7[1] = noteRoot + 2; // 2
+                    scale7[2] = noteRoot + 3; // b3
+                    scale7[3] = noteRoot + 5; // 4
+                    scale7[4] = noteRoot + 7; // 5
+                    scale7[5] = noteRoot + 9; // 6
+                    scale7[6] = noteRoot + 10; // b7
                     break;
                 case Mode.Aeo:
-                    _scale7[0] = _noteRoot; // 1
-                    _scale7[1] = _noteRoot + 2; // 2
-                    _scale7[2] = _noteRoot + 3; // b3
-                    _scale7[3] = _noteRoot + 5; // 4
-                    _scale7[4] = _noteRoot + 7; // 5
-                    _scale7[5] = _noteRoot + 8; // b6
-                    _scale7[6] = _noteRoot + 10; // b7
+                    scale7[0] = noteRoot; // 1
+                    scale7[1] = noteRoot + 2; // 2
+                    scale7[2] = noteRoot + 3; // b3
+                    scale7[3] = noteRoot + 5; // 4
+                    scale7[4] = noteRoot + 7; // 5
+                    scale7[5] = noteRoot + 8; // b6
+                    scale7[6] = noteRoot + 10; // b7
                     break;
                 case Mode.Phr:
-                    _scale7[0] = _noteRoot; // 1
-                    _scale7[1] = _noteRoot + 1; // b2
-                    _scale7[2] = _noteRoot + 3; // b3
-                    _scale7[3] = _noteRoot + 5; // 4
-                    _scale7[4] = _noteRoot + 7; // 5
-                    _scale7[5] = _noteRoot + 8; // b6
-                    _scale7[6] = _noteRoot + 10; // b7
+                    scale7[0] = noteRoot; // 1
+                    scale7[1] = noteRoot + 1; // b2
+                    scale7[2] = noteRoot + 3; // b3
+                    scale7[3] = noteRoot + 5; // 4
+                    scale7[4] = noteRoot + 7; // 5
+                    scale7[5] = noteRoot + 8; // b6
+                    scale7[6] = noteRoot + 10; // b7
                     break;
                 case Mode.Loc:
-                    _scale7[0] = _noteRoot; // 1
-                    _scale7[1] = _noteRoot + 1; // b2
-                    _scale7[2] = _noteRoot + 3; // b3
-                    _scale7[3] = _noteRoot + 5; // 4
-                    _scale7[4] = _noteRoot + 6; // b5
-                    _scale7[5] = _noteRoot + 8; // b6
-                    _scale7[6] = _noteRoot + 10; // b7
+                    scale7[0] = noteRoot; // 1
+                    scale7[1] = noteRoot + 1; // b2
+                    scale7[2] = noteRoot + 3; // b3
+                    scale7[3] = noteRoot + 5; // 4
+                    scale7[4] = noteRoot + 6; // b5
+                    scale7[5] = noteRoot + 8; // b6
+                    scale7[6] = noteRoot + 10; // b7
                     break;
             }
-            return _scale7;
+            return scale7;
         }
 
         /// <summary>
@@ -720,13 +720,13 @@ namespace Meowziq {
         /// そのキーの旋法の度数の3和音構成音をランダムで返す
         /// </summary>
         static int noteOfRandom3By(Key key, Degree degree, Mode keyMode, Mode spanMode) {
-            Mode _mode = spanMode is Mode.Undefined ? modeSpanBy(degree, keyMode) : spanMode; // 自動旋法の場合度数とキーの旋法から対応したその度数の旋法を取得
-            int[] _scaleKey = scale7By(key, keyMode); // キーの旋法でスケールを取得
-            int _noteDegree = _scaleKey[(int) degree]; // そのスケールの度数の音を取得
-            int[] _scale7 = scale7By(Key.Enum.Parse(_noteDegree), _mode); // その音のこの旋法でのスケールを取得
-            int[] _noteArray3 = noteArrayBy(3, _scale7); // スケールから3和音を取得
-            int _random = random.Next(0, 3); // ランダム値作成: 0 から 2
-            return _noteArray3[_random]; // そのスケールの3音のどれかを取得
+            Mode mode = spanMode is Mode.Undefined ? modeSpanBy(degree, keyMode) : spanMode; // 自動旋法の場合度数とキーの旋法から対応したその度数の旋法を取得
+            int[] scaleKey = scale7By(key, keyMode); // キーの旋法でスケールを取得
+            int noteDegree = scaleKey[(int) degree]; // そのスケールの度数の音を取得
+            int[] scale7 = scale7By(Key.Enum.Parse(noteDegree), mode); // その音のこの旋法でのスケールを取得
+            int[] noteArray3 = noteArrayBy(3, scale7); // スケールから3和音を取得
+            int random = Utils._random.Next(0, 3); // ランダム値作成: 0 から 2
+            return noteArray3[random]; // そのスケールの3音のどれかを取得
         }
 
         // MEMO: 展開コードでキーボードの範囲(ゾーン)を指定するのはどうか

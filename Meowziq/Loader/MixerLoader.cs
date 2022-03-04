@@ -36,8 +36,8 @@ namespace Meowziq.Loader {
         // private static Methods [verb]
 
         static Json loadJson(Stream target) {
-            var _serializer = new DataContractJsonSerializer(typeof(Json));
-            return (Json) _serializer.ReadObject(target);
+            var serializer = new DataContractJsonSerializer(typeof(Json));
+            return (Json) serializer.ReadObject(target);
         }
 
         static bool drumInst(string target) {

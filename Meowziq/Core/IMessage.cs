@@ -4,58 +4,58 @@ using System.Collections.Generic;
 
 namespace Meowziq {
     /// <summary>
-    /// Message のインタフェース
+    /// interface of Message.
     /// </summary>
     public interface IMessage<T1, T2> {
 
         /// <summary>
-        /// 引数の tick の T1 のリストを返します
-        /// NOTE: 引数 tick の T1 のリストが存在しなければ null を返します
+        /// returns a list of T1 of the argument tick
+        /// NOTE: returns null if the list of T1 for the argument tick does not exist
         /// </summary>
         List<T1> GetBy(int tick);
 
         /// <summary>
-        /// 引数 tick のアイテムを持つかどうかを返します
+        /// returns whether it has an item with the argument tick
         /// </summary>
         bool Has(int tick);
 
         /// <summary>
-        /// 引数の tick を起点にして切り替え処理を行います
+        /// switching processing is performed starting from the argument tick
         /// </summary>
         void ApplyTick(int tick, Action<int> load);
 
         /// <summary>
-        /// プログラムNo(音色)を T1 として適用します
+        /// apply the program number (timbre) as T1
         /// </summary>
         void ApplyProgramChange(int tick, int midiCh, int programNum);
 
         /// <summary>
-        /// ボリュームを T1 として適用します
+        /// apply volume as T1
         /// </summary>
         void ApplyVolume(int tick, int midiCh, int volume);
 
         /// <summary>
-        /// PAN (パン)を T1 として適用します
+        /// apply pan as T1
         /// </summary>
         void ApplyPan(int tick, int midiCh, Pan pan);
 
         /// <summary>
-        /// ミュートを T1 として適用します
+        /// apply mute as T1
         /// </summary>
         void ApplyMute(int tick, int midiCh, bool mute);
 
         /// <summary>
-        /// T2 を T1 として適用します
+        /// apply T2 as T1
         /// </summary>
         void ApplyNote(int tick, int midiCh, T2 note);
 
         /// <summary>
-        /// 状態を初期化します
+        /// initialize the state
         /// </summary>
         void Clear();
 
         /// <summary>
-        /// 内部フラグを反転します
+        /// invert the internal flag
         /// </summary>
         void Invert();
     }

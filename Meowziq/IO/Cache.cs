@@ -11,27 +11,27 @@ namespace Meowziq.IO {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Fields
 
-        static Resourse current; // この tick で読み込まれた json データの内容を保持
+        static Resourse _current; // この tick で読み込まれた json データの内容を保持
 
-        static Resourse valid; // 全てのバリデーションを通過した json データの内容を保持
+        static Resourse _valid; // 全てのバリデーションを通過した json データの内容を保持
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Constructor
 
         static Cache() {
-            current = new Resourse();
-            valid = new Resourse();
+            _current = new Resourse();
+            _valid = new Resourse();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Properties [noun, adjective] 
 
         public static Resourse Current {
-            get => current;
+            get => _current;
         }
 
         public static Resourse Valid {
-            get => valid;
+            get => _valid;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -41,21 +41,21 @@ namespace Meowziq.IO {
         /// json ファイルを文字列として読み込みます
         /// </summary>
         public static void Load(string targetPath) {
-            using (var _stream = new StreamReader($"{targetPath}/pattern.json")) {
-                current.Pattern = _stream.ReadToEnd();
+            using (var stream = new StreamReader($"{targetPath}/pattern.json")) {
+                _current.Pattern = stream.ReadToEnd();
             }
-            using (var _stream = new StreamReader($"{targetPath}/song.json")) {
-                current.Song = _stream.ReadToEnd();
+            using (var stream = new StreamReader($"{targetPath}/song.json")) {
+                _current.Song = stream.ReadToEnd();
             }
-            using (var _stream = new StreamReader($"{targetPath}/phrase.json")) {
-                current.Phrase = _stream.ReadToEnd();
+            using (var stream = new StreamReader($"{targetPath}/phrase.json")) {
+                _current.Phrase = stream.ReadToEnd();
             }
-            using (var _stream = new StreamReader($"{targetPath}/player.json")) {
-                current.Player = _stream.ReadToEnd();
+            using (var stream = new StreamReader($"{targetPath}/player.json")) {
+                _current.Player = stream.ReadToEnd();
             }
             if (File.Exists($"{targetPath}/mixer.json")) {
-                using (var _stream = new StreamReader($"{targetPath}/mixer.json")) {
-                    current.Mixer = _stream.ReadToEnd();
+                using (var stream = new StreamReader($"{targetPath}/mixer.json")) {
+                    _current.Mixer = stream.ReadToEnd();
                 }
             }
         }
@@ -64,19 +64,19 @@ namespace Meowziq.IO {
         /// バリデーションが通過した最新の内容として更新します
         /// </summary>
         public static void Update() {
-            valid.Pattern = current.Pattern;
-            valid.Song = current.Song;
-            valid.Phrase = current.Phrase;
-            valid.Player = current.Player;
-            valid.Mixer = current.Mixer;
+            _valid.Pattern = _current.Pattern;
+            _valid.Song = _current.Song;
+            _valid.Phrase = _current.Phrase;
+            _valid.Player = _current.Player;
+            _valid.Mixer = _current.Mixer;
         }
 
         /// <summary>
         /// 内容を初期化します
         /// </summary>
         public static void Clear() {
-            current.Clear();
-            valid.Clear();
+            _current.Clear();
+            _valid.Clear();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

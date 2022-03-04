@@ -1,5 +1,7 @@
 ﻿
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using static Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
+
 using System;
 
 namespace Meowziq.Value.Tests {
@@ -12,7 +14,7 @@ namespace Meowziq.Value.Tests {
         [TestMethod()]
         public void PhraseValueTest1() {
             var result = new PrivateType(typeof(Validater)).InvokeStatic("PhraseValue", "[1111|----|5555|----]");
-            Assert.AreEqual(result, "[1111|----|5555|----]");
+            AreEqual(result, "[1111|----|5555|----]");
         }
 
         /// <summary>

@@ -1,5 +1,7 @@
 ﻿
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using static Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
+
 using System.IO;
 
 using Meowziq.IO;
@@ -13,8 +15,8 @@ namespace Meowziq.Loader.Tests {
         /// </summary>
         [TestMethod()]
         public void BuildTest() {
-            using (var _stream = new StreamReader($"./data/pattern.json")) {
-                var _list = PatternLoader.Build(_stream.ReadToEnd().ToMemoryStream());
+            using (var stream = new StreamReader($"./data/pattern.json")) {
+                var list = PatternLoader.Build(stream.ReadToEnd().ToMemoryStream());
             }
         }
     }

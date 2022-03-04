@@ -12,28 +12,28 @@ namespace Meowziq.Midi {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Fields
 
-        static Map<int, Track> trackMap;
+        static Map<int, Track> _trackMap;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Constructor
 
         static Multi() {
-            trackMap = new Map<int, Track>();
-            Enumerable.Range(0, 16).ToList().ForEach(x => trackMap.Add(x, new Track()));
+            _trackMap = new Map<int, Track>();
+            Enumerable.Range(0, 16).ToList().ForEach(x => _trackMap.Add(x, new Track()));
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Properties [noun, adjective]
 
         public static List<Track> List {
-            get => trackMap.Select(x => x.Value).ToList();
+            get => _trackMap.Select(x => x.Value).ToList();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]
 
         public static Track Get(int index) {
-            return trackMap[index];
+            return _trackMap[index];
         }
     }
 }

@@ -17,13 +17,13 @@ namespace Meowziq.Loader {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Fields
 
-        static List<Pattern> patternList;
+        static List<Pattern> _patternList;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Properties [noun, adjective] 
 
         public static List<Pattern> PatternList {
-            set => patternList = value;
+            set => _patternList = value;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -33,20 +33,20 @@ namespace Meowziq.Loader {
         /// Song を作成します
         /// </summary>
         public static Core.Song Build(Stream target) {
-            if (patternList is null) {
+            if (_patternList is null) {
                 throw new ArgumentException("need patternList.");
             }
-            var _song = loadJson(target).Song;
-            var _sectionList = _song.Section.Select(x =>
+            var song = loadJson(target).Song;
+            var sectionList = song.Section.Select(x =>
                 new Core.Section(
                     Key.Enum.Parse(x.Key),
                     Mode.Enum.Parse(x.Mode),
                     x.PatternArray.Select(_x => searchPattern(_x)).ToList()
             )).ToList();
             return new Core.Song(
-                _song.Name,
-                int.Parse(_song.Tempo),
-                _sectionList
+                song.Name,
+                int.Parse(song.Tempo),
+                sectionList
             );
         }
 
@@ -55,15 +55,15 @@ namespace Meowziq.Loader {
 
         static Pattern searchPattern(string patternName) {
             try {
-                return patternList.Where(x => x.Name.Equals(patternName)).First(); // MEMO: 名前が一致した最初の要素
+                return _patternList.Where(x => x.Name.Equals(patternName)).First(); // MEMO: 名前が一致した最初の要素
             } catch {
                 throw new ArgumentException("undefined pattern.");
             }
         }
 
         static Json loadJson(Stream target) {
-            var _serializer = new DataContractJsonSerializer(typeof(Json));
-            return (Json) _serializer.ReadObject(target);
+            var serializer = new DataContractJsonSerializer(typeof(Json));
+            return (Json) serializer.ReadObject(target);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

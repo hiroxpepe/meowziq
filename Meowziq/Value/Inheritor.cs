@@ -52,8 +52,8 @@ namespace Meowziq.Value {
             if (target.Count() != baze.Count()) { // target と baze のデータは同じ数
                 throw new FormatException("inherited data count must be the same as the base.");
             }
-            var _result = target.Select((x, idx) => x.Equals('*') ? baze.ToArray()[idx] : x).ToArray();
-            return new string(_result);
+            var result = target.Select((x, idx) => x.Equals('*') ? baze.ToArray()[idx] : x).ToArray();
+            return new string(result);
         }
 
         /// <summary>
@@ -66,8 +66,8 @@ namespace Meowziq.Value {
             if (target.Count() != baze.Count()) { // target と baze のデータは同じ数
                 throw new FormatException("inherited arrray count must be the same as the base.");
             }
-            var _result = target.Select((x, idx) => applyString(x, baze[idx])).ToArray();
-            return _result;
+            var result = target.Select((x, idx) => applyString(x, baze[idx])).ToArray();
+            return result;
         }
     }
 }
