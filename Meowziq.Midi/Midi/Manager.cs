@@ -18,7 +18,7 @@ namespace Meowziq.Midi {
         // Constructor
 
         public Manager() {
-            this._outDevice = new OutputDevice(_outDeviceID);
+            _outDevice = new OutputDevice(_outDeviceID);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

@@ -5,8 +5,9 @@ using static Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 using System.IO;
 
 using Meowziq.IO;
+using Meowziq.Loader;
 
-namespace Meowziq.Loader.Tests {
+namespace MeowziqTest.Loader {
     [TestClass()]
     public class PatternLoaderTests {
 
@@ -15,7 +16,7 @@ namespace Meowziq.Loader.Tests {
         /// </summary>
         [TestMethod()]
         public void BuildTest() {
-            using (var stream = new StreamReader($"./data/pattern.json")) {
+            using (var stream = new StreamReader($"../data/pattern.json")) {
                 var list = PatternLoader.Build(stream.ReadToEnd().ToMemoryStream());
             }
         }

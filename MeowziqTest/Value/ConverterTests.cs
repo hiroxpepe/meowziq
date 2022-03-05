@@ -5,7 +5,9 @@ using static Microsoft.VisualStudio.TestTools.UnitTesting.CollectionAssert;
 using System;
 using System.Linq;
 
-namespace Meowziq.Value.Tests {
+using Meowziq.Value;
+
+namespace MeowziqTest.Value {
     [TestClass()]
     public class ConverterTests {
 

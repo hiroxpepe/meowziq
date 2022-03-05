@@ -142,7 +142,7 @@ namespace Meowziq.View {
             if (Sound.Stopping) {
                 return;
             }
-            if (this.Visible) {
+            if (Visible) {
                 // TODO: カウント分はUIではマイナス表示とする？
                 var tick = _sequencer.Position - 1; // NOTE: Position が 1, 31 と来るので予め1引く
                 // MIDIメッセージ処理

@@ -3,9 +3,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 using Sanford.Multimedia.Midi;
+using Meowziq;
+using Meowziq.Core;
 using Meowziq.Midi;
 
-namespace Meowziq.Core.Tests {
+namespace MeowziqTest.Core{
     [TestClass()]
     public class MixerTests {
 

@@ -55,335 +55,337 @@
             this._folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.SuspendLayout();
             // 
-            // sequence
+            // _buttonPlay
             // 
-            this._sequence.Format = 1;
-            // 
-            // sequencer
-            // 
-            this._sequencer.Position = 0;
-            this._sequencer.Sequence = this._sequence;
-            this._sequencer.ChannelMessagePlayed += new System.EventHandler<Sanford.Multimedia.Midi.ChannelMessageEventArgs>(this.sequencer_ChannelMessagePlayed);
-            // 
-            // pianoControl
-            // 
-            this._pianoControl.HighNoteID = 109;
-            this._pianoControl.Location = new System.Drawing.Point(11, 193);
-            this._pianoControl.LowNoteID = 21;
-            this._pianoControl.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this._pianoControl.Name = "pianoControl";
-            this._pianoControl.NoteOnColor = System.Drawing.Color.SkyBlue;
-            this._pianoControl.Size = new System.Drawing.Size(688, 84);
-            this._pianoControl.TabIndex = 4;
-            this._pianoControl.TabStop = false;
-            this._pianoControl.Text = "pianoControl";
-            // 
-            // buttonPlay
-            // 
-            this._buttonPlay.Font = new System.Drawing.Font("Meiryo UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this._buttonPlay.Location = new System.Drawing.Point(17, 79);
-            this._buttonPlay.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this._buttonPlay.Name = "buttonPlay";
-            this._buttonPlay.Size = new System.Drawing.Size(66, 32);
+            this._buttonPlay.Font = new System.Drawing.Font("Meiryo UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this._buttonPlay.Location = new System.Drawing.Point(23, 132);
+            this._buttonPlay.Name = "_buttonPlay";
+            this._buttonPlay.Size = new System.Drawing.Size(88, 53);
             this._buttonPlay.TabIndex = 1;
             this._buttonPlay.Text = "PLAY";
             this._buttonPlay.UseVisualStyleBackColor = true;
             this._buttonPlay.Click += new System.EventHandler(this.buttonPlay_Click);
             // 
-            // buttonStop
+            // _buttonStop
             // 
-            this._buttonStop.Font = new System.Drawing.Font("Meiryo UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this._buttonStop.Location = new System.Drawing.Point(97, 79);
-            this._buttonStop.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this._buttonStop.Name = "buttonStop";
-            this._buttonStop.Size = new System.Drawing.Size(66, 32);
+            this._buttonStop.Font = new System.Drawing.Font("Meiryo UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this._buttonStop.Location = new System.Drawing.Point(129, 132);
+            this._buttonStop.Name = "_buttonStop";
+            this._buttonStop.Size = new System.Drawing.Size(88, 53);
             this._buttonStop.TabIndex = 2;
             this._buttonStop.Text = "STOP";
             this._buttonStop.UseVisualStyleBackColor = true;
             this._buttonStop.Click += new System.EventHandler(this.buttonStop_Click);
             // 
-            // buttonLoad
+            // _buttonLoad
             // 
-            this._buttonLoad.Font = new System.Drawing.Font("Meiryo UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this._buttonLoad.Location = new System.Drawing.Point(178, 79);
-            this._buttonLoad.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this._buttonLoad.Name = "buttonLoad";
-            this._buttonLoad.Size = new System.Drawing.Size(66, 32);
+            this._buttonLoad.Font = new System.Drawing.Font("Meiryo UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this._buttonLoad.Location = new System.Drawing.Point(237, 132);
+            this._buttonLoad.Name = "_buttonLoad";
+            this._buttonLoad.Size = new System.Drawing.Size(88, 53);
             this._buttonLoad.TabIndex = 3;
             this._buttonLoad.Text = "LOAD";
             this._buttonLoad.UseVisualStyleBackColor = true;
             this._buttonLoad.Click += new System.EventHandler(this.buttonLoad_Click);
             // 
-            // buttonConvert
+            // _buttonConvert
             // 
-            this._buttonConvert.Font = new System.Drawing.Font("Meiryo UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this._buttonConvert.Location = new System.Drawing.Point(257, 79);
-            this._buttonConvert.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this._buttonConvert.Name = "buttonConvert";
-            this._buttonConvert.Size = new System.Drawing.Size(80, 32);
+            this._buttonConvert.Font = new System.Drawing.Font("Meiryo UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this._buttonConvert.Location = new System.Drawing.Point(343, 132);
+            this._buttonConvert.Name = "_buttonConvert";
+            this._buttonConvert.Size = new System.Drawing.Size(107, 53);
             this._buttonConvert.TabIndex = 26;
             this._buttonConvert.Text = "to SMF";
             this._buttonConvert.UseVisualStyleBackColor = true;
             this._buttonConvert.Click += new System.EventHandler(this.buttonConvert_Click);
             // 
-            // textBoxBeat
-            // 
-            this._textBoxBeat.BackColor = System.Drawing.Color.PaleGreen;
-            this._textBoxBeat.Font = new System.Drawing.Font("Meiryo UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this._textBoxBeat.Location = new System.Drawing.Point(16, 37);
-            this._textBoxBeat.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this._textBoxBeat.Name = "textBoxBeat";
-            this._textBoxBeat.Size = new System.Drawing.Size(66, 31);
-            this._textBoxBeat.TabIndex = 0;
-            this._textBoxBeat.TabStop = false;
-            this._textBoxBeat.Text = "0";
-            this._textBoxBeat.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // textBoxMeas
+            // _textBoxMeas
             // 
             this._textBoxMeas.BackColor = System.Drawing.Color.PaleGreen;
-            this._textBoxMeas.Font = new System.Drawing.Font("Meiryo UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this._textBoxMeas.Location = new System.Drawing.Point(97, 36);
-            this._textBoxMeas.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this._textBoxMeas.Name = "textBoxMeas";
-            this._textBoxMeas.Size = new System.Drawing.Size(66, 31);
+            this._textBoxMeas.Font = new System.Drawing.Font("Meiryo UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this._textBoxMeas.Location = new System.Drawing.Point(129, 60);
+            this._textBoxMeas.Name = "_textBoxMeas";
+            this._textBoxMeas.Size = new System.Drawing.Size(87, 37);
             this._textBoxMeas.TabIndex = 4;
             this._textBoxMeas.TabStop = false;
             this._textBoxMeas.Text = "0";
             this._textBoxMeas.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
-            // textBoxSongName
+            // _textBoxBeat
+            // 
+            this._textBoxBeat.BackColor = System.Drawing.Color.PaleGreen;
+            this._textBoxBeat.Font = new System.Drawing.Font("Meiryo UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this._textBoxBeat.Location = new System.Drawing.Point(21, 62);
+            this._textBoxBeat.Name = "_textBoxBeat";
+            this._textBoxBeat.Size = new System.Drawing.Size(87, 37);
+            this._textBoxBeat.TabIndex = 0;
+            this._textBoxBeat.TabStop = false;
+            this._textBoxBeat.Text = "0";
+            this._textBoxBeat.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // _textBoxSongName
             // 
             this._textBoxSongName.BackColor = System.Drawing.Color.PaleGreen;
-            this._textBoxSongName.Font = new System.Drawing.Font("Meiryo UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this._textBoxSongName.Location = new System.Drawing.Point(178, 36);
-            this._textBoxSongName.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this._textBoxSongName.Name = "textBoxSongName";
-            this._textBoxSongName.Size = new System.Drawing.Size(159, 31);
+            this._textBoxSongName.Font = new System.Drawing.Font("Meiryo UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this._textBoxSongName.Location = new System.Drawing.Point(237, 60);
+            this._textBoxSongName.Name = "_textBoxSongName";
+            this._textBoxSongName.Size = new System.Drawing.Size(211, 37);
             this._textBoxSongName.TabIndex = 12;
             this._textBoxSongName.TabStop = false;
             this._textBoxSongName.Text = "------------";
             // 
-            // textBoxKey
+            // _textBoxKey
             // 
             this._textBoxKey.BackColor = System.Drawing.Color.PaleGreen;
-            this._textBoxKey.Font = new System.Drawing.Font("Meiryo UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this._textBoxKey.Location = new System.Drawing.Point(516, 94);
-            this._textBoxKey.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this._textBoxKey.Name = "textBoxKey";
-            this._textBoxKey.Size = new System.Drawing.Size(66, 31);
+            this._textBoxKey.Font = new System.Drawing.Font("Meiryo UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this._textBoxKey.Location = new System.Drawing.Point(688, 157);
+            this._textBoxKey.Name = "_textBoxKey";
+            this._textBoxKey.Size = new System.Drawing.Size(87, 37);
             this._textBoxKey.TabIndex = 14;
             this._textBoxKey.TabStop = false;
             this._textBoxKey.Text = "---";
             // 
-            // textBoxDegree
+            // _textBoxDegree
             // 
             this._textBoxDegree.BackColor = System.Drawing.Color.PaleGreen;
-            this._textBoxDegree.Font = new System.Drawing.Font("Meiryo UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this._textBoxDegree.Location = new System.Drawing.Point(353, 37);
-            this._textBoxDegree.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this._textBoxDegree.Name = "textBoxDegree";
-            this._textBoxDegree.Size = new System.Drawing.Size(66, 31);
+            this._textBoxDegree.Font = new System.Drawing.Font("Meiryo UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this._textBoxDegree.Location = new System.Drawing.Point(471, 62);
+            this._textBoxDegree.Name = "_textBoxDegree";
+            this._textBoxDegree.Size = new System.Drawing.Size(87, 37);
             this._textBoxDegree.TabIndex = 16;
             this._textBoxDegree.TabStop = false;
             this._textBoxDegree.Text = "---";
             // 
-            // textBoxKeyMode
+            // _textBoxKeyMode
             // 
             this._textBoxKeyMode.BackColor = System.Drawing.Color.PaleGreen;
-            this._textBoxKeyMode.Font = new System.Drawing.Font("Meiryo UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this._textBoxKeyMode.Location = new System.Drawing.Point(433, 94);
-            this._textBoxKeyMode.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this._textBoxKeyMode.Name = "textBoxKeyMode";
-            this._textBoxKeyMode.Size = new System.Drawing.Size(66, 31);
+            this._textBoxKeyMode.Font = new System.Drawing.Font("Meiryo UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this._textBoxKeyMode.Location = new System.Drawing.Point(577, 157);
+            this._textBoxKeyMode.Name = "_textBoxKeyMode";
+            this._textBoxKeyMode.Size = new System.Drawing.Size(87, 37);
             this._textBoxKeyMode.TabIndex = 18;
             this._textBoxKeyMode.TabStop = false;
             this._textBoxKeyMode.Text = "---";
             // 
-            // textBoxCode
+            // _textBoxCode
             // 
             this._textBoxCode.BackColor = System.Drawing.Color.PaleGreen;
-            this._textBoxCode.Font = new System.Drawing.Font("Meiryo UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this._textBoxCode.Location = new System.Drawing.Point(515, 36);
-            this._textBoxCode.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this._textBoxCode.Name = "textBoxCode";
-            this._textBoxCode.Size = new System.Drawing.Size(66, 31);
+            this._textBoxCode.Font = new System.Drawing.Font("Meiryo UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this._textBoxCode.Location = new System.Drawing.Point(687, 60);
+            this._textBoxCode.Name = "_textBoxCode";
+            this._textBoxCode.Size = new System.Drawing.Size(87, 37);
             this._textBoxCode.TabIndex = 22;
             this._textBoxCode.TabStop = false;
             this._textBoxCode.Text = "---";
             // 
-            // textBoxMode
+            // _textBoxMode
             // 
             this._textBoxMode.BackColor = System.Drawing.Color.PaleGreen;
-            this._textBoxMode.Font = new System.Drawing.Font("Meiryo UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this._textBoxMode.Location = new System.Drawing.Point(434, 36);
-            this._textBoxMode.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this._textBoxMode.Name = "textBoxMode";
-            this._textBoxMode.Size = new System.Drawing.Size(66, 31);
+            this._textBoxMode.Font = new System.Drawing.Font("Meiryo UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this._textBoxMode.Location = new System.Drawing.Point(579, 60);
+            this._textBoxMode.Name = "_textBoxMode";
+            this._textBoxMode.Size = new System.Drawing.Size(87, 37);
             this._textBoxMode.TabIndex = 24;
             this._textBoxMode.TabStop = false;
             this._textBoxMode.Text = "---";
             // 
-            // labelMeas
+            // _labelMeas
             // 
             this._labelMeas.AutoSize = true;
-            this._labelMeas.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this._labelMeas.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this._labelMeas.ForeColor = System.Drawing.Color.White;
-            this._labelMeas.Location = new System.Drawing.Point(96, 16);
-            this._labelMeas.Name = "labelMeas";
-            this._labelMeas.Size = new System.Drawing.Size(47, 17);
+            this._labelMeas.Location = new System.Drawing.Point(128, 27);
+            this._labelMeas.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this._labelMeas.Name = "_labelMeas";
+            this._labelMeas.Size = new System.Drawing.Size(60, 22);
             this._labelMeas.TabIndex = 5;
             this._labelMeas.Text = "MEAS";
             // 
-            // labelTitle
+            // _labelTitle
             // 
             this._labelTitle.AutoSize = true;
-            this._labelTitle.Font = new System.Drawing.Font("Impact", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this._labelTitle.Font = new System.Drawing.Font("Impact", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this._labelTitle.ForeColor = System.Drawing.Color.Gold;
-            this._labelTitle.Location = new System.Drawing.Point(594, 30);
-            this._labelTitle.Name = "labelTitle";
-            this._labelTitle.Size = new System.Drawing.Size(110, 34);
+            this._labelTitle.Location = new System.Drawing.Point(792, 50);
+            this._labelTitle.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this._labelTitle.Name = "_labelTitle";
+            this._labelTitle.Size = new System.Drawing.Size(138, 42);
             this._labelTitle.TabIndex = 6;
             this._labelTitle.Text = "MeowziQ";
             // 
-            // labelSubTitle
+            // _labelSubTitle
             // 
             this._labelSubTitle.AutoSize = true;
-            this._labelSubTitle.Font = new System.Drawing.Font("Impact", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this._labelSubTitle.Font = new System.Drawing.Font("Impact", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this._labelSubTitle.ForeColor = System.Drawing.Color.Gold;
-            this._labelSubTitle.Location = new System.Drawing.Point(602, 15);
-            this._labelSubTitle.Name = "labelSubTitle";
-            this._labelSubTitle.Size = new System.Drawing.Size(92, 16);
+            this._labelSubTitle.Location = new System.Drawing.Point(803, 25);
+            this._labelSubTitle.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this._labelSubTitle.Name = "_labelSubTitle";
+            this._labelSubTitle.Size = new System.Drawing.Size(117, 19);
             this._labelSubTitle.TabIndex = 7;
             this._labelSubTitle.Text = "music sequencer";
             // 
-            // labelVersion
+            // _labelVersion
             // 
             this._labelVersion.AutoSize = true;
-            this._labelVersion.Font = new System.Drawing.Font("Impact", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this._labelVersion.Font = new System.Drawing.Font("Impact", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this._labelVersion.ForeColor = System.Drawing.Color.Gold;
-            this._labelVersion.Location = new System.Drawing.Point(645, 64);
-            this._labelVersion.Name = "labelVersion";
-            this._labelVersion.Size = new System.Drawing.Size(47, 16);
+            this._labelVersion.Location = new System.Drawing.Point(860, 107);
+            this._labelVersion.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this._labelVersion.Name = "_labelVersion";
+            this._labelVersion.Size = new System.Drawing.Size(60, 19);
             this._labelVersion.TabIndex = 8;
             this._labelVersion.Text = "ver 1.0.0";
             // 
-            // labelBeat
+            // _labelBeat
             // 
             this._labelBeat.AutoSize = true;
-            this._labelBeat.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this._labelBeat.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this._labelBeat.ForeColor = System.Drawing.Color.White;
-            this._labelBeat.Location = new System.Drawing.Point(14, 16);
-            this._labelBeat.Name = "labelBeat";
-            this._labelBeat.Size = new System.Drawing.Size(44, 17);
+            this._labelBeat.Location = new System.Drawing.Point(19, 27);
+            this._labelBeat.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this._labelBeat.Name = "_labelBeat";
+            this._labelBeat.Size = new System.Drawing.Size(56, 22);
             this._labelBeat.TabIndex = 9;
             this._labelBeat.Text = "BEAT";
             // 
-            // labelPlay
+            // _labelPlay
             // 
             this._labelPlay.AutoSize = true;
-            this._labelPlay.Font = new System.Drawing.Font("Meiryo UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this._labelPlay.Font = new System.Drawing.Font("Meiryo UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this._labelPlay.ForeColor = System.Drawing.Color.DimGray;
-            this._labelPlay.Location = new System.Drawing.Point(36, 113);
-            this._labelPlay.Name = "labelPlay";
-            this._labelPlay.Size = new System.Drawing.Size(29, 24);
+            this._labelPlay.Location = new System.Drawing.Point(48, 188);
+            this._labelPlay.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this._labelPlay.Name = "_labelPlay";
+            this._labelPlay.Size = new System.Drawing.Size(37, 30);
             this._labelPlay.TabIndex = 10;
             this._labelPlay.Text = "●";
             // 
-            // labelSongName
+            // _labelSongName
             // 
             this._labelSongName.AutoSize = true;
-            this._labelSongName.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this._labelSongName.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this._labelSongName.ForeColor = System.Drawing.Color.White;
-            this._labelSongName.Location = new System.Drawing.Point(176, 16);
-            this._labelSongName.Name = "labelSongName";
-            this._labelSongName.Size = new System.Drawing.Size(48, 17);
+            this._labelSongName.Location = new System.Drawing.Point(235, 27);
+            this._labelSongName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this._labelSongName.Name = "_labelSongName";
+            this._labelSongName.Size = new System.Drawing.Size(62, 22);
             this._labelSongName.TabIndex = 13;
             this._labelSongName.Text = "SONG";
             // 
-            // labelKey
+            // _labelKey
             // 
             this._labelKey.AutoSize = true;
-            this._labelKey.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this._labelKey.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this._labelKey.ForeColor = System.Drawing.Color.White;
-            this._labelKey.Location = new System.Drawing.Point(514, 73);
-            this._labelKey.Name = "labelKey";
-            this._labelKey.Size = new System.Drawing.Size(35, 17);
+            this._labelKey.Location = new System.Drawing.Point(685, 122);
+            this._labelKey.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this._labelKey.Name = "_labelKey";
+            this._labelKey.Size = new System.Drawing.Size(46, 22);
             this._labelKey.TabIndex = 15;
             this._labelKey.Text = "KEY";
             // 
-            // labelDegree
+            // _labelDegree
             // 
             this._labelDegree.AutoSize = true;
-            this._labelDegree.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this._labelDegree.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this._labelDegree.ForeColor = System.Drawing.Color.White;
-            this._labelDegree.Location = new System.Drawing.Point(350, 15);
-            this._labelDegree.Name = "labelDegree";
-            this._labelDegree.Size = new System.Drawing.Size(62, 17);
+            this._labelDegree.Location = new System.Drawing.Point(467, 25);
+            this._labelDegree.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this._labelDegree.Name = "_labelDegree";
+            this._labelDegree.Size = new System.Drawing.Size(82, 22);
             this._labelDegree.TabIndex = 17;
             this._labelDegree.Text = "DEGREE";
             // 
-            // labelKeyMode
+            // _labelKeyMode
             // 
             this._labelKeyMode.AutoSize = true;
-            this._labelKeyMode.Font = new System.Drawing.Font("Meiryo UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this._labelKeyMode.Font = new System.Drawing.Font("Meiryo UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this._labelKeyMode.ForeColor = System.Drawing.Color.White;
-            this._labelKeyMode.Location = new System.Drawing.Point(430, 75);
-            this._labelKeyMode.Name = "labelKeyMode";
-            this._labelKeyMode.Size = new System.Drawing.Size(74, 15);
+            this._labelKeyMode.Location = new System.Drawing.Point(573, 125);
+            this._labelKeyMode.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this._labelKeyMode.Name = "_labelKeyMode";
+            this._labelKeyMode.Size = new System.Drawing.Size(94, 19);
             this._labelKeyMode.TabIndex = 19;
             this._labelKeyMode.Text = "KEY MODE";
             // 
-            // labelCode
+            // _labelCode
             // 
             this._labelCode.AutoSize = true;
-            this._labelCode.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this._labelCode.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this._labelCode.ForeColor = System.Drawing.Color.White;
-            this._labelCode.Location = new System.Drawing.Point(513, 16);
-            this._labelCode.Name = "labelCode";
-            this._labelCode.Size = new System.Drawing.Size(45, 17);
+            this._labelCode.Location = new System.Drawing.Point(684, 27);
+            this._labelCode.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this._labelCode.Name = "_labelCode";
+            this._labelCode.Size = new System.Drawing.Size(60, 22);
             this._labelCode.TabIndex = 23;
             this._labelCode.Text = "CODE";
             // 
-            // labelMode
+            // _labelMode
             // 
             this._labelMode.AutoSize = true;
-            this._labelMode.Font = new System.Drawing.Font("Meiryo UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this._labelMode.Font = new System.Drawing.Font("Meiryo UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this._labelMode.ForeColor = System.Drawing.Color.White;
-            this._labelMode.Location = new System.Drawing.Point(430, 17);
-            this._labelMode.Name = "labelMode";
-            this._labelMode.Size = new System.Drawing.Size(45, 15);
+            this._labelMode.Location = new System.Drawing.Point(573, 28);
+            this._labelMode.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this._labelMode.Name = "_labelMode";
+            this._labelMode.Size = new System.Drawing.Size(57, 19);
             this._labelMode.TabIndex = 25;
             this._labelMode.Text = "MODE";
             // 
-            // labelModulation
+            // _labelModulation
             // 
             this._labelModulation.AutoSize = true;
-            this._labelModulation.Font = new System.Drawing.Font("Meiryo UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this._labelModulation.Font = new System.Drawing.Font("Meiryo UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this._labelModulation.ForeColor = System.Drawing.Color.DimGray;
-            this._labelModulation.Location = new System.Drawing.Point(429, 126);
-            this._labelModulation.Name = "labelModulation";
-            this._labelModulation.Size = new System.Drawing.Size(29, 24);
+            this._labelModulation.Location = new System.Drawing.Point(572, 210);
+            this._labelModulation.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this._labelModulation.Name = "_labelModulation";
+            this._labelModulation.Size = new System.Drawing.Size(37, 30);
             this._labelModulation.TabIndex = 27;
             this._labelModulation.Text = "●";
             // 
-            // labelModulationText
+            // _labelModulationText
             // 
             this._labelModulationText.AutoSize = true;
-            this._labelModulationText.Font = new System.Drawing.Font("Meiryo UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this._labelModulationText.Font = new System.Drawing.Font("Meiryo UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this._labelModulationText.ForeColor = System.Drawing.Color.White;
-            this._labelModulationText.Location = new System.Drawing.Point(454, 131);
-            this._labelModulationText.Name = "labelModulationText";
-            this._labelModulationText.Size = new System.Drawing.Size(95, 15);
+            this._labelModulationText.Location = new System.Drawing.Point(605, 218);
+            this._labelModulationText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this._labelModulationText.Name = "_labelModulationText";
+            this._labelModulationText.Size = new System.Drawing.Size(120, 19);
             this._labelModulationText.TabIndex = 28;
             this._labelModulationText.Text = "MODULATION";
             // 
+            // _sequence
+            // 
+            this._sequence.Format = 1;
+            // 
+            // _sequencer
+            // 
+            this._sequencer.Position = 0;
+            this._sequencer.Sequence = this._sequence;
+            this._sequencer.ChannelMessagePlayed += new System.EventHandler<Sanford.Multimedia.Midi.ChannelMessageEventArgs>(this.sequencer_ChannelMessagePlayed);
+            // 
+            // _pianoControl
+            // 
+            this._pianoControl.HighNoteID = 109;
+            this._pianoControl.Location = new System.Drawing.Point(15, 322);
+            this._pianoControl.LowNoteID = 21;
+            this._pianoControl.Name = "pianoControl";
+            this._pianoControl.NoteOnColor = System.Drawing.Color.SkyBlue;
+            this._pianoControl.Size = new System.Drawing.Size(915, 140);
+            this._pianoControl.TabIndex = 4;
+            this._pianoControl.TabStop = false;
+            this._pianoControl.Text = "pianoControl";
+            // 
             // FormMain
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
-            this.ClientSize = new System.Drawing.Size(709, 290);
+            this.ClientSize = new System.Drawing.Size(945, 483);
+            this.Controls.Add(this._pianoControl);
             this.Controls.Add(this._labelModulationText);
             this.Controls.Add(this._labelModulation);
             this.Controls.Add(this._labelMode);
@@ -410,13 +412,12 @@
             this.Controls.Add(this._buttonLoad);
             this.Controls.Add(this._buttonStop);
             this.Controls.Add(this._buttonPlay);
-            this.Controls.Add(this._pianoControl);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "FormMain";
             this.Text = "© STUDIO MeowToon";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.formMain_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion

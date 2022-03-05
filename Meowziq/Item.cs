@@ -24,8 +24,8 @@ namespace Meowziq {
         // Constructor
 
         public Item() {
-            _toAddHashSet = new HashSet<int>(); // 追加した判定
-            _takeOutHashSet = new HashSet<int>(); // 取り出した判定
+            _toAddHashSet = new(); // 追加した判定
+            _takeOutHashSet = new(); // 取り出した判定
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -72,8 +72,8 @@ namespace Meowziq {
         /// key の value を置き換えます
         /// </summary>
         public void SetBy(int key, List<T> value) {
-            this.Remove(key);
-            this.Add(key, value);
+            Remove(key);
+            Add(key, value);
         }
 
         /// <summary>

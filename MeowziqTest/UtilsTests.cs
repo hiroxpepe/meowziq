@@ -2,7 +2,9 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
-namespace Meowziq.Tests {
+using Meowziq;
+
+namespace MeowziqTest {
     [TestClass()]
     public class UtilsTests {
 

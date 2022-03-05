@@ -4,7 +4,10 @@ using static Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 using System;
 
-namespace Meowziq.Value.Tests {
+using Meowziq.Core;
+using Meowziq.Value;
+
+namespace MeowziqTest.Value {
     [TestClass()]
     public class InheritorTests {
 
@@ -77,11 +80,11 @@ namespace Meowziq.Value.Tests {
         /// </summary>
         [TestMethod()]
         public void ApplyTest() {
-            var target = new Core.Phrase();
+            var target = new Phrase();
             target.Data.Note.Text   = "[****|1**3|****|****][****|****|>>1>|--3-]";
-            var baze = new Core.Phrase();
+            var baze = new Phrase();
             baze.Data.Note.Text     = "[7>--|4>>5|>>7>|>>5>][7>--|4>>5|>>7>|>>5>]";
-            var expected = new Core.Phrase();
+            var expected = new Phrase();
             expected.Data.Note.Text = "[7>--|1>>3|>>7>|>>5>][7>--|4>>5|>>1>|--3-]";
             var result = Inheritor.Apply(target, baze);
             AreEqual(result.Data.Note.Text, expected.Data.Note.Text);
