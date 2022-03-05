@@ -73,12 +73,12 @@ namespace Meowziq.Core {
                     throw new ArgumentException("invalid range format.");
                 }
                 if (_data.HasChord) {
-                    _data.Chord.Range = new Range(
+                    _data.Chord.Range = new Value.Range(
                         int.Parse(rangeArray[0]),
                         int.Parse(rangeArray[1])
                     );
                 } else if (_data.HasSeque) {
-                    _data.Seque.Range = new Range(
+                    _data.Seque.Range = new Value.Range(
                         int.Parse(rangeArray[0]),
                         int.Parse(rangeArray[1])
                     );
