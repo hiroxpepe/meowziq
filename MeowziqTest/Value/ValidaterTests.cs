@@ -4,7 +4,9 @@ using static Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 using System;
 
-namespace Meowziq.Value.Tests {
+using Meowziq.Value;
+
+namespace MeowziqTest.Value {
     [TestClass()]
     public class ValidaterTests {
 
@@ -13,7 +15,7 @@ namespace Meowziq.Value.Tests {
         /// </summary>
         [TestMethod()]
         public void PhraseValueTest1() {
-            var result = new PrivateType(typeof(Validater)).InvokeStatic("PhraseValue", "[1111|----|5555|----]");
+            var result = Validater.PhraseValue("[1111|----|5555|----]");
             AreEqual(result, "[1111|----|5555|----]");
         }
 
@@ -22,8 +24,8 @@ namespace Meowziq.Value.Tests {
         /// </summary>
         [TestMethod()]
         [ExpectedException(typeof(FormatException))]
-        public void vPhraseValueTest2() {
-            new PrivateType(typeof(Validater)).InvokeStatic("PhraseValue", "[--1--|----|----|----]");
+        public void PhraseValueTest2() {
+            Validater.PhraseValue("[--1--|----|----|----]");
         }
     }
 }
