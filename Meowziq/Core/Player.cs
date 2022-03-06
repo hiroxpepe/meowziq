@@ -29,7 +29,7 @@ namespace Meowziq.Core {
         // Constructor
 
         public Player() {
-            _phraseList = new List<Phrase>();
+            _phraseList = new();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

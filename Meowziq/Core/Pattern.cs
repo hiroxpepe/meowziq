@@ -87,7 +87,7 @@ namespace Meowziq.Core {
                 throw new ArgumentException("beat counts needs 4."); // 1小節に足りない or 超過している
             }
             // Span を分解して1拍毎に追加する
-            _spanList = new List<Span>();
+            _spanList = new();
             spanList.ForEach(x => {
                 Enumerable.Range(0, x.Beat).ToList().ForEach(
                     _x => _spanList.Add(new Span(1, x.Degree, x.SpanMode))

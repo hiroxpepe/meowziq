@@ -43,7 +43,7 @@ namespace Meowziq.Loader {
         // private static Methods [verb]
 
         static Core.Player<T> convertPlayer(Player player) {
-            var newPlayer = new Core.Player<T>();
+            Core.Player<T> newPlayer = new();
             newPlayer.MidiCh = MidiChannel.Enum.Parse(player.Midi);
             if (int.Parse(player.Midi) is 9) { // FIXME: 10ch 以外のドラムを可能にする
                 newPlayer.DrumKit = DrumKit.Enum.Parse(player.Inst); // FIXME: 設定が違う場合

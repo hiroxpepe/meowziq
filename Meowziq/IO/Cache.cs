@@ -19,8 +19,8 @@ namespace Meowziq.IO {
         // static Constructor
 
         static Cache() {
-            _current = new Resourse();
-            _valid = new Resourse();
+            _current = new();
+            _valid = new();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -41,22 +41,17 @@ namespace Meowziq.IO {
         /// json ファイルを文字列として読み込みます
         /// </summary>
         public static void Load(string targetPath) {
-            using (var stream = new StreamReader($"{targetPath}/pattern.json")) {
-                _current.Pattern = stream.ReadToEnd();
-            }
-            using (var stream = new StreamReader($"{targetPath}/song.json")) {
-                _current.Song = stream.ReadToEnd();
-            }
-            using (var stream = new StreamReader($"{targetPath}/phrase.json")) {
-                _current.Phrase = stream.ReadToEnd();
-            }
-            using (var stream = new StreamReader($"{targetPath}/player.json")) {
-                _current.Player = stream.ReadToEnd();
-            }
+            using var stream1 = new StreamReader($"{targetPath}/pattern.json");
+            _current.Pattern = stream1.ReadToEnd();
+            using var stream2 = new StreamReader($"{targetPath}/song.json");
+            _current.Song = stream2.ReadToEnd();
+            using var stream3 = new StreamReader($"{targetPath}/phrase.json");
+            _current.Phrase = stream3.ReadToEnd();
+            using var stream4 = new StreamReader($"{targetPath}/player.json");
+            _current.Player = stream4.ReadToEnd();
             if (File.Exists($"{targetPath}/mixer.json")) {
-                using (var stream = new StreamReader($"{targetPath}/mixer.json")) {
-                    _current.Mixer = stream.ReadToEnd();
-                }
+                using var stream5 = new StreamReader($"{targetPath}/mixer.json");
+                _current.Mixer = stream5.ReadToEnd();
             }
         }
 
