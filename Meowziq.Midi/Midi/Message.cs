@@ -15,7 +15,7 @@ namespace Meowziq.Midi {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Fields
 
-        static HashSet<int> _hashSet = new HashSet<int>();
+        static HashSet<int> _hashSet;
 
         static bool _flag;
 
@@ -23,6 +23,7 @@ namespace Meowziq.Midi {
         // static Constructor
 
         static Message() {
+            _hashSet = new();
             _flag = true;
         }
 
@@ -180,7 +181,7 @@ namespace Meowziq.Midi {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Fields
 
-            static Item<ChannelMessage> _item = new Item<ChannelMessage>(); // Tick 毎の メッセージのリスト
+            static Item<ChannelMessage> _item = new(); // Tick 毎の メッセージのリスト
 
             static HashSet<int>[] _allNoteOffToAddArray = new HashSet<int>[16]; // ノート強制停止用配列
 
@@ -218,7 +219,7 @@ namespace Meowziq.Midi {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Fields
 
-            static Item<ChannelMessage> _item = new Item<ChannelMessage>(); // Tick 毎の メッセージのリスト
+            static Item<ChannelMessage> _item = new(); // Tick 毎の メッセージのリスト
 
             static HashSet<int>[] _allNoteOffToAddArray = new HashSet<int>[16]; // ノート強制停止用配列
 

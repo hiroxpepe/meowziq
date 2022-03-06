@@ -266,7 +266,7 @@ namespace Meowziq.View {
                 var songDir = _targetPath.Split(Path.DirectorySeparatorChar).Last();
                 Midi.Message.Invert(); // データ生成後にフラグ反転
                 // 曲情報設定
-                var conductorTrack = new Track();
+                Track conductorTrack = new();
                 conductorTrack.Insert(0, new MetaMessage(MetaType.Tempo, Value.Converter.ToByteTempo(State.Tempo)));
                 conductorTrack.Insert(0, new MetaMessage(MetaType.TrackName, Value.Converter.ToByteArray(State.Name)));
                 conductorTrack.Insert(0, new MetaMessage(MetaType.Copyright, Value.Converter.ToByteArray(State.Copyright)));
@@ -408,8 +408,8 @@ namespace Meowziq.View {
             /// creates and outputs an SMF file for tempo control.
             /// </summary>
             public static void CreateConductor(Sequence sequence) {
-                var tempo = new MetaMessage(MetaType.Tempo, Value.Converter.ToByteTempo(State.Tempo));
-                var track = new Track();
+                MetaMessage tempo = new(MetaType.Tempo, Value.Converter.ToByteTempo(State.Tempo));
+                Track track = new();
                 track.Insert(0, tempo);
                 for (var idx = 0; idx < 100000; idx++) { // tick を 30間隔でループさせます // TODO: ループ回数
                     var tick = idx * 30; // 30 tick を手動生成
