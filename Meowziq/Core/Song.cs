@@ -50,7 +50,7 @@ namespace Meowziq.Core {
         /// </summary>
         public List<Pattern> AllPattern {
             get {
-                var newPatternList = new List<Pattern>();
+                List<Pattern> newPatternList = new();
                 _sectionList.ForEach(x => x.AllPattern.ForEach(_x => newPatternList.Add(_x)));
                 return newPatternList;
             }

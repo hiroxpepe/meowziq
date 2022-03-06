@@ -7,9 +7,11 @@ using static Meowziq.Utils;
 
 namespace Meowziq.Core {
     /// <summary>
-    /// Generator Class
-    /// generate note data
+    /// generates Note objects and adds to the Item object.
     /// </summary>
+    /// <remarks>
+    /// called from Meowziq.Core.Phrase.onBuild().<br/>
+    /// </remarks>
     public class Generator {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -28,7 +30,7 @@ namespace Meowziq.Core {
         // public Methods [verb]
 
         /// <summary>
-        /// create and apply a note object.
+        /// creates and applies a Note object.
         /// </summary>
         public void ApplyNote(int startTick, int beatCount, List<Span> spanList, Param param) {
             for (var I6beatIdx = new Index(beatCount); I6beatIdx.HasNext; I6beatIdx.Increment()) {
@@ -74,7 +76,7 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// ドラム用 Note オブジェクトを作成して適用します
+        /// creates and applies a drum Note object.
         /// </summary>
         public void ApplyDrumNote(int startTick, int beatCount, Param param) {
             for (var I6beatIdx = new Index(beatCount); I6beatIdx.HasNext; I6beatIdx.Increment()) {
@@ -94,7 +96,7 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// シーケンス用 Note オブジェクトを作成して適用します
+        /// creates and applies a sequence Note object.
         /// </summary>
         public void ApplySequeNote(int startTick, int beatCount, List<Span> spanList, Param param) {
             for (var I6beatIdx = new Index(beatCount); I6beatIdx.HasNext; I6beatIdx.Increment()) {
@@ -117,7 +119,7 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// UI 表示用の情報を作成します
+        /// creates information for UI display.
         /// </summary>
         public void ApplyInfo(int startTick, int beatCount, List<Span> spanList) {
             for (var I6beatIdx = new Index(beatCount); I6beatIdx.HasNext; I6beatIdx.Increment()) {

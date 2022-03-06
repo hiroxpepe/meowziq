@@ -41,11 +41,11 @@ namespace Meowziq.Value {
         // Constructor
 
         public Data() {
-            _note = new Note();
+            _note = new();
             _auto = false;
-            _chord = new Chord();
-            _seque = new Seque();
-            _exp = new Exp();
+            _chord = new();
+            _seque = new();
+            _exp = new();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

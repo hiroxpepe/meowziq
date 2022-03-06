@@ -4,7 +4,7 @@ using System.Windows.Forms;
 namespace Meowziq.View {
     static class Program {
         /// <summary>
-        /// アプリケーションのメイン エントリ ポイントです。
+        /// the main entry point of the application.
         /// </summary>
         [STAThread]
         static void Main() {

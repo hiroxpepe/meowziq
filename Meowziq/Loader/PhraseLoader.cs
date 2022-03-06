@@ -32,7 +32,7 @@ namespace Meowziq.Loader {
         // private static Methods [verb]
 
         static Core.Phrase convertPhrase(Phrase phrase) {
-            var newPhrase = new Core.Phrase();
+            Core.Phrase newPhrase = new();
             newPhrase.Type = phrase.Type;
             newPhrase.Name = phrase.Name;
             newPhrase.Base = phrase.Base;

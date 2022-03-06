@@ -65,7 +65,7 @@ namespace Meowziq.Loader {
                 .ToArray();
 
             // 1小節4拍しかないので決め打ち // FIXME: 足りないパターンがある [V|V|II|V] とか
-            var spanList = new List<Span>();
+            List<Span> spanList = new();
             // 4拍全部 "I | | | "
             if (beatArray[1].Equals(" ") && beatArray[2].Equals(" ") && beatArray[3].Equals(" ")) {
                 spanList.Add(convertSpan(4, beatArray[0])); // 1拍目

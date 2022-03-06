@@ -18,7 +18,7 @@ namespace Meowziq.Midi {
         // static Constructor
 
         static Multi() {
-            _trackMap = new Map<int, Track>();
+            _trackMap = new();
             Enumerable.Range(0, 16).ToList().ForEach(x => _trackMap.Add(x, new Track()));
         }
 

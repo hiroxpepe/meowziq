@@ -32,8 +32,8 @@ namespace Meowziq.Core {
 
         static Mixer() {
             _use = false;
-            _previousFaderMap = new Map<string, Fader>();
-            _currentFaderMap = new Map<string, Fader>();
+            _previousFaderMap = new();
+            _currentFaderMap = new();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

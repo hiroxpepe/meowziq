@@ -21,9 +21,9 @@ namespace Meowziq.Core {
         // static Constructor
 
         static State() {
-            HashSet = new HashSet<int>(); // ※Dictionary.ContainsKey() が遅いのでその対策
-            ItemMap = new Map<int, Item16beat>();
-            TrackMap = new Map<int, Track>();
+            HashSet = new(); // ※Dictionary.ContainsKey() が遅いのでその対策
+            ItemMap = new();
+            TrackMap = new();
             _name = "Undefined"; // TODO: 別の曲を読み込んだ時
             _copyright = "Undefined"; // TODO: 別の曲を読み込んだ時
         }

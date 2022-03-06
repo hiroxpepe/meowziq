@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meowziq", "Meowziq\Meowziq.csproj", "{73E21602-E5FB-46BD-8FBC-C18E72E79089}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meowziq", "Meowziq\Meowziq.csproj", "{73E21602-E5FB-46BD-8FBC-C18E72E79089}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meowziq.View", "Meowziq.View\Meowziq.View.csproj", "{5365817E-0BC2-4444-BFFB-30EC3577D510}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meowziq.View", "Meowziq.View\Meowziq.View.csproj", "{5365817E-0BC2-4444-BFFB-30EC3577D510}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeowziqTest", "MeowziqTest\MeowziqTest.csproj", "{020B8C9F-E580-4CC0-A3F5-693D6D50B9BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeowziqTest", "MeowziqTest\MeowziqTest.csproj", "{020B8C9F-E580-4CC0-A3F5-693D6D50B9BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meowziq.Midi", "Meowziq.Midi\Meowziq.Midi.csproj", "{A3562768-EDBB-457A-AD96-F5CFB789DCE0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meowziq.Midi", "Meowziq.Midi\Meowziq.Midi.csproj", "{A3562768-EDBB-457A-AD96-F5CFB789DCE0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
