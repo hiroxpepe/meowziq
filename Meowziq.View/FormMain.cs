@@ -15,15 +15,15 @@ using Meowziq.Midi;
 
 namespace Meowziq.View {
     /// <summary>
-    /// TODO: 排他制御
-    /// MEMO: 半動的生成で MIDI ノートを出力し MIDI 楽器の音色をリアルタイムで変化させて楽しむ 
+    /// a main form of the application.
+    /// TODO: exclusive control
     /// </summary>
     public partial class FormMain : Form {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        Midi.Manager _midi;
+        Manager _midi;
 
         string _targetPath;
 
@@ -36,16 +36,14 @@ namespace Meowziq.View {
 
         public FormMain() {
             InitializeComponent();
-
-            // MIDIデバイス準備
-            _midi = new Midi.Manager();
+            _midi = new(); // creates a MIDI manager class.
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // EventHandler
 
         /// <summary>
-        /// 演奏を開始します
+        /// starts playing.
         /// </summary>
         async void buttonPlay_Click(object sender, EventArgs e) {
             try {
@@ -67,7 +65,7 @@ namespace Meowziq.View {
         }
 
         /// <summary>
-        /// 演奏を停止します
+        /// stop playing.
         /// </summary>
         async void buttonStop_Click(object sender, EventArgs e) {
             try {
@@ -83,7 +81,7 @@ namespace Meowziq.View {
         }
 
         /// <summary>
-        /// データをロードします
+        /// loads a song data.
         /// </summary>
         async void buttonLoad_Click(object sender, EventArgs e) {
             try {
@@ -101,7 +99,7 @@ namespace Meowziq.View {
         }
 
         /// <summary>
-        /// データをSMFに変換します
+        /// converts the song data to SMF.
         /// </summary>
         async void buttonConvert_Click(object sender, EventArgs e) {
             try {
@@ -122,7 +120,7 @@ namespace Meowziq.View {
         }
 
         /// <summary>
-        /// TODO: 動作確認 ⇒ NG
+        /// NG: doesn't work as expected.
         /// </summary>
         /*async*/ void formMain_FormClosing(object sender, FormClosingEventArgs e) {
             //var result = await stopSound();
@@ -132,12 +130,14 @@ namespace Meowziq.View {
         }
 
         /// <summary>
-        /// MIDI データをデバイスに投げます
-        /// NOTE: conductor.midi 依存で 30 tick単位でしか呼ばれていない
-        /// NOTE: conductor.midi のメッセージはスルーする  midi.OutDevice.Send(e.Message);
-        /// MEMO: tick と名前を付ける対象は常に絶対値とする
-        /// TODO: メッセージ送信のタイミングは独自実装出来るのでは？
+        /// throws MIDI data to the device.
         /// </summary>
+        /// <remarks>
+        /// NOTE: conductor.midi 依存で 30 tick単位でしか呼ばれていない<br/>
+        /// NOTE: conductor.midi のメッセージはスルーする  midi.OutDevice.Send(e.Message);<br/>
+        /// NOTE: tick と名前を付ける対象は常に絶対値とする<br/>
+        /// TODO: メッセージ送信のタイミングは独自実装出来るのでは？<br/>
+        /// </remarks>
         void sequencer_ChannelMessagePlayed(object sender, ChannelMessageEventArgs e) {
             if (Sound.Stopping) {
                 return;
@@ -177,9 +177,11 @@ namespace Meowziq.View {
         // private Methods [verb]
 
         /// <summary>
-        /// 停止中に曲データを完全にロードします
-        /// NOTE: SMF 出力時にも呼ばれます
+        /// loads a song data fully while stopped.
         /// </summary>
+        /// <remarks>
+        /// NOTE: SMF 出力時にも呼ばれます
+        /// </remarks>
         async Task<string> buildSong(bool smf = false) {
             var name = "------------";
             await Task.Run(() => {
@@ -194,9 +196,11 @@ namespace Meowziq.View {
         }
 
         /// <summary>
-        /// 演奏中に曲データの必要な部分をロードします
-        /// NOTE: Message クラスから呼ばれます
+        /// loads the required part of the song data during playing the song.
         /// </summary>
+        /// <remarks>
+        /// NOTE: Message クラスから呼ばれます
+        /// </remarks>
         async void loadSong(int tick) {
             try {
                 await Task.Run(() => {
@@ -224,7 +228,7 @@ namespace Meowziq.View {
         }
 
         /// <summary>
-        /// リソースの json ファイルをメモリに読み込みます
+        /// loads the resource's JSON files into memory.
         /// </summary>
         void buildResourse(int tick, bool current = true, bool smf = false) {
             MixerLoader<ChannelMessage>.Build(current ? Cache.Current.MixerStream : Cache.Valid.MixerStream);
@@ -239,9 +243,11 @@ namespace Meowziq.View {
         }
 
         /// <summary>
-        /// ソングをSMFに変換して出力
-        /// TODO: 曲再生を止める
+        /// converts the song to SMF and output as a file.
         /// </summary>
+        /// <remarks>
+        /// TODO: 曲再生を止める
+        /// </remarks>
         async Task<bool> convertSong() {
             return await Task.Run(async () => {
                 // 進捗表示用タイマー
@@ -292,14 +298,14 @@ namespace Meowziq.View {
         }
 
         /// <summary>
-        /// 演奏開始
+        /// starts to play a song.
         /// </summary>
         async Task<bool> startSound() {
             return await Task.Run(async () => {
                 Midi.Message.Clear();
                 _textBoxSongName.Text = await buildSong();
                 Facade.CreateConductor(_sequence);
-                _sequence.Load("./data/conductor.mid");
+                _sequence.Load("./data/conductor.mid"); // FIXME: to const value.
                 _sequencer.Position = 0;
                 _sequencer.Start();
                 _labelPlay.ForeColor = Color.Lime;
@@ -311,7 +317,7 @@ namespace Meowziq.View {
         }
 
         /// <summary>
-        /// 演奏停止
+        /// stop to play a song.
         /// </summary>
         async Task<bool> stopSound() {
             return await Task.Run(() => {
@@ -330,7 +336,7 @@ namespace Meowziq.View {
         }
 
         /// <summary>
-        /// UI表示を更新します
+        /// updates the UI display.
         /// </summary>
         MethodInvoker updateDisplay(State.Item16beat item) {
             return () => {
@@ -368,7 +374,7 @@ namespace Meowziq.View {
         }
 
         /// <summary>
-        /// UI表示を初期化します
+        /// initializes the UI display.
         /// </summary>
         MethodInvoker resetDisplay() {
             return () => {
@@ -391,7 +397,7 @@ namespace Meowziq.View {
         // inner Classes
 
         /// <summary>
-        /// 処理用のフロントクラス
+        /// a front class for processing.
         /// </summary>
         static class Facade {
 
@@ -399,7 +405,7 @@ namespace Meowziq.View {
             // public static Methods [verb]
 
             /// <summary>
-            /// テンポ制御用の SMF ファイルを作成して出力します
+            /// creates and outputs an SMF file for tempo control.
             /// </summary>
             public static void CreateConductor(Sequence sequence) {
                 var tempo = new MetaMessage(MetaType.Tempo, Value.Converter.ToByteTempo(State.Tempo));
@@ -410,16 +416,19 @@ namespace Meowziq.View {
                     track.Insert(tick, new ChannelMessage(ChannelCommand.NoteOn, 0, 64, 0));
                     track.Insert(tick + 30, new ChannelMessage(ChannelCommand.NoteOff, 0, 64, 0));
                 }
-                sequence.Load("./data/conductor.mid"); // TODO: 必要？
+                sequence.Load("./data/conductor.mid"); // TODO: 必要？ // FIXME: to const value.
                 sequence.Clear();
                 sequence.Add(track);
-                sequence.Save($"./data/conductor.mid"); // テンポ制御用 SMF ファイル書き出し
+                sequence.Save($"./data/conductor.mid"); // テンポ制御用 SMF ファイル書き出し // FIXME: to const value.
             }
         }
 
         /// <summary>
-        /// FormMain オブジェクトの状態を保持するクラス
+        /// holds the state of the FormMain.
         /// </summary>
+        /// <remarks>
+        /// TODO: フラグを同時に排他判定する
+        /// </remarks>
         static class Sound {
 
             ///////////////////////////////////////////////////////////////////////////////////////////
@@ -443,19 +452,17 @@ namespace Meowziq.View {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Properties [noun, adjective] 
 
-            // TODO: フラグを同時に判定操作する
-
-            public static bool Playing { // TODO: block ?
+            public static bool Playing {
                 get => _playing;
                 set => _playing = value;
             }
 
-            public static bool Played { // TODO: block ?
+            public static bool Played {
                 get => _played;
                 set => _played = value;
             }
 
-            public static bool Stopping { // TODO: block ?
+            public static bool Stopping {
                 get => _stopping;
                 set => _stopping = value;
             }
