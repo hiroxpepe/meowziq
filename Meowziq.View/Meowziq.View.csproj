@@ -1,14 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <LangVersion>9</LangVersion>
     <UseWindowsForms>true</UseWindowsForms>
-    <PackageId>MeowziQ</PackageId>
-    <Product>MeowziQ</Product>
-    <Company>STUDIO MeowToon</Company>
-    <Authors>Hiroyuki Adachi</Authors>
   </PropertyGroup>
 
   <ItemGroup>
