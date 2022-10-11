@@ -19,19 +19,19 @@ namespace Meowziq.Value {
         /// MEMO: メロディ、ハモリ記述と共用出来る？ ⇒ 多少無駄があっても別々で組んで後で統合した方が現状の破壊が少ない
         /// 
         /// </summary>
-        public Param(Note note, Exp exp, Way way, bool autoNote = true) {
+        public Param(Note note, Exp exp, Way way, bool auto_note = true) {
             this.note = note;
             Exp = exp;
             Way = way;
-            AutoNote = autoNote;
+            AutoNote = auto_note;
         }
 
         /// <summary>
         /// ドラム記述用パラメータ
         /// </summary>
-        public Param(Note note, int percussionNoteNum, Exp exp, Way way) {
+        public Param(Note note, int percussion_note_num, Exp exp, Way way) {
             this.note = note;
-            PercussionNoteNum = percussionNoteNum;
+            PercussionNoteNum = percussion_note_num;
             Exp = exp;
             Way = way;
         }

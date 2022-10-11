@@ -6,6 +6,9 @@ namespace Meowziq {
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // public Enums [noun]
 
+    /// <summary>
+    /// enumeration type of environment parameters.
+    /// </summary>
     public enum Env {
         MeasMax = 12,
     }

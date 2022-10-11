@@ -3,8 +3,8 @@ using NLog;
 
 namespace Meowziq {
     /// <summary>
-    /// ログ用ファサードクラス
-    /// NOTE: NLog を使用
+    /// facade class for logging
+    /// NOTE: use NLog
     /// </summary>
     public static class Log {
 
