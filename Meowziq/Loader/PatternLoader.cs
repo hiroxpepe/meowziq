@@ -30,15 +30,15 @@ namespace Meowziq.Loader {
             return new Core.Pattern(pattern.Name, convertMeasList(pattern.Data)); // Core.Pattern に変換
         }
 
-        static List<Meas> convertMeasList(string patternString) {
+        static List<Meas> convertMeasList(string pattern_string) {
             // 旋法の省略記述を変換
-            patternString = interpretModePrefix(patternString);
+            pattern_string = interpretModePrefix(pattern_string);
             // 小節に切り出す "[I:Aeo| | | ][IV| | | ][I| | | ][IV| | | ]"
-            var measStringArray = patternString.Replace("][", "@")  // まず "][" を "@" に置き換え
+            var meas_string_array = pattern_string.Replace("][", "@")  // まず "][" を "@" に置き換え
                 .Split('@') // 小節で切り分ける
                 .Select(x => x.Replace("[", "").Replace("]", "")).ToArray(); // 不要文字削除
             // Span リストに変換してから Meas を作成してリストに変換
-            return measStringArray.Select(x => new Meas(convertSpanList(x))).ToList();
+            return meas_string_array.Select(x => new Meas(convertSpanList(x))).ToList();
         }
 
         /// <summary>
@@ -55,9 +55,9 @@ namespace Meowziq.Loader {
             return target;
         }
 
-        static List<Span> convertSpanList(string measString) {
+        static List<Span> convertSpanList(string meas_string) {
             // Span に切り出す "I:Aeo | | | "
-            var beatArray = measString.Split('|')
+            var beat_array = meas_string.Split('|')
                 .Select(x => x.Replace("     ", " ")) // 5空白を1空白に置き換え
                 .Select(x => x.Replace("    ", " ")) // 4空白を1空白に置き換え
                 .Select(x => x.Replace("   ", " ")) // 3空白を1空白に置き換え
@@ -65,42 +65,42 @@ namespace Meowziq.Loader {
                 .ToArray();
 
             // 1小節4拍しかないので決め打ち // FIXME: 足りないパターンがある [V|V|II|V] とか
-            List<Span> spanList = new();
+            List<Span> span_list = new();
             // 4拍全部 "I | | | "
-            if (beatArray[1].Equals(" ") && beatArray[2].Equals(" ") && beatArray[3].Equals(" ")) {
-                spanList.Add(convertSpan(4, beatArray[0])); // 1拍目
+            if (beat_array[1].Equals(" ") && beat_array[2].Equals(" ") && beat_array[3].Equals(" ")) {
+                span_list.Add(convertSpan(4, beat_array[0])); // 1拍目
             }
             // 3拍と1拍 "I | | |V "
-            else if (beatArray[1].Equals(" ") && beatArray[2].Equals(" ") && !beatArray[3].Equals(" ")) {
-                spanList.Add(convertSpan(3, beatArray[0])); // 1拍目
-                spanList.Add(convertSpan(1, beatArray[3])); // 4拍目
+            else if (beat_array[1].Equals(" ") && beat_array[2].Equals(" ") && !beat_array[3].Equals(" ")) {
+                span_list.Add(convertSpan(3, beat_array[0])); // 1拍目
+                span_list.Add(convertSpan(1, beat_array[3])); // 4拍目
             }
             // 2拍と2拍 "I | |V | "
-            else if (beatArray[1].Equals(" ") && !beatArray[2].Equals(" ") && beatArray[3].Equals(" ")) {
-                spanList.Add(convertSpan(2, beatArray[0])); // 1拍目
-                spanList.Add(convertSpan(2, beatArray[2])); // 3拍目
+            else if (beat_array[1].Equals(" ") && !beat_array[2].Equals(" ") && beat_array[3].Equals(" ")) {
+                span_list.Add(convertSpan(2, beat_array[0])); // 1拍目
+                span_list.Add(convertSpan(2, beat_array[2])); // 3拍目
             }
             // TODO: // 2拍と1拍と1拍 "I | |V |I "
 
             // 1拍と3拍 "I |V | | "
-            else if (!beatArray[1].Equals(" ") && beatArray[2].Equals(" ") && beatArray[3].Equals(" ")) {
-                spanList.Add(convertSpan(1, beatArray[0])); // 1拍目
-                spanList.Add(convertSpan(3, beatArray[1])); // 2拍目
+            else if (!beat_array[1].Equals(" ") && beat_array[2].Equals(" ") && beat_array[3].Equals(" ")) {
+                span_list.Add(convertSpan(1, beat_array[0])); // 1拍目
+                span_list.Add(convertSpan(3, beat_array[1])); // 2拍目
             }
             // 1拍と2拍と1拍 "I |V | |I |"
-            else if (!beatArray[1].Equals(" ") && beatArray[2].Equals(" ") && !beatArray[3].Equals(" ")) {
-                spanList.Add(convertSpan(1, beatArray[0])); // 1拍目
-                spanList.Add(convertSpan(2, beatArray[1])); // 2拍目
-                spanList.Add(convertSpan(1, beatArray[3])); // 4拍目
+            else if (!beat_array[1].Equals(" ") && beat_array[2].Equals(" ") && !beat_array[3].Equals(" ")) {
+                span_list.Add(convertSpan(1, beat_array[0])); // 1拍目
+                span_list.Add(convertSpan(2, beat_array[1])); // 2拍目
+                span_list.Add(convertSpan(1, beat_array[3])); // 4拍目
             }
             // TODO: // 1拍と1拍と2拍 "I |V |I | |"
 
             // TODO: // 1拍と1拍と1拍と1拍 "I |V |I |V "
-            return spanList;
+            return span_list;
         }
 
-        static Span convertSpan(int beat, string beatString) {
-            var part = beatString.Split(':'); // ':' で分割
+        static Span convertSpan(int beat, string beat_string) {
+            var part = beat_string.Split(':'); // ':' で分割
             if (part.Length == 1) {
                 return new Span(beat, Degree.Enum.Parse(part[0].Trim()));
             } else {

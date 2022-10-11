@@ -23,19 +23,19 @@ namespace Meowziq.Value {
 
         Exp _exp;
 
-        Percussion[] _percussionArray; // data記述：ドラム Track パーカッション Note No
+        Percussion[] _percussion_array; // data記述：ドラム Track パーカッション Note No
 
-        string[] _beatArray; // data記述：ドラム音符
+        string[] _beat_array; // data記述：ドラム音符
 
-        string[] _noteArray; // data記述：Key 旋法の度数指定 ⇒ 歌メロなどを想定
+        string[] _note_array; // data記述：Key 旋法の度数指定 ⇒ 歌メロなどを想定
 
-        string[] _autoArray; // data記述：Span 旋法の度数指定 ⇒ ベースラインなどを想定
+        string[] _auto_array; // data記述：Span 旋法の度数指定 ⇒ ベースラインなどを想定
 
-        int[] _octArray;
+        int[] _oct_array;
 
-        string[] _preArray;
+        string[] _pre_array;
 
-        string[] _postArray;
+        string[] _post_array;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
@@ -80,12 +80,12 @@ namespace Meowziq.Value {
         /// Percussion の音色設定
         /// </summary>
         public Percussion[] PercussionArray {
-            get => _percussionArray;
+            get => _percussion_array;
             set {
                 if (value.Length != arrayLength) {
                     throw new ArgumentException("percussionArray must be same count as beatArray.");
                 } else {
-                    _percussionArray = value;
+                    _percussion_array = value;
                 }
             }
         }
@@ -94,12 +94,12 @@ namespace Meowziq.Value {
         /// "beat" テキストの配列
         /// </summary>
         public string[] BeatArray {
-            get => _beatArray;
+            get => _beat_array;
             set {
                 if (!(value is null)) {
                     value.ToList().ForEach(x => Value.Validater.PhraseValue(x));
                 }
-                _beatArray = value;
+                _beat_array = value;
             }
         }
 
@@ -107,12 +107,12 @@ namespace Meowziq.Value {
         /// "note" テキストの配列
         /// </summary>
         public string[] NoteArray {
-            get => _noteArray;
+            get => _note_array;
             set {
                 if (!(value is null)) {
                     value.ToList().ForEach(x => Value.Validater.PhraseValue(x));
                 }
-                _noteArray = value;
+                _note_array = value;
             }
         }
 
@@ -120,12 +120,12 @@ namespace Meowziq.Value {
         /// "auto" テキストの配列
         /// </summary>
         public string[] AutoArray {
-            get => _autoArray;
+            get => _auto_array;
             set {
                 if (!(value is null)) {
                     value.ToList().ForEach(x => Value.Validater.PhraseValue(x));
                 }
-                _autoArray = value;
+                _auto_array = value;
                 if (!(value is null)) {
                     _auto = true;
                 }
@@ -136,16 +136,16 @@ namespace Meowziq.Value {
         /// "note", "auto" テキストのオクターブ設定
         /// </summary>
         public int[] OctArray {
-            get => _octArray;
+            get => _oct_array;
             set {
                 checkTextArray();
                 if (value is null) {
-                    _octArray = new int[arrayLength];
-                    _octArray.Select(x => x = 0); // オクターブの設定を自動生成
+                    _oct_array = new int[arrayLength];
+                    _oct_array.Select(x => x = 0); // オクターブの設定を自動生成
                 } else if (value.Length != arrayLength) {
                     throw new ArgumentException("noteOctArray must be same count as noteArray or autoArray.");
                 } else {
-                    _octArray = value; // TODO: バリデーション
+                    _oct_array = value; // TODO: バリデーション
                 }
             }
         }
@@ -154,17 +154,17 @@ namespace Meowziq.Value {
         /// "beat", "note", "auto" テキストの前方音価設定
         /// </summary>
         public string[] PreArray {
-            get => _preArray;
+            get => _pre_array;
             set {
                 checkTextArray();
                 if (value is null) {
-                    _preArray = new string[arrayLength];
-                    _preArray.Select(x => x = null); // 初期設定を自動生成
+                    _pre_array = new string[arrayLength];
+                    _pre_array.Select(x => x = null); // 初期設定を自動生成
                 } else if (value.Length != arrayLength) {
                     throw new ArgumentException("preArray must be same count as beatArray or noteArray or autoArray.");
                 } else {
                     value.ToList().ForEach(x => Value.Validater.PhraseValue(x));
-                    _preArray = value;
+                    _pre_array = value;
                 }
             }
         }
@@ -173,17 +173,17 @@ namespace Meowziq.Value {
         /// "note", "auto" テキストの後方音価設定
         /// </summary>
         public string[] PostArray {
-            get => _postArray;
+            get => _post_array;
             set {
                 checkTextArray();
                 if (value is null) {
-                    _postArray = new string[arrayLength];
-                    _postArray.Select(x => x = null); // 初期設定を自動生成
+                    _post_array = new string[arrayLength];
+                    _post_array.Select(x => x = null); // 初期設定を自動生成
                 } else if (value.Length != arrayLength) {
                     throw new ArgumentException("postArray must be same count as noteArray or autoArray.");
                 } else {
                     value.ToList().ForEach(x => Value.Validater.PhraseValue(x));
-                    _postArray = value;
+                    _post_array = value;
                 }
             }
         }
@@ -242,14 +242,14 @@ namespace Meowziq.Value {
 
         int arrayLength {
             get {
-                if (_beatArray != null) {
-                    return _beatArray.Length;
+                if (_beat_array != null) {
+                    return _beat_array.Length;
                 }
-                if (_noteArray != null) {
-                    return _noteArray.Length;
+                if (_note_array != null) {
+                    return _note_array.Length;
                 }
-                if (_autoArray != null) {
-                    return _autoArray.Length;
+                if (_auto_array != null) {
+                    return _auto_array.Length;
                 }
                 return 0;
             }
@@ -257,7 +257,7 @@ namespace Meowziq.Value {
 
         bool hasAnyArray {
             get {
-                if (_beatArray != null || _noteArray != null || _autoArray != null) { // 何かは持つ
+                if (_beat_array != null || _note_array != null || _auto_array != null) { // 何かは持つ
                     return true;
                 }
                 return false; // beat、note、auto いずれも持たない
@@ -265,15 +265,15 @@ namespace Meowziq.Value {
         }
 
         public bool hasBeatArray {
-            get => _beatArray != null;
+            get => _beat_array != null;
         }
 
         public bool hasNoteArray {
-            get => _noteArray != null && _auto == false;
+            get => _note_array != null && _auto == false;
         }
 
         public bool hasAutoArray {
-            get => _autoArray != null && _auto == true;
+            get => _auto_array != null && _auto == true;
         }
 
         bool hasNote {

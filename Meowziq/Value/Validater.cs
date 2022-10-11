@@ -52,13 +52,13 @@ namespace Meowziq.Value {
         ///     これを16進にすると 0x07A120 ⇒ 3バイトで表現すると "07", "A1", "20"
         /// </summary>
         public static byte[] ToByteTempo(int tempo) {
-            var doubleValue = 60 * Math.Pow(10, 6) / tempo;
-            var hex = int.Parse(Math.Round(doubleValue).ToString()).ToString("X6"); // 16進数6桁変換
-            var charArray = hex.ToCharArray();
+            var double_value = 60 * Math.Pow(10, 6) / tempo;
+            var hex = int.Parse(Math.Round(double_value).ToString()).ToString("X6"); // 16進数6桁変換
+            var char_array = hex.ToCharArray();
             return new byte[3]{ // 3byte で返す
-                Convert.ToByte(charArray[0].ToString() + charArray[1].ToString(), 16),
-                Convert.ToByte(charArray[2].ToString() + charArray[3].ToString(), 16),
-                Convert.ToByte(charArray[4].ToString() + charArray[5].ToString(), 16)
+                Convert.ToByte(char_array[0].ToString() + char_array[1].ToString(), 16),
+                Convert.ToByte(char_array[2].ToString() + char_array[3].ToString(), 16),
+                Convert.ToByte(char_array[4].ToString() + char_array[5].ToString(), 16)
             };
         }
 
