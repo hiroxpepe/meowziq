@@ -32,39 +32,39 @@ namespace Meowziq.Loader {
         // private static Methods [verb]
 
         static Core.Phrase convertPhrase(Phrase phrase) {
-            Core.Phrase newPhrase = new();
-            newPhrase.Type = phrase.Type;
-            newPhrase.Name = phrase.Name;
-            newPhrase.Base = phrase.Base;
+            Core.Phrase new_phrase = new();
+            new_phrase.Type = phrase.Type;
+            new_phrase.Name = phrase.Name;
+            new_phrase.Base = phrase.Base;
             if (phrase.Note != null) { // キーの旋法を自動判定するモード
-                newPhrase.Data.Note.Text = phrase.Note;
+                new_phrase.Data.Note.Text = phrase.Note;
             } else if (phrase.Auto != null) { // Spanの旋法を自動判定するモード
-                newPhrase.Data.Note.Text = phrase.Auto;
-                newPhrase.Data.Auto = true;
+                new_phrase.Data.Note.Text = phrase.Auto;
+                new_phrase.Data.Auto = true;
             }
-            newPhrase.Data.Note.Oct = phrase.Oct;
-            newPhrase.Data.Chord.Text = phrase.Chord;
-            newPhrase.Data.Seque.Text = phrase.Gete;
-            newPhrase.Range = phrase.Range;
-            newPhrase.Data.Exp.Pre = phrase.Pre;
-            newPhrase.Data.Exp.Post = phrase.Post;
+            new_phrase.Data.Note.Oct = phrase.Oct;
+            new_phrase.Data.Chord.Text = phrase.Chord;
+            new_phrase.Data.Seque.Text = phrase.Gete;
+            new_phrase.Range = phrase.Range;
+            new_phrase.Data.Exp.Pre = phrase.Pre;
+            new_phrase.Data.Exp.Post = phrase.Post;
             if (phrase.Data != null) { // 複合データがある場合
-                newPhrase.Data.BeatArray = phrase.Data.BeatArray;
-                newPhrase.Data.NoteArray = phrase.Data.NoteArray;
-                newPhrase.Data.AutoArray = phrase.Data.AutoArray;
-                newPhrase.Data.OctArray = phrase.Data.OctArray;
-                newPhrase.Data.PreArray = phrase.Data.PreArray;
-                newPhrase.Data.PostArray = phrase.Data.PostArray;
+                new_phrase.Data.BeatArray = phrase.Data.BeatArray;
+                new_phrase.Data.NoteArray = phrase.Data.NoteArray;
+                new_phrase.Data.AutoArray = phrase.Data.AutoArray;
+                new_phrase.Data.OctArray = phrase.Data.OctArray;
+                new_phrase.Data.PreArray = phrase.Data.PreArray;
+                new_phrase.Data.PostArray = phrase.Data.PostArray;
                 if (phrase.Data.InstArray != null) { // ドラム用音名データがある場合
-                    newPhrase.Data.PercussionArray = phrase.Data.InstArray.Select(x => Percussion.Enum.Parse(x)).ToArray();
+                    new_phrase.Data.PercussionArray = phrase.Data.InstArray.Select(x => Percussion.Enum.Parse(x)).ToArray();
                 }
             }
-            return newPhrase;
+            return new_phrase;
         }
 
-        static Core.Phrase searchBasePhrase(string phraseType, string phraseName, List<Core.Phrase> list) {
+        static Core.Phrase searchBasePhrase(string phrase_type, string phrase_name, List<Core.Phrase> list) {
             try {
-                return list.Where(x => x.Type.Equals(phraseType) && x.Name.Equals(phraseName)).First();
+                return list.Where(x => x.Type.Equals(phrase_type) && x.Name.Equals(phrase_name)).First();
             } catch {
                 throw new ArgumentException("undefined pattern.");
             }

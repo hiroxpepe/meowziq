@@ -17,13 +17,13 @@ namespace Meowziq.Loader {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Fields
 
-        static List<Phrase> _phraseList;
+        static List<Phrase> _phrase_list;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Properties [noun, adjective] 
 
         public static List<Phrase> PhraseList {
-            set => _phraseList = value;
+            set => _phrase_list = value;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@ namespace Meowziq.Loader {
         /// Player のリストを作成します
         /// </summary>
         public static List<Core.Player<T>> Build(Stream target) {
-            if (_phraseList is null) {
+            if (_phrase_list is null) {
                 throw new ArgumentException("need phraseList.");
             }
             return loadJson(target).PlayerArray.Select(x => convertPlayer(x)).ToList(); // Core.Player のリストに変換
@@ -43,16 +43,16 @@ namespace Meowziq.Loader {
         // private static Methods [verb]
 
         static Core.Player<T> convertPlayer(Player player) {
-            Core.Player<T> newPlayer = new();
-            newPlayer.MidiCh = MidiChannel.Enum.Parse(player.Midi);
+            Core.Player<T> new_player = new();
+            new_player.MidiCh = MidiChannel.Enum.Parse(player.Midi);
             if (int.Parse(player.Midi) is 9) { // FIXME: 10ch 以外のドラムを可能にする
-                newPlayer.DrumKit = DrumKit.Enum.Parse(player.Inst); // FIXME: 設定が違う場合
+                new_player.DrumKit = DrumKit.Enum.Parse(player.Inst); // FIXME: 設定が違う場合
             } else {
-                newPlayer.Instrument = Instrument.Enum.Parse(player.Inst); // FIXME: 設定が違う場合
+                new_player.Instrument = Instrument.Enum.Parse(player.Inst); // FIXME: 設定が違う場合
             }
-            newPlayer.Type = player.Type;
-            newPlayer.PhraseList = _phraseList.Where(x => x.Type.Equals(newPlayer.Type)).ToList(); // Player と Phrase の type が一致したら
-            return newPlayer;
+            new_player.Type = player.Type;
+            new_player.PhraseList = _phrase_list.Where(x => x.Type.Equals(new_player.Type)).ToList(); // Player と Phrase の type が一致したら
+            return new_player;
         }
 
         static Json loadJson(Stream target) {

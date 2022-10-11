@@ -17,13 +17,13 @@ namespace Meowziq.Loader {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Fields
 
-        static List<Pattern> _patternList;
+        static List<Pattern> _pattern_list;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Properties [noun, adjective] 
 
         public static List<Pattern> PatternList {
-            set => _patternList = value;
+            set => _pattern_list = value;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -33,11 +33,11 @@ namespace Meowziq.Loader {
         /// Song を作成します
         /// </summary>
         public static Core.Song Build(Stream target) {
-            if (_patternList is null) {
+            if (_pattern_list is null) {
                 throw new ArgumentException("need patternList.");
             }
             var song = loadJson(target).Song;
-            var sectionList = song.Section.Select(x =>
+            var section_list = song.Section.Select(x =>
                 new Core.Section(
                     Key.Enum.Parse(x.Key),
                     Mode.Enum.Parse(x.Mode),
@@ -46,16 +46,16 @@ namespace Meowziq.Loader {
             return new Core.Song(
                 song.Name,
                 int.Parse(song.Tempo),
-                sectionList
+                section_list
             );
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private static Methods [verb]
 
-        static Pattern searchPattern(string patternName) {
+        static Pattern searchPattern(string pattern_name) {
             try {
-                return _patternList.Where(x => x.Name.Equals(patternName)).First(); // MEMO: 名前が一致した最初の要素
+                return _pattern_list.Where(x => x.Name.Equals(pattern_name)).First(); // MEMO: 名前が一致した最初の要素
             } catch {
                 throw new ArgumentException("undefined pattern.");
             }
