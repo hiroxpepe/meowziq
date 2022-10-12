@@ -4,21 +4,21 @@ using System.Text.RegularExpressions;
 
 namespace Meowziq {
     /// <summary>
-    /// 共通拡張メソッド
+    /// common extension methods.
     /// </summary>
     public static class Extensions {
         /// <summary>
-        /// char 文字を数値に変換します
+        /// converts a character to a number.
         /// </summary>
         public static int Int32(this char source) {
-            if (!Regex.IsMatch(source.ToString(), @"^[0-9]+$")) { // 0～9 のみ有効 
+            if (!Regex.IsMatch(source.ToString(), @"^[0-9]+$")) { // only 0 to 9 are valid.
                 throw new FormatException("a char value must be 0～9.");
             }
             return int.Parse(source.ToString());
         }
 
         /// <summary>
-        /// 文字列が null または 空文字("")ではない場合 TRUE を返します
+        /// returns true if the string is not a null or empty string.
         /// </summary>
         public static bool HasValue(this string source) {
             return !(source is null || source.Equals(""));

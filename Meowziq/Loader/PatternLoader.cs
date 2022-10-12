@@ -9,7 +9,7 @@ using Meowziq.Core;
 
 namespace Meowziq.Loader {
     /// <summary>
-    /// Pattern のローダークラス
+    /// loader class for pattern.
     /// </summary>
     public static class PatternLoader {
 

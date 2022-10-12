@@ -5,32 +5,67 @@ using System.Text.RegularExpressions;
 
 namespace Meowziq.Value {
     /// <summary>
-    /// Phrase クラスの Data クラス
-    /// NOTE: Loader クラスから操作されるので公開必須
+    /// data class of phrase class.
     /// </summary>
+    /// <note>
+    /// used from the Loader class, so it must be made public.
+    /// </note>
     public class Data {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        Note _note; // note記述：Key 旋法の度数指定 ⇒ 歌メロなどを想定、auto記述：Span 旋法の度数指定 ⇒ ベースラインなどを想定
+        /// <summary>
+        /// "note" notated value.
+        /// </summary>
+        /// <memo>
+        /// note記述：Key 旋法の度数指定 ⇒ 歌メロなどを想定
+        /// </memo>
+        Note _note;
 
-        bool _auto; // auto記述かどうか
+        /// <summary>
+        /// whether "auto" notated value.
+        /// </summary>
+        /// <memo>
+        /// auto記述：Span 旋法の度数指定 ⇒ ベースラインなどを想定
+        /// </memo>
+        bool _auto;
 
-        Chord _chord; // chord記述
+        /// <summary>
+        /// "chord" notated value.
+        /// </summary>
+        Chord _chord;
 
-        Seque _seque; // seque記述
+        /// <summary>
+        /// "seque" notated value.
+        /// </summary>
+        Seque _seque;
 
         Exp _exp;
 
-        Percussion[] _percussion_array; // data記述：ドラム Track パーカッション Note No
+        /// <summary>
+        /// data記述：ドラム Track パーカッション Note No
+        /// </summary>
+        Percussion[] _percussion_array;
 
-        string[] _beat_array; // data記述：ドラム音符
+        /// <summary>
+        /// data記述：ドラム音符
+        /// </summary>
+        string[] _beat_array;
 
-        string[] _note_array; // data記述：Key 旋法の度数指定 ⇒ 歌メロなどを想定
+        /// <summary>
+        /// data記述：Key 旋法の度数指定 ⇒ 歌メロなどを想定
+        /// </summary>
+        string[] _note_array; 
 
-        string[] _auto_array; // data記述：Span 旋法の度数指定 ⇒ ベースラインなどを想定
+        /// <summary>
+        /// data記述：Span 旋法の度数指定 ⇒ ベースラインなどを想定
+        /// </summary>
+        string[] _auto_array;
 
+        /// <summary>
+        /// data記述：オクターブ
+        /// </summary>
         int[] _oct_array;
 
         string[] _pre_array;
@@ -73,11 +108,11 @@ namespace Meowziq.Value {
 
         public Exp Exp {
             get => _exp;
-            set => _exp = value; // デフォルト値は 0
+            set => _exp = value; // default value is 0
         }
 
         /// <summary>
-        /// Percussion の音色設定
+        /// percussion sound array.
         /// </summary>
         public Percussion[] PercussionArray {
             get => _percussion_array;
@@ -91,7 +126,7 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// "beat" テキストの配列
+        /// array of "beat" text
         /// </summary>
         public string[] BeatArray {
             get => _beat_array;
@@ -104,7 +139,7 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// "note" テキストの配列
+        /// array of "note" text
         /// </summary>
         public string[] NoteArray {
             get => _note_array;
@@ -117,7 +152,7 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// "auto" テキストの配列
+        /// array of "auto" text
         /// </summary>
         public string[] AutoArray {
             get => _auto_array;
@@ -141,11 +176,11 @@ namespace Meowziq.Value {
                 checkTextArray();
                 if (value is null) {
                     _oct_array = new int[arrayLength];
-                    _oct_array.Select(x => x = 0); // オクターブの設定を自動生成
+                    _oct_array.Select(x => x = 0); // automatically generate octave values.
                 } else if (value.Length != arrayLength) {
                     throw new ArgumentException("noteOctArray must be same count as noteArray or autoArray.");
                 } else {
-                    _oct_array = value; // TODO: バリデーション
+                    _oct_array = value; // TODO: validation
                 }
             }
         }
@@ -159,7 +194,7 @@ namespace Meowziq.Value {
                 checkTextArray();
                 if (value is null) {
                     _pre_array = new string[arrayLength];
-                    _pre_array.Select(x => x = null); // 初期設定を自動生成
+                    _pre_array.Select(x => x = null); // automatically generate initial values.
                 } else if (value.Length != arrayLength) {
                     throw new ArgumentException("preArray must be same count as beatArray or noteArray or autoArray.");
                 } else {
@@ -178,7 +213,7 @@ namespace Meowziq.Value {
                 checkTextArray();
                 if (value is null) {
                     _post_array = new string[arrayLength];
-                    _post_array.Select(x => x = null); // 初期設定を自動生成
+                    _post_array.Select(x => x = null); // automatically generate initial values.
                 } else if (value.Length != arrayLength) {
                     throw new ArgumentException("postArray must be same count as noteArray or autoArray.");
                 } else {
@@ -189,49 +224,49 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// "beat" 記述のデータを持つかどうか
+        /// whether or not to have "beat" notated data.
         /// </summary>
         public bool HasBeat {
             get => !hasNote && !hasAuto && !hasChord && !hasSeque && hasBeatArray && !hasNoteArray && !hasAutoArray;
         }
 
         /// <summary>
-        /// "chord" 記述のデータを持つかどうか
+        /// whether or not to have "chord" notated data.
         /// </summary>
         public bool HasChord {
             get => !hasNote && !hasAuto && hasChord && !hasSeque && !hasBeatArray && !hasNoteArray && !hasAutoArray;
         }
 
         /// <summary>
-        /// "seque" 記述のデータを持つかどうか
+        /// whether or not to have "seque" notated data.
         /// </summary>
         public bool HasSeque {
             get => !hasNote && !hasAuto && !hasChord && hasSeque && !hasBeatArray && !hasNoteArray && !hasAutoArray;
         }
 
         /// <summary>
-        /// "note" 記述のデータを持つかどうか
+        /// whether or not to have "note" notated data.
         /// </summary>
         public bool HasNote {
             get => (hasNote || hasNoteArray) && !hasAuto && !hasChord && !hasSeque && !hasBeatArray && !hasAutoArray;
         }
 
         /// <summary>
-        /// "auto" 記述のデータを持つかどうか
+        /// whether or not to have "auto" notated data.
         /// </summary>
         public bool HasAuto {
             get => !hasNote && !hasNoteArray && (hasAuto || hasAutoArray) && !hasChord && !hasSeque && !hasBeatArray;
         }
 
         /// <summary>
-        /// Array 記述のデータを持つかどうか
+        /// whether or not to have array notated data.
         /// </summary>
         public bool HasMulti {
             get => !hasNote && !hasAuto && !hasChord && !hasSeque && (hasBeatArray || hasNoteArray || hasAutoArray);
         }
 
         /// <summary>
-        /// データを持たないかどうか
+        /// whether or not to have data.
         /// </summary>
         public bool HasNoData {
             get => !hasNote && !hasAuto && !hasChord && !hasSeque && !hasBeatArray && !hasNoteArray && !hasAutoArray;
@@ -257,10 +292,10 @@ namespace Meowziq.Value {
 
         bool hasAnyArray {
             get {
-                if (_beat_array != null || _note_array != null || _auto_array != null) { // 何かは持つ
+                if (_beat_array != null || _note_array != null || _auto_array != null) { // have something.
                     return true;
                 }
-                return false; // beat、note、auto いずれも持たない
+                return false; // does not have beat, note, or auto.
             }
         }
 
@@ -285,7 +320,7 @@ namespace Meowziq.Value {
         }
 
         bool hasChord {
-            get => _chord.Text != null; // TODO: Text.Equals("") では？
+            get => _chord.Text != null; // TODO: is Text.Equals("") correct?
         }
 
         bool hasSeque {
@@ -303,9 +338,12 @@ namespace Meowziq.Value {
     }
 
     /// <summary>
+    /// note parameter class.
+    /// </summary>
+    /// <remarks>
     /// note: Keyの旋法で度数数値を Note No に変換します
     /// auto: Spanの旋法で度数数値を Note No に変換します
-    /// </summary>
+    /// </remarks>
     public class Note {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -350,8 +388,11 @@ namespace Meowziq.Value {
     }
 
     /// <summary>
-    /// NOTE: 個別にプロパティ設定が必要
+    /// chord parameter class.
     /// </summary>
+    /// <note>
+    /// 個別にプロパティ設定が必要
+    /// </note>
     public class Chord {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -384,7 +425,7 @@ namespace Meowziq.Value {
     }
 
     /// <summary>
-    /// アルペジオ用設定
+    /// arpeggio parameter class.
     /// </summary>
     public class Seque {
 
@@ -446,7 +487,7 @@ namespace Meowziq.Value {
         // public static Methods [verb]
 
         /// <summary>
-        /// 音価に変換して返します
+        /// converts the text mark to the note value.
         /// </summary>
         public static int ToGate(string target) {
             if (target.Equals("+")) {
@@ -461,9 +502,11 @@ namespace Meowziq.Value {
     }
 
     /// <summary>
-    /// Range パラメータクラス
-    /// TODO: 範囲を小節内で指定出来るように
+    /// range parameter class.
     /// </summary>
+    /// <todo>
+    /// 範囲を小節内で指定出来るように
+    /// </todo>
     public class Range {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -476,7 +519,7 @@ namespace Meowziq.Value {
             if (max > 127) {
                 throw new ArgumentException("invalid range max.");
             }
-            if (max - min != 11) { // オクターブの範囲外
+            if (max - min != 11) { // octave out of range.
                 var okMax = min + 11;
                 var okMin = max - 11;
                 throw new ArgumentException($"invalid range length,\r\nmust set {min}:{okMax} or {okMin}:{max}.");

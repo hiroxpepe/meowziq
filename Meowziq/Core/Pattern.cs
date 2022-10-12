@@ -15,7 +15,7 @@ namespace Meowziq.Core {
 
         string _name;
 
-        List<Meas> _measList;
+        List<Meas> _meas_list;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
@@ -23,12 +23,12 @@ namespace Meowziq.Core {
         /// <summary>
         /// NOTE: コンストラクタだけが作成する唯一の方法
         /// </summary>
-        public Pattern(string name, List<Meas> measList) {
-            if (measList.Count > Env.MeasMax.Int32()) {
+        public Pattern(string name, List<Meas> meas_list) {
+            if (meas_list.Count > Env.MeasMax.Int32()) {
                 throw new ArgumentException($"measure counts are until {Env.MeasMax.Int32()}."); // 1パターンは12小節まで
             }
             _name = name;
-            _measList = measList;
+            _meas_list = meas_list;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -43,21 +43,21 @@ namespace Meowziq.Core {
         /// </summary>
         public int BeatCount {
             // FIXME: 1小節を4拍として計算
-            get => _measList.Count * 4;
+            get => _meas_list.Count * 4;
         }
 
         /// <summary>
         /// Meas のリストを返す
         /// </summary>
         public List<Meas> AllMeas {
-            get => _measList;
+            get => _meas_list;
         }
 
         /// <summary>
         /// Span のリストを返す
         /// </summary>
         public List<Span> AllSpan {
-            get => _measList.SelectMany(x => x.AllSpan).ToList();
+            get => _meas_list.SelectMany(x => x.AllSpan).ToList();
         }
     }
 
@@ -71,7 +71,7 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        List<Span> _spanList;
+        List<Span> _span_list;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
@@ -80,17 +80,17 @@ namespace Meowziq.Core {
         /// コンストラクタだけが作成する唯一の方法
         /// </summary>
         public Meas(List<Span> spanList) {
-            var totalBeatCount = 0;
-            spanList.ForEach(x => totalBeatCount += x.Beat); // 拍を集計する
-            if (totalBeatCount < 4 || totalBeatCount > 4) {
+            var total_beat_count = 0;
+            spanList.ForEach(x => total_beat_count += x.Beat); // 拍を集計する
+            if (total_beat_count < 4 || total_beat_count > 4) {
                 // FIXME: 3拍子とかは？
                 throw new ArgumentException("beat counts needs 4."); // 1小節に足りない or 超過している
             }
             // Span を分解して1拍毎に追加する
-            _spanList = new();
+            _span_list = new();
             spanList.ForEach(x => {
                 Enumerable.Range(0, x.Beat).ToList().ForEach(
-                    _x => _spanList.Add(new Span(1, x.Degree, x.SpanMode))
+                    _x => _span_list.Add(new Span(1, x.Degree, x.SpanMode))
                 );
             });
         }
@@ -102,7 +102,7 @@ namespace Meowziq.Core {
         /// Span のリストを返す
         /// </summary>
         public List<Span> AllSpan {
-            get => _spanList;
+            get => _span_list;
         }
     }
 
@@ -124,9 +124,9 @@ namespace Meowziq.Core {
 
         Degree _degree; // キーに対する度数
 
-        Mode _keyMode; // キーの旋法
+        Mode _key_mode; // キーの旋法
 
-        Mode _spanMode; // この期間の旋法
+        Mode _span_mode; // この期間の旋法
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
@@ -135,16 +135,16 @@ namespace Meowziq.Core {
             _beat = beat;
             _key = Key.Undefined;
             _degree = degree;
-            _keyMode = Mode.Undefined;
-            _spanMode = Mode.Undefined;
+            _key_mode = Mode.Undefined;
+            _span_mode = Mode.Undefined;
         }
 
-        public Span(int beat, Degree degree, Mode spanMode) {
+        public Span(int beat, Degree degree, Mode span_mode) {
             _beat = beat;
             _key = Key.Undefined;
             _degree = degree;
-            _keyMode = Mode.Undefined;
-            _spanMode = spanMode;
+            _key_mode = Mode.Undefined;
+            _span_mode = span_mode;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -164,12 +164,12 @@ namespace Meowziq.Core {
         }
 
         public Mode KeyMode {
-            get => _keyMode;
-            set => _keyMode = value;
+            get => _key_mode;
+            set => _key_mode = value;
         }
 
         public Mode SpanMode {
-            get => _spanMode; // 一度設定した spanMode は変更しない
+            get => _span_mode; // 一度設定した spanMode は変更しない
         }
     }
 }

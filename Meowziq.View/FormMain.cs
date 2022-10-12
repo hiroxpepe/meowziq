@@ -15,7 +15,7 @@ using Meowziq.Midi;
 
 namespace Meowziq.View {
     /// <summary>
-    /// a main form of the application.
+    /// main form of the application.
     /// TODO: exclusive control
     /// </summary>
     public partial class FormMain : Form {
@@ -25,9 +25,9 @@ namespace Meowziq.View {
 
         Manager _midi;
 
-        string _targetPath;
+        string _target_path;
 
-        string _exMessage;
+        string _ex_message;
 
         DialogResult _result;
 
@@ -36,7 +36,7 @@ namespace Meowziq.View {
 
         public FormMain() {
             InitializeComponent();
-            _midi = new(); // creates a MIDI manager class.
+            _midi = new(); // creates a midi manager class.
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -47,7 +47,7 @@ namespace Meowziq.View {
         /// </summary>
         async void buttonPlay_Click(object sender, EventArgs e) {
             try {
-                if (_textBoxSongName.Text.Equals("------------")) {
+                if (_textbox_song_name.Text.Equals("------------")) {
                     var message = "please load a song.";
                     MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     Log.Error(message);
@@ -85,11 +85,11 @@ namespace Meowziq.View {
         /// </summary>
         async void buttonLoad_Click(object sender, EventArgs e) {
             try {
-                _folderBrowserDialog.SelectedPath = AppDomain.CurrentDomain.BaseDirectory;
-                var dr = _folderBrowserDialog.ShowDialog();
+                _folderbrowserdialog.SelectedPath = AppDomain.CurrentDomain.BaseDirectory;
+                var dr = _folderbrowserdialog.ShowDialog();
                 if (dr == DialogResult.OK) {
-                    _targetPath = _folderBrowserDialog.SelectedPath;
-                    _textBoxSongName.Text = await buildSong();
+                    _target_path = _folderbrowserdialog.SelectedPath;
+                    _textbox_song_name.Text = await buildSong();
                 }
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
@@ -103,7 +103,7 @@ namespace Meowziq.View {
         /// </summary>
         async void buttonConvert_Click(object sender, EventArgs e) {
             try {
-                if (_textBoxSongName.Text.Equals("------------")) {
+                if (_textbox_song_name.Text.Equals("------------")) {
                     var message = "please load a song.";
                     MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     Log.Error(message);
@@ -136,12 +136,12 @@ namespace Meowziq.View {
         /// NOTE: conductor.midi 依存で 30 tick単位でしか呼ばれていない<br/>
         /// NOTE: conductor.midi のメッセージはスルーする  midi.OutDevice.Send(e.Message);<br/>
         /// NOTE: tick と名前を付ける対象は常に絶対値とする<br/>
-        /// TODO: メッセージ送信のタイミングは独自実装出来るのでは？<br/>
         /// </remarks>
+        /// <todo>
+        /// メッセージ送信のタイミングは独自実装出来るのでは？
+        /// </todo>
         void sequencer_ChannelMessagePlayed(object sender, ChannelMessageEventArgs e) {
-            if (Sound.Stopping) {
-                return;
-            }
+            if (Sound.Stopping) { return; }
             if (Visible) {
                 // TODO: カウント分はUIではマイナス表示とする？
                 var tick = _sequencer.Position - 1; // NOTE: Position が 1, 31 と来るので予め1引く
@@ -154,7 +154,7 @@ namespace Meowziq.View {
                     }); // MEMO: Parallel.ForEach では逆に遅かった
                     list.ForEach(x => {
                         if (x.MidiChannel != 9 && x.MidiChannel != 1) { // FIXME: 暫定:シーケンス除外
-                            _pianoControl.Send(x); // ドラム以外はピアノロールに表示
+                            _piano_control.Send(x); // ドラム以外はピアノロールに表示
                         }
                         if (x.MidiChannel == 2) {
                             Log.Debug($"Data1: {x.Data1} Data2: {x.Data2}");
@@ -180,46 +180,46 @@ namespace Meowziq.View {
         /// loads a song data fully while stopped.
         /// </summary>
         /// <remarks>
-        /// NOTE: SMF 出力時にも呼ばれます
+        /// also called from SMF output.
         /// </remarks>
         async Task<string> buildSong(bool smf = false) {
             var name = "------------";
             await Task.Run(() => {
-                Mixer<ChannelMessage>.Clear(); // TODO: ここでOKか確認
+                Mixer<ChannelMessage>.Clear(); // TODO: check if this process is ok here.
                 Cache.Clear();
-                Cache.Load(_targetPath);
+                Cache.Load(_target_path);
                 buildResourse(0, true, smf);
                 name = State.Name;
                 Log.Info("load! :)");
             });
-            return name; // Song の名前を返す
+            return name; // returns the name of the song.
         }
 
         /// <summary>
         /// loads the required part of the song data during playing the song.
         /// </summary>
         /// <remarks>
-        /// NOTE: Message クラスから呼ばれます
+        /// called from the message class.
         /// </remarks>
         async void loadSong(int tick) {
             try {
                 await Task.Run(() => {
-                    Cache.Load(_targetPath); // json ファイルを読み込む
+                    Cache.Load(_target_path); // json ファイルを読み込む
                     buildResourse(tick, true);
                     Cache.Update(); // 正常に読み込めたらキャッシュとして採用
-                    _exMessage = "";
+                    _ex_message = "";
                     Log.Trace("load! :)");
                 });
             } catch (Exception ex) { // NOTE: ここで ファイル読み込み ⇒ Build() までの全ての例外を捕捉する
-                if (!_exMessage.Equals(ex.Message)) { // エラーメッセージが違う場合
+                if (!_ex_message.Equals(ex.Message)) { // エラーメッセージが違う場合
                     _ = Task.Factory.StartNew(() => { // エラーダイアログ表示
                         _result = MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                         if (_result is DialogResult.OK) { // OKで閉じられたら
-                            _exMessage = ""; // フラグを初期化して必要なら再度ダイアログを表示
+                            _ex_message = ""; // フラグを初期化して必要なら再度ダイアログを表示
                         }
                     });
                 }
-                _exMessage = ex.Message;
+                _ex_message = ex.Message;
                 await Task.Run(() => {
                     Log.Fatal("load failed.. :(");
                     buildResourse(tick, false);
@@ -245,9 +245,9 @@ namespace Meowziq.View {
         /// <summary>
         /// converts the song to SMF and output as a file.
         /// </summary>
-        /// <remarks>
-        /// TODO: 曲再生を止める
-        /// </remarks>
+        /// <todo>
+        /// stop playing the song.
+        /// </todo>
         async Task<bool> convertSong() {
             return await Task.Run(async () => {
                 // 進捗表示用タイマー
@@ -257,23 +257,23 @@ namespace Meowziq.View {
                     Log.Info($"converting the song.. ({x})");
                     Invoke((MethodInvoker) (() => {
                         var _dot = (x % 2) == 0 ? "*" : "-";
-                        _textBoxSongName.Text = $"{message} {_dot}";
+                        _textbox_song_name.Text = $"{message} {_dot}";
                     }));
                 });
                 // MIDI データ生成
                 Midi.Message.Clear();
-                var songName = await buildSong(true);
-                var songDir = _targetPath.Split(Path.DirectorySeparatorChar).Last();
+                var song_name = await buildSong(true);
+                var song_dir = _target_path.Split(Path.DirectorySeparatorChar).Last();
                 Midi.Message.Invert(); // データ生成後にフラグ反転
                 // 曲情報設定
-                Track conductorTrack = new();
-                conductorTrack.Insert(0, new MetaMessage(MetaType.Tempo, Value.Converter.ToByteTempo(State.Tempo)));
-                conductorTrack.Insert(0, new MetaMessage(MetaType.TrackName, Value.Converter.ToByteArray(State.Name)));
-                conductorTrack.Insert(0, new MetaMessage(MetaType.Copyright, Value.Converter.ToByteArray(State.Copyright)));
+                Track conductor_track = new();
+                conductor_track.Insert(0, new MetaMessage(MetaType.Tempo, Value.Converter.ToByteTempo(State.Tempo)));
+                conductor_track.Insert(0, new MetaMessage(MetaType.TrackName, Value.Converter.ToByteArray(State.Name)));
+                conductor_track.Insert(0, new MetaMessage(MetaType.Copyright, Value.Converter.ToByteArray(State.Copyright)));
                 State.TrackList.ForEach(x => {
-                    var chTrack = Multi.Get(x.MidiCh);
-                    chTrack.Insert(0, new MetaMessage(MetaType.TrackName, Value.Converter.ToByteArray(x.Name)));
-                    chTrack.Insert(0, new MetaMessage(MetaType.ProgramName, Value.Converter.ToByteArray(x.Instrument))); // TODO: 反映されない？
+                    var ch_track = Multi.Get(x.MidiCh);
+                    ch_track.Insert(0, new MetaMessage(MetaType.TrackName, Value.Converter.ToByteArray(x.Name)));
+                    ch_track.Insert(0, new MetaMessage(MetaType.ProgramName, Value.Converter.ToByteArray(x.Instrument))); // FIXME: not reflected?
                 });
                 // MIDI データ適用
                 for (var idx = 0; Midi.Message.Has(idx * 30); idx++) { // tick を 30間隔でループさせます
@@ -287,10 +287,10 @@ namespace Meowziq.View {
                 _sequence.Load("./data/conductor.mid"); // TODO: 必要？
                 _sequence.Clear();
                 _sequence.Format = 1;
-                _sequence.Add(conductorTrack);
+                _sequence.Add(conductor_track);
                 Multi.List.Where(x => x.Length > 1).ToList().ForEach(x => _sequence.Add(x));
-                _sequence.Save($"./data/{songDir}/{songName}.mid");
-                Invoke((MethodInvoker) (() => _textBoxSongName.Text = songName));// Song 名を戻す
+                _sequence.Save($"./data/{song_dir}/{song_name}.mid");
+                Invoke((MethodInvoker) (() => _textbox_song_name.Text = song_name));// Song 名を戻す
                 disposer.Dispose(); // タイマー破棄
                 Log.Info("save! :D");
                 return true;
@@ -303,12 +303,12 @@ namespace Meowziq.View {
         async Task<bool> startSound() {
             return await Task.Run(async () => {
                 Midi.Message.Clear();
-                _textBoxSongName.Text = await buildSong();
+                _textbox_song_name.Text = await buildSong();
                 Facade.CreateConductor(_sequence);
                 _sequence.Load("./data/conductor.mid"); // FIXME: to const value.
                 _sequencer.Position = 0;
                 _sequencer.Start();
-                _labelPlay.ForeColor = Color.Lime;
+                _label_play.ForeColor = Color.Lime;
                 Sound.Playing = true;
                 Sound.Played = false;
                 Log.Info("start! :D");
@@ -340,12 +340,12 @@ namespace Meowziq.View {
         /// </summary>
         MethodInvoker updateDisplay(State.Item16beat item) {
             return () => {
-                _textBoxBeat.Text = State.Beat.ToString();
-                _textBoxMeas.Text = State.Meas.ToString();
-                _textBoxKey.Text = item.Key;
-                _textBoxDegree.Text = item.Degree;
-                _textBoxKeyMode.Text = item.KeyMode;
-                _textBoxCode.Text = Utils.ToSimpleCodeName(
+                _textbox_beat.Text = State.Beat.ToString();
+                _textbox_meas.Text = State.Meas.ToString();
+                _textbox_key.Text = item.Key;
+                _textbox_degree.Text = item.Degree;
+                _textbox_key_mode.Text = item.KeyMode;
+                _textbox_code.Text = Utils.ToSimpleCodeName(
                     Key.Enum.Parse(item.Key),
                     Degree.Enum.Parse(item.Degree),
                     Mode.Enum.Parse(item.KeyMode),
@@ -353,22 +353,22 @@ namespace Meowziq.View {
                     item.AutoMode
                 );
                 if (item.AutoMode) { // 自動旋法適用の場合
-                    var autoMode = Utils.ToModeSpan(
+                    var auto_mode = Utils.ToModeSpan(
                         Degree.Enum.Parse(item.Degree),
                         Mode.Enum.Parse(item.KeyMode)
                     );
-                    _textBoxMode.Text = autoMode.ToString();
-                    _labelModulation.ForeColor = Color.DimGray;
+                    _textbox_Mode.Text = auto_mode.ToString();
+                    _label_modulation.ForeColor = Color.DimGray;
                 } else { // Spanの旋法適用の場合
-                    _textBoxMode.Text = item.SpanMode;
-                    var keyMode = Utils.ToModeKey(
+                    _textbox_Mode.Text = item.SpanMode;
+                    var key_mode = Utils.ToModeKey(
                         Key.Enum.Parse(item.Key),
                         Degree.Enum.Parse(item.Degree),
                         Mode.Enum.Parse(item.KeyMode),
                         Mode.Enum.Parse(item.SpanMode)
                     );
-                    _textBoxKeyMode.Text = keyMode.ToString().Equals("Undefined") ? "---" : keyMode.ToString();
-                    _labelModulation.ForeColor = Color.HotPink; // TODO: 度合によって色変化
+                    _textbox_key_mode.Text = key_mode.ToString().Equals("Undefined") ? "---" : key_mode.ToString();
+                    _label_modulation.ForeColor = Color.HotPink; // TODO: 度合によって色変化
                 }
             };
         }
@@ -379,17 +379,17 @@ namespace Meowziq.View {
         MethodInvoker resetDisplay() {
             return () => {
                 Enumerable.Range(0, 88).ToList().ForEach(
-                    x => _pianoControl.Send(new ChannelMessage(ChannelCommand.NoteOff, 1, x, 0))
+                    x => _piano_control.Send(new ChannelMessage(ChannelCommand.NoteOff, 1, x, 0))
                 );
-                _labelPlay.ForeColor = Color.DimGray;
-                _labelModulation.ForeColor = Color.DimGray;
-                _textBoxBeat.Text = "0";
-                _textBoxMeas.Text = "0";
-                _textBoxKey.Text = "---";
-                _textBoxDegree.Text = "---";
-                _textBoxKeyMode.Text = "---";
-                _textBoxMode.Text = "---";
-                _textBoxCode.Text = "---";
+                _label_play.ForeColor = Color.DimGray;
+                _label_modulation.ForeColor = Color.DimGray;
+                _textbox_beat.Text = "0";
+                _textbox_meas.Text = "0";
+                _textbox_key.Text = "---";
+                _textbox_degree.Text = "---";
+                _textbox_key_mode.Text = "---";
+                _textbox_Mode.Text = "---";
+                _textbox_code.Text = "---";
             };
         }
 
@@ -426,9 +426,9 @@ namespace Meowziq.View {
         /// <summary>
         /// holds the state of the FormMain.
         /// </summary>
-        /// <remarks>
-        /// TODO: フラグを同時に排他判定する
-        /// </remarks>
+        /// <todo>
+        /// checks of exclusive control with flags at the same time.
+        /// </todo>
         static class Sound {
 
             ///////////////////////////////////////////////////////////////////////////////////////////

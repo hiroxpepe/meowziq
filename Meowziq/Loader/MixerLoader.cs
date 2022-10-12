@@ -6,7 +6,7 @@ using System.Runtime.Serialization.Json;
 
 namespace Meowziq.Loader {
     /// <summary>
-    /// Mixer のローダークラス
+    /// loader class for mixer.
     /// </summary>
     public static class MixerLoader<T> {
 

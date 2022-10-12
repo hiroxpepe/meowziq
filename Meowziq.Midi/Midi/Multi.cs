@@ -5,35 +5,35 @@ using Sanford.Multimedia.Midi;
 
 namespace Meowziq.Midi {
     /// <summary>
-    /// SMF 出力用 Track オブジェクトを保持するクラス
+    /// class that holds Sanford.Multimedia.Midi.Track objects for SMF output.
     /// </summary>
     public static class Multi {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Fields
 
-        static Map<int, Track> _trackMap;
+        static Map<int, Track> _track_map;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Constructor
 
         static Multi() {
-            _trackMap = new();
-            Enumerable.Range(0, 16).ToList().ForEach(x => _trackMap.Add(x, new Track()));
+            _track_map = new();
+            Enumerable.Range(0, 16).ToList().ForEach(x => _track_map.Add(x, new Track()));
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Properties [noun, adjective]
 
         public static List<Track> List {
-            get => _trackMap.Select(x => x.Value).ToList();
+            get => _track_map.Select(x => x.Value).ToList();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]
 
         public static Track Get(int index) {
-            return _trackMap[index];
+            return _track_map[index];
         }
     }
 }

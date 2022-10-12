@@ -10,24 +10,28 @@ namespace Meowziq.Core {
     /// generates Note objects and adds to the Item object.
     /// </summary>
     /// <remarks>
-    /// called from Meowziq.Core.Phrase.onBuild().<br/>
+    /// called from Meowziq.Core.Phrase.onBuild().
     /// </remarks>
     public class Generator {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Fields
+        #region Fields
 
         Item<Note> _note_item;
 
+        #endregion
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Constructor
+        #region Constructor
 
         public Generator(Item<Note> note_item) {
             _note_item = note_item;
         }
 
+        #endregion
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Methods [verb]
+        #region public Methods [verb]
 
         /// <summary>
         /// creates and applies a Note object.
@@ -137,8 +141,10 @@ namespace Meowziq.Core {
             }
         }
 
+        #endregion
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // private Methods [verb]
+        #region private Methods [verb]
 
         /// <summary>
         /// 全てのノートを Range 範囲指定以内に変換します
@@ -167,8 +173,12 @@ namespace Meowziq.Core {
             _note_item.Add(tick, note);
         }
 
+        #endregion
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // inner Classes
+        #region inner Classes
+
+        #region Gete
 
         /// <summary>
         /// 音価の情報を保持するクラス
@@ -176,7 +186,7 @@ namespace Meowziq.Core {
         class Gete {
 
             ///////////////////////////////////////////////////////////////////////////////////////////
-            // Fields
+            #region Fields
 
             int _beat_count;
 
@@ -188,8 +198,10 @@ namespace Meowziq.Core {
 
             int _pre_count;
 
+            #endregion
+
             ///////////////////////////////////////////////////////////////////////////////////////////
-            // Constructor
+            #region Constructor
 
             public Gete(int search_idx, int beat_count) {
                 _beat_count = beat_count;
@@ -205,8 +217,10 @@ namespace Meowziq.Core {
                 _pre_count = 0;
             }
 
+            #endregion
+
             ///////////////////////////////////////////////////////////////////////////////////////////
-            // Properties [noun, adjective] 
+            #region Properties [noun, adjective] 
 
             /// <summary>
             /// この Pattern に次の 16beat が存在するかどうか
@@ -243,8 +257,10 @@ namespace Meowziq.Core {
                 get => To16beatLength(_gate_count + 1); // 音の長さ：+1 はテキスト数値文字の分
             }
 
+            #endregion
+
             ///////////////////////////////////////////////////////////////////////////////////////////
-            // public Methods [verb]
+            #region public Methods [verb]
 
             /// <summary>
             /// シンコペーションの設定を適用します
@@ -265,7 +281,13 @@ namespace Meowziq.Core {
             public void IncrementGate() {
                 _gate_count++;
             }
+
+            #endregion
         }
+
+        #endregion
+
+        #region Index
 
         /// <summary>
         /// 16beatのカウントを保持するクラス
@@ -275,14 +297,16 @@ namespace Meowziq.Core {
         class Index {
 
             ///////////////////////////////////////////////////////////////////////////////////////////
-            // Fields
+            #region Fields
 
             int _beat_count; // この Pattern の拍数
 
             int _idx_for_16beat; // 16beatを4回数える用
 
+            #endregion
+
             ///////////////////////////////////////////////////////////////////////////////////////////
-            // Constructor
+            #region Constructor
 
             public Index(int beat_count) {
                 _beat_count = beat_count;
@@ -290,8 +314,10 @@ namespace Meowziq.Core {
                 SpanIdx = 0;
             }
 
+            #endregion
+
             ///////////////////////////////////////////////////////////////////////////////////////////
-            // Properties [noun, adjective] 
+            #region Properties [noun, adjective] 
 
             /// <summary>
             /// 16beat の index 値
@@ -318,8 +344,10 @@ namespace Meowziq.Core {
                 }
             }
 
+            #endregion
+
             ///////////////////////////////////////////////////////////////////////////////////////////
-            // public Methods [verb]
+            #region public Methods [verb]
 
             public void Increment() {
                 Idx++; // increments 16 beats
@@ -329,6 +357,12 @@ namespace Meowziq.Core {
                     SpanIdx++; // Span index をインクリメント MEMO: 1拍のこと
                 } // TODO: 必要なのは1小節をカウントすることとそのindex値
             }
+
+            #endregion
         }
+
+        #endregion
+
+        #endregion
     }
 }

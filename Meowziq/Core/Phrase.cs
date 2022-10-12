@@ -20,14 +20,14 @@ namespace Meowziq.Core {
 
         Data _data; // json から読み込んだデータを格納
 
-        Item<Note> _noteItem; // Tick 毎の Note のリスト、Pattern の設定回数分の Note を格納
+        Item<Note> _note_item; // Tick 毎の Note のリスト、Pattern の設定回数分の Note を格納
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
         public Phrase() {
             _data = new(); // json から詰められるデータ
-            _noteItem = new();
+            _note_item = new();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,23 +64,23 @@ namespace Meowziq.Core {
                 if (value is null) {
                     return;
                 }
-                var rangeText = value;
-                if (!rangeText.Contains(":")) {
+                var range_text = value;
+                if (!range_text.Contains(":")) {
                     throw new ArgumentException("invalid range format.");
                 }
-                var rangeArray = rangeText.Split(':');
-                if (rangeArray.Length != 2) {
+                var range_array = range_text.Split(':');
+                if (range_array.Length != 2) {
                     throw new ArgumentException("invalid range format.");
                 }
                 if (_data.HasChord) {
                     _data.Chord.Range = new(
-                        int.Parse(rangeArray[0]),
-                        int.Parse(rangeArray[1])
+                        int.Parse(range_array[0]),
+                        int.Parse(range_array[1])
                     );
                 } else if (_data.HasSeque) {
                     _data.Seque.Range = new(
-                        int.Parse(rangeArray[0]),
-                        int.Parse(rangeArray[1])
+                        int.Parse(range_array[0]),
+                        int.Parse(range_array[1])
                     );
                 }
             }
@@ -110,7 +110,7 @@ namespace Meowziq.Core {
                 if (!Type.ToLower().Contains("drum")) { // ドラム以外 TODO: これで良いか確認
                     optimize(); // 最適化する
                 }
-                return _noteItem.SelectMany(x => x.Value).Select(x => x).ToList();
+                return _note_item.SelectMany(x => x.Value).Select(x => x).ToList();
             }
         }
 
@@ -133,15 +133,15 @@ namespace Meowziq.Core {
         /// </summary>
         public void RemoveBy(Note target) {
             var tick1 = target.Tick;
-            var noteList1 = _noteItem.Get(tick1);
-            noteList1 = noteList1.Where(x => !(!x.HasPre && x.Tick == tick1)).ToList(); // 優先ノートではなく tick が同じものを削除 // FIXME: ドラムは音毎？
-            _noteItem.SetBy(tick1, noteList1);
+            var note_list1 = _note_item.Get(tick1);
+            note_list1 = note_list1.Where(x => !(!x.HasPre && x.Tick == tick1)).ToList(); // 優先ノートではなく tick が同じものを削除 // FIXME: ドラムは音毎？
+            _note_item.SetBy(tick1, note_list1);
             if (target.PreCount > 1) { // さらにシンコぺの設定値が2の場合
                 var tick2 = target.Tick + Length.Of16beat.Int32();
-                var noteList2 = _noteItem.Get(tick2);
-                if (noteList2 != null) {
-                    noteList2 = noteList2.Where(x => !(!x.HasPre && x.Tick == tick2)).ToList(); // さらに被る16音符を削除
-                    _noteItem.SetBy(tick2, noteList2);
+                var note_list2 = _note_item.Get(tick2);
+                if (note_list2 != null) {
+                    note_list2 = note_list2.Where(x => !(!x.HasPre && x.Tick == tick2)).ToList(); // さらに被る16音符を削除
+                    _note_item.SetBy(tick2, note_list2);
                 }
             }
         }
@@ -157,7 +157,7 @@ namespace Meowziq.Core {
             //    throw new ArgumentException("invalid beatCount.");
             //}
             // NOTE: Way で分岐 TODO: プラグイン拡張出来るように
-            var generator = new Generator(_noteItem); // NOTE: コンストラクタで生成ではNG
+            var generator = new Generator(_note_item); // NOTE: コンストラクタで生成ではNG
             var way = defineWay();
             switch (way) {
                 case Way.Mono:
@@ -173,10 +173,10 @@ namespace Meowziq.Core {
                     }
                     break;
                 case Way.Multi:
-                    var stringArray = _data.Auto ? _data.AutoArray : _data.NoteArray;
-                    for (var idx = 0; idx < stringArray.Length; idx++) { // TODO: for の置き換え
+                    var string_array = _data.Auto ? _data.AutoArray : _data.NoteArray;
+                    for (var idx = 0; idx < string_array.Length; idx++) { // TODO: for の置き換え
                         var param = new Param(
-                            new Value.Note(stringArray[idx], _data.OctArray[idx]),
+                            new Value.Note(string_array[idx], _data.OctArray[idx]),
                             new Value.Exp(_data.PreArray[idx], _data.PostArray[idx]),
                             way,
                             _data.Auto
@@ -214,10 +214,10 @@ namespace Meowziq.Core {
         ///       current の シンコペ Note () ← 判定済み
         /// </summary>
         void optimize() {
-            var noteList = _noteItem.SelectMany(x => x.Value).Select(x => x).ToList();
-            foreach (var stopNote in noteList.Where(x => x.HasPre)) { // 優先ノートのリスト
-                foreach (var note in noteList) { // このフレーズの全てのノートの中で
-                    if (note.Tick == stopNote.Tick) { // 優先ノートと発音タイミングがかぶったら
+            var note_list = _note_item.SelectMany(x => x.Value).Select(x => x).ToList();
+            foreach (var stop_note in note_list.Where(x => x.HasPre)) { // 優先ノートのリスト
+                foreach (var note in note_list) { // このフレーズの全てのノートの中で
+                    if (note.Tick == stop_note.Tick) { // 優先ノートと発音タイミングがかぶったら
                         RemoveBy(note); // ノートを削除
                     }
                 }
@@ -257,11 +257,11 @@ namespace Meowziq.Core {
                 throw new ArgumentException("target must not be null.");
             }
             // 小節に切り出す
-            var measStringArray = target.Replace("][", "@")  // まず "][" を "@" に置き換え
+            var meas_string_array = target.Replace("][", "@")  // まず "][" を "@" に置き換え
                 .Split('@') // 小節で切り分ける
                 .Select(x => x.Replace("[", "").Replace("]", "")).ToArray(); // 不要文字削除
             // FIXME: 1小節を4拍として計算
-            return measStringArray.Length * 4;
+            return meas_string_array.Length * 4;
         }
     }
 }

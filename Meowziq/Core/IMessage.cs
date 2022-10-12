@@ -27,27 +27,27 @@ namespace Meowziq {
         /// <summary>
         /// apply the program number (timbre) as T1
         /// </summary>
-        void ApplyProgramChange(int tick, int midiCh, int programNum);
+        void ApplyProgramChange(int tick, int midiCh, int program_num);
 
         /// <summary>
         /// apply volume as T1
         /// </summary>
-        void ApplyVolume(int tick, int midiCh, int volume);
+        void ApplyVolume(int tick, int midi_ch, int volume);
 
         /// <summary>
         /// apply pan as T1
         /// </summary>
-        void ApplyPan(int tick, int midiCh, Pan pan);
+        void ApplyPan(int tick, int midi_ch, Pan pan);
 
         /// <summary>
         /// apply mute as T1
         /// </summary>
-        void ApplyMute(int tick, int midiCh, bool mute);
+        void ApplyMute(int tick, int midi_ch, bool mute);
 
         /// <summary>
         /// apply T2 as T1
         /// </summary>
-        void ApplyNote(int tick, int midiCh, T2 note);
+        void ApplyNote(int tick, int midi_ch, T2 note);
 
         /// <summary>
         /// initialize the state

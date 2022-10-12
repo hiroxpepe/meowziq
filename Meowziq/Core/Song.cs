@@ -17,15 +17,15 @@ namespace Meowziq.Core {
 
         int _tempo;
 
-        List<Section> _sectionList;
+        List<Section> _section_list;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
-        public Song(string name, int tempo, List<Section> sectionList) {
+        public Song(string name, int tempo, List<Section> section_list) {
             _name = name;
             _tempo = tempo;
-            _sectionList = sectionList;
+            _section_list = section_list;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -50,9 +50,9 @@ namespace Meowziq.Core {
         /// </summary>
         public List<Pattern> AllPattern {
             get {
-                List<Pattern> newPatternList = new();
-                _sectionList.ForEach(x => x.AllPattern.ForEach(_x => newPatternList.Add(_x)));
-                return newPatternList;
+                List<Pattern> new_pattern_list = new();
+                _section_list.ForEach(x => x.AllPattern.ForEach(_x => new_pattern_list.Add(_x)));
+                return new_pattern_list;
             }
         }
 
@@ -60,7 +60,7 @@ namespace Meowziq.Core {
         /// 全ての Section
         /// </summary>
         public List<Section> AllSection {
-            get => _sectionList;
+            get => _section_list;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -88,17 +88,17 @@ namespace Meowziq.Core {
 
         Key _key; // NOTE: ここは単体で良い
 
-        Mode _keyMode; // NOTE: ここは単体で良い
+        Mode _key_mode; // NOTE: ここは単体で良い
 
-        List<Pattern> _patternList;
+        List<Pattern> _pattern_list;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
-        public Section(Key key, Mode keyMode, List<Pattern> patternList) {
+        public Section(Key key, Mode key_mode, List<Pattern> pattern_list) {
             _key = key;
-            _keyMode = keyMode;
-            _patternList = patternList;
+            _key_mode = key_mode;
+            _pattern_list = pattern_list;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -115,14 +115,14 @@ namespace Meowziq.Core {
         /// この Section の旋法
         /// </summary>
         public Mode KeyMode {
-            get => _keyMode; // NOTE: 後から変更できない
+            get => _key_mode; // NOTE: 後から変更できない
         }
 
         /// <summary>
         /// 全ての Pattern
         /// </summary>
         public List<Pattern> AllPattern {
-            get => _patternList;
+            get => _pattern_list;
         }
     }
 }
