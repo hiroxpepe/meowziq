@@ -1,10 +1,25 @@
-﻿
+﻿/*
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 using System;
 using System.Linq;
 
 namespace Meowziq.Value {
     /// <summary>
     /// NOTE: 入力値バリデーション クラス
+    /// @author h.adachi
     /// </summary>
     public static class Validater {
         /// <summary>
@@ -48,7 +63,7 @@ namespace Meowziq.Value {
     /// </todo>
     public static class Converter {
         /// <summary>
-        /// converts numeric BPM to tempo information for SMF.
+        /// converts numeric BPM to tempo information for smf.
         /// </summary>
         /// <summary_jp>
         /// BPM = 120 (1分あたり四分音符が120個) の場合、<br/>

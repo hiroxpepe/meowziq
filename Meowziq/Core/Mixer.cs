@@ -1,4 +1,18 @@
-﻿
+﻿/*
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 using System;
 using System.Linq;
 
@@ -13,6 +27,7 @@ namespace Meowziq.Core {
     ///     + MEMO: そもそもこのアプリでボリュームやパンを詳細に設定出来る必要があるのか？
     ///     + MEMO: Mixer に設定がある場合は楽器は Mixer の設定を使用する
     ///         + ただし Mixer 経由で値を Message に適用した方が好ましい
+    /// @author h.adachi
     /// </summary>
     public static class Mixer<T> {
 
