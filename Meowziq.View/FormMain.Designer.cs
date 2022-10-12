@@ -414,7 +414,6 @@
             this.Controls.Add(this._button_play);
             this.Name = "FormMain";
             this.Text = "© STUDIO MeowToon";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.formMain_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -1,4 +1,18 @@
-﻿
+﻿/*
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +23,7 @@ using Meowziq.Core; // depends on Meowziq.Core.Note
 namespace Meowziq.Midi {
     /// <summary>
     /// message class using Sanford.Multimedia.Midi
+    /// @author h.adachi
     /// </summary>
     /// <fixme>
     /// relies on abstraction instead of ChannelMessage.
@@ -128,11 +143,11 @@ namespace Meowziq.Midi {
         /// <remarks>
         /// run in "Second" start.
         /// </remarks>
-        public static void ApplyNote(int tick, int midi_ch, Note note) { // TODO: tick を使用する
+        public static void ApplyNote(int tick, int midi_ch, Note note) {
             if (!_flag) {
-                if (note.HasPre) { // ノートが優先発音の場合
-                    var note_off_tick = tick - Length.Of32beat.Int32(); // 念のため32分音符前に停止
-                    if (Prime.AllNoteOffToAddArray[midi_ch].Add(note_off_tick)) { // MIDI ch 毎にこの tick のノート強制停止は一回のみ 
+                if (note.HasPre) { // note has priority pronunciation,
+                    var note_off_tick = tick - Length.Of32beat.Int32(); // just in case, stop before the 32nd note.
+                    if (Prime.AllNoteOffToAddArray[midi_ch].Add(note_off_tick)) { // forced stop for the note of tick only once per midi ch.
                         if (midi_ch != 9) { // exclude the drum midi channel.
                             add(note_off_tick, new ChannelMessage(ChannelCommand.Controller, midi_ch, 120));
                         }
@@ -141,9 +156,9 @@ namespace Meowziq.Midi {
                 add(tick, new ChannelMessage(ChannelCommand.NoteOn, midi_ch, note.Num, note.Velo)); // midi note on.
                 add(tick + note.Gate, new ChannelMessage(ChannelCommand.NoteOff, midi_ch, note.Num, 0)); // midi note off.
             } else {
-                if (note.HasPre) { // ノートが優先発音の場合
-                    var note_off_tick = tick - Length.Of32beat.Int32(); // 念のため32分音符前に停止
-                    if (Second.AllNoteOffToAddArray[midi_ch].Add(note_off_tick)) { // MIDI ch 毎にこの tick のノート強制停止は一回のみ 
+                if (note.HasPre) { // note has priority pronunciation,
+                    var note_off_tick = tick - Length.Of32beat.Int32(); // just in case, stop before the 32nd note.
+                    if (Second.AllNoteOffToAddArray[midi_ch].Add(note_off_tick)) { // forced stop for the note of tick only once per midi ch.
                         if (midi_ch != 9) { // exclude the drum midi channel.
                             add(note_off_tick, new ChannelMessage(ChannelCommand.Controller, midi_ch, 120));
                         }
