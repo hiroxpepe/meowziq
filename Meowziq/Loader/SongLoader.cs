@@ -10,7 +10,7 @@ using Meowziq.Core;
 
 namespace Meowziq.Loader {
     /// <summary>
-    /// Song のローダークラス
+    /// loader class for song.
     /// </summary>
     public static class SongLoader {
 
@@ -30,7 +30,7 @@ namespace Meowziq.Loader {
         // public static Methods [verb]
 
         /// <summary>
-        /// Song を作成します
+        /// creates a song.
         /// </summary>
         public static Core.Song Build(Stream target) {
             if (_pattern_list is null) {
@@ -55,7 +55,10 @@ namespace Meowziq.Loader {
 
         static Pattern searchPattern(string pattern_name) {
             try {
-                return _pattern_list.Where(x => x.Name.Equals(pattern_name)).First(); // MEMO: 名前が一致した最初の要素
+                /// <remarks>
+                /// first element with matching name.
+                /// </remarks>
+                return _pattern_list.Where(x => x.Name.Equals(pattern_name)).First();
             } catch {
                 throw new ArgumentException("undefined pattern.");
             }

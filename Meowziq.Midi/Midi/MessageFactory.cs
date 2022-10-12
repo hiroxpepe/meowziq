@@ -7,9 +7,11 @@ using Meowziq.Core;
 
 namespace Meowziq.Midi {
     /// <summary>
-    /// IMessage インタフェースに対して具象オブジェクトを返します
-    /// MEMO: static クラスは インターフェィスを実装出来ません
+    /// create a concrete object for the IMessage interface.
     /// </summary>
+    /// <memo>
+    /// static class cannot implement interface.<br/>
+    /// </memo>
     public static class MessageFactory {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -31,24 +33,24 @@ namespace Meowziq.Midi {
                 Midi.Message.ApplyTick(tick, load);
             }
 
-            public void ApplyNote(int tick, int midiCh, Note note) {
-                Midi.Message.ApplyNote(tick, midiCh, note);
+            public void ApplyNote(int tick, int midi_ch, Note note) {
+                Midi.Message.ApplyNote(tick, midi_ch, note);
             }
 
-            public void ApplyProgramChange(int tick, int midiCh, int programNum) {
-                Midi.Message.ApplyProgramChange(tick, midiCh, programNum);
+            public void ApplyProgramChange(int tick, int midi_ch, int program_num) {
+                Midi.Message.ApplyProgramChange(tick, midi_ch, program_num);
             }
 
-            public void ApplyVolume(int tick, int midiCh, int volume) {
-                Midi.Message.ApplyVolume(tick, midiCh, volume);
+            public void ApplyVolume(int tick, int midi_ch, int volume) {
+                Midi.Message.ApplyVolume(tick, midi_ch, volume);
             }
 
-            public void ApplyPan(int tick, int midiCh, Pan pan) {
-                Midi.Message.ApplyPan(tick, midiCh, pan);
+            public void ApplyPan(int tick, int midi_ch, Pan pan) {
+                Midi.Message.ApplyPan(tick, midi_ch, pan);
             }
 
-            public void ApplyMute(int tick, int midiCh, bool mute) {
-                Midi.Message.ApplyMute(tick, midiCh, mute);
+            public void ApplyMute(int tick, int midi_ch, bool mute) {
+                Midi.Message.ApplyMute(tick, midi_ch, mute);
             }
 
             public void Clear() {

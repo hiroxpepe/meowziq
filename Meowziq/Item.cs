@@ -3,73 +3,113 @@ using System.Collections.Generic;
 
 namespace Meowziq {
     /// <summary>
-    /// Dictionary の名前が長いので Map と名付ける
-    /// NOTE: Meowziq 名前空間で使用される
+    /// the name of Dictionary is too long so it names Map.
     /// </summary>
+    /// <note>
+    /// used in the Meowziq namespace.
+    /// </note>
     public class Map<K, V> : Dictionary<K, V> {
     }
 
     /// <summary>
-    /// Item クラス
-    /// NOTE: Add された Value を一度だけ取り出す Map(Dictionary)
-    /// NOTE: Meowziq 名前空間で使用される
+    /// the item class.
     /// </summary>
+    /// <remarks>
+    /// Map(Dictionary) class that can take out from the key of the value only once.
+    /// </remarks>
+    /// <note>
+    /// used in the Meowziq namespace.
+    /// </note>
     public class Item<T> : Map<int, List<T>> {
 
-        HashSet<int> _to_add_hash_set; // 追加した判定
+        /// <summary>
+        /// hasset for whether the key was added.
+        /// </summary>
+        HashSet<int> _to_add_hashset;
 
-        HashSet<int> _take_out_hash_set; // 取り出した判定
+        /// <summary>
+        /// hasset for whether the key was taken out.
+        /// </summary>
+        HashSet<int> _take_out_hashset;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
         public Item() {
-            _to_add_hash_set = new(); // 追加した判定
-            _take_out_hash_set = new(); // 取り出した判定
+            _to_add_hashset = new();
+            _take_out_hashset = new();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
 
         /// <summary>
-        /// key の List に value を追加します
+        /// adds the value of the key to list.
         /// </summary>
         public void Add(int key, T value) {
-            if (!ContainsKey(key)) { // key がなければ
-                var new_list = new List<T>(); // List を新規作成
-                new_list.Add(value); // List に value を追加
-                Add(key, new_list); // Item に新規追加
-            } else {
-                var list = this[key]; // Item から key の List を取得
-                list.Add(value); // List に value を追加
+            /// <remarks>
+            /// creates a new list if this does not have a key. <br/>
+            /// adds the value to the list and adds as new to this.
+            /// </remarks>
+            if (!ContainsKey(key)) {
+                List<T> new_list = new();
+                new_list.Add(value);
+                Add(key, new_list);
+            }
+            /// <remarks>
+            /// gets the list of the key from this. <br/>
+            /// adds the value to list.
+            /// </remarks>
+            else {
+                var list = this[key];
+                list.Add(value);
             }
         }
 
         /// <summary>
-        /// key の Value を返します
+        /// returns the value of the key.
         /// </summary>
         public List<T> Get(int key) {
+            /// <remarks>
+            /// returns null if the key does not exist.
+            /// </remarks>
             if (!ContainsKey(key)) {
-                return null; // key に存在しない場合は null を返す
+                return null;
             }
-            return this[key]; // 初回なら key の value を返す
+            /// <remarks>
+            /// returns the value of the key.
+            /// </remarks>
+            return this[key];
         }
 
         /// <summary>
-        /// 1回だけ key の Value を返します
+        /// returns the value of the key only once.
         /// </summary>
         public List<T> GetOnce(int key) {
-            if (!_take_out_hash_set.Add(key)) { // 取り出したことを判定する hashSet で false なら
-                return null; // 既に1回取り出したので null を返す
+            /// <remarks>
+            /// adds the key to hashset for whether the key was taken out. <br/>
+            /// if the return value is false, already being taken out once, so return null.
+            /// </remarks>
+            if (!_take_out_hashset.Add(key)) {
+                return null;
             }
+            /// <remarks>
+            /// returns null if the key does not exist.
+            /// </remarks>
             if (!ContainsKey(key)) {
-                return null; // key に存在しない場合は null を返す
+                return null;
             }
-            return this[key]; // 初回なら key の value を返す // TODO: ソート： ドラム優先、メロ後：ソートパラメータが必要？
+            /// <remarks>
+            /// first time returns the value of the key.
+            /// </remarks>
+            /// <todo>
+            /// needs a sorting parameter, such as drums first and melody later?
+            /// </todo>
+            return this[key];
         }
 
         /// <summary>
-        /// key の value を置き換えます
+        /// replaces the value in key.
         /// </summary>
         public void SetBy(int key, List<T> value) {
             Remove(key);
@@ -77,27 +117,35 @@ namespace Meowziq {
         }
 
         /// <summary>
-        /// key と value を追加します
-        /// TODO: 重複 key は？
+        /// adds key and value.
         /// </summary>
+        /// <todo>
+        /// what about duplicate keys?
+        /// </todo>
         public new void Add(int key, List<T> value) {
-            _to_add_hash_set.Add(key); // key を追加したフラグを追加
+            /// <remarks>
+            /// adds the added key to hashset.
+            /// </remarks>
+            _to_add_hashset.Add(key);
             base.Add(key, value);
         }
 
         /// <summary>
-        /// key があれば true、なければ false を返します
+        /// returns true if the key exists, false otherwise.
         /// </summary>
         public new bool ContainsKey(int key) {
-            return _to_add_hash_set.Contains(key); // HashSet.Contains() は高速
+            /// <remarks>
+            /// HashSet.Contains() is fast.
+            /// </remarks>
+            return _to_add_hashset.Contains(key);
         }
 
         /// <summary>
-        /// 内容を初期化します
+        /// initializes the contents.
         /// </summary>
         public new void Clear() {
-            _to_add_hash_set.Clear();
-            _take_out_hash_set.Clear();
+            _to_add_hashset.Clear();
+            _take_out_hashset.Clear();
             base.Clear();
         }
     }

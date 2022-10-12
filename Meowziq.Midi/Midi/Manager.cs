@@ -3,22 +3,22 @@ using Sanford.Multimedia.Midi;
 
 namespace Meowziq.Midi {
     /// <summary>
-    /// Sanford.Multimedia.Midi を使用した MIDI クラス
+    /// midi class using Sanford.Multimedia.Midi
     /// </summary>
     public class Manager {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        OutputDevice _outDevice;
+        OutputDevice _out_device;
 
-        int _outDeviceID = 0; // TODO: 選択出来るように
+        int _out_device_id = 0; // TODO: to be able to choose.
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
         public Manager() {
-            _outDevice = new OutputDevice(_outDeviceID);
+            _out_device = new OutputDevice(_out_device_id);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@ namespace Meowziq.Midi {
 
         public OutputDevice OutDevice {
             get {
-                return _outDevice;
+                return _out_device;
             }
         }
     }

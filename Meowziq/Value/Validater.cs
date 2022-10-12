@@ -41,21 +41,26 @@ namespace Meowziq.Value {
     }
 
     /// <summary>
-    /// 変換用クラス
-    /// TODO: 拡張メソッドで十分？
+    /// conversion class.
     /// </summary>
+    /// <todo>
+    /// are extension methods enough?
+    /// </todo>
     public static class Converter {
         /// <summary>
-        /// 数値 BPM を SMF 用のTEMPO情報に変換します
-        ///     BPM = 120 (1分あたり四分音符が120個) の場合、
-        ///     四分音符の長さは 60 x 10の6乗 / 120 = 500,000 (μsec)
-        ///     これを16進にすると 0x07A120 ⇒ 3バイトで表現すると "07", "A1", "20"
+        /// converts numeric BPM to tempo information for SMF.
         /// </summary>
+        /// <summary_jp>
+        /// BPM = 120 (1分あたり四分音符が120個) の場合、<br/>
+        /// 四分音符の長さは 60 x 10の6乗 / 120 = 500,000 (μsec) <br/>
+        /// これを16進にすると 0x07A120 <br/>
+        /// 3バイトで表現すると "07", "A1", "20"
+        /// </summary_jp>
         public static byte[] ToByteTempo(int tempo) {
             var double_value = 60 * Math.Pow(10, 6) / tempo;
-            var hex = int.Parse(Math.Round(double_value).ToString()).ToString("X6"); // 16進数6桁変換
+            var hex = int.Parse(Math.Round(double_value).ToString()).ToString("X6"); // hexadecimal 6-digit conversion.
             var char_array = hex.ToCharArray();
-            return new byte[3]{ // 3byte で返す
+            return new byte[3]{ // returns in 3 bytes.
                 Convert.ToByte(char_array[0].ToString() + char_array[1].ToString(), 16),
                 Convert.ToByte(char_array[2].ToString() + char_array[3].ToString(), 16),
                 Convert.ToByte(char_array[4].ToString() + char_array[5].ToString(), 16)
@@ -63,7 +68,7 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// 文字列を byte 配列に変換します
+        /// converts string to byte array.
         /// </summary>
         public static byte[] ToByteArray(string target) {
             return target.ToCharArray().Select(x => Convert.ToByte(x)).ToArray();

@@ -138,7 +138,7 @@ namespace Meowziq.Core {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Fields
 
-            string _spanMode; // TODO: Mode 型に変更
+            string _span_mode; // TODO: Mode 型に変更
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Properties [noun, adjective]
@@ -161,17 +161,17 @@ namespace Meowziq.Core {
 
             public string SpanMode {
                 get {
-                    if (_spanMode.Equals("Undefined")) {
+                    if (_span_mode.Equals("Undefined")) {
                         return KeyMode;
                     }
-                    return _spanMode;
+                    return _span_mode;
                 } 
-                set => _spanMode = value;
+                set => _span_mode = value;
             }
 
             public bool AutoMode {
                 get {
-                    if (_spanMode.Equals("Undefined")) {
+                    if (_span_mode.Equals("Undefined")) {
                         return true;
                     }
                     return false;

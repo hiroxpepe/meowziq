@@ -10,7 +10,7 @@ using Meowziq.Core;
 
 namespace Meowziq.Loader {
     /// <summary>
-    /// Player のローダークラス
+    /// loader class for player.
     /// </summary>
     public static class PlayerLoader<T> {
 
@@ -30,13 +30,16 @@ namespace Meowziq.Loader {
         // public static Methods [verb]
 
         /// <summary>
-        /// Player のリストを作成します
+        /// creates a list of players.
         /// </summary>
         public static List<Core.Player<T>> Build(Stream target) {
             if (_phrase_list is null) {
                 throw new ArgumentException("need phraseList.");
             }
-            return loadJson(target).PlayerArray.Select(x => convertPlayer(x)).ToList(); // Core.Player のリストに変換
+            /// <remarks>
+            /// converts to a list of Core.Player.
+            /// </remarks>
+            return loadJson(target).PlayerArray.Select(x => convertPlayer(x)).ToList();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

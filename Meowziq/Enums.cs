@@ -28,7 +28,7 @@ namespace Meowziq {
         MidRight = 96,
         Right = 127,
         Undefined = -1,
-        // for Extension Method
+        // for extension method.
         Enum = -128,
     }
 
@@ -52,9 +52,9 @@ namespace Meowziq {
         G = 67,
         Gb = 66,
         F = 65,
-        E = 64, // MEMO: E を最低音とする
+        E = 64, // MEMO: E is the lowest note.
         Undefined = -1,
-        // for Extension Method
+        // for extension method.
         Enum = -128,
     }
 
@@ -67,7 +67,7 @@ namespace Meowziq {
         VI = 5,
         VII = 6,
         Undefined = -1,
-        // for Extension Method
+        // for extension method.
         Enum = -128,
     }
 
@@ -80,7 +80,7 @@ namespace Meowziq {
         Phr = 5,
         Loc = 6,
         Undefined = -1,
-        // for Extension Method
+        // for extension method.
         Enum = -128,
     }
 
@@ -229,7 +229,7 @@ namespace Meowziq {
         Helicopter = 125,
         Applause = 126,
         Gunshot = 127,
-        // for Extension Method
+        // for extension method.
         Enum = -128,
     }
 
@@ -243,7 +243,7 @@ namespace Meowziq {
         Brush = 40,
         Orchestra = 48,
         SFX = 56,
-        // for Extension Method
+        // for extension method.
         Enum = -128,
     }
 
@@ -295,7 +295,7 @@ namespace Meowziq {
         Open_Cuica = 79,
         Mute_Triangle = 80,
         Open_Triangle = 81,
-        // for Extension Method
+        // for extension method.
         Enum = -128,
     }
 
@@ -316,12 +316,12 @@ namespace Meowziq {
         ch14 = 13,
         ch15 = 14,
         ch16 = 15,
-        // for Extension Method
+        // for extension method.
         Enum = -128,
     }
 
     /// <summary>
-    /// 汎用拡張メソッド
+    /// enum extension methods.
     /// </summary>
     public static class EnumExtensions {
 
@@ -390,9 +390,9 @@ namespace Meowziq {
             }
         }
 
-        public static Key Parse(this Key source, int target) { // TODO: 拡張メソッド
+        public static Key Parse(this Key source, int target) {
             if (target > 75) {
-                target -= 12; // オクターブ調節
+                target -= 12; // octave adjustment.
             }
             switch (target) {
                 case 75:
@@ -418,7 +418,7 @@ namespace Meowziq {
                 case 65:
                     return Key.F;
                 case 64:
-                    return Key.E; // MEMO: E を最低音とする
+                    return Key.E; // MEMO: E is the lowest note.
                 default:
                     throw new ArgumentException("not key.");
             }

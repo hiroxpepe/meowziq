@@ -16,7 +16,7 @@ namespace Meowziq.Core {
 
         int _velo; // MIDI ノート強さ
 
-        int _preCount; // シンコペーション設定
+        int _pre_count; // シンコペーション設定
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
@@ -24,12 +24,12 @@ namespace Meowziq.Core {
         /// <summary>
         /// NOTE: 作成したら状態は変更できません
         /// </summary>
-        public Note(int tick, int num, int gate, int velo, int preCount = 0) {
+        public Note(int tick, int num, int gate, int velo, int pre_count = 0) {
             _tick = tick;
             _num = num;
             _gate = gate;
             _velo = velo;
-            _preCount = preCount;
+            _pre_count = pre_count;
             Log.Trace($"tick: {tick}");
         }
 
@@ -53,11 +53,11 @@ namespace Meowziq.Core {
         }
 
         public bool HasPre {
-            get => _preCount > 0; // NOTE: 変更操作を提供しません
+            get => _pre_count > 0; // NOTE: 変更操作を提供しません
         }
 
         public int PreCount {
-            get => _preCount; // NOTE: 変更操作を提供しません
+            get => _pre_count; // NOTE: 変更操作を提供しません
         }
     }
 }

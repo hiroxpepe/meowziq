@@ -5,9 +5,14 @@ using System.Linq;
 
 namespace Meowziq {
     /// <summary>
-    /// NOTE: TOPレベルであるべき ⇒ 実装パッケージを using しない、引数はプリミティブ型か Enum のみ
-    /// MEMO: ここでは var で変数を定義しない
+    /// definition of util functions.
     /// </summary>
+    /// <note>
+    /// TOPレベルであるべき ⇒ 実装パッケージを using しない、引数はプリミティブ型か Enum のみ
+    /// </note>
+    /// <memo>
+    /// ここでは var で変数を定義しない
+    /// </memo>
     public class Utils {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -202,12 +207,15 @@ namespace Meowziq {
             return scale7[(int) degree];
         }
 
+        /// <summary>
+        /// コード構成音の3音を抽出
+        /// </summary>
         static int[] noteArray3By(Key key, Degree degree, Mode key_mode) {
             key.Validate();
             degree.Validate();
             key_mode.Validate();
             int[] scale7 = scale7By(key, key_mode);
-            int[] note3 = new int[3]; // コード構成音の3音を抽出
+            int[] note3 = new int[3];
             switch (degree) {
                 case Degree.I:
                     note3[0] = scale7[1 - 1];
@@ -248,12 +256,15 @@ namespace Meowziq {
             return note3;
         }
 
+        /// <summary>
+        /// コード構成音の4音を抽出
+        /// </summary>
         static int[] noteArray4By(Key key, Degree degree, Mode key_mode) {
             key.Validate();
             degree.Validate();
             key_mode.Validate();
             int[] scale7 = scale7By(key, key_mode);
-            int[] note4 = new int[4]; // コード構成音の4音を抽出
+            int[] note4 = new int[4];
             switch (degree) {
                 case Degree.I:
                     note4[0] = scale7[1 - 1];
@@ -381,14 +392,20 @@ namespace Meowziq {
         }
 
         /// <summary>
-        /// キーと旋法からモードスケールを返します
+        /// returns a modal scale from the key and the mode.
         /// </summary>
         static int[] scale7By(Key key, Mode key_mode) {
             key.Validate();
             key_mode.Validate();
             int note_root = (int) key;
-            int[] scale7 = new int[7]; // 7音の旋法を作成
+            /// <note>
+            /// creates a mode scale consisting of seven notes.
+            /// </note>
+            int[] scale7 = new int[7];
             switch (key_mode) {
+                /// <note>
+                /// lydian mode scale.
+                /// </note>
                 case Mode.Lyd:
                     scale7[0] = note_root; // 1
                     scale7[1] = note_root + 2; // 2
@@ -398,6 +415,9 @@ namespace Meowziq {
                     scale7[5] = note_root + 9; // 6
                     scale7[6] = note_root + 11; // 7
                     break;
+                /// <note>
+                /// ionian mode scale.
+                /// </note>
                 case Mode.Ion:
                     scale7[0] = note_root; // 1
                     scale7[1] = note_root + 2; // 2
@@ -407,6 +427,9 @@ namespace Meowziq {
                     scale7[5] = note_root + 9; // 6
                     scale7[6] = note_root + 11; // 7
                     break;
+                /// <note>
+                /// mixolydian mode scale.
+                /// </note>
                 case Mode.Mix:
                     scale7[0] = note_root; // 1
                     scale7[1] = note_root + 2; // 2
@@ -416,6 +439,9 @@ namespace Meowziq {
                     scale7[5] = note_root + 9; // 6
                     scale7[6] = note_root + 10; // b7
                     break;
+                /// <note>
+                /// dorian mode scale.
+                /// </note>
                 case Mode.Dor:
                     scale7[0] = note_root; // 1
                     scale7[1] = note_root + 2; // 2
@@ -425,6 +451,9 @@ namespace Meowziq {
                     scale7[5] = note_root + 9; // 6
                     scale7[6] = note_root + 10; // b7
                     break;
+                /// <note>
+                /// aeolian mode scale.
+                /// </note>
                 case Mode.Aeo:
                     scale7[0] = note_root; // 1
                     scale7[1] = note_root + 2; // 2
@@ -434,6 +463,9 @@ namespace Meowziq {
                     scale7[5] = note_root + 8; // b6
                     scale7[6] = note_root + 10; // b7
                     break;
+                /// <note>
+                /// phrygian mode scale.
+                /// </note>
                 case Mode.Phr:
                     scale7[0] = note_root; // 1
                     scale7[1] = note_root + 1; // b2
@@ -443,6 +475,9 @@ namespace Meowziq {
                     scale7[5] = note_root + 8; // b6
                     scale7[6] = note_root + 10; // b7
                     break;
+                /// <note>
+                /// locrian mode scale.
+                /// </note>
                 case Mode.Loc:
                     scale7[0] = note_root; // 1
                     scale7[1] = note_root + 1; // b2

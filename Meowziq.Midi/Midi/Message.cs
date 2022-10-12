@@ -4,18 +4,21 @@ using System.Collections.Generic;
 using System.Linq;
 using Sanford.Multimedia.Midi;
 
-using Meowziq.Core; // Core.Note に依存
+using Meowziq.Core; // depends on Meowziq.Core.Note
 
 namespace Meowziq.Midi {
     /// <summary>
-    /// Sanford.Multimedia.Midi を使用した Message クラス
+    /// message class using Sanford.Multimedia.Midi
     /// </summary>
+    /// <fixme>
+    /// relies on abstraction instead of ChannelMessage.
+    /// </fixme>
     public static class Message {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Fields
 
-        static HashSet<int> _hashSet;
+        static HashSet<int> _hashset;
 
         static bool _flag;
 
@@ -23,7 +26,7 @@ namespace Meowziq.Midi {
         // static Constructor
 
         static Message() {
-            _hashSet = new();
+            _hashset = new();
             _flag = true;
         }
 
@@ -31,11 +34,14 @@ namespace Meowziq.Midi {
         // public static Methods [verb]
 
         /// <summary>
-        /// 引数の tick の ChannelMessage のリストを返します
-        /// NOTE: 引数 tick の ChannelMessage のリストが存在しなければ null を返します
+        /// returns the list of ChannelMessages for the argument tick.
         /// </summary>
+        /// <remarks>
+        /// returns null if the list does not exist.<br/>
+        /// run in "Prime" start.
+        /// </remarks>
         public static List<ChannelMessage> GetBy(int tick) {
-            if (_flag) { // Prime スタートで実行
+            if (_flag) {
                 return Prime.Item.GetOnce(tick);
             } else {
                 return Second.Item.GetOnce(tick);
@@ -43,10 +49,13 @@ namespace Meowziq.Midi {
         }
 
         /// <summary>
-        /// 引数 tick のアイテムを持つかどうかを返します
+        /// whether has the item with the argument tick.
         /// </summary>
+        /// <remarks>
+        /// run in "Prime" start.
+        /// </remarks>
         public static bool Has(int tick) {
-            if (_flag) { // Prime スタートで実行
+            if (_flag) {
                 return Prime.Item.Select(x => x.Key).Max() > tick;
             } else {
                 return Second.Item.Select(x => x.Key).Max() > tick;
@@ -54,84 +63,102 @@ namespace Meowziq.Midi {
         }
 
         /// <summary>
-        /// 引数の tick を起点にして切り替え処理を行います
+        /// changes internal data from the argument tick.
         /// </summary>
         public static void ApplyTick(int tick, Action<int> load) {
-            if (!_hashSet.Add(tick)) {
-                return; // 既に処理した tick なので無視する
+            /// <remarks>
+            /// ignore the tick as it has already been processed.
+            /// </remarks>
+            if (!_hashset.Add(tick)) {
+                return;
             }
-            // tick が2拍ごとに切り替え MEMO: * 4 にすれば 1小節毎、* 1 にすれば 1拍毎に切り替えれる
+            /// <remarks>
+            /// change every time the tick accumulates to 2 beats. 
+            /// </remarks>
+            /// <memo>
+            /// set it to 4 can change every 1 bar. <br/>
+            /// also set it to 1 can change every 1 beat. 
+            /// </memo>
             if (tick % (Length.Of4beat.Int32() * 2) == 0) {
                 change();
-                load(tick); // load に失敗したらキャッシュを読む
+                /// <remarks>
+                /// if load fails Read cache.
+                /// </remarks>
+                load(tick);
             }
         }
 
         /// <summary>
-        /// プログラムNo(音色)を ChannelMessage として適用します
+        /// applies program_num as ChannelMessage.
         /// </summary>
-        public static void ApplyProgramChange(int tick, int midiCh, int programNum ) {
-            add(tick, new ChannelMessage(ChannelCommand.ProgramChange, midiCh, programNum, 127)); // プログラムチェンジ
+        /// <remarks>
+        /// program change.
+        /// </remarks> 
+        public static void ApplyProgramChange(int tick, int midi_ch, int program_num ) {
+            add(tick, new ChannelMessage(ChannelCommand.ProgramChange, midi_ch, program_num, 127));
         }
 
         /// <summary>
-        /// ボリュームを ChannelMessage として適用します
+        /// applies volume as ChannelMessage.
         /// </summary>
-        public static void ApplyVolume(int tick, int midiCh, int volume) {
-            add(tick, new ChannelMessage(ChannelCommand.Controller, midiCh, 7, volume));
+        public static void ApplyVolume(int tick, int midi_ch, int volume) {
+            add(tick, new ChannelMessage(ChannelCommand.Controller, midi_ch, 7, volume));
         }
 
         /// <summary>
-        /// PAN (パン)を ChannelMessage として適用します
+        /// applies pan as ChannelMessage.
         /// </summary>
-        public static void ApplyPan(int tick, int midiCh, Pan pan) {
-            add(tick, new ChannelMessage(ChannelCommand.Controller, midiCh, 10, (int) pan));
+        public static void ApplyPan(int tick, int midi_ch, Pan pan) {
+            add(tick, new ChannelMessage(ChannelCommand.Controller, midi_ch, 10, (int) pan));
         }
 
         /// <summary>
-        /// ミュートを ChannelMessage として適用します
+        /// applies mute as ChannelMessage.
         /// </summary>
-        public static void ApplyMute(int tick, int midiCh, bool mute) {
+        public static void ApplyMute(int tick, int midi_ch, bool mute) {
             if (!mute) {
                 return;
             }
-            add(tick, new ChannelMessage(ChannelCommand.Controller, midiCh, 7, 0));
+            add(tick, new ChannelMessage(ChannelCommand.Controller, midi_ch, 7, 0));
         }
 
         /// <summary>
-        /// Note を ChannelMessage として適用します
+        /// applies note as ChannelMessage.
         /// </summary>
-        public static void ApplyNote(int tick, int midiCh, Note note) { // TODO: tick を使用する
+        /// <remarks>
+        /// run in "Second" start.
+        /// </remarks>
+        public static void ApplyNote(int tick, int midi_ch, Note note) { // TODO: tick を使用する
             if (!_flag) {
                 if (note.HasPre) { // ノートが優先発音の場合
-                    var _noteOffTick = tick - Length.Of32beat.Int32(); // 念のため32分音符前に停止
-                    if (Prime.AllNoteOffToAddArray[midiCh].Add(_noteOffTick)) { // MIDI ch 毎にこの tick のノート強制停止は一回のみ 
-                        if (midiCh != 9) { // ドラム以外
-                            add(_noteOffTick, new ChannelMessage(ChannelCommand.Controller, midiCh, 120));
+                    var note_off_tick = tick - Length.Of32beat.Int32(); // 念のため32分音符前に停止
+                    if (Prime.AllNoteOffToAddArray[midi_ch].Add(note_off_tick)) { // MIDI ch 毎にこの tick のノート強制停止は一回のみ 
+                        if (midi_ch != 9) { // exclude the drum midi channel.
+                            add(note_off_tick, new ChannelMessage(ChannelCommand.Controller, midi_ch, 120));
                         }
                     }
                 }
-                add(tick, new ChannelMessage(ChannelCommand.NoteOn, midiCh, note.Num, note.Velo)); // ノートON
-                add(tick + note.Gate, new ChannelMessage(ChannelCommand.NoteOff, midiCh, note.Num, 0)); // ノートOFF ※この位置
-            } else { // Second スタートで実行
+                add(tick, new ChannelMessage(ChannelCommand.NoteOn, midi_ch, note.Num, note.Velo)); // midi note on.
+                add(tick + note.Gate, new ChannelMessage(ChannelCommand.NoteOff, midi_ch, note.Num, 0)); // midi note off.
+            } else {
                 if (note.HasPre) { // ノートが優先発音の場合
-                    var _noteOffTick = tick - Length.Of32beat.Int32(); // 念のため32分音符前に停止
-                    if (Second.AllNoteOffToAddArray[midiCh].Add(_noteOffTick)) { // MIDI ch 毎にこの tick のノート強制停止は一回のみ 
-                        if (midiCh != 9) { // ドラム以外
-                            add(_noteOffTick, new ChannelMessage(ChannelCommand.Controller, midiCh, 120));
+                    var note_off_tick = tick - Length.Of32beat.Int32(); // 念のため32分音符前に停止
+                    if (Second.AllNoteOffToAddArray[midi_ch].Add(note_off_tick)) { // MIDI ch 毎にこの tick のノート強制停止は一回のみ 
+                        if (midi_ch != 9) { // exclude the drum midi channel.
+                            add(note_off_tick, new ChannelMessage(ChannelCommand.Controller, midi_ch, 120));
                         }
                     }
                 }
-                add(tick, new ChannelMessage(ChannelCommand.NoteOn, midiCh, note.Num, note.Velo)); // ノートON
-                add(tick + note.Gate, new ChannelMessage(ChannelCommand.NoteOff, midiCh, note.Num, 0)); // ノートOFF ※この位置
+                add(tick, new ChannelMessage(ChannelCommand.NoteOn, midi_ch, note.Num, note.Velo)); // midi note on.
+                add(tick + note.Gate, new ChannelMessage(ChannelCommand.NoteOff, midi_ch, note.Num, 0)); // midi note off.
             }
         }
 
         /// <summary>
-        /// 状態を初期化します
+        /// initializes the state.
         /// </summary>
         public static void Clear() {
-            _hashSet.Clear();
+            _hashset.Clear();
             Prime.Clear();
             Second.Clear();
             State.Clear();
@@ -139,7 +166,7 @@ namespace Meowziq.Midi {
         }
 
         /// <summary>
-        /// 内部フラグを反転します
+        /// inverts the internal flag.
         /// </summary>
         public static void Invert() {
             _flag = !_flag;
@@ -149,18 +176,21 @@ namespace Meowziq.Midi {
         // private static Methods [verb]
 
         /// <summary>
-        /// ChannelMessage をリストに追加します
+        /// adds a channel_message to the list.
         /// </summary>
-        static void add(int tick, ChannelMessage channelMessage) {
+        /// <remarks>
+        /// run in "Second" start.
+        /// </remarks>
+        static void add(int tick, ChannelMessage channel_message) {
             if (!_flag) {
-                Prime.Item.Add(tick, channelMessage);
-            } else { // Second スタートで実行
-                Second.Item.Add(tick, channelMessage);
+                Prime.Item.Add(tick, channel_message);
+            } else {
+                Second.Item.Add(tick, channel_message);
             }
         }
 
         /// <summary>
-        /// 内部のデータを切り替えます
+        /// switches internal data.
         /// </summary>
         static void change() {
             _flag = !_flag;
@@ -181,15 +211,21 @@ namespace Meowziq.Midi {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Fields
 
-            static Item<ChannelMessage> _item = new(); // Tick 毎の メッセージのリスト
+            /// <summary>
+            /// list of messages per tick.
+            /// </summary>
+            static Item<ChannelMessage> _item = new();
 
-            static HashSet<int>[] _allNoteOffToAddArray = new HashSet<int>[16]; // ノート強制停止用配列
+            /// <summary>
+            /// array for note forced stop.
+            /// </summary>
+            static HashSet<int>[] _all_note_off_to_add_array = new HashSet<int>[16];
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Constructor
 
             static Prime() {
-                _allNoteOffToAddArray = _allNoteOffToAddArray.Select(x => x = new HashSet<int>()).ToArray();
+                _all_note_off_to_add_array = _all_note_off_to_add_array.Select(x => x = new HashSet<int>()).ToArray();
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
@@ -201,8 +237,8 @@ namespace Meowziq.Midi {
             }
 
             public static HashSet<int>[] AllNoteOffToAddArray {
-                get => _allNoteOffToAddArray;
-                set => _allNoteOffToAddArray = value;
+                get => _all_note_off_to_add_array;
+                set => _all_note_off_to_add_array = value;
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
@@ -210,7 +246,7 @@ namespace Meowziq.Midi {
 
             public static void Clear() {
                 _item.Clear();
-                _allNoteOffToAddArray.ToList().ForEach(x => x.Clear());
+                _all_note_off_to_add_array.ToList().ForEach(x => x.Clear());
             }
         }
 
@@ -219,15 +255,21 @@ namespace Meowziq.Midi {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Fields
 
-            static Item<ChannelMessage> _item = new(); // Tick 毎の メッセージのリスト
+            /// <summary>
+            /// list of messages per tick.
+            /// </summary>
+            static Item<ChannelMessage> _item = new();
 
-            static HashSet<int>[] _allNoteOffToAddArray = new HashSet<int>[16]; // ノート強制停止用配列
+            /// <summary>
+            /// array for note forced stop.
+            /// </summary>
+            static HashSet<int>[] _all_note_off_to_add_array = new HashSet<int>[16];
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Constructor
 
             static Second() {
-                _allNoteOffToAddArray = _allNoteOffToAddArray.Select(x => x = new HashSet<int>()).ToArray();
+                _all_note_off_to_add_array = _all_note_off_to_add_array.Select(x => x = new HashSet<int>()).ToArray();
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
@@ -239,8 +281,8 @@ namespace Meowziq.Midi {
             }
 
             public static HashSet<int>[] AllNoteOffToAddArray {
-                get => _allNoteOffToAddArray;
-                set => _allNoteOffToAddArray = value;
+                get => _all_note_off_to_add_array;
+                set => _all_note_off_to_add_array = value;
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
@@ -248,7 +290,7 @@ namespace Meowziq.Midi {
 
             public static void Clear() {
                 _item.Clear();
-                _allNoteOffToAddArray.ToList().ForEach(x => x.Clear());
+                _all_note_off_to_add_array.ToList().ForEach(x => x.Clear());
             }
         }
     }

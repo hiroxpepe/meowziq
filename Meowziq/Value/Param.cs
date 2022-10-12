@@ -2,12 +2,14 @@
 using System.Text.RegularExpressions;
 
 /// <summary>
-/// Generator クラスに引数として渡すパラメータークラス
-/// MEMO: 不変オブジェクトに出来るかどうか
+/// parameter class to provide as an argument to the generator class.
 /// </summary>
+/// <memo>
+/// whether it can be an immutable object.
+/// </memo>
 namespace Meowziq.Value {
     /// <summary>
-    /// パラメータクラス
+    /// parameter class.
     /// </summary>
     public class Param {
 
@@ -15,10 +17,11 @@ namespace Meowziq.Value {
         // Constructor
 
         /// <summary>
-        /// ノート記述用パラメータ
-        /// MEMO: メロディ、ハモリ記述と共用出来る？ ⇒ 多少無駄があっても別々で組んで後で統合した方が現状の破壊が少ない
-        /// 
+        /// creates as a "note" notated parameter.
         /// </summary>
+        /// <memo>
+        /// メロディ、ハモリ記述と共用出来る？ ⇒ 多少無駄があっても別々で組んで後で統合した方が現状の破壊が少ない
+        /// </memo>
         public Param(Note note, Exp exp, Way way, bool auto_note = true) {
             this.note = note;
             Exp = exp;
@@ -27,7 +30,7 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// ドラム記述用パラメータ
+        /// creates as a "beat" notated parameter.
         /// </summary>
         public Param(Note note, int percussion_note_num, Exp exp, Way way) {
             this.note = note;
@@ -37,7 +40,7 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// コード記述用パラメータ
+        /// creates as a "chord" notated parameter.
         /// </summary>
         public Param(Chord chord, Exp exp, Way type) {
             Chord = chord;
@@ -46,7 +49,7 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// アルペジオ記述用パラメータ
+        /// creates as a "seque" notated parameter.
         /// </summary>
         public Param(Seque seque, Way type) {
             Seque = seque;
@@ -56,12 +59,18 @@ namespace Meowziq.Value {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjective] 
 
+        /// <remarks>
+        /// Range が Generator から使用される
+        /// </remarks>
         public Chord Chord {
-            get; // NOTE: Range が Generator から使用される
+            get;
         }
 
+        /// <remarks>
+        /// Range が Generator から使用される
+        /// </remarks>
         public Seque Seque {
-            get; // NOTE: Range が Generator から使用される
+            get;
         }
 
         public Exp Exp {
@@ -76,9 +85,9 @@ namespace Meowziq.Value {
             get;
         }
 
-        /// <summary>
-        /// NOTE: ここで char 配列が返せれば Generator 側は問題ない
-        /// </summary>
+        /// <remarks>
+        /// ここで char 配列が返せれば Generator 側は問題ない
+        /// </remarks>
         public char[] TextCharArray {
             get {
                 if (Way is Way.Mono || Way is Way.Multi || Way is Way.Drum) {
@@ -106,17 +115,21 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// ノート記述用パラメータかどうか
-        /// NOTE: Generator クラスから使用されます
+        /// whether "note" notated parameter.
         /// </summary>
+        /// <remarks>
+        /// Generator クラスから使用されます
+        /// </remarks>
         public bool IsNote {
             get => Way is Way.Mono || Way is Way.Multi;
         }
 
         /// <summary>
-        /// コード記述用パラメータかどうか
-        /// NOTE: Generator クラスから使用されます
+        /// whether "chord" notated parameter.
         /// </summary>
+        /// <remarks>
+        /// Generator クラスから使用されます
+        /// </remarks>
         public bool IsChord {
             get => Way is Way.Chord;
         }

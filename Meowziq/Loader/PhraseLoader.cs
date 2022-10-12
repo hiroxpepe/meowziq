@@ -10,7 +10,7 @@ using Meowziq.Value;
 
 namespace Meowziq.Loader {
     /// <summary>
-    /// Phrase のローダークラス
+    /// loader class for phrase.
     /// </summary>
     public static class PhraseLoader {
 

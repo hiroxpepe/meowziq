@@ -4,8 +4,10 @@ using NLog;
 namespace Meowziq {
     /// <summary>
     /// facade class for logging
-    /// NOTE: use NLog
     /// </summary>
+    /// <note>
+    /// use NLog.
+    /// </note>
     public static class Log {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
