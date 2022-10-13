@@ -21,8 +21,10 @@ using System.Runtime.Serialization.Json;
 namespace Meowziq.Loader {
     /// <summary>
     /// loader class for mixer.
-    /// @author h.adachi
     /// </summary>
+    /// <author>
+    /// h.adachi (STUDIO MeowToon)
+    /// </author>
     public static class MixerLoader<T> {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

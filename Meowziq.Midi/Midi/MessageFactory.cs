@@ -22,11 +22,13 @@ using Meowziq.Core;
 namespace Meowziq.Midi {
     /// <summary>
     /// create a concrete object for the IMessage interface.
-    /// @author h.adachi
     /// </summary>
-    /// <memo>
+    /// <note>
     /// static class cannot implement interface.<br/>
-    /// </memo>
+    /// </note>
+    /// <author>
+    /// h.adachi (STUDIO MeowToon)
+    /// </author>
     public static class MessageFactory {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

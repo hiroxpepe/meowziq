@@ -19,8 +19,10 @@ using System.Linq;
 namespace Meowziq.Value {
     /// <summary>
     /// Phrase のデータを継承する為のクラス
-    /// @author h.adachi
     /// </summary>
+    /// <author>
+    /// h.adachi (STUDIO MeowToon)
+    /// </author>
     public static class Inheritor {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -61,7 +63,7 @@ namespace Meowziq.Value {
         /// target のデータが '*' なら baze のデータと置き換えます
         /// </summary>
         static string applyString(string target, string baze) {
-            if (target is null || target.Equals("")) { // target が空文字 or null なら baze を返す
+            if (target is null || target.Equals(string.Empty)) { // target が空文字 or null なら baze を返す
                 return baze;
             }
             if (target.Count() != baze.Count()) { // target と baze のデータは同じ数

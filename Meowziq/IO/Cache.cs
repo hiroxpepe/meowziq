@@ -19,8 +19,10 @@ using System.Text;
 namespace Meowziq.IO {
     /// <summary>
     /// キャッシュ クラス
-    /// @author h.adachi
     /// </summary>
+    /// <author>
+    /// h.adachi (STUDIO MeowToon)
+    /// </author>
     public static class Cache {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -166,12 +168,12 @@ namespace Meowziq.IO {
             return source == target;
         }
 
-        public static void Set(/*ref*/ this string source, string target) {
+        public static void Set(this string source, string target) {
             source = target; // FIXME: 値渡しなのでこれでは無理 ⇒ C# の仕様で出来ない
         }
 
-        public static void Clear(/*ref*/ this string source) {
-            source = ""; // FIXME: 値渡しなのでこれでは無理 ⇒ C# の仕様で出来ない
+        public static void Clear(this string source) {
+            source = string.Empty; // FIXME: 値渡しなのでこれでは無理 ⇒ C# の仕様で出来ない
         }
     }
 }

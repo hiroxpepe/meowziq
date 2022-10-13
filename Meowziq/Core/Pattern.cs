@@ -20,9 +20,13 @@ using System.Linq;
 namespace Meowziq.Core {
     /// <summary>
     /// Pattern クラス
-    ///     + Meas オブジェクトのリストを管理します
-    /// @author h.adachi
     /// </summary>
+    /// <note>
+    /// + Meas オブジェクトのリストを管理します
+    /// </note>
+    /// <author>
+    /// h.adachi (STUDIO MeowToon)
+    /// </author>
     public class Pattern {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

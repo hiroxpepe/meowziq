@@ -17,12 +17,14 @@ using NLog;
 
 namespace Meowziq {
     /// <summary>
-    /// facade class for logging,
-    /// @author h.adachi
+    /// facade class for logging.
     /// </summary>
     /// <note>
     /// use NLog.
     /// </note>
+    /// <author>
+    /// h.adachi (STUDIO MeowToon)
+    /// </author>
     public static class Log {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

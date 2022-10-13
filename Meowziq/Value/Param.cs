@@ -15,17 +15,16 @@
 
 using System.Text.RegularExpressions;
 
-/// <summary>
-/// parameter class to provide as an argument to the generator class.
-/// @author h.adachi
-/// </summary>
-/// <memo>
-/// whether it can be an immutable object.
-/// </memo>
 namespace Meowziq.Value {
     /// <summary>
-    /// parameter class.
+    /// parameter class to provide as an argument to the generator class.
     /// </summary>
+    /// <memo>
+    /// whether it can be an immutable object.
+    /// </memo>
+    /// <author>
+    /// h.adachi (STUDIO MeowToon)
+    /// </author>
     public class Param {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

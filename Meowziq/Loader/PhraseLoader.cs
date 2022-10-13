@@ -25,8 +25,10 @@ using Meowziq.Value;
 namespace Meowziq.Loader {
     /// <summary>
     /// loader class for phrase.
-    /// @author h.adachi
     /// </summary>
+    /// <author>
+    /// h.adachi (STUDIO MeowToon)
+    /// </author>
     public static class PhraseLoader {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -39,8 +41,7 @@ namespace Meowziq.Loader {
         /// </summary>
         public static List<Core.Phrase> Build(Stream target) {
             var list = loadJson(target).PhraseArray.Select(x => convertPhrase(x)).ToList();
-            return list.Select(x => x = !(x.Base is null) ? Inheritor.Apply(x, searchBasePhrase(x.Type, x.Base, list)) : x)
-                .ToList();
+            return list.Select(x => x = !(x.Base is null) ? Inheritor.Apply(x, searchBasePhrase(x.Type, x.Base, list)) : x).ToList();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

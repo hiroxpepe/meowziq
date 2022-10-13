@@ -18,20 +18,22 @@ using System.Collections.Generic;
 namespace Meowziq {
     /// <summary>
     /// the name of Dictionary is too long so it names Map.
-    /// @author h.adachi
     /// </summary>
     /// <note>
     /// used in the Meowziq namespace.
     /// </note>
+    /// <author>
+    /// h.adachi (STUDIO MeowToon)
+    /// </author>
     public class Map<K, V> : Dictionary<K, V> {
     }
 
     /// <summary>
     /// the item class.
     /// </summary>
-    /// <remarks>
+    /// <note>
     /// Map(Dictionary) class that can take out from the key of the value only once.
-    /// </remarks>
+    /// </note>
     /// <note>
     /// used in the Meowziq namespace.
     /// </note>

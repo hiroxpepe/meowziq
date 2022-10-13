@@ -18,8 +18,10 @@ using Sanford.Multimedia.Midi;
 namespace Meowziq.Midi {
     /// <summary>
     /// midi class using Sanford.Multimedia.Midi
-    /// @author h.adachi
     /// </summary>
+    /// <author>
+    /// h.adachi (STUDIO MeowToon)
+    /// </author>
     public class Manager {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

@@ -25,8 +25,10 @@ using Meowziq.Core;
 namespace Meowziq.Loader {
     /// <summary>
     /// loader class for player.
-    /// @author h.adachi
     /// </summary>
+    /// <author>
+    /// h.adachi (STUDIO MeowToon)
+    /// </author>
     public static class PlayerLoader<T> {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -49,7 +51,7 @@ namespace Meowziq.Loader {
         /// </summary>
         public static List<Core.Player<T>> Build(Stream target) {
             if (_phrase_list is null) {
-                throw new ArgumentException("need phraseList.");
+                throw new ArgumentException("need _phrase_list.");
             }
             /// <remarks>
             /// converts to a list of Core.Player.

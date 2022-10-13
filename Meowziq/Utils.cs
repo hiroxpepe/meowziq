@@ -20,14 +20,18 @@ using System.Linq;
 namespace Meowziq {
     /// <summary>
     /// definition of util functions.
-    /// @author h.adachi
     /// </summary>
     /// <note>
-    /// TOPレベルであるべき ⇒ 実装パッケージを using しない、引数はプリミティブ型か Enum のみ
+    /// + this should be top level. <br/>
+    /// + do not do using the implementation package. <br/>
+    /// + arguments must be primitive types or enums only. <br/>
     /// </note>
     /// <memo>
-    /// ここでは var で変数を定義しない
+    /// do not define variables with var here.
     /// </memo>
+    /// <author>
+    /// h.adachi (STUDIO MeowToon)
+    /// </author>
     public class Utils {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -39,17 +43,17 @@ namespace Meowziq {
         // public static Methods [verb]
 
         /// <summary>
-        /// 引数の index 値の 16beat における長さを返します
+        /// returns the length in 16beats for the index value of the argument.
         /// </summary>
         public static int To16beatLength(int index) {
             return Length.Of16beat.Int32() * index;
         }
 
         /// <summary>
-        /// 引数の count 値(1拍)における 16beat の数を返します
+        /// returns the length16beats in the count value (one beat) of the argument.
         /// </summary>
         public static int To16beatCount(int beat_count) {
-            return beat_count * 4; // 1拍における 16beat の数なので 4 を掛ける
+            return beat_count * 4; // multiplies by 4 because it is the number of 16beats in one beat.
         }
 
         /// <summary>
@@ -58,10 +62,10 @@ namespace Meowziq {
         ///     Span に旋法あり：Span に設定した旋法を使用
         /// </summary>
         public static int[] ToNoteArray(Key key, Degree degree, Mode key_mode, Mode span_mode, int index) {
-            int note_degree = noteRootBy(key, degree, key_mode); // 曲のキーの度数と旋法から度数のルート音を取得
-            Mode mode = span_mode is Mode.Undefined ? modeSpanBy(degree, key_mode) : span_mode; // Span に旋法がなければ自動旋法
-            int[] scale7 = scale7By(Key.Enum.Parse(note_degree), mode); // そのルート音の旋法スケールを取得
-            return noteArrayBy(index, scale7); // 旋法スケールから引数indexに対応したコード構成音の配列を返す
+            int degree_note = rootNoteBy(key: key, degree: degree, key_mode: key_mode); // 曲のキーの度数と旋法から度数のルート音を取得
+            Mode mode = span_mode is Mode.Undefined ? spanModeBy(degree: degree, key_mode: key_mode) : span_mode; // Span に旋法がなければ自動旋法
+            int[] scale7 = scale7By(key: Key.Enum.Parse(degree_note), key_mode: mode); // そのルート音の旋法スケールを取得
+            return noteArrayBy(index: index, scale7: scale7); // 旋法スケールから引数indexに対応したコード構成音の配列を返す
         }
 
         /// <summary>
@@ -72,63 +76,66 @@ namespace Meowziq {
         /// ※ "note": キーの旋法を自動判定し、その旋法の ノート記法の対応 Note No を返す
         /// </summary>
         public static int ToNote(Key key, Degree degree, Mode key_mode, Mode span_mode, int index, bool auto_note = true) {
-            int note_degree = noteRootBy(key, degree, key_mode); // 曲のキーの度数と旋法から度数のルート音を取得
-            Mode mode = span_mode is Mode.Undefined ? modeSpanBy(degree, key_mode) : span_mode; // Span に旋法がなければ自動旋法
+            int degree_note = rootNoteBy(key: key, degree: degree, key_mode: key_mode); // 曲のキーの度数と旋法から度数のルート音を取得
+            Mode mode = span_mode is Mode.Undefined ? spanModeBy(degree: degree, key_mode: key_mode) : span_mode; // Span に旋法がなければ自動旋法
             int[] scale7 = null;
             if (auto_note) { // Span ベースの旋法(自動・設定)
-                scale7 = scale7By(Key.Enum.Parse(note_degree), mode); // そのルート音の旋法スケールを取得
+                scale7 = scale7By(key: Key.Enum.Parse(degree_note), key_mode: mode); // そのルート音の旋法スケールを取得
             } else { // キーの旋法を自動判定してそちらから取得
-                var mode_current_key = ToModeKey(key, degree, key_mode, mode);
-                if (!mode_current_key.ToString().Equals("Undefined")) { // 旋法が判定出来れば
-                    scale7 = scale7By(key, mode_current_key); // 判定した曲の旋法を取得
+                Mode key_mode_current = ToKeyMode(key: key, degree: degree, key_mode: key_mode, span_mode: mode);
+                if (!key_mode_current.ToString().Equals("Undefined")) { // 旋法が判定出来れば
+                    scale7 = scale7By(key: key, key_mode: key_mode_current); // 判定した曲の旋法を取得
                 }
             }
             return scale7[index - 1]; // 0基底のスケール配列から引数添え字のノートを返す
         }
 
         /// <summary>
-        /// FIXME: テキスト設定からランダムアルぺジエーター
+        /// gets random note from parameters.
         /// </summary>
-        public static int ToNoteRandom(Key key, Degree degree, Mode key_mode, Mode span_mode) {
-            return noteOfRandom3By(key, degree, key_mode, span_mode);
+        /// <fixme>
+        /// FIXME: this
+        /// </fixme>
+        public static int ToRandomNote(Key key, Degree degree, Mode key_mode, Mode span_mode) {
+            return noteOfRandom3By(key: key, degree: degree, key_mode: key_mode, span_mode: span_mode);
         }
 
         /// <summary>
         /// 度数とキーの旋法から旋法に対応したその度数の旋法を返します
         /// </summary>
-        public static Mode ToModeSpan(Degree degree, Mode key_mode) {
-            return modeSpanBy(degree, key_mode);
+        public static Mode ToSpanMode(Degree degree, Mode key_mode) {
+            return spanModeBy(degree: degree, key_mode: key_mode);
         }
 
         /// <summary>
         /// Span の旋法から曲の旋法を判定する
         /// </summary>
-        public static Mode ToModeKey(Key key, Degree degree, Mode key_mode, Mode span_mode) {
+        public static Mode ToKeyMode(Key key, Degree degree, Mode key_mode, Mode span_mode) {
             // NOTE: 旋法チェンジ判定不能なものをはねる
             // MEMO: C キーにおける A の表示の仕方は後で考える
-            Mode mode_key_maybe = modeKeyMaybeBy(degree, span_mode); // span の度数と旋法からこの旋法と推測される
-            int[] scale_key = scale7By(key, mode_key_maybe); // この旋法と曲キーで作成したスケールの構成音が同じになるはずである
-            int note_degree = noteRootBy(key, degree, key_mode); // 曲のキーの度数と旋法から度数のルート音を取得
-            int[] scale_span = scale7By(Key.Enum.Parse(note_degree), span_mode); // span の度数と旋法でもスケールを作成してみる
-            if (!compareScale(scale_key, scale_span)) { // 比較して構成音は同じはず
+            Mode key_mode_maybe = keyModeMaybeBy(degree: degree, span_mode: span_mode); // span の度数と旋法からこの旋法と推測される
+            int[] key_scale = scale7By(key: key, key_mode: key_mode_maybe); // この旋法と曲キーで作成したスケールの構成音が同じになるはずである
+            int degree_note = rootNoteBy(key: key, degree: degree, key_mode: key_mode); // 曲のキーの度数と旋法から度数のルート音を取得
+            int[] span_scale = scale7By(key: Key.Enum.Parse(degree_note), key_mode: span_mode); // span の度数と旋法でもスケールを作成してみる
+            if (!compareScale(scale1: key_scale, scale2: span_scale)) { // 比較して構成音は同じはず
                 return Mode.Undefined; // 構成音が違う場合
             }
-            return mode_key_maybe; // TODO: これで正しいかテストを作成して確認
+            return key_mode_maybe; // TODO: これで正しいかテストを作成して確認
         }
 
         /// <summary>
         /// メジャーかマイナーかシンプルなコードネームを返します
         /// </summary>
         public static string ToSimpleCodeName(Key key, Degree degree, Mode key_mode, Mode span_mode, bool auto_mode = true) {
-            int note_degree = noteRootBy(key, degree, key_mode); // 曲のキーの度数と旋法から度数のルート音を取得
-            string code_base = Key.Enum.Parse(note_degree).ToString(); // コードネームの基本取得
+            int degree_note = rootNoteBy(key: key, degree: degree, key_mode: key_mode); // 曲のキーの度数と旋法から度数のルート音を取得
+            string code_base = Key.Enum.Parse(degree_note).ToString(); // コードネームの基本取得
             Mode mode;
-            if (auto_mode) { // 自動旋法取得
-                mode = modeSpanBy(degree, key_mode);
+            if (auto_mode) { // 旋法を取得する
+                mode = spanModeBy(degree: degree, key_mode: key_mode);
             } else {
-                mode = span_mode; // Spanの旋法適用
+                mode = span_mode; // Spanの旋法をそのまま適用
             }
-            string major_or_miner_string = majorOrMiner(mode) ? "" : "m";
+            string major_or_miner_string = majorOrMiner(mode: mode) ? string.Empty : "m";
             return code_base + major_or_miner_string;
         }
 
@@ -136,16 +143,16 @@ namespace Meowziq {
         // private static Methods [verb]
 
         /// <summary>
-        /// スケールの構成音を比較します
+        /// compares scale notes.
         /// </summary>
         static bool compareScale(int[] scale1, int[] scale2) {
             List<Key> list1 = scale1.Select(x => Key.Enum.Parse(x)).OrderBy(x => x).ToList();
             List<Key> list2 = scale2.Select(x => Key.Enum.Parse(x)).OrderBy(x => x).ToList();
             var result = list1.Where(x => !list2.Contains(x));
             if (result.Count() == 0) {
-                return true; // 構成音が一致
+                return true; // scale notes match.
             }
-            return false; // 構成音が異なる
+            return false; // scale notes not match.
         }
 
         /// <summary>
@@ -171,10 +178,10 @@ namespace Meowziq {
         /// 1～9のコード記法から Note No の配列を返します
         /// </summary>
         static int[] noteArrayBy(int index, int[] scale7) {
-            // TODO: バリデート
-            int[] note2 = new int[2]; // chord 構成音の2音
-            int[] note3 = new int[3]; // chord 構成音の3音
-            int[] note4 = new int[4]; // chord 構成音の4音
+            // TODO: validate
+            int[] note2 = new int[2]; // extracts two notes as chord notes from scale notes.
+            int[] note3 = new int[3]; // extracts three notes as chord notes from scale notes.
+            int[] note4 = new int[4]; // extracts four notes as chord notes from scale notes.
             switch (index) {
                 case 3: // e.g. C, Cm, Cm(b5)
                     note3[0] = scale7[1 - 1];
@@ -202,23 +209,26 @@ namespace Meowziq {
                     note4[2] = scale7[5 - 1];
                     note4[3] = scale7[7 - 1];
                     return note4;
-                // TODO: 8で2音オクターブ？
+                // TODO: two octaves in 8?
                 case 9: // e.g. Cadd9, Cmadd9, Cm(b9), Cm(-5,b9)
                     note4[0] = scale7[1 - 1];
                     note4[1] = scale7[3 - 1];
                     note4[2] = scale7[5 - 1];
-                    note4[3] = scale7[2 - 1] + 12; // 1オクターブ上: FIXME: Range の対応外
+                    note4[3] = scale7[2 - 1] + 12; // 1 octave up. // FIXME: Considers not supported Range.
                     return note4;
                 default:
-                    throw new ArgumentException("invalid index.");
+                    throw new ArgumentException("invalid index or scale7.");
             }
         }
 
-        static int noteRootBy(Key key, Degree degree, Mode key_mode) {
+        /// <summary>
+        /// returns root note number from the key, the degree, and the mode of the song.
+        /// </summary>
+        static int rootNoteBy(Key key, Degree degree, Mode key_mode) {
             key.Validate();
             degree.Validate();
             key_mode.Validate();
-            int[] scale7 = scale7By(key, key_mode);
+            int[] scale7 = scale7By(key: key, key_mode: key_mode);
             return scale7[(int) degree];
         }
 
@@ -229,7 +239,7 @@ namespace Meowziq {
             key.Validate();
             degree.Validate();
             key_mode.Validate();
-            int[] scale7 = scale7By(key, key_mode);
+            int[] scale7 = scale7By(key: key, key_mode: key_mode);
             int[] note3 = new int[3];
             switch (degree) {
                 case Degree.I:
@@ -278,7 +288,7 @@ namespace Meowziq {
             key.Validate();
             degree.Validate();
             key_mode.Validate();
-            int[] scale7 = scale7By(key, key_mode);
+            int[] scale7 = scale7By(key: key, key_mode: key_mode);
             int[] note4 = new int[4];
             switch (degree) {
                 case Degree.I:
@@ -327,17 +337,17 @@ namespace Meowziq {
             return note4;
         }
 
-        // TODO: 5音を取り出すメソッド：7モードのペンタトニック
+        // TODO: コード構成音の5音を取り出すメソッド：7モードのペンタトニック
 
         /// <summary>
-        /// MEMO: 有効？ 何の目的で使用？
+        /// コード構成音の7音を抽出
         /// </summary>
         static int[] noteArray7By(Key key, Degree degree, Mode key_mode) {
             key.Validate();
             degree.Validate();
             key_mode.Validate();
-            int[] scale7 = scale7By(key, key_mode);
-            int[] note7 = new int[7]; // コード構成音の7音を抽出
+            int[] scale7 = scale7By(key: key, key_mode: key_mode);
+            int[] note7 = new int[7];
             switch (degree) {
                 case Degree.I:
                     note7[0] = scale7[1 - 1];
@@ -407,12 +417,12 @@ namespace Meowziq {
         }
 
         /// <summary>
-        /// returns a modal scale from the key and the mode.
+        /// returns a modal scale notes number from the key and the mode.
         /// </summary>
         static int[] scale7By(Key key, Mode key_mode) {
             key.Validate();
             key_mode.Validate();
-            int note_root = (int) key;
+            int root_note = (int) key;
             /// <note>
             /// creates a mode scale consisting of seven notes.
             /// </note>
@@ -422,85 +432,85 @@ namespace Meowziq {
                 /// lydian mode scale.
                 /// </note>
                 case Mode.Lyd:
-                    scale7[0] = note_root; // 1
-                    scale7[1] = note_root + 2; // 2
-                    scale7[2] = note_root + 4; // 3
-                    scale7[3] = note_root + 6; // #4
-                    scale7[4] = note_root + 7; // 5
-                    scale7[5] = note_root + 9; // 6
-                    scale7[6] = note_root + 11; // 7
+                    scale7[0] = root_note; // 1
+                    scale7[1] = root_note + 2; // 2
+                    scale7[2] = root_note + 4; // 3
+                    scale7[3] = root_note + 6; // #4
+                    scale7[4] = root_note + 7; // 5
+                    scale7[5] = root_note + 9; // 6
+                    scale7[6] = root_note + 11; // 7
                     break;
                 /// <note>
                 /// ionian mode scale.
                 /// </note>
                 case Mode.Ion:
-                    scale7[0] = note_root; // 1
-                    scale7[1] = note_root + 2; // 2
-                    scale7[2] = note_root + 4; // 3
-                    scale7[3] = note_root + 5; // 4
-                    scale7[4] = note_root + 7; // 5
-                    scale7[5] = note_root + 9; // 6
-                    scale7[6] = note_root + 11; // 7
+                    scale7[0] = root_note; // 1
+                    scale7[1] = root_note + 2; // 2
+                    scale7[2] = root_note + 4; // 3
+                    scale7[3] = root_note + 5; // 4
+                    scale7[4] = root_note + 7; // 5
+                    scale7[5] = root_note + 9; // 6
+                    scale7[6] = root_note + 11; // 7
                     break;
                 /// <note>
                 /// mixolydian mode scale.
                 /// </note>
                 case Mode.Mix:
-                    scale7[0] = note_root; // 1
-                    scale7[1] = note_root + 2; // 2
-                    scale7[2] = note_root + 4; // 3
-                    scale7[3] = note_root + 5; // 4
-                    scale7[4] = note_root + 7; // 5
-                    scale7[5] = note_root + 9; // 6
-                    scale7[6] = note_root + 10; // b7
+                    scale7[0] = root_note; // 1
+                    scale7[1] = root_note + 2; // 2
+                    scale7[2] = root_note + 4; // 3
+                    scale7[3] = root_note + 5; // 4
+                    scale7[4] = root_note + 7; // 5
+                    scale7[5] = root_note + 9; // 6
+                    scale7[6] = root_note + 10; // b7
                     break;
                 /// <note>
                 /// dorian mode scale.
                 /// </note>
                 case Mode.Dor:
-                    scale7[0] = note_root; // 1
-                    scale7[1] = note_root + 2; // 2
-                    scale7[2] = note_root + 3; // b3
-                    scale7[3] = note_root + 5; // 4
-                    scale7[4] = note_root + 7; // 5
-                    scale7[5] = note_root + 9; // 6
-                    scale7[6] = note_root + 10; // b7
+                    scale7[0] = root_note; // 1
+                    scale7[1] = root_note + 2; // 2
+                    scale7[2] = root_note + 3; // b3
+                    scale7[3] = root_note + 5; // 4
+                    scale7[4] = root_note + 7; // 5
+                    scale7[5] = root_note + 9; // 6
+                    scale7[6] = root_note + 10; // b7
                     break;
                 /// <note>
                 /// aeolian mode scale.
                 /// </note>
                 case Mode.Aeo:
-                    scale7[0] = note_root; // 1
-                    scale7[1] = note_root + 2; // 2
-                    scale7[2] = note_root + 3; // b3
-                    scale7[3] = note_root + 5; // 4
-                    scale7[4] = note_root + 7; // 5
-                    scale7[5] = note_root + 8; // b6
-                    scale7[6] = note_root + 10; // b7
+                    scale7[0] = root_note; // 1
+                    scale7[1] = root_note + 2; // 2
+                    scale7[2] = root_note + 3; // b3
+                    scale7[3] = root_note + 5; // 4
+                    scale7[4] = root_note + 7; // 5
+                    scale7[5] = root_note + 8; // b6
+                    scale7[6] = root_note + 10; // b7
                     break;
                 /// <note>
                 /// phrygian mode scale.
                 /// </note>
                 case Mode.Phr:
-                    scale7[0] = note_root; // 1
-                    scale7[1] = note_root + 1; // b2
-                    scale7[2] = note_root + 3; // b3
-                    scale7[3] = note_root + 5; // 4
-                    scale7[4] = note_root + 7; // 5
-                    scale7[5] = note_root + 8; // b6
-                    scale7[6] = note_root + 10; // b7
+                    scale7[0] = root_note; // 1
+                    scale7[1] = root_note + 1; // b2
+                    scale7[2] = root_note + 3; // b3
+                    scale7[3] = root_note + 5; // 4
+                    scale7[4] = root_note + 7; // 5
+                    scale7[5] = root_note + 8; // b6
+                    scale7[6] = root_note + 10; // b7
                     break;
                 /// <note>
                 /// locrian mode scale.
                 /// </note>
                 case Mode.Loc:
-                    scale7[0] = note_root; // 1
-                    scale7[1] = note_root + 1; // b2
-                    scale7[2] = note_root + 3; // b3
-                    scale7[3] = note_root + 5; // 4
-                    scale7[4] = note_root + 6; // b5
-                    scale7[5] = note_root + 8; // b6
-                    scale7[6] = note_root + 10; // b7
+                    scale7[0] = root_note; // 1
+                    scale7[1] = root_note + 1; // b2
+                    scale7[2] = root_note + 3; // b3
+                    scale7[3] = root_note + 5; // 4
+                    scale7[4] = root_note + 6; // b5
+                    scale7[5] = root_note + 8; // b6
+                    scale7[6] = root_note + 10; // b7
                     break;
             }
             return scale7;
@@ -511,7 +521,7 @@ namespace Meowziq {
         /// TODO: ※仮 -- Span の度数と旋法でキーの旋法を返す
         /// TODO: C キーで Am が A になる時は？ ⇒ ※暫定: 後続でチェックして Mode.Undefined を返すようにした
         /// </summary>
-        static Mode modeKeyMaybeBy(Degree degree, Mode span_mode) {
+        static Mode keyModeMaybeBy(Degree degree, Mode span_mode) {
             span_mode.Validate();
             degree.Validate();
             if (span_mode is Mode.Lyd) {
@@ -634,13 +644,13 @@ namespace Meowziq {
                         return Mode.Ion;
                 }
             }
-            throw new ArgumentException("not key or degree.");
+            throw new ArgumentException("invalid degree or span_mode.");
         }
 
         /// <summary>
         /// 度数とキーの旋法から対応したその度数の旋法を返します
         /// </summary>
-        static Mode modeSpanBy(Degree degree, Mode key_mode) {
+        static Mode spanModeBy(Degree degree, Mode key_mode) {
             key_mode.Validate();
             degree.Validate();
             if (key_mode is Mode.Lyd) {
@@ -763,19 +773,19 @@ namespace Meowziq {
                         return Mode.Aeo;
                 }
             }
-            throw new ArgumentException("not key or degree.");
+            throw new ArgumentException("invalid degree or key_mode.");
         }
 
         /// <summary>
         /// そのキーの旋法の度数の3和音構成音をランダムで返す
         /// </summary>
         static int noteOfRandom3By(Key key, Degree degree, Mode key_mode, Mode span_mode) {
-            Mode mode = span_mode is Mode.Undefined ? modeSpanBy(degree, key_mode) : span_mode; // 自動旋法の場合度数とキーの旋法から対応したその度数の旋法を取得
-            int[] scale_key = scale7By(key, key_mode); // キーの旋法でスケールを取得
-            int note_degree = scale_key[(int) degree]; // そのスケールの度数の音を取得
-            int[] scale7 = scale7By(Key.Enum.Parse(note_degree), mode); // その音のこの旋法でのスケールを取得
-            int[] note_array3 = noteArrayBy(3, scale7); // スケールから3和音を取得
-            int random = Utils._random.Next(0, 3); // ランダム値作成: 0 から 2
+            Mode mode = span_mode is Mode.Undefined ? spanModeBy(degree: degree, key_mode: key_mode) : span_mode; // 自動旋法の場合度数とキーの旋法から対応したその度数の旋法を取得
+            int[] key_scale = scale7By(key: key, key_mode: key_mode); // キーの旋法でスケールを取得
+            int degree_note = key_scale[(int) degree]; // そのスケールの度数の音を取得
+            int[] scale7 = scale7By(key: Key.Enum.Parse(degree_note), key_mode: mode); // その音のこの旋法でのスケールを取得
+            int[] note_array3 = noteArrayBy(index: 3, scale7: scale7); // スケールから3和音を取得
+            int random = _random.Next(minValue: 0, maxValue: 3); // ランダム値作成: 0 から 2 // FIXME:
             return note_array3[random]; // そのスケールの3音のどれかを取得
         }
 

@@ -18,9 +18,11 @@ using System.Linq;
 
 namespace Meowziq.Value {
     /// <summary>
-    /// NOTE: 入力値バリデーション クラス
-    /// @author h.adachi
+    /// 入力値バリデーション クラス
     /// </summary>
+    /// <author>
+    /// h.adachi (STUDIO MeowToon)
+    /// </author>
     public static class Validater {
         /// <summary>
         /// TODO: 使用可能な文字の判定
@@ -51,7 +53,7 @@ namespace Meowziq.Value {
         /// 不要文字 "[", "]", "|", を削除します
         /// </summary>
         internal static string Filter(string target) {
-            return target.Replace("|", "").Replace("[", "").Replace("]", ""); // 不要文字削除
+            return target.Replace("|", string.Empty).Replace("[", string.Empty).Replace("]", string.Empty); // 不要文字削除
         }
     }
 

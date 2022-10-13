@@ -23,11 +23,13 @@ using Meowziq.Core; // depends on Meowziq.Core.Note
 namespace Meowziq.Midi {
     /// <summary>
     /// message class using Sanford.Multimedia.Midi
-    /// @author h.adachi
     /// </summary>
     /// <fixme>
     /// relies on abstraction instead of ChannelMessage.
     /// </fixme>
+    /// <author>
+    /// h.adachi (STUDIO MeowToon)
+    /// </author>
     public static class Message {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,9 +59,9 @@ namespace Meowziq.Midi {
         /// </remarks>
         public static List<ChannelMessage> GetBy(int tick) {
             if (_flag) {
-                return Prime.Item.GetOnce(tick);
+                return Prime.Item.GetOnce(key: tick);
             } else {
-                return Second.Item.GetOnce(tick);
+                return Second.Item.GetOnce(key: tick);
             }
         }
 
@@ -84,7 +86,7 @@ namespace Meowziq.Midi {
             /// <remarks>
             /// ignore the tick as it has already been processed.
             /// </remarks>
-            if (!_hashset.Add(tick)) {
+            if (!_hashset.Add(item: tick)) {
                 return;
             }
             /// <remarks>
@@ -110,21 +112,21 @@ namespace Meowziq.Midi {
         /// program change.
         /// </remarks> 
         public static void ApplyProgramChange(int tick, int midi_ch, int program_num ) {
-            add(tick, new ChannelMessage(ChannelCommand.ProgramChange, midi_ch, program_num, 127));
+            add(tick: tick, message: new ChannelMessage(ChannelCommand.ProgramChange, midi_ch, program_num, 127));
         }
 
         /// <summary>
         /// applies volume as ChannelMessage.
         /// </summary>
         public static void ApplyVolume(int tick, int midi_ch, int volume) {
-            add(tick, new ChannelMessage(ChannelCommand.Controller, midi_ch, 7, volume));
+            add(tick: tick, message: new ChannelMessage(ChannelCommand.Controller, midi_ch, 7, volume));
         }
 
         /// <summary>
         /// applies pan as ChannelMessage.
         /// </summary>
         public static void ApplyPan(int tick, int midi_ch, Pan pan) {
-            add(tick, new ChannelMessage(ChannelCommand.Controller, midi_ch, 10, (int) pan));
+            add(tick: tick, message: new ChannelMessage(ChannelCommand.Controller, midi_ch, 10, (int) pan));
         }
 
         /// <summary>
@@ -134,7 +136,7 @@ namespace Meowziq.Midi {
             if (!mute) {
                 return;
             }
-            add(tick, new ChannelMessage(ChannelCommand.Controller, midi_ch, 7, 0));
+            add(tick: tick, message: new ChannelMessage(ChannelCommand.Controller, midi_ch, 7, 0));
         }
 
         /// <summary>
@@ -149,23 +151,23 @@ namespace Meowziq.Midi {
                     var note_off_tick = tick - Length.Of32beat.Int32(); // just in case, stop before the 32nd note.
                     if (Prime.AllNoteOffToAddArray[midi_ch].Add(note_off_tick)) { // forced stop for the note of tick only once per midi ch.
                         if (midi_ch != 9) { // exclude the drum midi channel.
-                            add(note_off_tick, new ChannelMessage(ChannelCommand.Controller, midi_ch, 120));
+                            add(tick: note_off_tick, message: new ChannelMessage(ChannelCommand.Controller, midi_ch, 120));
                         }
                     }
                 }
-                add(tick, new ChannelMessage(ChannelCommand.NoteOn, midi_ch, note.Num, note.Velo)); // midi note on.
-                add(tick + note.Gate, new ChannelMessage(ChannelCommand.NoteOff, midi_ch, note.Num, 0)); // midi note off.
+                add(tick: tick, message: new ChannelMessage(ChannelCommand.NoteOn, midi_ch, note.Num, note.Velo)); // midi note on.
+                add(tick: tick + note.Gate, message: new ChannelMessage(ChannelCommand.NoteOff, midi_ch, note.Num, 0)); // midi note off.
             } else {
                 if (note.HasPre) { // note has priority pronunciation,
                     var note_off_tick = tick - Length.Of32beat.Int32(); // just in case, stop before the 32nd note.
                     if (Second.AllNoteOffToAddArray[midi_ch].Add(note_off_tick)) { // forced stop for the note of tick only once per midi ch.
                         if (midi_ch != 9) { // exclude the drum midi channel.
-                            add(note_off_tick, new ChannelMessage(ChannelCommand.Controller, midi_ch, 120));
+                            add(tick: note_off_tick, message: new ChannelMessage(ChannelCommand.Controller, midi_ch, 120));
                         }
                     }
                 }
-                add(tick, new ChannelMessage(ChannelCommand.NoteOn, midi_ch, note.Num, note.Velo)); // midi note on.
-                add(tick + note.Gate, new ChannelMessage(ChannelCommand.NoteOff, midi_ch, note.Num, 0)); // midi note off.
+                add(tick: tick, message: new ChannelMessage(ChannelCommand.NoteOn, midi_ch, note.Num, note.Velo)); // midi note on.
+                add(tick: tick + note.Gate, message: new ChannelMessage(ChannelCommand.NoteOff, midi_ch, note.Num, 0)); // midi note off.
             }
         }
 
@@ -191,16 +193,16 @@ namespace Meowziq.Midi {
         // private static Methods [verb]
 
         /// <summary>
-        /// adds a channel_message to the list.
+        /// adds a ChannelMessage to the list.
         /// </summary>
         /// <remarks>
         /// run in "Second" start.
         /// </remarks>
-        static void add(int tick, ChannelMessage channel_message) {
+        static void add(int tick, ChannelMessage message) {
             if (!_flag) {
-                Prime.Item.Add(tick, channel_message);
+                Prime.Item.Add(tick, message);
             } else {
-                Second.Item.Add(tick, channel_message);
+                Second.Item.Add(tick, message);
             }
         }
 

@@ -19,8 +19,10 @@ using System.Text.RegularExpressions;
 namespace Meowziq {
     /// <summary>
     /// common extension methods.
-    /// @author h.adachi
     /// </summary>
+    /// <author>
+    /// h.adachi (STUDIO MeowToon)
+    /// </author>
     public static class Extensions {
         /// <summary>
         /// converts a character to a number.
@@ -36,7 +38,7 @@ namespace Meowziq {
         /// returns true if the string is not a null or empty string.
         /// </summary>
         public static bool HasValue(this string source) {
-            return !(source is null || source.Equals(""));
+            return !(source is null || source.Equals(string.Empty));
         }
     }
 }

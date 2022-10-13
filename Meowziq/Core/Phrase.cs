@@ -22,10 +22,14 @@ using Meowziq.Value;
 namespace Meowziq.Core {
     /// <summary>
     /// Phrase クラス
-    ///     + キーと旋法は外部から与えられる
-    ///     + Note オブジェクトのリストを管理する
-    /// @author h.adachi
     /// </summary>
+    /// <note>
+    /// + キーと旋法は外部から与えられる
+    /// + Note オブジェクトのリストを管理する
+    /// </note>
+    /// <author>
+    /// h.adachi (STUDIO MeowToon)
+    /// </author>
     public class Phrase {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -203,7 +207,7 @@ namespace Meowziq.Core {
                     _data.BeatArray.ToList().Select((x, idx) => new Param(
                         new Value.Note(x, 0), // オクターブは常に 0
                         (int) _data.PercussionArray[idx],
-                        new Value.Exp(_data.PreArray[idx], ""),
+                        new Value.Exp(_data.PreArray[idx], string.Empty),
                         way
                     )).ToList().ForEach(x => generator.ApplyDrumNote(tick, pattern.BeatCount, x));
                     break;
@@ -274,7 +278,7 @@ namespace Meowziq.Core {
             // 小節に切り出す
             var meas_string_array = target.Replace("][", "@")  // まず "][" を "@" に置き換え
                 .Split('@') // 小節で切り分ける
-                .Select(x => x.Replace("[", "").Replace("]", "")).ToArray(); // 不要文字削除
+                .Select(x => x.Replace("[", string.Empty).Replace("]", string.Empty)).ToArray(); // 不要文字削除
             // FIXME: 1小節を4拍として計算
             return meas_string_array.Length * 4;
         }
