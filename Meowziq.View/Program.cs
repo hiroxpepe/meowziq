@@ -19,8 +19,8 @@ using System.Windows.Forms;
 namespace Meowziq.View {
     /// <summary>
     /// the application.
-    /// @author h.adachi
     /// </summary>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     static class Program {
         /// <summary>
         /// the main entry point of the application.

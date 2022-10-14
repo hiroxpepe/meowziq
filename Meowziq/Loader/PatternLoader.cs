@@ -24,8 +24,8 @@ using Meowziq.Core;
 namespace Meowziq.Loader {
     /// <summary>
     /// loader class for pattern.
-    /// @author h.adachi
     /// </summary>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class PatternLoader {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ namespace Meowziq.Loader {
             // 小節に切り出す "[I:Aeo| | | ][IV| | | ][I| | | ][IV| | | ]"
             var meas_string_array = pattern_string.Replace("][", "@")  // まず "][" を "@" に置き換え
                 .Split('@') // 小節で切り分ける
-                .Select(x => x.Replace("[", "").Replace("]", "")).ToArray(); // 不要文字削除
+                .Select(x => x.Replace("[", string.Empty).Replace("]", string.Empty)).ToArray(); // 不要文字削除
             // Span リストに変換してから Meas を作成してリストに変換
             return meas_string_array.Select(x => new Meas(convertSpanList(x))).ToList();
         }

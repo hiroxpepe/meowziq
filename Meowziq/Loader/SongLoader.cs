@@ -25,8 +25,8 @@ using Meowziq.Core;
 namespace Meowziq.Loader {
     /// <summary>
     /// loader class for song.
-    /// @author h.adachi
     /// </summary>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class SongLoader {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@ namespace Meowziq.Loader {
         /// </summary>
         public static Core.Song Build(Stream target) {
             if (_pattern_list is null) {
-                throw new ArgumentException("need patternList.");
+                throw new ArgumentException("need _pattern_list.");
             }
             var song = loadJson(target).Song;
             var section_list = song.Section.Select(x =>

@@ -21,12 +21,12 @@ using static Meowziq.Utils;
 
 namespace Meowziq.Core {
     /// <summary>
-    /// generates note objects and adds to the item object.
-    /// @author h.adachi
+    /// generates Note objects and adds to the Item object.
     /// </summary>
-    /// <remarks>
-    /// called from Meowziq.Core.Phrase.onBuild().
-    /// </remarks>
+    /// <note>
+    /// + called from Meowziq.Core.Phrase.onBuild(). <br/>
+    /// </note>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Generator {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -39,8 +39,15 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         #region Constructor
 
-        public Generator(Item<Note> note_item) {
+        Generator(Item<Note> note_item) {
             _note_item = note_item;
+        }
+
+        /// <summary>
+        /// returns an initialized instance.
+        /// </summary>
+        public static Generator GetInstance(Item<Note> note_item) {
+            return new Generator(note_item);
         }
 
         #endregion
@@ -65,10 +72,10 @@ namespace Meowziq.Core {
                         note_num_array = ToNoteArray(
                             span.Key, span.Degree, span.KeyMode, span.SpanMode, text.Int32()
                         );
-                        note_num_array = applyRange(note_num_array, param.Chord.Range); // コード展開形の範囲を適用
+                        note_num_array = applyRange(target: note_num_array, range: param.Chord.Range); // コード展開形の範囲を適用
                     }
                     // check the note value of this sound
-                    var gate = new Gete(I6beat_idx.Idx, beat_count);
+                    var gate = new Gete(search_idx: I6beat_idx.Idx, beat_count: beat_count);
                     for (; gate.HasNextSearch; gate.IncrementSearch()) { // +1 は数値文字の分
                         var search = param.TextCharArray[gate.SearchIdx];
                         if (search.Equals('>')) {
@@ -88,14 +95,14 @@ namespace Meowziq.Core {
                     }
                     var tick = gate.PreLength + start_tick + To16beatLength(I6beat_idx.Idx);
                     note_num_array.Where(x => x != -1).ToList().ForEach(x => 
-                        add(tick, new Note(tick, x + param.Interval, gate.Value, 104, gate.PreCount
-                    )));
+                        add(tick: tick, note: new Note(tick: tick, num: x + param.Interval, gate: gate.Value, velo: 104, pre_count: gate.PreCount))
+                    );
                 }
             }
         }
 
         /// <summary>
-        /// creates and applies a drum Note object.
+        /// creates and applies a Note object for drum.
         /// </summary>
         public void ApplyDrumNote(int start_tick, int beat_count, Param param) {
             for (var I6beat_idx = new Index(beat_count); I6beat_idx.HasNext; I6beat_idx.Increment()) {
@@ -109,7 +116,7 @@ namespace Meowziq.Core {
                         }
                     }
                     var tick = gate.PreLength + start_tick + To16beatLength(I6beat_idx.Idx);
-                    add(tick, new Note(tick, param.PercussionNoteNum, gate.Value, 104, gate.PreCount));
+                    add(tick: tick, note: new Note(tick: tick, num: param.PercussionNoteNum, gate: gate.Value, velo: 104, pre_count: gate.PreCount));
                 }
             }
         }
@@ -120,19 +127,19 @@ namespace Meowziq.Core {
         public void ApplySequeNote(int start_tick, int beat_count, List<Span> span_list, Param param) {
             for (var I6beat_idx = new Index(beat_count); I6beat_idx.HasNext; I6beat_idx.Increment()) {
                 var span = span_list[I6beat_idx.SpanIdx]; // 16beat 4個で1拍進む
-                var note = ToNoteRandom(span.Key, span.Degree, span.KeyMode, span.SpanMode); // 16の倍数
-                if (!(param.Seque.Range is null)) {
-                    note = applyRange(new int[] { note }, param.Seque.Range)[0]; // TODO: applyRange の単音 ver
+                var note_num = ToRandomNote(key: span.Key, degree: span.Degree, key_mode: span.KeyMode, span_mode: span.SpanMode); // 16の倍数
+                if (param.Seque.Range is not null) {
+                    note_num = applyRange(target: new int[] { note_num }, range: param.Seque.Range)[0]; // TODO: applyRange の単音 ver
                 }
                 if (param.HasTextCharArray) { // TODO: 判定方法の改善
                     var text = param.TextCharArray[I6beat_idx.Idx];
                     if (param.Seque.Text.HasValue() && param.IsMatch(text)) {
-                        var tick = start_tick + To16beatLength(I6beat_idx.Idx);
-                        add(tick, new Note(tick, note, Seque.ToGate(text.ToString()), 104));
+                        var tick = start_tick + To16beatLength(index: I6beat_idx.Idx);
+                        add(tick: tick, note: new Note(tick: tick, num: note_num, gate: Seque.ToGate(target: text.ToString()), velo: 104));
                     }
                 } else {
-                    var tick = start_tick + To16beatLength(I6beat_idx.Idx);
-                    add(tick, new Note(tick, note, 30, 104)); // TODO: デフォルトの Text 記述を持たせればこの分岐は削除出来る：パターンの長さで自動生成
+                    var tick = start_tick + To16beatLength(index: I6beat_idx.Idx);
+                    add(tick: tick, note: new Note(tick: tick, num: note_num, gate: 30, velo: 104)); // TODO: デフォルトの Text 記述を持たせればこの分岐は削除出来る：パターンの長さで自動生成
                 }
             }
         }
@@ -143,9 +150,9 @@ namespace Meowziq.Core {
         public void ApplyInfo(int start_tick, int beat_count, List<Span> span_list) {
             for (var I6beat_idx = new Index(beat_count); I6beat_idx.HasNext; I6beat_idx.Increment()) {
                 var span = span_list[I6beat_idx.SpanIdx]; // 16beat 4個で1拍進む
-                var tick = start_tick + To16beatLength(I6beat_idx.Idx); // 16beat の tick 毎に処理
-                if (State.HashSet.Add(tick)) { // tick につき1度だけ
-                    State.ItemMap.Add(tick, new State.Item16beat {
+                var tick = start_tick + To16beatLength(index: I6beat_idx.Idx); // 16beat の tick 毎に処理
+                if (State.HashSet.Add(item: tick)) { // tick につき1度だけ
+                    State.ItemMap.Add(key: tick, value: new State.Item16beat {
                         Tick = tick,
                         Key = span.Key.ToString(),
                         Degree = span.Degree.ToString(),
@@ -203,15 +210,7 @@ namespace Meowziq.Core {
             ///////////////////////////////////////////////////////////////////////////////////////////
             #region Fields
 
-            int _beat_count;
-
-            int _gate_count;
-
-            int _search_idx;
-
-            int _pre_length;
-
-            int _pre_count;
+            int _beat_count, _gate_count, _search_idx, _pre_length, _pre_count;
 
             #endregion
 
@@ -306,9 +305,11 @@ namespace Meowziq.Core {
 
         /// <summary>
         /// 16beatのカウントを保持するクラス
-        /// 4インクリメントされる毎に1インクリメントした Span の index 値も返す
-        /// NOTE: ここの Span は必ず1拍である
         /// </summary>
+        /// <note>
+        /// + 4インクリメントされる毎に1インクリメントした Span の index 値も返す
+        /// + ここの Span は必ず1拍である
+        /// </note>
         class Index {
 
             ///////////////////////////////////////////////////////////////////////////////////////////

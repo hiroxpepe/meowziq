@@ -19,10 +19,12 @@ using System.Linq;
 namespace Meowziq.Core {
     /// <summary>
     /// Player クラス
-    ///     + Phrase オブジェクトのリストを管理
-    ///     + Phrase オブジェクトを適切なタイミングで Build します
-    /// @author h.adachi
     /// </summary>
+    /// <note>
+    /// + Phrase オブジェクトのリストを管理
+    /// + Phrase オブジェクトを適切なタイミングで Build します
+    /// </note>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Player<T> {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -117,7 +119,7 @@ namespace Meowziq.Core {
                             Log.Trace($"Build: tick: {tick} head: {locate.Head} to end: {locate.end} {pattern.Name} {_type}");
                         }
                         Mixer<T>.ApplyVaule(locate.Head, _midi_ch, Type, pattern.Name, _program_num); // Mixer に値の変更を適用 NOTE: Note より先に設定することに意味がある
-                        if (!locate.Name.Equals("") && (smf || locate.NeedBuild)) { // FIXME: tick で判定しないと全検索になってる
+                        if (!locate.Name.Equals(string.Empty) && (smf || locate.NeedBuild)) { // FIXME: tick で判定しないと全検索になってる
                             var previousPhraseList = _phrase_list.Where(x => x.Name.Equals(locate.Name)).ToList(); // 一つ前の Phrase を引き当てる 
                             if (previousPhraseList.Count != 0) {
                                 if (!_type.ToLower().Contains("drum")) { // ドラム以外
@@ -199,8 +201,8 @@ namespace Meowziq.Core {
                 _current_tick = tick;
                 _head_tick = 0;
                 _length = 0;
-                _max = tick + Length.Of4beat.Int32() * 4 * Env.MeasMax.Int32(); // Pattern の最大の長さ ※最大12小節まで
-                _previous_name = "";
+                _max = tick + Length.Of4beat.Int32() * 4 * Meowziq.Measure.Max.Int32(); // Pattern の最大の長さ ※最大12小節まで
+                _previous_name = string.Empty;
                 _smf = smf;
             }
 
