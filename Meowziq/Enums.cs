@@ -23,9 +23,7 @@ namespace Meowziq {
     /// <summary>
     /// enumeration type of environment parameters.
     /// </summary>
-    /// <author>
-    /// h.adachi (STUDIO MeowToon)
-    /// </author>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public enum Env {
         MeasMax = 12,
     }

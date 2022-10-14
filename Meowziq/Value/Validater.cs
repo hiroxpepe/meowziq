@@ -20,9 +20,7 @@ namespace Meowziq.Value {
     /// <summary>
     /// 入力値バリデーション クラス
     /// </summary>
-    /// <author>
-    /// h.adachi (STUDIO MeowToon)
-    /// </author>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Validater {
         /// <summary>
         /// TODO: 使用可能な文字の判定

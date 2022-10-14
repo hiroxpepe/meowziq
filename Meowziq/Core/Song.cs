@@ -24,9 +24,7 @@ namespace Meowziq.Core {
     /// + Pattern のオブジェクトのリストを管理する
     /// + フリジアンやロクリアンの調性感というより上5度転調、下4度転調の概念を取り入れる
     /// </note>
-    /// <author>
-    /// h.adachi (STUDIO MeowToon)
-    /// </author>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Song {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

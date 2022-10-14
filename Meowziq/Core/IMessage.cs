@@ -20,9 +20,7 @@ namespace Meowziq {
     /// <summary>
     /// interface of Message.
     /// </summary>
-    /// <author>
-    /// h.adachi (STUDIO MeowToon)
-    /// </author>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public interface IMessage<T1, T2> {
 
         /// <summary>

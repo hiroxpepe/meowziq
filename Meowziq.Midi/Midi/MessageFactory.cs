@@ -26,9 +26,7 @@ namespace Meowziq.Midi {
     /// <note>
     /// static class cannot implement interface.<br/>
     /// </note>
-    /// <author>
-    /// h.adachi (STUDIO MeowToon)
-    /// </author>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class MessageFactory {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

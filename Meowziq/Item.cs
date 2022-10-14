@@ -22,9 +22,7 @@ namespace Meowziq {
     /// <note>
     /// used in the Meowziq namespace.
     /// </note>
-    /// <author>
-    /// h.adachi (STUDIO MeowToon)
-    /// </author>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Map<K, V> : Dictionary<K, V> {
     }
 

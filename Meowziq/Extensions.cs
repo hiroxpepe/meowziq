@@ -20,9 +20,7 @@ namespace Meowziq {
     /// <summary>
     /// common extension methods.
     /// </summary>
-    /// <author>
-    /// h.adachi (STUDIO MeowToon)
-    /// </author>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Extensions {
         /// <summary>
         /// converts a character to a number.

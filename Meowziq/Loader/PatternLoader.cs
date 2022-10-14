@@ -25,9 +25,7 @@ namespace Meowziq.Loader {
     /// <summary>
     /// loader class for pattern.
     /// </summary>
-    /// <author>
-    /// h.adachi (STUDIO MeowToon)
-    /// </author>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class PatternLoader {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

@@ -34,9 +34,7 @@ namespace Meowziq.View {
     /// <todo>
     /// exclusive control.
     /// </todo>
-    /// <author>
-    /// h.adachi (STUDIO MeowToon)
-    /// </author>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public partial class FormMain : Form {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

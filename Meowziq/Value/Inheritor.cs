@@ -20,9 +20,7 @@ namespace Meowziq.Value {
     /// <summary>
     /// Phrase のデータを継承する為のクラス
     /// </summary>
-    /// <author>
-    /// h.adachi (STUDIO MeowToon)
-    /// </author>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Inheritor {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

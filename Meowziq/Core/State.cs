@@ -25,9 +25,7 @@ namespace Meowziq.Core {
     /// + 曲がどのような状況で演奏されているかを表す情報を保持する
     /// + 設定されて読み出させるだけこれを状態を変更する目的で使わないで下さい
     /// </note>
-    /// <author>
-    /// h.adachi (STUDIO MeowToon)
-    /// </author>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class State {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

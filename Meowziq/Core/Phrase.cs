@@ -27,9 +27,7 @@ namespace Meowziq.Core {
     /// + キーと旋法は外部から与えられる
     /// + Note オブジェクトのリストを管理する
     /// </note>
-    /// <author>
-    /// h.adachi (STUDIO MeowToon)
-    /// </author>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Phrase {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

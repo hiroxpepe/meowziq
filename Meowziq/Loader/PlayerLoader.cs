@@ -26,9 +26,7 @@ namespace Meowziq.Loader {
     /// <summary>
     /// loader class for player.
     /// </summary>
-    /// <author>
-    /// h.adachi (STUDIO MeowToon)
-    /// </author>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class PlayerLoader<T> {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

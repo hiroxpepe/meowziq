@@ -24,9 +24,7 @@ namespace Meowziq.Core {
     /// + Phrase オブジェクトのリストを管理
     /// + Phrase オブジェクトを適切なタイミングで Build します
     /// </note>
-    /// <author>
-    /// h.adachi (STUDIO MeowToon)
-    /// </author>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Player<T> {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

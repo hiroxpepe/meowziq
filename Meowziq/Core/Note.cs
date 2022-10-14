@@ -20,9 +20,7 @@ namespace Meowziq.Core {
     /// <note>
     /// + ChannelMessage に変換されます
     /// </note>
-    /// <author>
-    /// h.adachi (STUDIO MeowToon)
-    /// </author>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Note {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

@@ -20,9 +20,7 @@ namespace Meowziq.IO {
     /// <summary>
     /// キャッシュ クラス
     /// </summary>
-    /// <author>
-    /// h.adachi (STUDIO MeowToon)
-    /// </author>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Cache {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

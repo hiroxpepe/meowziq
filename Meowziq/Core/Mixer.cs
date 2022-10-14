@@ -30,9 +30,7 @@ namespace Meowziq.Core {
     /// + Mixer に設定がある場合は楽器は Mixer の設定を使用する
     ///     + ただし Mixer 経由で値を Message に適用した方が好ましい
     /// </note>
-    /// <author>
-    /// h.adachi (STUDIO MeowToon)
-    /// </author>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Mixer<T> {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -217,11 +215,6 @@ namespace Meowziq.Core {
             // static Fields
 
             bool _mute = false;
-
-            ///////////////////////////////////////////////////////////////////////////////////////////
-            // private Constructor
-
-            private Fader() { }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Properties [noun, adjective]

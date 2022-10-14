@@ -24,9 +24,7 @@ namespace Meowziq.Core {
     /// <note>
     /// + Meas オブジェクトのリストを管理します
     /// </note>
-    /// <author>
-    /// h.adachi (STUDIO MeowToon)
-    /// </author>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Pattern {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

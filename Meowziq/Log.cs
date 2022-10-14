@@ -22,9 +22,7 @@ namespace Meowziq {
     /// <note>
     /// use NLog.
     /// </note>
-    /// <author>
-    /// h.adachi (STUDIO MeowToon)
-    /// </author>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Log {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

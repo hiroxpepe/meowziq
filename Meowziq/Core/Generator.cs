@@ -26,9 +26,7 @@ namespace Meowziq.Core {
     /// <note>
     /// + called from Meowziq.Core.Phrase.onBuild(). <br/>
     /// </note>
-    /// <author>
-    /// h.adachi (STUDIO MeowToon)
-    /// </author>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Generator {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

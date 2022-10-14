@@ -29,9 +29,7 @@ namespace Meowziq {
     /// <memo>
     /// do not define variables with var here.
     /// </memo>
-    /// <author>
-    /// h.adachi (STUDIO MeowToon)
-    /// </author>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Utils {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

@@ -27,9 +27,7 @@ namespace Meowziq.Midi {
     /// <fixme>
     /// relies on abstraction instead of ChannelMessage.
     /// </fixme>
-    /// <author>
-    /// h.adachi (STUDIO MeowToon)
-    /// </author>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Message {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

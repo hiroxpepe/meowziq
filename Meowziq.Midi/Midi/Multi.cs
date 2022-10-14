@@ -21,9 +21,7 @@ namespace Meowziq.Midi {
     /// <summary>
     /// class that holds Sanford.Multimedia.Midi.Track objects for smf output.
     /// </summary>
-    /// <author>
-    /// h.adachi (STUDIO MeowToon)
-    /// </author>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Multi {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

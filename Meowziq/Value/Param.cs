@@ -22,9 +22,7 @@ namespace Meowziq.Value {
     /// <memo>
     /// whether it can be an immutable object.
     /// </memo>
-    /// <author>
-    /// h.adachi (STUDIO MeowToon)
-    /// </author>
+   /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Param {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

@@ -24,9 +24,7 @@ namespace Meowziq.Value {
     /// <note>
     /// used from the Loader class, so it must be made public.
     /// </note>
-    /// <author>
-    /// h.adachi (STUDIO MeowToon)
-    /// </author>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Data {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
