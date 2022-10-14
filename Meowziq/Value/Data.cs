@@ -151,7 +151,7 @@ namespace Meowziq.Value {
             get => _beat_array;
             set {
                 if (!(value is null)) {
-                    value.ToList().ForEach(x => Value.Validater.PhraseValue(x));
+                    value.ToList().ForEach(x => Validater.PhraseValue(x));
                 }
                 _beat_array = value;
             }
@@ -164,7 +164,7 @@ namespace Meowziq.Value {
             get => _note_array;
             set {
                 if (!(value is null)) {
-                    value.ToList().ForEach(x => Value.Validater.PhraseValue(x));
+                    value.ToList().ForEach(x => Validater.PhraseValue(x));
                 }
                 _note_array = value;
             }
@@ -177,7 +177,7 @@ namespace Meowziq.Value {
             get => _auto_array;
             set {
                 if (!(value is null)) {
-                    value.ToList().ForEach(x => Value.Validater.PhraseValue(x));
+                    value.ToList().ForEach(x => Validater.PhraseValue(x));
                 }
                 _auto_array = value;
                 if (!(value is null)) {
@@ -217,7 +217,7 @@ namespace Meowziq.Value {
                 } else if (value.Length != arrayLength) {
                     throw new ArgumentException("preArray must be same count as beatArray or noteArray or autoArray.");
                 } else {
-                    value.ToList().ForEach(x => Value.Validater.PhraseValue(x));
+                    value.ToList().ForEach(x => Validater.PhraseValue(x));
                     _pre_array = value;
                 }
             }
@@ -236,7 +236,7 @@ namespace Meowziq.Value {
                 } else if (value.Length != arrayLength) {
                     throw new ArgumentException("postArray must be same count as noteArray or autoArray.");
                 } else {
-                    value.ToList().ForEach(x => Value.Validater.PhraseValue(x));
+                    value.ToList().ForEach(x => Validater.PhraseValue(x));
                     _post_array = value;
                 }
             }
@@ -359,12 +359,12 @@ namespace Meowziq.Value {
     /// <summary>
     /// note parameter class.
     /// </summary>
-    /// <remarks_jp>
+    /// <memo_jp>
     /// + "note" 記法 <br/>
-    ///     + Key_mode の旋法で度数数値を note number に変換します <br/>
+    ///     + Key_mode の旋法で度数数値を note number に変換 <br/>
     /// + "auto" 記法 <br/> 
-    ///     + Span_mode の旋法で度数数値を note number に変換します <br/>
-    /// </remarks_jp>
+    ///     + Span_mode の旋法で度数数値を note number に変換 <br/>
+    /// </memo_jp>
     public class Note {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -372,7 +372,7 @@ namespace Meowziq.Value {
 
         string _text;
 
-        // TODO: gate で Bass のゴーストノートなどを表現 
+        // TODO: representing bass ghost notes with "gate".
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
@@ -392,7 +392,7 @@ namespace Meowziq.Value {
 
         public string Text {
             get => _text;
-            set => _text = Value.Validater.PhraseValue(value);
+            set => _text = Validater.PhraseValue(value);
         }
 
         public int Oct {
@@ -414,9 +414,6 @@ namespace Meowziq.Value {
     /// <summary>
     /// chord parameter class.
     /// </summary>
-    /// <note>
-    /// 個別にプロパティ設定が必要
-    /// </note>
     public class Chord {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -436,7 +433,7 @@ namespace Meowziq.Value {
 
         public string Text {
             get => _text;
-            set => _text = Value.Validater.PhraseValue(value);
+            set => _text = Validater.PhraseValue(value);
         }
 
         public Range Range {
@@ -484,7 +481,7 @@ namespace Meowziq.Value {
 
         public string Text {
             get => _text;
-            set => _text = Value.Validater.PhraseValue(value);
+            set => _text = Validater.PhraseValue(value);
         }
 
         public int Stack {

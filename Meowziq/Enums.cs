@@ -21,18 +21,36 @@ namespace Meowziq {
     // public Enums [noun]
 
     /// <summary>
-    /// enumeration type of environment parameters.
+    /// measure type.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
-    public enum Env {
-        MeasMax = 12,
+    public enum Measure {
+        Max = 12,
     }
 
-    public enum Way {
+    /// <summary>
+    /// type of data written in json.
+    /// </summary>
+    public enum DataType {
+        /// <summary>
+        /// mono "note" or "auto" notated data.
+        /// </summary>
         Mono = 0,
+        /// <summary>
+        /// poly "note" or "auto" notated data.
+        /// </summary>
         Multi = 1,
+        /// <summary>
+        /// "chord" notated data.
+        /// </summary>
         Chord = 2,
+        /// <summary>
+        /// "beat" notated data.
+        /// </summary>
         Drum = 3,
+        /// <summary>
+        /// "seque" notated data.
+        /// </summary>
         Seque = 4,
     }
 
@@ -340,7 +358,7 @@ namespace Meowziq {
     /// </summary>
     public static class EnumExtensions {
 
-        public static int Int32(this Env source) {
+        public static int Int32(this Measure source) {
             return (int) source;
         }
 

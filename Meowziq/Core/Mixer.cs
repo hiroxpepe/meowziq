@@ -95,7 +95,7 @@ namespace Meowziq.Core {
         /// Message に対して Note を適用します
         /// </summary>
         public static void ApplyNote(int tick, int midi_ch, Note note) {
-            _message.ApplyNote(tick: tick, midi_ch: midi_ch, note: note);
+            _message.ApplyNote(tick, midi_ch, note);
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace Meowziq.Core {
                 return; // mixer.json 使用時で存在しないキー
             }
             playerProgramNum = (programNum: program_num, type: type, name: name);
-            applyValueBy(tick: tick, midi_ch: midi_ch, type: type, name: name);
+            applyValueBy(tick, midi_ch, type, name);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -130,10 +130,10 @@ namespace Meowziq.Core {
         // private static Methods [verb]
 
         static void applyValueBy(int tick, int midi_ch, string type, string name) {
-            applyProgramChangeBy(tick: tick, midi_ch: midi_ch, type: type, name: name);
-            applyVolumeBy(tick: tick, midi_ch: midi_ch, type: type, name: name);
-            applyPanBy(tick: tick, midi_ch: midi_ch, type: type, name: name);
-            applyMuteBy(tick: tick, midi_ch: midi_ch, type: type, name: name);
+            applyProgramChangeBy(tick, midi_ch, type, name);
+            applyVolumeBy(tick, midi_ch, type, name);
+            applyPanBy(tick, midi_ch, type, name);
+            applyMuteBy(tick, midi_ch, type, name);
         }
 
         static void applyProgramChangeBy(int tick, int midi_ch, string type, string name) {
@@ -147,20 +147,20 @@ namespace Meowziq.Core {
         static void applyVolumeBy(int tick, int midi_ch, string type, string name) {
             if (!_use) { name = "default"; } // mixer.json なしは常に "default"
             if (changedVol(type, name)) {
-                _message.ApplyVolume(tick, midi_ch, _current_fader_map[$"{type}:{name}"].Vol);
+                _message.ApplyVolume(tick, midi_ch, volume: _current_fader_map[$"{type}:{name}"].Vol);
             }
         }
 
         static void applyPanBy(int tick, int midi_ch, string type, string name) {
             if (!_use) { name = "default"; } // mixer.json なしは常に "default"
             if (changedPan(type, name)) {
-                _message.ApplyPan(tick, midi_ch, _current_fader_map[$"{type}:{name}"].Pan);
+                _message.ApplyPan(tick, midi_ch, pan: _current_fader_map[$"{type}:{name}"].Pan);
             }
         }
 
         static void applyMuteBy(int tick, int midi_ch, string type, string name) {
             if (!_use) { name = "default"; } // mixer.json なしは常に "default"
-            _message.ApplyMute(tick, midi_ch, _current_fader_map[$"{type}:{name}"].Mute);
+            _message.ApplyMute(tick, midi_ch, mute: _current_fader_map[$"{type}:{name}"].Mute);
         }
 
         /// <summary>

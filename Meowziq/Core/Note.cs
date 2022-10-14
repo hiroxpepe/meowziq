@@ -15,10 +15,10 @@
 
 namespace Meowziq.Core {
     /// <summary>
-    /// 音情報保持クラス
+    /// note class.
     /// </summary>
     /// <note>
-    /// + ChannelMessage に変換されます
+    /// + converts to ChannelMessage
     /// </note>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Note {
@@ -32,7 +32,7 @@ namespace Meowziq.Core {
         // Constructor
 
         /// <note>
-        /// + 作成したら状態は変更できません
+        /// + states cannot be changed once created.
         /// </note>
         public Note(int tick, int num, int gate, int velo, int pre_count = 0) {
             _tick = tick;
@@ -77,7 +77,7 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// MIDI ノート強さ
+        /// midi note strength.
         /// </summary>
         /// <note>
         /// + not provide modify operations.

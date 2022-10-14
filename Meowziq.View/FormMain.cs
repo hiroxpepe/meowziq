@@ -291,10 +291,10 @@ namespace Meowziq.View {
                 /// <summary>
                 /// applies midi data.
                 /// </summary>
-                for (var idx = 0; Midi.Message.Has(tick: idx * 30); idx++) { // loops every 30 ticks.
-                    var tick = idx * 30; // manually generates 30 ticks.
+                for (var index = 0; Midi.Message.Has(tick: index * 30); index++) { // loops every 30 ticks.
+                    var tick = index * 30; // manually generates 30 ticks.
                     var list = Midi.Message.GetBy(tick: tick); // gets list of messages.
-                    if (list != null) {
+                    if (list is not null) {
                         list.ForEach(x => Multi.Get(index: x.MidiChannel).Insert(position: tick, message: x));
                     }
                 }
@@ -304,8 +304,8 @@ namespace Meowziq.View {
                 _sequence.Load("./data/conductor.mid"); // TODO: need this?
                 _sequence.Clear();
                 _sequence.Format = 1;
-                _sequence.Add(item: conductor_track);
-                Multi.List.Where(x => x.Length > 1).ToList().ForEach(x => _sequence.Add(x));
+                _sequence.Add(item: conductor_track); // adds conductor track.
+                Multi.List.Where(x => x.Length > 1).ToList().ForEach(x => _sequence.Add(item: x)); // adds channel tracks.
                 _sequence.Save($"./data/{song_dir}/{song_name}.mid");
                 Invoke(method: (MethodInvoker) (() => _textbox_song_name.Text = song_name));// restores the song name.
                 disposer.Dispose(); // discard timer.
@@ -339,7 +339,7 @@ namespace Meowziq.View {
         async Task<bool> stopSound() {
             return await Task.Run(function: () => {
                 Sound.Stopping = true;
-                Enumerable.Range(0, 16).ToList().ForEach(
+                Enumerable.Range(start: Env.MIDI_TRACK_BASE, count: Env.MIDI_TRACK_COUNT).ToList().ForEach(
                     x => _midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, x, 120))
                 );
                 Sound.Stopping = false;
@@ -435,8 +435,8 @@ namespace Meowziq.View {
                 MetaMessage tempo = new(type: MetaType.Tempo, data: Value.Converter.ToByteTempo(tempo: State.Tempo));
                 Track track = new();
                 track.Insert(position: 0, message: tempo);
-                for (var idx = 0; idx < 100000; idx++) { // FIXME: number of loops.
-                    var tick = idx * 30; // manually generates 30 ticks.
+                for (var index = 0; index < 100000; index++) { // FIXME: number of loops.
+                    var tick = index * 30; // manually generates 30 ticks.
                     track.Insert(position: tick, message: new ChannelMessage(command: ChannelCommand.NoteOn, midiChannel: 0, data1: 64, data2: 0));
                     track.Insert(position: tick + 30, message: new ChannelMessage(command: ChannelCommand.NoteOff, midiChannel: 0, data1: 64, data2: 0));
                 }

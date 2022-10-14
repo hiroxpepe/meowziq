@@ -18,40 +18,40 @@ using System.Linq;
 
 namespace Meowziq.Value {
     /// <summary>
-    /// 入力値バリデーション クラス
+    /// validation class for input values.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Validater {
         /// <summary>
-        /// TODO: 使用可能な文字の判定
+        /// checks the letters of the phrase
         /// </summary>
         public static string PhraseValue(string target) {
             if (target is null) {
-                return target; // 値がなければそのまま返す FIXME:
+                return target; // no value, return as is.
             }
-            // 拍のデータの数が4文字かどうか
+            // whether the number of one beat data is 4 characters.
             var target1 = target;
-            target1 = target1.Replace("[", "|").Replace("]", "|"); // 文字の置き換え
-            var array1 = target1.Split('|') // 区切り文字で切り分ける
-                .Where(x => !string.IsNullOrWhiteSpace(x)) // 空文字以外が対象で
-                .Where(x => x.Length != 4) // そのデータが4文字ではないものを抽出
+            target1 = target1.Replace("[", "|").Replace("]", "|"); // replaces the character. 
+            var array1 = target1.Split('|') // separates by delimiter.
+                .Where(x => !string.IsNullOrWhiteSpace(x)) // non empty characters are targeted.
+                .Where(x => x.Length != 4) // extracts the data is not 4 characters.
                 .ToArray();
-            if (array1.Length != 0) { // そのデータがあれば例外を投げる
+            if (array1.Length != 0) { // throws an exception if the data exists.
                 throw new FormatException("a beat data count must be 4.");
             }
-            return target; // バリデーションOKなら元々の文字列を返す
+            return target; // returns the original string if validation is ok.
         }
     }
 
     /// <summary>
-    /// NOTE: 入力値用の Utils クラス
+    /// utils class for input values.
     /// </summary>
     internal class Utils {
         /// <summary>
-        /// 不要文字 "[", "]", "|", を削除します
+        /// removes unnecessary characters "[", "]", "|".
         /// </summary>
         internal static string Filter(string target) {
-            return target.Replace("|", string.Empty).Replace("[", string.Empty).Replace("]", string.Empty); // 不要文字削除
+            return target.Replace("|", string.Empty).Replace("[", string.Empty).Replace("]", string.Empty); // removes unnecessary characters.
         }
     }
 
@@ -67,7 +67,7 @@ namespace Meowziq.Value {
         /// </summary>
         /// <summary_jp>
         /// BPM = 120 (1分あたり四分音符が120個) の場合、<br/>
-        /// 四分音符の長さは 60 x 10の6乗 / 120 = 500,000 (μsec) <br/>
+        /// 四分音符の長さは 60 x 10 の6乗 / 120 = 500,000 (μsec) <br/>
         /// これを16進にすると 0x07A120 <br/>
         /// 3バイトで表現すると "07", "A1", "20"
         /// </summary_jp>

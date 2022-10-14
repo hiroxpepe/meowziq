@@ -201,7 +201,7 @@ namespace Meowziq.Core {
                 _current_tick = tick;
                 _head_tick = 0;
                 _length = 0;
-                _max = tick + Length.Of4beat.Int32() * 4 * Env.MeasMax.Int32(); // Pattern の最大の長さ ※最大12小節まで
+                _max = tick + Length.Of4beat.Int32() * 4 * Meowziq.Measure.Max.Int32(); // Pattern の最大の長さ ※最大12小節まで
                 _previous_name = string.Empty;
                 _smf = smf;
             }

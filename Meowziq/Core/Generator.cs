@@ -39,8 +39,15 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         #region Constructor
 
-        public Generator(Item<Note> note_item) {
+        Generator(Item<Note> note_item) {
             _note_item = note_item;
+        }
+
+        /// <summary>
+        /// returns an initialized instance.
+        /// </summary>
+        public static Generator GetInstance(Item<Note> note_item) {
+            return new Generator(note_item);
         }
 
         #endregion
@@ -203,15 +210,7 @@ namespace Meowziq.Core {
             ///////////////////////////////////////////////////////////////////////////////////////////
             #region Fields
 
-            int _beat_count;
-
-            int _gate_count;
-
-            int _search_idx;
-
-            int _pre_length;
-
-            int _pre_count;
+            int _beat_count, _gate_count, _search_idx, _pre_length, _pre_count;
 
             #endregion
 
