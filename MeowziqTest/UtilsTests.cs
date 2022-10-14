@@ -13,7 +13,7 @@ namespace MeowziqTest {
         /// </summary>
         [TestMethod()]
         public void ToNoteRandomTestKeyModeCIonI() {
-            var note = Utils.ToNoteRandom(Key.C, Degree.I, Mode.Ion, Mode.Undefined);
+            var note = Utils.ToRandomNote(Key.C, Degree.I, Mode.Ion, Mode.Undefined);
             var noteToKey = Key.Enum.Parse(note);
             Log.Info($"note: {noteToKey}");
             IsTrue(
@@ -28,7 +28,7 @@ namespace MeowziqTest {
         /// </summary>
         [TestMethod()]
         public void ToNoteRandomTestKeyModeCIonII() {
-            var note = Utils.ToNoteRandom(Key.C, Degree.II, Mode.Ion, Mode.Undefined);
+            var note = Utils.ToRandomNote(Key.C, Degree.II, Mode.Ion, Mode.Undefined);
             var noteToKey = Key.Enum.Parse(note);
             Log.Info($"note: {noteToKey}");
             IsTrue(
@@ -43,7 +43,7 @@ namespace MeowziqTest {
         /// </summary>
         [TestMethod()]
         public void ToNoteRandomTestKeyModeCIonIII() {
-            var note = Utils.ToNoteRandom(Key.C, Degree.III, Mode.Ion, Mode.Undefined);
+            var note = Utils.ToRandomNote(Key.C, Degree.III, Mode.Ion, Mode.Undefined);
             var noteToKey = Key.Enum.Parse(note);
             Log.Info($"note: {noteToKey}");
             IsTrue(
@@ -58,7 +58,7 @@ namespace MeowziqTest {
         /// </summary>
         [TestMethod()]
         public void ToNoteRandomTestKeyModeCIonIV() {
-            var note = Utils.ToNoteRandom(Key.C, Degree.IV, Mode.Ion, Mode.Undefined);
+            var note = Utils.ToRandomNote(Key.C, Degree.IV, Mode.Ion, Mode.Undefined);
             var noteToKey = Key.Enum.Parse(note);
             Log.Info($"note: {noteToKey}");
             IsTrue(
@@ -73,7 +73,7 @@ namespace MeowziqTest {
         /// </summary>
         [TestMethod()]
         public void ToNoteRandomTestKeyModeCIonV() {
-            var note = Utils.ToNoteRandom(Key.C, Degree.V, Mode.Ion, Mode.Undefined);
+            var note = Utils.ToRandomNote(Key.C, Degree.V, Mode.Ion, Mode.Undefined);
             var noteToKey = Key.Enum.Parse(note);
             Log.Info($"note: {noteToKey}");
             IsTrue(
@@ -88,7 +88,7 @@ namespace MeowziqTest {
         /// </summary>
         [TestMethod()]
         public void ToNoteRandomTestKeyModeCIonVI() {
-            var note = Utils.ToNoteRandom(Key.C, Degree.VI, Mode.Ion, Mode.Undefined);
+            var note = Utils.ToRandomNote(Key.C, Degree.VI, Mode.Ion, Mode.Undefined);
             var noteToKey = Key.Enum.Parse(note);
             Log.Info($"note: {noteToKey}");
             IsTrue(
@@ -103,7 +103,7 @@ namespace MeowziqTest {
         /// </summary>
         [TestMethod()]
         public void ToNoteRandomTestKeyModeCIonVII() {
-            var note = Utils.ToNoteRandom(Key.C, Degree.VII, Mode.Ion, Mode.Undefined);
+            var note = Utils.ToRandomNote(Key.C, Degree.VII, Mode.Ion, Mode.Undefined);
             var noteToKey = Key.Enum.Parse(note);
             Log.Info($"note: {noteToKey}");
             IsTrue(
@@ -120,7 +120,7 @@ namespace MeowziqTest {
         /// </summary>
         [TestMethod()]
         public void ToNoteRandomTestSpanModeCIonI() {
-            var note = Utils.ToNoteRandom(Key.C, Degree.I, Mode.Aeo, Mode.Ion);
+            var note = Utils.ToRandomNote(Key.C, Degree.I, Mode.Aeo, Mode.Ion);
             var noteToKey = Key.Enum.Parse(note);
             Log.Info($"note: {noteToKey}");
             IsTrue(
@@ -135,7 +135,7 @@ namespace MeowziqTest {
         /// </summary>
         [TestMethod()]
         public void ToNoteRandomTestSpanModeCIonII() {
-            var note = Utils.ToNoteRandom(Key.C, Degree.II, Mode.Aeo, Mode.Ion);
+            var note = Utils.ToRandomNote(Key.C, Degree.II, Mode.Aeo, Mode.Ion);
             var noteToKey = Key.Enum.Parse(note);
             Log.Info($"note: {noteToKey}");
             IsTrue(
@@ -150,7 +150,7 @@ namespace MeowziqTest {
         /// </summary>
         [TestMethod()]
         public void ToNoteRandomTestSpanModeCIonIII() {
-            var note = Utils.ToNoteRandom(Key.C, Degree.III, Mode.Aeo, Mode.Ion);
+            var note = Utils.ToRandomNote(Key.C, Degree.III, Mode.Aeo, Mode.Ion);
             var noteToKey = Key.Enum.Parse(note);
             Log.Info($"note: {noteToKey}");
             IsTrue(
@@ -165,7 +165,7 @@ namespace MeowziqTest {
         /// </summary>
         [TestMethod()]
         public void ToNoteRandomTestSpanModeCIonIV() {
-            var note = Utils.ToNoteRandom(Key.C, Degree.IV, Mode.Aeo, Mode.Ion);
+            var note = Utils.ToRandomNote(Key.C, Degree.IV, Mode.Aeo, Mode.Ion);
             var noteToKey = Key.Enum.Parse(note);
             Log.Info($"note: {noteToKey}");
             IsTrue(
@@ -180,7 +180,7 @@ namespace MeowziqTest {
         /// </summary>
         [TestMethod()]
         public void ToNoteRandomTestSpanModeCIonV() {
-            var note = Utils.ToNoteRandom(Key.C, Degree.V, Mode.Aeo, Mode.Ion);
+            var note = Utils.ToRandomNote(Key.C, Degree.V, Mode.Aeo, Mode.Ion);
             var noteToKey = Key.Enum.Parse(note);
             Log.Info($"note: {noteToKey}");
             IsTrue(
@@ -195,7 +195,7 @@ namespace MeowziqTest {
         /// </summary>
         [TestMethod()]
         public void ToNoteRandomTestSpanModeCIonVI() {
-            var note = Utils.ToNoteRandom(Key.C, Degree.VI, Mode.Aeo, Mode.Ion);
+            var note = Utils.ToRandomNote(Key.C, Degree.VI, Mode.Aeo, Mode.Ion);
             var noteToKey = Key.Enum.Parse(note);
             Log.Info($"note: {noteToKey}");
             IsTrue(
@@ -210,7 +210,7 @@ namespace MeowziqTest {
         /// </summary>
         [TestMethod()]
         public void ToNoteRandomTestSpanModeCIonVII() {
-            var note = Utils.ToNoteRandom(Key.C, Degree.VII, Mode.Aeo, Mode.Ion);
+            var note = Utils.ToRandomNote(Key.C, Degree.VII, Mode.Aeo, Mode.Ion);
             var noteToKey = Key.Enum.Parse(note);
             Log.Info($"note: {noteToKey}");
             IsTrue(

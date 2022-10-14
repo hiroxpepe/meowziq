@@ -19,10 +19,12 @@ using System.Linq;
 namespace Meowziq.Core {
     /// <summary>
     /// Song クラス
-    ///     + Pattern のオブジェクトのリストを管理する
-    /// MEMO: フリジアンやロクリアンの調性感というより、上5度転調、下4度転調の概念を取り入れる
-    /// @author h.adachi
     /// </summary>
+    /// <note>
+    /// + Pattern のオブジェクトのリストを管理する
+    /// + フリジアンやロクリアンの調性感というより上5度転調、下4度転調の概念を取り入れる
+    /// </note>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Song {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

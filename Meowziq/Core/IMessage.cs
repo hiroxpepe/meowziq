@@ -19,8 +19,8 @@ using System.Collections.Generic;
 namespace Meowziq {
     /// <summary>
     /// interface of Message.
-    /// @author h.adachi
     /// </summary>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public interface IMessage<T1, T2> {
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace Meowziq {
         /// <summary>
         /// apply the program number (timbre) as T1
         /// </summary>
-        void ApplyProgramChange(int tick, int midiCh, int program_num);
+        void ApplyProgramChange(int tick, int midi_ch, int program_num);
 
         /// <summary>
         /// apply volume as T1

@@ -30,11 +30,11 @@ using Meowziq.Midi;
 namespace Meowziq.View {
     /// <summary>
     /// main form of the application.
-    /// @author h.adachi
     /// </summary>
     /// <todo>
     /// exclusive control.
     /// </todo>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public partial class FormMain : Form {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -66,14 +66,14 @@ namespace Meowziq.View {
             try {
                 if (_textbox_song_name.Text.Equals("------------")) {
                     var message = "please load a song.";
-                    MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    MessageBox.Show(text: message, caption: "Error", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Stop);
                     Log.Error(message);
                     return;
                 }
                 if (Sound.Playing || Sound.Stopping) { return; }
                 await startSound();
             } catch (Exception ex) {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                MessageBox.Show(text: ex.Message, caption: "Error", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Stop);
                 Log.Error(ex.Message);
                 await stopSound();
             }
@@ -87,7 +87,7 @@ namespace Meowziq.View {
                 if (Sound.Stopping || !Sound.Played) { return; }
                 await stopSound();
             } catch (Exception ex) {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                MessageBox.Show(text: ex.Message, caption: "Error", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Stop);
                 Log.Error(ex.Message);
                 await stopSound();
             }
@@ -105,7 +105,7 @@ namespace Meowziq.View {
                     _textbox_song_name.Text = await buildSong();
                 }
             } catch (Exception ex) {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                MessageBox.Show(text: ex.Message, caption: "Error", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Stop);
                 Log.Error(ex.Message);
                 await stopSound();
             }
@@ -118,15 +118,15 @@ namespace Meowziq.View {
             try {
                 if (_textbox_song_name.Text.Equals("------------")) {
                     var message = "please load a song.";
-                    MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    MessageBox.Show(text: message, caption: "Error", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Stop);
                     Log.Error(message);
                     return;
                 }
                 if (await convertSong()) {
-                    MessageBox.Show("converted the song to SMF.", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(text: "converted the song to SMF.", caption: "Done", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Information);
                 }
             } catch (Exception ex) {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                MessageBox.Show(text: ex.Message, caption: "Error", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Stop);
                 Log.Error(ex.Message);
                 await stopSound();
             }
@@ -135,42 +135,42 @@ namespace Meowziq.View {
         /// <summary>
         /// throws midi data to the device.
         /// </summary>
-        /// <remarks_jp>
-        /// conductor.midi 依存で 30 tick単位でしか呼ばれていない<br/>
-        /// conductor.midi のメッセージはスルーする  midi.OutDevice.Send(e.Message);<br/>
-        /// tick と名前を付ける対象は常に絶対値とする<br/>
-        /// </remarks_jp>
-        /// <todo_jp>
-        /// メッセージ送信のタイミングは独自実装出来るのでは？
-        /// </todo_jp>
+        /// <remarks>
+        /// + depends on the conductor.midi and is only called every 30 ticks. <br/>
+        /// + ignores messages in the conductor.midi.  midi.OutDevice.Send(e.Message); <br/>
+        /// + variable named tick defines to be always an absolute value. <br/>
+        /// </remarks>
+        /// <todo>
+        /// is it possible to independently implement the timing of message transmission to the midi device?
+        /// </todo>
         void sequencer_ChannelMessagePlayed(object sender, ChannelMessageEventArgs e) {
             if (Sound.Stopping) { return; }
             if (Visible) {
                 // TODO: count needs to be displayed as a minus value on the ui?
                 var tick = _sequencer.Position - 1; // NOTE: tick position comes with 1, 31, so subtract 1 in advance.
                 // midi message processing.
-                Midi.Message.ApplyTick(tick, loadSong); // switches every 2 beats. MEMO: considers syncopation.
-                var list = Midi.Message.GetBy(tick); // gets the list of midi messages.
+                Midi.Message.ApplyTick(tick: tick, load: loadSong); // switches every 2 beats. MEMO: considers syncopation.
+                var list = Midi.Message.GetBy(tick: tick); // gets the list of midi messages.
                 if (list is not null) {
                     list.ForEach(x => {
-                        _midi.OutDevice.Send(x); // sends messages to a midi device. // MEMO: throws cc directly here?
+                        _midi.OutDevice.Send(message: x); // sends messages to a midi device. // MEMO: throws cc directly here?
                     }); // MEMO: Parallel.ForEach was slow.
                     list.ForEach(x => {
                         if (x.MidiChannel != 9 && x.MidiChannel != 1) { // FIXME: exclude sequences is provisional.
-                            _piano_control.Send(x); // shows in piano roll except for drums.
+                            _piano_control.Send(message: x); // shows in piano roll except for drums.
                         }
                         if (x.MidiChannel == 2) {
                             Log.Debug($"Data1: {x.Data1} Data2: {x.Data2}");
                         }
                     });
                 }
-                // updates ui information.
+                // updates UI information.
                 State.Beat = ((tick / 480) + 1); // shows as starting from 1 instead of starting from 0.
                 State.Meas = ((State.Beat - 1) / 4 + 1);
                 var map = State.ItemMap;
-                if (map.ContainsKey(tick)) { // FIXME: is ContainsKey ok?
+                if (map.ContainsKey(key: tick)) { // FIXME: is ContainsKey ok?
                     var item = map[tick];
-                    Invoke(updateDisplay(item));
+                    Invoke(method: updateDisplay(item: item));
                 }
                 Sound.Played = true;
             }
@@ -187,11 +187,11 @@ namespace Meowziq.View {
         /// </remarks>
         async Task<string> buildSong(bool smf = false) {
             var name = "------------";
-            await Task.Run(() => {
+            await Task.Run(action: () => {
                 Mixer<ChannelMessage>.Clear(); // TODO: check if this process is ok here.
                 Cache.Clear();
-                Cache.Load(_target_path);
-                buildResourse(0, true, smf);
+                Cache.Load(targetPath: _target_path);
+                buildResourse(tick: 0, current: true, smf: smf);
                 name = State.Name;
                 Log.Info("load! :)");
             });
@@ -206,11 +206,11 @@ namespace Meowziq.View {
         /// </remarks>
         async void loadSong(int tick) {
             try {
-                await Task.Run(() => {
-                    Cache.Load(_target_path); // reads json files.
-                    buildResourse(tick, true);
+                await Task.Run(action: () => {
+                    Cache.Load(targetPath: _target_path); // reads json files.
+                    buildResourse(tick: tick, current: true);
                     Cache.Update(); // can be read normally, it holds as a cache.
-                    _ex_message = "";
+                    _ex_message = string.Empty;
                     Log.Trace("load! :)");
                 });
             }
@@ -219,17 +219,17 @@ namespace Meowziq.View {
             /// </remarks>
             catch (Exception ex) {
                 if (!_ex_message.Equals(ex.Message)) { // if the error message is different,
-                    _ = Task.Factory.StartNew(() => { // displays an error dialog.
+                    _ = Task.Factory.StartNew(action: () => { // displays an error dialog.
                         _result = MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                         if (_result is DialogResult.OK) { // when closed with ok.
-                            _ex_message = ""; // initializes the flag and show the dialog again if necessary.
+                            _ex_message = string.Empty; // initializes the flag and show the dialog again if necessary.
                         }
                     });
                 }
                 _ex_message = ex.Message;
-                await Task.Run(() => {
+                await Task.Run(action: () => {
                     Log.Fatal("load failed.. :(");
-                    buildResourse(tick, false);
+                    buildResourse(tick: tick, current: false);
                 });
             }
         }
@@ -238,14 +238,14 @@ namespace Meowziq.View {
         /// loads the resource's json files into memory.
         /// </summary>
         void buildResourse(int tick, bool current = true, bool smf = false) {
-            MixerLoader<ChannelMessage>.Build(current ? Cache.Current.MixerStream : Cache.Valid.MixerStream);
+            MixerLoader<ChannelMessage>.Build(target: current ? Cache.Current.MixerStream : Cache.Valid.MixerStream);
             Mixer<ChannelMessage>.Message = MessageFactory.CreateMessage();
-            SongLoader.PatternList = PatternLoader.Build(current ? Cache.Current.PatternStream : Cache.Valid.PatternStream);
-            Song song = SongLoader.Build(current ? Cache.Current.SongStream : Cache.Valid.SongStream);
-            PlayerLoader<ChannelMessage>.PhraseList = PhraseLoader.Build(current ? Cache.Current.PhraseStream : Cache.Valid.PhraseStream);
-            PlayerLoader<ChannelMessage>.Build(current ? Cache.Current.PlayerStream : Cache.Valid.PlayerStream).ForEach(x => {
+            SongLoader.PatternList = PatternLoader.Build(target: current ? Cache.Current.PatternStream : Cache.Valid.PatternStream);
+            Song song = SongLoader.Build(target: current ? Cache.Current.SongStream : Cache.Valid.SongStream);
+            PlayerLoader<ChannelMessage>.PhraseList = PhraseLoader.Build(target: current ? Cache.Current.PhraseStream : Cache.Valid.PhraseStream);
+            PlayerLoader<ChannelMessage>.Build(target: current ? Cache.Current.PlayerStream : Cache.Valid.PlayerStream).ForEach(x => {
                 x.Song = song; // sets song data.
-                x.Build(tick, smf); // builds midi data.
+                x.Build(tick: tick, smf: smf); // builds midi data.
             });
         }
 
@@ -256,46 +256,46 @@ namespace Meowziq.View {
         /// stop playing the song.
         /// </todo>
         async Task<bool> convertSong() {
-            return await Task.Run(async () => {
+            return await Task.Run(function: async () => {
                 /// <summary>
                 /// progress timer.
                 /// </summary>
                 var message = "PLEASE WAIT";
-                IObservable<long> timer = Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
+                IObservable<long> timer = Observable.Timer(dueTime: TimeSpan.FromSeconds(1), period: TimeSpan.FromSeconds(1));
                 IDisposable disposer = timer.Subscribe(x => {
                     Log.Info($"converting the song.. ({x})");
-                    Invoke((MethodInvoker) (() => {
-                        var _dot = (x % 2) == 0 ? "*" : "-";
-                        _textbox_song_name.Text = $"{message} {_dot}";
+                    Invoke(method: (MethodInvoker) (() => {
+                        var dot = (x % 2) == 0 ? "*" : "-";
+                        _textbox_song_name.Text = $"{message} {dot}";
                     }));
                 });
                 /// <summary>
                 /// midi data generation.
                 /// </summary>
                 Midi.Message.Clear();
-                var song_name = await buildSong(true);
+                var song_name = await buildSong(smf: true);
                 var song_dir = _target_path.Split(Path.DirectorySeparatorChar).Last();
                 Midi.Message.Invert(); // inverse the flag after data generation.
                 /// <summary>
                 /// song information setting.
                 /// </summary>
                 Track conductor_track = new();
-                conductor_track.Insert(0, new MetaMessage(MetaType.Tempo, Value.Converter.ToByteTempo(State.Tempo)));
-                conductor_track.Insert(0, new MetaMessage(MetaType.TrackName, Value.Converter.ToByteArray(State.Name)));
-                conductor_track.Insert(0, new MetaMessage(MetaType.Copyright, Value.Converter.ToByteArray(State.Copyright)));
+                conductor_track.Insert(position: 0, new MetaMessage(MetaType.Tempo, Value.Converter.ToByteTempo(State.Tempo)));
+                conductor_track.Insert(position: 0, new MetaMessage(MetaType.TrackName, Value.Converter.ToByteArray(State.Name)));
+                conductor_track.Insert(position: 0, new MetaMessage(MetaType.Copyright, Value.Converter.ToByteArray(State.Copyright)));
                 State.TrackList.ForEach(x => {
-                    var ch_track = Multi.Get(x.MidiCh);
-                    ch_track.Insert(0, new MetaMessage(MetaType.TrackName, Value.Converter.ToByteArray(x.Name)));
-                    ch_track.Insert(0, new MetaMessage(MetaType.ProgramName, Value.Converter.ToByteArray(x.Instrument))); // FIXME: not reflected?
+                    var ch_track = Multi.Get(index: x.MidiCh);
+                    ch_track.Insert(position: 0, new MetaMessage(MetaType.TrackName, Value.Converter.ToByteArray(x.Name)));
+                    ch_track.Insert(position: 0, new MetaMessage(MetaType.ProgramName, Value.Converter.ToByteArray(x.Instrument))); // FIXME: not reflected?
                 });
                 /// <summary>
                 /// applies midi data.
                 /// </summary>
-                for (var idx = 0; Midi.Message.Has(idx * 30); idx++) { // loops every 30 ticks.
-                    var tick = idx * 30; // manually generates 30 ticks.
-                    var list = Midi.Message.GetBy(tick); // gets list of messages.
-                    if (list != null) {
-                        list.ForEach(x => Multi.Get(x.MidiChannel).Insert(tick, x));
+                for (var index = 0; Midi.Message.Has(tick: index * 30); index++) { // loops every 30 ticks.
+                    var tick = index * 30; // manually generates 30 ticks.
+                    var list = Midi.Message.GetBy(tick: tick); // gets list of messages.
+                    if (list is not null) {
+                        list.ForEach(x => Multi.Get(index: x.MidiChannel).Insert(position: tick, message: x));
                     }
                 }
                 /// <summary>
@@ -304,10 +304,10 @@ namespace Meowziq.View {
                 _sequence.Load("./data/conductor.mid"); // TODO: need this?
                 _sequence.Clear();
                 _sequence.Format = 1;
-                _sequence.Add(conductor_track);
-                Multi.List.Where(x => x.Length > 1).ToList().ForEach(x => _sequence.Add(x));
+                _sequence.Add(item: conductor_track); // adds conductor track.
+                Multi.List.Where(x => x.Length > 1).ToList().ForEach(x => _sequence.Add(item: x)); // adds channel tracks.
                 _sequence.Save($"./data/{song_dir}/{song_name}.mid");
-                Invoke((MethodInvoker) (() => _textbox_song_name.Text = song_name));// restores the song name.
+                Invoke(method: (MethodInvoker) (() => _textbox_song_name.Text = song_name));// restores the song name.
                 disposer.Dispose(); // discard timer.
                 Log.Info("save! :D");
                 return true;
@@ -318,10 +318,10 @@ namespace Meowziq.View {
         /// starts to play a song.
         /// </summary>
         async Task<bool> startSound() {
-            return await Task.Run(async () => {
+            return await Task.Run(function: async () => {
                 Midi.Message.Clear();
                 _textbox_song_name.Text = await buildSong();
-                Facade.CreateConductor(_sequence);
+                Facade.CreateConductor(sequence: _sequence);
                 _sequence.Load("./data/conductor.mid"); // FIXME: to const value.
                 _sequencer.Position = 0;
                 _sequencer.Start();
@@ -337,16 +337,16 @@ namespace Meowziq.View {
         /// stop to play a song.
         /// </summary>
         async Task<bool> stopSound() {
-            return await Task.Run(() => {
+            return await Task.Run(function: () => {
                 Sound.Stopping = true;
-                Enumerable.Range(0, 16).ToList().ForEach(
+                Enumerable.Range(start: Env.MIDI_TRACK_BASE, count: Env.MIDI_TRACK_COUNT).ToList().ForEach(
                     x => _midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, x, 120))
                 );
                 Sound.Stopping = false;
                 Sound.Playing = false;
                 _sequencer.Stop();
                 _sequence.Clear();
-                Invoke(resetDisplay());
+                Invoke(method: resetDisplay());
                 Log.Info("stop. :|");
                 return true;
             });
@@ -363,19 +363,19 @@ namespace Meowziq.View {
                 _textbox_degree.Text = item.Degree;
                 _textbox_key_mode.Text = item.KeyMode;
                 _textbox_code.Text = Utils.ToSimpleCodeName(
-                    Key.Enum.Parse(item.Key),
-                    Degree.Enum.Parse(item.Degree),
-                    Mode.Enum.Parse(item.KeyMode),
-                    Mode.Enum.Parse(item.SpanMode),
-                    item.AutoMode
+                    key: Key.Enum.Parse(item.Key),
+                    degree: Degree.Enum.Parse(item.Degree),
+                    key_mode: Mode.Enum.Parse(item.KeyMode),
+                    span_mode: Mode.Enum.Parse(item.SpanMode),
+                    auto_mode: item.AutoMode
                 );
                 /// <remarks>
                 /// using the auto mode.
                 /// </remarks>
                 if (item.AutoMode) {
-                    Mode auto_mode = Utils.ToModeSpan(
-                        Degree.Enum.Parse(item.Degree),
-                        Mode.Enum.Parse(item.KeyMode)
+                    Mode auto_mode = Utils.ToSpanMode(
+                        degree: Degree.Enum.Parse(item.Degree),
+                        key_mode: Mode.Enum.Parse(item.KeyMode)
                     );
                     _textbox_Mode.Text = auto_mode.ToString();
                     _label_modulation.ForeColor = Color.DimGray;
@@ -385,11 +385,11 @@ namespace Meowziq.View {
                 /// </remarks>
                 else {
                     _textbox_Mode.Text = item.SpanMode;
-                    Mode key_mode = Utils.ToModeKey(
-                        Key.Enum.Parse(item.Key),
-                        Degree.Enum.Parse(item.Degree),
-                        Mode.Enum.Parse(item.KeyMode),
-                        Mode.Enum.Parse(item.SpanMode)
+                    Mode key_mode = Utils.ToKeyMode(
+                        key: Key.Enum.Parse(item.Key),
+                        degree: Degree.Enum.Parse(item.Degree),
+                        key_mode: Mode.Enum.Parse(item.KeyMode),
+                        span_mode: Mode.Enum.Parse(item.SpanMode)
                     );
                     _textbox_key_mode.Text = key_mode.ToString().Equals("Undefined") ? "---" : key_mode.ToString();
                     _label_modulation.ForeColor = Color.HotPink; // TODO: changes color depending on the degree.
@@ -402,8 +402,8 @@ namespace Meowziq.View {
         /// </summary>
         MethodInvoker resetDisplay() {
             return () => {
-                Enumerable.Range(0, 88).ToList().ForEach(
-                    x => _piano_control.Send(new ChannelMessage(ChannelCommand.NoteOff, 1, x, 0))
+                Enumerable.Range(start: 0, count: 88).ToList().ForEach(
+                    x => _piano_control.Send(message: new ChannelMessage(command: ChannelCommand.NoteOff, midiChannel: 1, data1: x, data2: 0))
                 );
                 _label_play.ForeColor = Color.DimGray;
                 _label_modulation.ForeColor = Color.DimGray;
@@ -432,17 +432,17 @@ namespace Meowziq.View {
             /// creates and outputs an smf file for tempo control.
             /// </summary>
             public static void CreateConductor(Sequence sequence) {
-                MetaMessage tempo = new(MetaType.Tempo, Value.Converter.ToByteTempo(State.Tempo));
+                MetaMessage tempo = new(type: MetaType.Tempo, data: Value.Converter.ToByteTempo(tempo: State.Tempo));
                 Track track = new();
-                track.Insert(0, tempo);
-                for (var idx = 0; idx < 100000; idx++) { // FIXME: number of loops.
-                    var tick = idx * 30; // manually generates 30 ticks.
-                    track.Insert(tick, new ChannelMessage(ChannelCommand.NoteOn, 0, 64, 0));
-                    track.Insert(tick + 30, new ChannelMessage(ChannelCommand.NoteOff, 0, 64, 0));
+                track.Insert(position: 0, message: tempo);
+                for (var index = 0; index < 100000; index++) { // FIXME: number of loops.
+                    var tick = index * 30; // manually generates 30 ticks.
+                    track.Insert(position: tick, message: new ChannelMessage(command: ChannelCommand.NoteOn, midiChannel: 0, data1: 64, data2: 0));
+                    track.Insert(position: tick + 30, message: new ChannelMessage(command: ChannelCommand.NoteOff, midiChannel: 0, data1: 64, data2: 0));
                 }
                 sequence.Load("./data/conductor.mid"); // TODO: need this? // FIXME: to const value.
                 sequence.Clear();
-                sequence.Add(track);
+                sequence.Add(item: track);
                 sequence.Save($"./data/conductor.mid"); // smf file export for tempo control. // FIXME: to const value.
             }
         }

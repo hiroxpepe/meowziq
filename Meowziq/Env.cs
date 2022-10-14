@@ -13,30 +13,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.Text.RegularExpressions;
-
 namespace Meowziq {
     /// <summary>
-    /// common extension methods.
+    /// envelope class
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
-    public static class Extensions {
-        /// <summary>
-        /// converts a character to a number.
-        /// </summary>
-        public static int Int32(this char source) {
-            if (!Regex.IsMatch(source.ToString(), @"^[0-9]+$")) { // only 0 to 9 are valid.
-                throw new FormatException("a char value must be 0～9.");
-            }
-            return int.Parse(source.ToString());
-        }
+    public static class Env {
+#nullable enable
 
-        /// <summary>
-        /// returns true if the string is not a null or empty string.
-        /// </summary>
-        public static bool HasValue(this string source) {
-            return !(source is null || source.Equals(string.Empty));
-        }
+        public const int MIDI_TRACK_BASE = 0;
+        public const int MIDI_TRACK_COUNT = 16;
+
     }
 }

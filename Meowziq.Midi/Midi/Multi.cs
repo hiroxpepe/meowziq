@@ -20,8 +20,8 @@ using Sanford.Multimedia.Midi;
 namespace Meowziq.Midi {
     /// <summary>
     /// class that holds Sanford.Multimedia.Midi.Track objects for smf output.
-    /// @author h.adachi
     /// </summary>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Multi {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -33,20 +33,31 @@ namespace Meowziq.Midi {
         // static Constructor
 
         static Multi() {
+            /// <summary>
+            /// initializes track map.
+            /// </summary>
             _track_map = new();
-            Enumerable.Range(0, 16).ToList().ForEach(x => _track_map.Add(x, new Track()));
+            Enumerable.Range(start: Env.MIDI_TRACK_BASE, count: Env.MIDI_TRACK_COUNT).ToList().ForEach(
+                action: x => _track_map.Add(key: x, value: new Track())
+            );
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Properties [noun, adjective]
 
+        /// <summary>
+        /// gets the Track list.
+        /// </summary>
         public static List<Track> List {
-            get => _track_map.Select(x => x.Value).ToList();
+            get => _track_map.Select(selector: x => x.Value).ToList();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]
 
+        /// <summary>
+        /// gets a Track by index.
+        /// </summary>
         public static Track Get(int index) {
             return _track_map[index];
         }

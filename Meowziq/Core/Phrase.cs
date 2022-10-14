@@ -22,10 +22,12 @@ using Meowziq.Value;
 namespace Meowziq.Core {
     /// <summary>
     /// Phrase クラス
-    ///     + キーと旋法は外部から与えられる
-    ///     + Note オブジェクトのリストを管理する
-    /// @author h.adachi
     /// </summary>
+    /// <note>
+    /// + キーと旋法は外部から与えられる
+    /// + Note オブジェクトのリストを管理する
+    /// </note>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Phrase {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -102,13 +104,15 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// TBA: シーケンス
-        /// Phrase の拍数を返す
+        /// returns the number of beats in the phrase.
         /// </summary>
+        /// <remarks>
+        /// not used yet.
+        /// </remarks>
         public int BeatCount {
             get {
-                switch (defineWay()) {
-                    case Way.Mono:
+                switch (defineDataType()) {
+                    case DataType.Mono:
                         return measCount(_data.Note.Text);
                     default:
                         throw new ArgumentException("not understandable DataType.");
@@ -168,48 +172,44 @@ namespace Meowziq.Core {
         /// Note データを生成します
         /// </summary>
         protected void onBuild(int tick, Pattern pattern) {
-            //if (BeatCount != pattern.BeatCount) {
-            //    throw new ArgumentException("invalid beatCount.");
-            //}
-            // NOTE: Way で分岐 TODO: プラグイン拡張出来るように
-            var generator = new Generator(_note_item); // NOTE: コンストラクタで生成ではNG
-            var way = defineWay();
-            switch (way) {
-                case Way.Mono:
+            var generator = Generator.GetInstance(_note_item);
+            var data_type = defineDataType();
+            switch (data_type) {
+                case DataType.Mono:
                     {
-                        var param = new Param(_data.Note, _data.Exp, way); // NOTE: "note", "auto" データ判定済
+                        var param = new Param(_data.Note, _data.Exp, data_type);
                         generator.ApplyNote(tick, pattern.BeatCount, pattern.AllSpan, param);
                     }
                     break;
-                case Way.Chord:
+                case DataType.Chord:
                     {
-                        var param = new Param(_data.Chord, _data.Exp, way);
+                        var param = new Param(_data.Chord, _data.Exp, data_type);
                         generator.ApplyNote(tick, pattern.BeatCount, pattern.AllSpan, param);
                     }
                     break;
-                case Way.Multi:
+                case DataType.Multi:
                     var string_array = _data.Auto ? _data.AutoArray : _data.NoteArray;
-                    for (var idx = 0; idx < string_array.Length; idx++) { // TODO: for の置き換え
+                    for (var idxindex = 0; idxindex < string_array.Length; idxindex++) {
                         var param = new Param(
-                            new Value.Note(string_array[idx], _data.OctArray[idx]),
-                            new Value.Exp(_data.PreArray[idx], _data.PostArray[idx]),
-                            way,
+                            new Value.Note(string_array[idxindex], _data.OctArray[idxindex]),
+                            new Value.Exp(_data.PreArray[idxindex], _data.PostArray[idxindex]),
+                            data_type,
                             _data.Auto
                         );
                         generator.ApplyNote(tick, pattern.BeatCount, pattern.AllSpan, param);
                     }
                     break;
-                case Way.Drum:
+                case DataType.Drum:
                     _data.BeatArray.ToList().Select((x, idx) => new Param(
-                        new Value.Note(x, 0), // オクターブは常に 0
+                        new Value.Note(text: x, oct: 0), // octave is always 0.
                         (int) _data.PercussionArray[idx],
-                        new Value.Exp(_data.PreArray[idx], ""),
-                        way
+                        new Value.Exp(pre: _data.PreArray[idx], post: string.Empty),
+                        data_type
                     )).ToList().ForEach(x => generator.ApplyDrumNote(tick, pattern.BeatCount, x));
                     break;
-                case Way.Seque:
+                case DataType.Seque:
                     {
-                        var param = new Param(_data.Seque, way);
+                        var param = new Param(seque: _data.Seque, type: data_type);
                         generator.ApplySequeNote(tick, pattern.BeatCount, pattern.AllSpan, param);
                     }
                     break;
@@ -228,6 +228,13 @@ namespace Meowziq.Core {
         ///           previous.AllNote.Were(なんとか) 
         ///       current の シンコペ Note () ← 判定済み
         /// </summary>
+        /// <memo_jp>
+        /// + 消したい音はこのフレーズではない場合もある => Player で処理を定義
+        /// + この処理の高速化が必須：何が必要で何が必要でないか
+        /// + previous の発音が続いてる Note を識別する？ => どのように？
+        ///     + previous.AllNote.Were(なんとか) 
+        /// + current の シンコペ Note <= 判定済み
+        /// </memo_jp>
         void optimize() {
             var note_list = _note_item.SelectMany(x => x.Value).Select(x => x).ToList();
             foreach (var stop_note in note_list.Where(x => x.HasPre)) { // 優先ノートのリスト
@@ -240,43 +247,45 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// json に記述されたデータのタイプを判定します
+        /// determines the type of data written in json.
         /// </summary>
-        Way defineWay() {
+        DataType defineDataType() {
             if (!_data.HasMulti && (_data.HasNote || _data.HasAuto)) {
-                return Way.Mono; // 単体 "note", "auto" ノート記述 
+                return DataType.Mono;
             }
             else if (_data.HasMulti && (_data.HasNote || _data.HasAuto)) {
-                return Way.Multi; // 複合 "note", "auto" 記述
+                return DataType.Multi;
             }
             else if (_data.HasChord) {
-                return Way.Chord; // "chord" 記述
+                return DataType.Chord;
             }
             else if (_data.HasBeat) {
-                return Way.Drum; // "beat" 記述 
+                return DataType.Drum;
             }
             else if (_data.HasSeque) {
-                return Way.Seque; // "seque" 記述
+                return DataType.Seque;
             }
-            throw new ArgumentException("not understandable Way.");
+            throw new ArgumentException("not understandable DataType.");
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private static Methods [verb]
 
         /// <summary>
-        /// TBA
+        /// returns the number of measures.
         /// </summary>
+        /// <remarks>
+        /// not used yet.
+        /// </remarks>
         static int measCount(string target) {
             if (target == null) {
                 throw new ArgumentException("target must not be null.");
             }
-            // 小節に切り出す
-            var meas_string_array = target.Replace("][", "@")  // まず "][" を "@" に置き換え
-                .Split('@') // 小節で切り分ける
-                .Select(x => x.Replace("[", "").Replace("]", "")).ToArray(); // 不要文字削除
-            // FIXME: 1小節を4拍として計算
-            return meas_string_array.Length * 4;
+            // divides into measures.
+            string[] meas_string_array = target.Replace("][", "@")  // replaces "][" with "@" first.
+                .Split('@') // divides with that mark.
+                .Select(x => x.Replace("[", string.Empty).Replace("]", string.Empty)).ToArray(); // removes unnecessary characters.
+            return meas_string_array.Length * 4; // 1 measure is calculated as 4 beats.
         }
     }
 }

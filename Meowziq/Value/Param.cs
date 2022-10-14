@@ -15,17 +15,14 @@
 
 using System.Text.RegularExpressions;
 
-/// <summary>
-/// parameter class to provide as an argument to the generator class.
-/// @author h.adachi
-/// </summary>
-/// <memo>
-/// whether it can be an immutable object.
-/// </memo>
 namespace Meowziq.Value {
     /// <summary>
-    /// parameter class.
+    /// parameter class to provide as an argument to the generator class.
     /// </summary>
+    /// <memo>
+    /// whether it can be an immutable object.
+    /// </memo>
+   /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Param {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -34,56 +31,56 @@ namespace Meowziq.Value {
         /// <summary>
         /// creates as a "note" notated parameter.
         /// </summary>
-        /// <memo>
-        /// メロディ、ハモリ記述と共用出来る？ ⇒ 多少無駄があっても別々で組んで後で統合した方が現状の破壊が少ない
-        /// </memo>
-        public Param(Note note, Exp exp, Way way, bool auto_note = true) {
+        /// <memo_jp>
+        /// + ハモリ記述と共用出来る？ <br/> 
+        /// </memo_jp>
+        public Param(Note note, Exp exp, DataType type, bool auto_note = true) {
             this.note = note;
             Exp = exp;
-            Way = way;
+            Type = type;
             AutoNote = auto_note;
         }
 
         /// <summary>
         /// creates as a "beat" notated parameter.
         /// </summary>
-        public Param(Note note, int percussion_note_num, Exp exp, Way way) {
+        public Param(Note note, int percussion_note_num, Exp exp, DataType type) {
             this.note = note;
             PercussionNoteNum = percussion_note_num;
             Exp = exp;
-            Way = way;
+            Type = type;
         }
 
         /// <summary>
         /// creates as a "chord" notated parameter.
         /// </summary>
-        public Param(Chord chord, Exp exp, Way type) {
+        public Param(Chord chord, Exp exp, DataType type) {
             Chord = chord;
             Exp = exp;
-            Way = type;
+            Type = type;
         }
 
         /// <summary>
         /// creates as a "seque" notated parameter.
         /// </summary>
-        public Param(Seque seque, Way type) {
+        public Param(Seque seque, DataType type) {
             Seque = seque;
-            Way = type;
+            Type = type;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjective] 
 
-        /// <remarks>
-        /// Range が Generator から使用される
-        /// </remarks>
+        /// <memo>
+        /// range is used from Generator.
+        /// </memo>
         public Chord Chord {
             get;
         }
 
-        /// <remarks>
-        /// Range が Generator から使用される
-        /// </remarks>
+        /// <memo>
+        /// range is used from Generator.
+        /// </memo>
         public Seque Seque {
             get;
         }
@@ -96,20 +93,20 @@ namespace Meowziq.Value {
             get;
         }
 
-        public Way Way {
+        public DataType Type {
             get;
         }
 
-        /// <remarks>
-        /// ここで char 配列が返せれば Generator 側は問題ない
-        /// </remarks>
+        /// <memo>
+        /// if a char array can be returned here, there is no problem on the Generator side.
+        /// </memo>
         public char[] TextCharArray {
             get {
-                if (Way is Way.Mono || Way is Way.Multi || Way is Way.Drum) {
+                if (Type is DataType.Mono || Type is DataType.Multi || Type is DataType.Drum) {
                     return note.TextCharArray;
-                } else if (Way is Way.Chord) {
+                } else if (Type is DataType.Chord) {
                     return Chord.TextCharArray;
-                } else if (Way is Way.Seque) {
+                } else if (Type is DataType.Seque) {
                     return Seque.TextCharArray;
                 }
                 return null;
@@ -122,35 +119,35 @@ namespace Meowziq.Value {
 
         public int Interval {
             get {
-                if (Way is Way.Mono || Way is Way.Multi) {
+                if (Type is DataType.Mono || Type is DataType.Multi) {
                     return note.Interval;
                 }
-                return 0; // Chord はインターバルなし
+                return 0; // Chord has no interval.
             }
         }
 
         /// <summary>
         /// whether "note" notated parameter.
         /// </summary>
-        /// <remarks>
-        /// Generator クラスから使用されます
-        /// </remarks>
+        /// <memo>
+        /// used from the Generator class.
+        /// </memo>
         public bool IsNote {
-            get => Way is Way.Mono || Way is Way.Multi;
+            get => Type is DataType.Mono || Type is DataType.Multi;
         }
 
         /// <summary>
         /// whether "chord" notated parameter.
         /// </summary>
-        /// <remarks>
-        /// Generator クラスから使用されます
-        /// </remarks>
+        /// <memo>
+        /// used from the Generator class.
+        /// </memo>
         public bool IsChord {
-            get => Way is Way.Chord;
+            get => Type is DataType.Chord;
         }
 
         /// <summary>
-        /// Span の旋法で Note No を取得
+        /// whether gets a note number in span mode.
         /// </summary>
         public bool AutoNote {
             get;
@@ -161,14 +158,14 @@ namespace Meowziq.Value {
         // public Methods [verb]
 
         public bool IsMatch(char target) {
-            if (Way is Way.Mono || Way is Way.Multi) {
-                return Regex.IsMatch(target.ToString(), @"^[1-7]+$"); // Mono, Multi は 1～7
-            } else if (Way is Way.Chord) {
-                return Regex.IsMatch(target.ToString(), @"^[1-9]+$"); // Chord は 1～9
-            } else if (Way is Way.Drum) {
-                return target.ToString().Equals("x"); // Drum は 'x'
-            } else if (Way is Way.Seque) {
-                return target.ToString().Equals("+") || target.ToString().Equals("*") || target.ToString().Equals(">"); // Seque は '+', '*', '>'
+            if (Type is DataType.Mono || Type is DataType.Multi) {
+                return Regex.IsMatch(target.ToString(), @"^[1-7]+$"); // 1 to 7 for Mono and Multi.
+            } else if (Type is DataType.Chord) {
+                return Regex.IsMatch(target.ToString(), @"^[1-9]+$"); // 1 to 9 for Chord.
+            } else if (Type is DataType.Drum) {
+                return target.ToString().Equals("x"); // Drum is 'x'.
+            } else if (Type is DataType.Seque) {
+                return target.ToString().Equals("+") || target.ToString().Equals("*") || target.ToString().Equals(">"); // Seque is '+', '*', '>'.
             }
             return false;
         }

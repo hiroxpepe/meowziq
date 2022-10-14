@@ -20,9 +20,11 @@ using System.Linq;
 namespace Meowziq.Core {
     /// <summary>
     /// Pattern クラス
-    ///     + Meas オブジェクトのリストを管理します
-    /// @author h.adachi
     /// </summary>
+    /// <note>
+    /// + Meas オブジェクトのリストを管理します
+    /// </note>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Pattern {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -39,8 +41,8 @@ namespace Meowziq.Core {
         /// NOTE: コンストラクタだけが作成する唯一の方法
         /// </summary>
         public Pattern(string name, List<Meas> meas_list) {
-            if (meas_list.Count > Env.MeasMax.Int32()) {
-                throw new ArgumentException($"measure counts are until {Env.MeasMax.Int32()}."); // 1パターンは12小節まで
+            if (meas_list.Count > Meowziq.Measure.Max.Int32()) {
+                throw new ArgumentException($"measure counts are until {Meowziq.Measure.Max.Int32()}."); // 1パターンは12小節まで
             }
             _name = name;
             _meas_list = meas_list;
@@ -104,7 +106,7 @@ namespace Meowziq.Core {
             // Span を分解して1拍毎に追加する
             _span_list = new();
             spanList.ForEach(x => {
-                Enumerable.Range(0, x.Beat).ToList().ForEach(
+                Enumerable.Range(start: 0, count: x.Beat).ToList().ForEach(
                     _x => _span_list.Add(new Span(1, x.Degree, x.SpanMode))
                 );
             });

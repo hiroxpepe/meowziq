@@ -15,30 +15,25 @@
 
 namespace Meowziq.Core {
     /// <summary>
-    /// ChannelMessage に変換される音情報保持クラス
-    /// @author h.adachi
+    /// note class.
     /// </summary>
+    /// <note>
+    /// + converts to ChannelMessage
+    /// </note>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Note {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        int _tick; // 4分音符 480の分解能のシーケンサーの tick 値 ※絶対値
-
-        int _num; // MIDI ノート番号
-
-        int _gate; // MIDI ノートON -> ノートOFF までの長さ
-
-        int _velo; // MIDI ノート強さ
-
-        int _pre_count; // シンコペーション設定
+        int _tick, _num, _gate, _velo, _pre_count;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
-        /// <summary>
-        /// NOTE: 作成したら状態は変更できません
-        /// </summary>
+        /// <note>
+        /// + states cannot be changed once created.
+        /// </note>
         public Note(int tick, int num, int gate, int velo, int pre_count = 0) {
             _tick = tick;
             _num = num;
@@ -51,28 +46,64 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjective] 
 
+        /// <summary>
+        /// 4分音符 480の分解能のシーケンサーの tick 値 ※絶対値
+        /// </summary>
+        /// <note>
+        /// + not provide modify operations.
+        /// </note>
         public int Tick {
-            get => _tick; // NOTE: 変更操作を提供しません
+            get => _tick;
         }
 
+        /// <summary>
+        /// MIDI ノート番号
+        /// </summary>
+        /// <note>
+        /// + not provide modify operations.
+        /// </note>
         public int Num {
-            get => _num; // NOTE: 変更操作を提供しません
+            get => _num;
         }
 
+        /// <summary>
+        /// MIDI ノートON -> ノートOFF までの長さ
+        /// </summary>
+        /// <note>
+        /// + not provide modify operations.
+        /// </note>
         public int Gate {
-            get => _gate; // NOTE: 変更操作を提供しません
+            get => _gate;
         }
 
+        /// <summary>
+        /// midi note strength.
+        /// </summary>
+        /// <note>
+        /// + not provide modify operations.
+        /// </note>
         public int Velo {
-            get => _velo; // NOTE: 変更操作を提供しません
+            get => _velo;
         }
 
+        /// <summary>
+        /// シンコペーション設定があるかどうか
+        /// </summary>
+        /// <note>
+        /// + not provide modify operations.
+        /// </note>
         public bool HasPre {
-            get => _pre_count > 0; // NOTE: 変更操作を提供しません
+            get => _pre_count > 0;
         }
 
+        /// <summary>
+        /// シンコペーション設定
+        /// </summary>
+        /// <note>
+        /// + not provide modify operations.
+        /// </note>
         public int PreCount {
-            get => _pre_count; // NOTE: 変更操作を提供しません
+            get => _pre_count;
         }
     }
 }
