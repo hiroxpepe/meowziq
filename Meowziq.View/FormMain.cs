@@ -73,13 +73,10 @@ namespace Meowziq.View {
                     return;
                 }
                 if (Sound.Playing || Sound.Stopping) { return; }
-                //////////////////////////////////
-                State.Repeat.Clear();
+                State.Repeat.ClearTick();
                 State.Repeat.ResetTickCounter();
-                // FIXME:
-                State.Repeat.BeginMeas = 1;
-                State.Repeat.EndMeas = 5;
-                //////////////////////////////////
+                State.Repeat.BeginMeas = (int) _numericupdown_repeat_begin.Value;
+                State.Repeat.EndMeas = (int) _numericupdown_repeat_end.Value;
                 await startSound();
             } catch (Exception ex) {
                 MessageBox.Show(text: ex.Message, caption: "Error", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Stop);
@@ -306,7 +303,7 @@ namespace Meowziq.View {
                 /// <summary>
                 /// SMF file export.
                 /// </summary>
-                _sequence.Load("./data/conductor.mid"); // TODO: need this?
+                _sequence.Load(CONDUCTOR_MIDI); // FIXME: still need for tempo.
                 _sequence.Clear();
                 _sequence.Format = 1;
                 _sequence.Add(item: conductor_track); // adds conductor track.
@@ -327,7 +324,7 @@ namespace Meowziq.View {
                 Midi.Message.Clear();
                 _textbox_song_name.Text = await buildSong();
                 Facade.CreateConductor(sequence: _sequence);
-                _sequence.Load(CONDUCTOR_MIDI); // FIXME: to const value.
+                _sequence.Load(CONDUCTOR_MIDI);
                 _sequencer.Position = 0;
                 _sequencer.Start();
                 _label_play.ForeColor = Lime;

@@ -32,9 +32,17 @@ namespace Meowziq {
         /// note resolution of the sequencer.
         /// </summary>
         public static readonly int NOTE_RESOLUTION = 480;
+        /// <summary>
+        /// 1 measure consists of 4 beats.
+        /// </summary>
+        public static readonly int TO_MEASURE = 4;
+        /// <summary>
+        /// set it to 4 can change every 1 measure. <br/>
+        /// also set it to 1 can change every 1 beat. 
+        /// </summary>
+        public static readonly int LOAD_EVERY_BEAT = 1;
 
         public static readonly string COUNT_PATTERN = "count";
-
         public static readonly string CONDUCTOR_MIDI = "./data/conductor.mid";
     }
 }

@@ -230,16 +230,14 @@ namespace Meowziq.Core {
             public static int BeginMeas {
                 set {
                     _begin_meas = value;
-                    _begin_tick = ((_begin_meas - 1) * 480 * 4) + (CountBeatLength * 480);
-                    //Log.Debug($"_begin_tick: {_begin_tick}");
+                    _begin_tick = ((_begin_meas - 1) * NOTE_RESOLUTION * TO_MEASURE) + (CountBeatLength * NOTE_RESOLUTION);
                 }
             }
 
             public static int EndMeas {
                 set { 
                     _end_meas = value;
-                    _end_tick = ((_end_meas - 1) * 480 * 4) + (CountBeatLength * 480);
-                    //Log.Debug($"_end_tick: {_end_tick}");
+                    _end_tick = ((_end_meas - 1) * NOTE_RESOLUTION * TO_MEASURE) + (CountBeatLength * NOTE_RESOLUTION);
                 }
             }
 
@@ -267,23 +265,22 @@ namespace Meowziq.Core {
                 _tick_counter += TICK_INTERVAL;
                 // resets when repeat length is reached.
                 if (_tick_counter == _begin_tick + repeatTickLength) {
-                    _tick_counter = _begin_tick -30;
+                    _tick_counter = _begin_tick - TICK_INTERVAL;
                 }
-                //Log.Debug($"repeatTickLength: {repeatTickLength} _tick: {_tick} _tick_counter: {_tick_counter}");
             }
 
             /// <summary>
-            /// clears this state.
+            /// clears this tick state.
             /// </summary>
-            public static void Clear() {
-                _begin_meas = _end_meas = _begin_tick = _end_tick = 0;
+            public static void ClearTick() {
+                _begin_tick = _end_tick = 0;
             }
 
             /// <summary>
             /// resets the tick counter.
             /// </summary>
             public static void ResetTickCounter() {
-                _tick_counter = _begin_tick -30;
+                _tick_counter = _begin_tick - TICK_INTERVAL;
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -300,7 +297,7 @@ namespace Meowziq.Core {
             /// length of the tick in repeat.
             /// </summary>
             public static int repeatTickLength {
-                get => (_end_meas - _begin_meas) * 480 * 4; 
+                get => (_end_meas - _begin_meas) * NOTE_RESOLUTION * TO_MEASURE; 
             }
         }
 

@@ -19,6 +19,7 @@ using System.Linq;
 using Sanford.Multimedia.Midi;
 
 using Meowziq.Core; // depends on Meowziq.Core.Note
+using static Meowziq.Env;
 
 namespace Meowziq.Midi {
     /// <summary>
@@ -57,9 +58,9 @@ namespace Meowziq.Midi {
         /// </remarks>
         public static List<ChannelMessage> GetBy(int tick) {
             if (_flag) {
-                return Prime.Item.Get/*Once*/(key: tick); // TODO: checks for problems.
+                return Prime.Item.Get(key: tick); // TODO: checks for problems.
             } else {
-                return Second.Item.Get/*Once*/(key: tick); // TODO: checks for problems.
+                return Second.Item.Get(key: tick); // TODO: checks for problems.
             }
         }
 
@@ -88,13 +89,13 @@ namespace Meowziq.Midi {
                 //return; // TODO: checks for problems.
             }
             /// <remarks>
-            /// change every time the tick accumulates to 2 beats. 
+            /// change every time the tick accumulates to N beats. 
             /// </remarks>
             /// <memo>
-            /// set it to 4 can change every 1 bar. <br/>
+            /// set it to 4 can change every 1 measure. <br/>
             /// also set it to 1 can change every 1 beat. 
             /// </memo>
-            if (tick % (Length.Of4beat.Int32() * 2) == 0) {
+            if (tick % (Length.Of4beat.Int32() * LOAD_EVERY_BEAT) == 0) {
                 change();
                 /// <remarks>
                 /// if load fails Read cache.
