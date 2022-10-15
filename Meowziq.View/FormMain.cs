@@ -121,7 +121,7 @@ namespace Meowziq.View {
         }
 
         /// <summary>
-        /// converts the song data to smf.
+        /// converts the song data to SMF.
         /// </summary>
         async void buttonConvert_Click(object sender, EventArgs e) {
             try {
@@ -142,7 +142,7 @@ namespace Meowziq.View {
         }
 
         /// <summary>
-        /// throws midi data to the device.
+        /// throws MIDI data to the device.
         /// </summary>
         /// <remarks>
         /// + depends on the conductor.midi and is only called every 30 ticks. <br/>
@@ -150,14 +150,14 @@ namespace Meowziq.View {
         /// + variable named tick defines to be always an absolute value. <br/>
         /// </remarks>
         /// <todo>
-        /// is it possible to independently implement the timing of message transmission to the midi device?
+        /// is it possible to independently implement the timing of message transmission to the MIDI device?
         /// </todo>
         void sequencer_ChannelMessagePlayed(object sender, ChannelMessageEventArgs e) {
             if (Sound.Stopping) { return; }
             if (Visible) {
                 State.Tick = _sequencer.Position - 1; // NOTE: tick position comes with 1, 31, so subtract 1 in advance.
                 if (State.SameTick) { return; };
-                // midi message processing.
+                // MIDI message processing.
                 Midi.Message.ApplyTick(tick: State.Repeat.Tick, load: loadSong); // switches every 2 beats. MEMO: considers syncopation.
                 var list = Midi.Message.GetBy(tick: State.Repeat.Tick); // gets the list of midi messages.
                 if (list is not null) {
@@ -188,7 +188,7 @@ namespace Meowziq.View {
         /// loads a song data fully while stopped.
         /// </summary>
         /// <remarks>
-        /// also called from smf output.
+        /// also called from SMF output.
         /// </remarks>
         async Task<string> buildSong(bool smf = false) {
             var name = "------------";
@@ -225,7 +225,7 @@ namespace Meowziq.View {
             catch (Exception ex) {
                 if (!_ex_message.Equals(ex.Message)) { // if the error message is different,
                     _ = Task.Factory.StartNew(action: () => { // displays an error dialog.
-                        _result = MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                        _result = MessageBox.Show(text: ex.Message, caption: "Error", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Stop);
                         if (_result is DialogResult.OK) { // when closed with ok.
                             _ex_message = string.Empty; // initializes the flag and show the dialog again if necessary.
                         }
@@ -250,12 +250,12 @@ namespace Meowziq.View {
             PlayerLoader<ChannelMessage>.PhraseList = PhraseLoader.Build(target: current ? Cache.Current.PhraseStream : Cache.Valid.PhraseStream);
             PlayerLoader<ChannelMessage>.Build(target: current ? Cache.Current.PlayerStream : Cache.Valid.PlayerStream).ForEach(x => {
                 x.Song = song; // sets song data.
-                x.Build(tick: tick, smf: smf); // builds midi data.
+                x.Build(tick: tick, smf: smf); // builds MIDI data.
             });
         }
 
         /// <summary>
-        /// converts the song to smf and output as a file.
+        /// converts the song to SMF and output as a file.
         /// </summary>
         /// <todo>
         /// stop playing the song.
@@ -267,7 +267,7 @@ namespace Meowziq.View {
                 /// </summary>
                 var message = "PLEASE WAIT";
                 IObservable<long> timer = Observable.Timer(dueTime: TimeSpan.FromSeconds(1), period: TimeSpan.FromSeconds(1));
-                IDisposable disposer = timer.Subscribe(x => {
+                IDisposable disposer = timer.Subscribe(onNext: x => {
                     Log.Info($"converting the song.. ({x})");
                     Invoke(method: (MethodInvoker) (() => {
                         var dot = (x % 2) == 0 ? "*" : "-";
@@ -275,7 +275,7 @@ namespace Meowziq.View {
                     }));
                 });
                 /// <summary>
-                /// midi data generation.
+                /// MIDI data generation.
                 /// </summary>
                 Midi.Message.Clear();
                 var song_name = await buildSong(smf: true);
@@ -288,29 +288,29 @@ namespace Meowziq.View {
                 conductor_track.Insert(position: 0, new MetaMessage(MetaType.Tempo, Value.Converter.ToByteTempo(State.Tempo)));
                 conductor_track.Insert(position: 0, new MetaMessage(MetaType.TrackName, Value.Converter.ToByteArray(State.Name)));
                 conductor_track.Insert(position: 0, new MetaMessage(MetaType.Copyright, Value.Converter.ToByteArray(State.Copyright)));
-                State.TrackList.ForEach(x => {
+                State.TrackList.ForEach(action: x => {
                     var ch_track = Multi.Get(index: x.MidiCh);
                     ch_track.Insert(position: 0, new MetaMessage(MetaType.TrackName, Value.Converter.ToByteArray(x.Name)));
                     ch_track.Insert(position: 0, new MetaMessage(MetaType.ProgramName, Value.Converter.ToByteArray(x.Instrument))); // FIXME: not reflected?
                 });
                 /// <summary>
-                /// applies midi data.
+                /// applies MIDI data.
                 /// </summary>
                 for (var index = 0; Midi.Message.Has(tick: index * 30); index++) { // loops every 30 ticks.
                     var tick = index * 30; // manually generates 30 ticks.
                     var list = Midi.Message.GetBy(tick: tick); // gets list of messages.
                     if (list is not null) {
-                        list.ForEach(x => Multi.Get(index: x.MidiChannel).Insert(position: tick, message: x));
+                        list.ForEach(action: x => Multi.Get(index: x.MidiChannel).Insert(position: tick, message: x));
                     }
                 }
                 /// <summary>
-                /// smf file export.
+                /// SMF file export.
                 /// </summary>
                 _sequence.Load("./data/conductor.mid"); // TODO: need this?
                 _sequence.Clear();
                 _sequence.Format = 1;
                 _sequence.Add(item: conductor_track); // adds conductor track.
-                Multi.List.Where(x => x.Length > 1).ToList().ForEach(x => _sequence.Add(item: x)); // adds channel tracks.
+                Multi.List.Where(predicate: x => x.Length > 1).ToList().ForEach(action: x => _sequence.Add(item: x)); // adds channel tracks.
                 _sequence.Save($"./data/{song_dir}/{song_name}.mid");
                 Invoke(method: (MethodInvoker) (() => _textbox_song_name.Text = song_name));// restores the song name.
                 disposer.Dispose(); // discard timer.
@@ -327,7 +327,7 @@ namespace Meowziq.View {
                 Midi.Message.Clear();
                 _textbox_song_name.Text = await buildSong();
                 Facade.CreateConductor(sequence: _sequence);
-                _sequence.Load("./data/conductor.mid"); // FIXME: to const value.
+                _sequence.Load(CONDUCTOR_MIDI); // FIXME: to const value.
                 _sequencer.Position = 0;
                 _sequencer.Start();
                 _label_play.ForeColor = Lime;
@@ -345,7 +345,7 @@ namespace Meowziq.View {
             return await Task.Run(function: () => {
                 Sound.Stopping = true;
                 Enumerable.Range(start: MIDI_TRACK_BASE, count: MIDI_TRACK_COUNT).ToList().ForEach(
-                    x => _midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, x, 120))
+                    action: x => _midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, x, 120))
                 );
                 Sound.Stopping = false;
                 Sound.Playing = false;
@@ -408,7 +408,7 @@ namespace Meowziq.View {
         MethodInvoker resetDisplay() {
             return () => {
                 Enumerable.Range(start: 0, count: 88).ToList().ForEach(
-                    x => _piano_control.Send(message: new ChannelMessage(command: ChannelCommand.NoteOff, midiChannel: 1, data1: x, data2: 0))
+                    action: x => _piano_control.Send(message: new ChannelMessage(command: ChannelCommand.NoteOff, midiChannel: 1, data1: x, data2: 0))
                 );
                 _label_play.ForeColor = DimGray;
                 _label_modulation.ForeColor = DimGray;
@@ -434,7 +434,7 @@ namespace Meowziq.View {
             // public static Methods [verb]
 
             /// <summary>
-            /// creates and outputs an smf file for tempo control.
+            /// creates and outputs an SMF file for tempo control.
             /// </summary>
             public static void CreateConductor(Sequence sequence) {
                 MetaMessage tempo = new(type: MetaType.Tempo, data: Value.Converter.ToByteTempo(tempo: State.Tempo));
@@ -445,10 +445,10 @@ namespace Meowziq.View {
                     track.Insert(position: tick, message: new ChannelMessage(command: ChannelCommand.NoteOn, midiChannel: 0, data1: 64, data2: 0));
                     track.Insert(position: tick + 30, message: new ChannelMessage(command: ChannelCommand.NoteOff, midiChannel: 0, data1: 64, data2: 0));
                 }
-                sequence.Load("./data/conductor.mid"); // TODO: need this? // FIXME: to const value.
+                sequence.Load(CONDUCTOR_MIDI); // FIXME: still need for tempo.
                 sequence.Clear();
                 sequence.Add(item: track);
-                sequence.Save($"./data/conductor.mid"); // smf file export for tempo control. // FIXME: to const value.
+                sequence.Save(CONDUCTOR_MIDI); // SMF file export for tempo control.
             }
         }
 

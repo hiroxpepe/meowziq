@@ -63,7 +63,7 @@ namespace Meowziq.Value {
     /// </todo>
     public static class Converter {
         /// <summary>
-        /// converts numeric BPM to tempo information for smf.
+        /// converts numeric BPM to tempo information for SMF.
         /// </summary>
         /// <summary_jp>
         /// BPM = 120 (1分あたり四分音符が120個) の場合、<br/>
