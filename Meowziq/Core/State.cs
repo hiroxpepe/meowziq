@@ -24,8 +24,7 @@ namespace Meowziq.Core {
     /// state class
     /// </summary>
     /// <note>
-    /// + 曲がどのような状況で演奏されているかを表す情報を保持する
-    /// + 設定されて読み出させるだけこれを状態を変更する目的で使わない
+    /// + holds information about how the song is being played.
     /// </note>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class State {
@@ -34,6 +33,7 @@ namespace Meowziq.Core {
         // Const [nouns]
 
         const int TO_ONE_BASE = 1;
+        const int BEAT_TO_MEAS = 4;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Fields [nouns, noun phrases]
@@ -83,6 +83,7 @@ namespace Meowziq.Core {
                 else {
                     _same_tick = false;
                     _tick = value;
+                    Repeat.IncrementTick();
                 }
             }
         }
@@ -102,7 +103,7 @@ namespace Meowziq.Core {
         /// </note>
         public static int Beat {
             get {
-                return (_tick / 480) + TO_ONE_BASE - _count_beat_length;
+                return (_tick / NOTE_RESOLUTION) + TO_ONE_BASE - _count_beat_length;
             }
         }
 
@@ -112,7 +113,7 @@ namespace Meowziq.Core {
         public static int Meas {
             get {
                 if (Beat <= 0) { return 0; }
-                return (Beat - 1) / 4 + TO_ONE_BASE;
+                return (Beat - 1) / BEAT_TO_MEAS + TO_ONE_BASE;
             }
         }
 
@@ -141,10 +142,10 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// sets the beat length of the "count" pattern. 
+        /// provides the beat length of the "count" pattern. 
         /// </summary>
         public static int CountBeatLength {
-            set => _count_beat_length = value;
+            get => _count_beat_length; set => _count_beat_length = value;
         }
 
         /// <summary>
@@ -162,10 +163,10 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// 
+        /// whether has the Item of the current tick.
         /// </summary>
-        public static bool Contains {
-            get => _hashset.Contains(_tick);
+        public static bool Has {
+            get => _hashset.Contains(Repeat.Tick);
         }
 
         /// <summary>
@@ -175,7 +176,7 @@ namespace Meowziq.Core {
         /// used in UI display.
         /// </note>
         public static Item16beat CurrentItem {
-            get => _item_map[_tick];
+            get => _item_map[Repeat.Tick];
         }
 
         /// <summary>
@@ -201,13 +202,6 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]
 
-        /// <remarks>
-        /// not used yet.
-        /// </remarks>
-        public static void IncrementTick() {
-            _tick += TICK_RESOLUTION; // increments tick.
-        }
-
         /// <summary>
         /// clears the list and the map data.
         /// </summary>
@@ -219,6 +213,96 @@ namespace Meowziq.Core {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // inner Classes
+
+        /// <summary>
+        /// repeat class
+        /// </summary>
+        public static class Repeat {
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////
+            // static Fields [nouns, noun phrases]
+
+            static int _begin_meas, _end_meas, _begin_tick, _end_tick, _tick_counter = 0;
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////
+            // public static Properties [noun, adjective] 
+
+            public static int BeginMeas {
+                set {
+                    _begin_meas = value;
+                    _begin_tick = ((_begin_meas - 1) * 480 * 4) + (CountBeatLength * 480);
+                    //Log.Debug($"_begin_tick: {_begin_tick}");
+                }
+            }
+
+            public static int EndMeas {
+                set { 
+                    _end_meas = value;
+                    _end_tick = ((_end_meas - 1) * 480 * 4) + (CountBeatLength * 480);
+                    //Log.Debug($"_end_tick: {_end_tick}");
+                }
+            }
+
+            /// <summary>
+            /// gets the repeat tick.
+            /// </summary>
+            public static int Tick {
+                get {
+                    if (!has || (_begin_meas > Meas && _end_meas < Meas)) {
+                        return _tick;
+                    }
+                    return _tick_counter;
+                }
+            }
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////
+            // public static Methods [verb]
+
+            /// <summary>
+            /// increments the tick.
+            /// </summary>
+            public static void IncrementTick() {
+                if (!has) { return; }
+                if (_begin_meas > Meas && _end_meas < Meas) { return; }
+                _tick_counter += TICK_INTERVAL;
+                // resets when repeat length is reached.
+                if (_tick_counter == _begin_tick + repeatTickLength) {
+                    _tick_counter = _begin_tick -30;
+                }
+                //Log.Debug($"repeatTickLength: {repeatTickLength} _tick: {_tick} _tick_counter: {_tick_counter}");
+            }
+
+            /// <summary>
+            /// clears this state.
+            /// </summary>
+            public static void Clear() {
+                _begin_meas = _end_meas = _begin_tick = _end_tick = 0;
+            }
+
+            /// <summary>
+            /// resets the tick counter.
+            /// </summary>
+            public static void ResetTickCounter() {
+                _tick_counter = _begin_tick -30;
+            }
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////
+            // private static Properties [noun, adjective]
+
+            /// <summary>
+            /// whether has set.
+            /// </summary>
+            static bool has {
+                get => _begin_meas >= 0 && _end_meas >= 0 && _begin_meas < _end_meas;
+            }
+
+            /// <summary>
+            /// length of the tick in repeat.
+            /// </summary>
+            public static int repeatTickLength {
+                get => (_end_meas - _begin_meas) * 480 * 4; 
+            }
+        }
 
         /// <summary>
         /// SMF 出力用のトラック情報を保持

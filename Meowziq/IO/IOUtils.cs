@@ -13,28 +13,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace Meowziq {
+using System.IO;
+
+namespace Meowziq.IO {
     /// <summary>
-    /// envelope class
-    /// </summary>
+    /// IO utils functions.
     /// <author>h.adachi (STUDIO MeowToon)</author>
-    public static class Env {
-#nullable enable
-
-        public static readonly int MIDI_TRACK_BASE = 0;
-        public static readonly int MIDI_TRACK_COUNT = 16;
-
+    public static class IOUtils {
         /// <summary>
-        /// tick interval of the sequencer.
+        /// creates a directory if necessary.
         /// </summary>
-        public static readonly int TICK_INTERVAL = 30;
-        /// <summary>
-        /// note resolution of the sequencer.
-        /// </summary>
-        public static readonly int NOTE_RESOLUTION = 480;
-
-        public static readonly string COUNT_PATTERN = "count";
-
-        public static readonly string CONDUCTOR_MIDI = "./data/conductor.mid";
+        public static DirectoryInfo MakeDirectoryIfNecessary(string target) {
+            string directory = Path.GetDirectoryName(target);
+            bool exists = Directory.Exists(directory);
+            if (!exists) {
+                return Directory.CreateDirectory(directory);
+            }
+            return null;
+        }
     }
 }
