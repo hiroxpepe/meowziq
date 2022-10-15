@@ -181,6 +181,7 @@ namespace Meowziq {
             int[] note3 = new int[3]; // extracts three notes as chord notes from scale notes.
             int[] note4 = new int[4]; // extracts four notes as chord notes from scale notes.
             switch (index) {
+                // FIXME: index = 2.
                 case 3: // e.g. C, Cm, Cm(b5)
                     note3[0] = scale7[1 - 1];
                     note3[1] = scale7[3 - 1];

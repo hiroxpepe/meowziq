@@ -73,6 +73,13 @@ namespace Meowziq.View {
                     return;
                 }
                 if (Sound.Playing || Sound.Stopping) { return; }
+                //////////////////////////////////
+                State.Repeat.Clear();
+                State.Repeat.ResetTickCounter();
+                // FIXME:
+                State.Repeat.BeginMeas = 1;
+                State.Repeat.EndMeas = 5;
+                //////////////////////////////////
                 await startSound();
             } catch (Exception ex) {
                 MessageBox.Show(text: ex.Message, caption: "Error", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Stop);
@@ -148,12 +155,11 @@ namespace Meowziq.View {
         void sequencer_ChannelMessagePlayed(object sender, ChannelMessageEventArgs e) {
             if (Sound.Stopping) { return; }
             if (Visible) {
-                // TODO: count needs to be displayed as a minus value on the UI?
                 State.Tick = _sequencer.Position - 1; // NOTE: tick position comes with 1, 31, so subtract 1 in advance.
                 if (State.SameTick) { return; };
                 // midi message processing.
-                Midi.Message.ApplyTick(tick: State.Tick, load: loadSong); // switches every 2 beats. MEMO: considers syncopation.
-                var list = Midi.Message.GetBy(tick: State.Tick); // gets the list of midi messages.
+                Midi.Message.ApplyTick(tick: State.Repeat.Tick, load: loadSong); // switches every 2 beats. MEMO: considers syncopation.
+                var list = Midi.Message.GetBy(tick: State.Repeat.Tick); // gets the list of midi messages.
                 if (list is not null) {
                     list.ForEach(x => {
                         _midi.OutDevice.Send(message: x); // sends messages to a midi device. // MEMO: throws cc directly here?
@@ -168,7 +174,7 @@ namespace Meowziq.View {
                     });
                 }
                 // updates UI information.
-                if (State.Contains) {
+                if (State.Has) {
                     Invoke(method: updateDisplay(item: State.CurrentItem));
                 }
                 Sound.Played = true;
@@ -192,7 +198,7 @@ namespace Meowziq.View {
                 Cache.Load(targetPath: _target_path);
                 buildResourse(tick: 0, current: true, smf: smf);
                 name = State.Name;
-                Log.Info("load! :)");
+                Log.Info("buildSong! :)");
             });
             return name; // returns the name of the song.
         }
@@ -210,7 +216,7 @@ namespace Meowziq.View {
                     buildResourse(tick: tick, current: true);
                     Cache.Update(); // can be read normally, it holds as a cache.
                     _ex_message = string.Empty;
-                    Log.Trace("load! :)");
+                    Log.Info("loadSong! :)");
                 });
             }
             /// <remarks>

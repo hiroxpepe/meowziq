@@ -24,7 +24,14 @@ namespace Meowziq {
         public static readonly int MIDI_TRACK_BASE = 0;
         public static readonly int MIDI_TRACK_COUNT = 16;
 
-        public static readonly int TICK_RESOLUTION = 30;
+        /// <summary>
+        /// tick interval of the sequencer.
+        /// </summary>
+        public static readonly int TICK_INTERVAL = 30;
+        /// <summary>
+        /// note resolution of the sequencer.
+        /// </summary>
+        public static readonly int NOTE_RESOLUTION = 480;
 
         public static readonly string COUNT_PATTERN = "count";
     }

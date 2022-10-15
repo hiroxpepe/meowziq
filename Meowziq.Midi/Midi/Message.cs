@@ -57,9 +57,9 @@ namespace Meowziq.Midi {
         /// </remarks>
         public static List<ChannelMessage> GetBy(int tick) {
             if (_flag) {
-                return Prime.Item.GetOnce(key: tick);
+                return Prime.Item.Get/*Once*/(key: tick); // TODO: checks for problems.
             } else {
-                return Second.Item.GetOnce(key: tick);
+                return Second.Item.Get/*Once*/(key: tick); // TODO: checks for problems.
             }
         }
 
@@ -85,7 +85,7 @@ namespace Meowziq.Midi {
             /// ignore the tick as it has already been processed.
             /// </remarks>
             if (!_hashset.Add(item: tick)) {
-                return;
+                //return; // TODO: checks for problems.
             }
             /// <remarks>
             /// change every time the tick accumulates to 2 beats. 
