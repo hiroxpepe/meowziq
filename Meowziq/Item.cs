@@ -13,11 +13,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System;
 using System.Collections.Generic;
 
 namespace Meowziq {
     /// <summary>
-    /// the name of Dictionary is too long so it names Map.
+    /// name of Dictionary is too long, it be named Map.
     /// </summary>
     /// <note>
     /// used in the Meowziq namespace.
@@ -25,6 +26,21 @@ namespace Meowziq {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Map<K, V> : Dictionary<K, V> {
     }
+
+    /// <summary>
+    /// changed event args.
+    /// </summary>
+    public class EvtArgs : EventArgs {
+        public EvtArgs(string name) {
+            Name = name;
+        }
+        public string Name { get; }
+    }
+
+    /// <summary>
+    /// changed event handler.
+    /// </summary>
+    public delegate void Changed(object sender, EvtArgs e);
 
     /// <summary>
     /// the item class.

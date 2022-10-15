@@ -14,6 +14,7 @@
  */
 
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Meowziq {
@@ -37,6 +38,15 @@ namespace Meowziq {
         /// </summary>
         public static bool HasValue(this string source) {
             return !(source is null || source.Equals(string.Empty));
+        }
+
+        /// <summary>
+        /// gets the length of the beat.
+        /// </summary>
+        public static int GetBeatLength(this string source) {
+            const int MEAS_TO_BEAT = 4;
+            int length = source.Replace("][", "@").Split('@').Select(x => x.Replace("[", string.Empty).Replace("]", string.Empty)).ToArray().Length;
+            return length * MEAS_TO_BEAT;
         }
     }
 }
