@@ -77,7 +77,7 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// midi note strength.
+        /// MIDI note strength.
         /// </summary>
         /// <note>
         /// + not provide modify operations.
