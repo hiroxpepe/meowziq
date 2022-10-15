@@ -20,6 +20,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 
 using Meowziq.Core;
+using static Meowziq.Env;
 
 namespace Meowziq.Loader {
     /// <summary>
@@ -42,6 +43,7 @@ namespace Meowziq.Loader {
         // private static Methods [verb]
 
         static Core.Pattern convertPattern(Pattern pattern) {
+            getCountBeatLength(pattern);
             return new Core.Pattern(pattern.Name, convertMeasList(pattern.Data)); // Core.Pattern に変換
         }
 
@@ -120,6 +122,15 @@ namespace Meowziq.Loader {
                 return new Span(beat, Degree.Enum.Parse(part[0].Trim()));
             } else {
                 return new Span(beat, Degree.Enum.Parse(part[0].Trim()), Mode.Enum.Parse(part[1].Trim())); // 旋法指定あり
+            }
+        }
+
+        /// <summary>
+        /// gets the length of the beat for the "count" pattern.
+        /// </summary>
+        static void getCountBeatLength(Pattern pattern) {
+            if (pattern.Name.Equals(COUNT_PATTERN)) {
+                State.CountBeatLength = pattern.Data.GetBeatLength();
             }
         }
 

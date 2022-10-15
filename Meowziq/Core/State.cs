@@ -17,92 +17,204 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
+using static Meowziq.Env;
+
 namespace Meowziq.Core {
     /// <summary>
-    /// ステイト クラス
+    /// state class
     /// </summary>
     /// <note>
     /// + 曲がどのような状況で演奏されているかを表す情報を保持する
-    /// + 設定されて読み出させるだけこれを状態を変更する目的で使わないで下さい
+    /// + 設定されて読み出させるだけこれを状態を変更する目的で使わない
     /// </note>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class State {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Fields
+        // Const [nouns]
 
-        static string _name;
+        const int TO_ONE_BASE = 1;
 
-        static string _copyright;
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // static Fields [nouns, noun phrases]
+
+        static int _tick, _tempo, _count_beat_length = 0;
+
+        static bool _same_tick;
+
+        static string _name, _copyright;
+
+        static HashSet<int> _hashset;
+
+        static Map<int, Item16beat> _item_map;
+
+        static Map<int, Track> _track_map;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Constructor
 
         static State() {
-            HashSet = new(); // ※Dictionary.ContainsKey() が遅いのでその対策
-            ItemMap = new();
-            TrackMap = new();
-            _name = "Undefined"; // TODO: 別の曲を読み込んだ時
-            _copyright = "Undefined"; // TODO: 別の曲を読み込んだ時
+            _hashset = new();
+            _item_map = new();
+            _track_map = new();
+            _name = "Undefined"; // FIXME: when loading another song.
+            _copyright = "Undefined"; // FIXME: when loading another song.
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Properties [noun, adjective] 
 
+        /// <summary>
+        /// provides the song tempo.
+        /// </summary>
         public static int Tempo {
-            get; set;
+            get => _tempo; set => _tempo = value;
         }
 
-        public static int Beat {
-            get; set;
-        }
-
-        public static int Meas {
-            get; set;
-        }
-
-        public static string Name {
-            get => _name;
-            set => _name = value;
-        }
-
-        public static string Copyright {
-            get => _copyright;
-            set => _copyright = value;
-        }
-
-        public static (int tempo, string name) TempoAndName {
+        /// <summary>
+        /// provides the current tick.
+        /// </summary>
+        public static int Tick {
+            get => _tick;
             set {
-                Name = value.name;
-                Tempo = value.tempo;
+                if (_tick == value) {
+                    _same_tick = true;
+                }
+                else {
+                    _same_tick = false;
+                    _tick = value;
+                }
             }
         }
 
+        /// <summary>
+        /// whether given the same tick.
+        /// </summary>
+        public static bool SameTick {
+            get => _same_tick;
+        }
+
+        /// <summary>
+        /// gets the position of the current beat.
+        /// </summary>
+        /// <note>
+        /// shows as starting from 1 instead of starting from 0.
+        /// </note>
+        public static int Beat {
+            get {
+                return (_tick / 480) + TO_ONE_BASE - _count_beat_length;
+            }
+        }
+
+        /// <summary>
+        /// gets the position of current measures.
+        /// </summary>
+        public static int Meas {
+            get {
+                if (Beat <= 0) { return 0; }
+                return (Beat - 1) / 4 + TO_ONE_BASE;
+            }
+        }
+
+        /// <summary>
+        /// provides the song name.
+        /// </summary>
+        public static string Name {
+            get => _name; set => _name = value;
+        }
+
+        /// <summary>
+        /// provides the song copyright.
+        /// </summary>
+        public static string Copyright {
+            get => _copyright; set => _copyright = value;
+        }
+
+        /// <summary>
+        /// sets the song tempo and name. 
+        /// </summary>
+        public static (int tempo, string name) TempoAndName {
+            set {
+                _name = value.name;
+                _tempo = value.tempo;
+            }
+        }
+
+        /// <summary>
+        /// sets the beat length of the "count" pattern. 
+        /// </summary>
+        public static int CountBeatLength {
+            set => _count_beat_length = value;
+        }
+
+        /// <summary>
+        /// gets the hashset.
+        /// </summary>
         public static HashSet<int> HashSet {
-            get; set;
+            get => _hashset;
         }
 
+        /// <summary>
+        /// gets the Item map.
+        /// </summary>
         public static Map<int, Item16beat> ItemMap {
-            get; set;
+            get => _item_map;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public static bool Contains {
+            get => _hashset.Contains(_tick);
+        }
+
+        /// <summary>
+        /// gets the current Item.
+        /// </summary>
+        /// <note>
+        /// used in UI display.
+        /// </note>
+        public static Item16beat CurrentItem {
+            get => _item_map[_tick];
+        }
+
+        /// <summary>
+        /// gets the Track map.
+        /// </summary>
+        /// <note>
+        /// used when converting the song to SMF.
+        /// </note>
         public static Map<int, Track> TrackMap {
-            get; set;
+            get => _track_map;
         }
 
+        /// <summary>
+        /// gets the Track list.
+        /// </summary>
+        /// <note>
+        /// used when converting the song to SMF.
+        /// </note>
         public static List<Track> TrackList {
-            get => TrackMap.Select(x => x.Value).ToList();
+            get => _track_map.Select(x => x.Value).ToList();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]
 
+        /// <remarks>
+        /// not used yet.
+        /// </remarks>
+        public static void IncrementTick() {
+            _tick += TICK_RESOLUTION; // increments tick.
+        }
+
+        /// <summary>
+        /// clears the list and the map data.
+        /// </summary>
         public static void Clear() {
-            Beat = 0;
-            Meas = 0;
-            HashSet.Clear();
-            ItemMap.Clear();
-            TrackMap.Clear();
+            _hashset.Clear();
+            _item_map.Clear();
+            _track_map.Clear();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

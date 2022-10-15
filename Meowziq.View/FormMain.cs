@@ -14,18 +14,20 @@
  */
 
 using System;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Drawing.Color;
 using Sanford.Multimedia.Midi;
 
 using Meowziq.Core;
 using Meowziq.IO;
 using Meowziq.Loader;
 using Meowziq.Midi;
+using static Meowziq.Env;
+using static Meowziq.Utils;
 
 namespace Meowziq.View {
     /// <summary>
@@ -146,11 +148,12 @@ namespace Meowziq.View {
         void sequencer_ChannelMessagePlayed(object sender, ChannelMessageEventArgs e) {
             if (Sound.Stopping) { return; }
             if (Visible) {
-                // TODO: count needs to be displayed as a minus value on the ui?
-                var tick = _sequencer.Position - 1; // NOTE: tick position comes with 1, 31, so subtract 1 in advance.
+                // TODO: count needs to be displayed as a minus value on the UI?
+                State.Tick = _sequencer.Position - 1; // NOTE: tick position comes with 1, 31, so subtract 1 in advance.
+                if (State.SameTick) { return; };
                 // midi message processing.
-                Midi.Message.ApplyTick(tick: tick, load: loadSong); // switches every 2 beats. MEMO: considers syncopation.
-                var list = Midi.Message.GetBy(tick: tick); // gets the list of midi messages.
+                Midi.Message.ApplyTick(tick: State.Tick, load: loadSong); // switches every 2 beats. MEMO: considers syncopation.
+                var list = Midi.Message.GetBy(tick: State.Tick); // gets the list of midi messages.
                 if (list is not null) {
                     list.ForEach(x => {
                         _midi.OutDevice.Send(message: x); // sends messages to a midi device. // MEMO: throws cc directly here?
@@ -160,17 +163,13 @@ namespace Meowziq.View {
                             _piano_control.Send(message: x); // shows in piano roll except for drums.
                         }
                         if (x.MidiChannel == 2) {
-                            Log.Debug($"Data1: {x.Data1} Data2: {x.Data2}");
+                            //Log.Trace($"Data1: {x.Data1} Data2: {x.Data2}");
                         }
                     });
                 }
                 // updates UI information.
-                State.Beat = ((tick / 480) + 1); // shows as starting from 1 instead of starting from 0.
-                State.Meas = ((State.Beat - 1) / 4 + 1);
-                var map = State.ItemMap;
-                if (map.ContainsKey(key: tick)) { // FIXME: is ContainsKey ok?
-                    var item = map[tick];
-                    Invoke(method: updateDisplay(item: item));
+                if (State.Contains) {
+                    Invoke(method: updateDisplay(item: State.CurrentItem));
                 }
                 Sound.Played = true;
             }
@@ -325,7 +324,7 @@ namespace Meowziq.View {
                 _sequence.Load("./data/conductor.mid"); // FIXME: to const value.
                 _sequencer.Position = 0;
                 _sequencer.Start();
-                _label_play.ForeColor = Color.Lime;
+                _label_play.ForeColor = Lime;
                 Sound.Playing = true;
                 Sound.Played = false;
                 Log.Info("start! :D");
@@ -339,7 +338,7 @@ namespace Meowziq.View {
         async Task<bool> stopSound() {
             return await Task.Run(function: () => {
                 Sound.Stopping = true;
-                Enumerable.Range(start: Env.MIDI_TRACK_BASE, count: Env.MIDI_TRACK_COUNT).ToList().ForEach(
+                Enumerable.Range(start: MIDI_TRACK_BASE, count: MIDI_TRACK_COUNT).ToList().ForEach(
                     x => _midi.OutDevice.Send(new ChannelMessage(ChannelCommand.Controller, x, 120))
                 );
                 Sound.Stopping = false;
@@ -362,7 +361,7 @@ namespace Meowziq.View {
                 _textbox_key.Text = item.Key;
                 _textbox_degree.Text = item.Degree;
                 _textbox_key_mode.Text = item.KeyMode;
-                _textbox_code.Text = Utils.ToSimpleCodeName(
+                _textbox_code.Text = ToSimpleCodeName(
                     key: Key.Enum.Parse(item.Key),
                     degree: Degree.Enum.Parse(item.Degree),
                     key_mode: Mode.Enum.Parse(item.KeyMode),
@@ -373,26 +372,26 @@ namespace Meowziq.View {
                 /// using the auto mode.
                 /// </remarks>
                 if (item.AutoMode) {
-                    Mode auto_mode = Utils.ToSpanMode(
+                    Mode auto_mode = ToSpanMode(
                         degree: Degree.Enum.Parse(item.Degree),
                         key_mode: Mode.Enum.Parse(item.KeyMode)
                     );
                     _textbox_Mode.Text = auto_mode.ToString();
-                    _label_modulation.ForeColor = Color.DimGray;
+                    _label_modulation.ForeColor = DimGray;
                 }
                 /// <remarks>
                 /// using the span mode.
                 /// </remarks>
                 else {
                     _textbox_Mode.Text = item.SpanMode;
-                    Mode key_mode = Utils.ToKeyMode(
+                    Mode key_mode = ToKeyMode(
                         key: Key.Enum.Parse(item.Key),
                         degree: Degree.Enum.Parse(item.Degree),
                         key_mode: Mode.Enum.Parse(item.KeyMode),
                         span_mode: Mode.Enum.Parse(item.SpanMode)
                     );
                     _textbox_key_mode.Text = key_mode.ToString().Equals("Undefined") ? "---" : key_mode.ToString();
-                    _label_modulation.ForeColor = Color.HotPink; // TODO: changes color depending on the degree.
+                    _label_modulation.ForeColor = HotPink; // TODO: changes color depending on the degree.
                 }
             };
         }
@@ -405,8 +404,8 @@ namespace Meowziq.View {
                 Enumerable.Range(start: 0, count: 88).ToList().ForEach(
                     x => _piano_control.Send(message: new ChannelMessage(command: ChannelCommand.NoteOff, midiChannel: 1, data1: x, data2: 0))
                 );
-                _label_play.ForeColor = Color.DimGray;
-                _label_modulation.ForeColor = Color.DimGray;
+                _label_play.ForeColor = DimGray;
+                _label_modulation.ForeColor = DimGray;
                 _textbox_beat.Text = "0";
                 _textbox_meas.Text = "0";
                 _textbox_key.Text = "---";
