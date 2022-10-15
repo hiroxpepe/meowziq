@@ -133,6 +133,7 @@ namespace Meowziq.Core {
                 }
             }
             // Note データ適用のループ NOTE: Pattern を回す必要はない
+            // それぞれの Phrase に曲を通しての Note が充填されている
             foreach (var phrase in _phrase_list) {
                 var note_list = phrase.AllNote;
                 var hash_set = new HashSet<int>();

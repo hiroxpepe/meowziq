@@ -17,6 +17,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Sanford.Multimedia.Midi;
 
+using static Meowziq.Env;
+
 namespace Meowziq.Midi {
     /// <summary>
     /// class that holds Sanford.Multimedia.Midi.Track objects for smf output.
@@ -37,7 +39,7 @@ namespace Meowziq.Midi {
             /// initializes track map.
             /// </summary>
             _track_map = new();
-            Enumerable.Range(start: Env.MIDI_TRACK_BASE, count: Env.MIDI_TRACK_COUNT).ToList().ForEach(
+            Enumerable.Range(start: MIDI_TRACK_BASE, count: MIDI_TRACK_COUNT).ToList().ForEach(
                 action: x => _track_map.Add(key: x, value: new Track())
             );
         }

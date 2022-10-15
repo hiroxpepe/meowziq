@@ -21,8 +21,11 @@ namespace Meowziq {
     public static class Env {
 #nullable enable
 
-        public const int MIDI_TRACK_BASE = 0;
-        public const int MIDI_TRACK_COUNT = 16;
+        public static readonly int MIDI_TRACK_BASE = 0;
+        public static readonly int MIDI_TRACK_COUNT = 16;
 
+        public static readonly int TICK_RESOLUTION = 30;
+
+        public static readonly string COUNT_PATTERN = "count";
     }
 }
