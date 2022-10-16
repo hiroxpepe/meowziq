@@ -47,17 +47,18 @@ namespace Meowziq.Core {
         // Properties [noun, adjective] 
 
         /// <summary>
-        /// 4分音符 480の分解能のシーケンサーの tick 値 ※絶対値
+        /// tick value of the quarter note 480 resolution sequencer.
         /// </summary>
         /// <note>
-        /// + not provide modify operations.
+        /// + always an absolute value. <br/>
+        /// + not provide modify operations. <br/>
         /// </note>
         public int Tick {
             get => _tick;
         }
 
         /// <summary>
-        /// MIDI ノート番号
+        /// MIDI note number.
         /// </summary>
         /// <note>
         /// + not provide modify operations.
@@ -67,7 +68,7 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// MIDI ノートON -> ノートOFF までの長さ
+        /// length from a note on to a note off of MIDI.
         /// </summary>
         /// <note>
         /// + not provide modify operations.
@@ -87,7 +88,7 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// シンコペーション設定があるかどうか
+        /// whether has a syncopation parameter.
         /// </summary>
         /// <note>
         /// + not provide modify operations.
@@ -97,7 +98,7 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// シンコペーション設定
+        /// syncopation parameter.
         /// </summary>
         /// <note>
         /// + not provide modify operations.

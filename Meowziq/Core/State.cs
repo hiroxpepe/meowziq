@@ -102,9 +102,7 @@ namespace Meowziq.Core {
         /// shows as starting from 1 instead of starting from 0.
         /// </note>
         public static int Beat {
-            get {
-                return (_tick / NOTE_RESOLUTION) + TO_ONE_BASE - _count_beat_length;
-            }
+            get => (Repeat.Tick / NOTE_RESOLUTION) + TO_ONE_BASE - _count_beat_length;
         }
 
         /// <summary>
@@ -136,8 +134,7 @@ namespace Meowziq.Core {
         /// </summary>
         public static (int tempo, string name) TempoAndName {
             set {
-                _name = value.name;
-                _tempo = value.tempo;
+                _name = value.name; _tempo = value.tempo;
             }
         }
 
@@ -230,16 +227,14 @@ namespace Meowziq.Core {
             public static int BeginMeas {
                 set {
                     _begin_meas = value;
-                    _begin_tick = ((_begin_meas - 1) * 480 * 4) + (CountBeatLength * 480);
-                    //Log.Debug($"_begin_tick: {_begin_tick}");
+                    _begin_tick = ((_begin_meas - 1) * NOTE_RESOLUTION * TO_MEASURE) + (CountBeatLength * NOTE_RESOLUTION);
                 }
             }
 
             public static int EndMeas {
                 set { 
                     _end_meas = value;
-                    _end_tick = ((_end_meas - 1) * 480 * 4) + (CountBeatLength * 480);
-                    //Log.Debug($"_end_tick: {_end_tick}");
+                    _end_tick = ((_end_meas - 1) * NOTE_RESOLUTION * TO_MEASURE) + (CountBeatLength * NOTE_RESOLUTION);
                 }
             }
 
@@ -248,7 +243,7 @@ namespace Meowziq.Core {
             /// </summary>
             public static int Tick {
                 get {
-                    if (!has || (_begin_meas > Meas && _end_meas < Meas)) {
+                    if (!has || (_begin_meas > meas && _end_meas < meas)) {
                         return _tick;
                     }
                     return _tick_counter;
@@ -263,27 +258,26 @@ namespace Meowziq.Core {
             /// </summary>
             public static void IncrementTick() {
                 if (!has) { return; }
-                if (_begin_meas > Meas && _end_meas < Meas) { return; }
+                if (_begin_meas > meas && _end_meas < meas) { return; }
                 _tick_counter += TICK_INTERVAL;
                 // resets when repeat length is reached.
                 if (_tick_counter == _begin_tick + repeatTickLength) {
-                    _tick_counter = _begin_tick -30;
+                    _tick_counter = _begin_tick - TICK_INTERVAL;
                 }
-                //Log.Debug($"repeatTickLength: {repeatTickLength} _tick: {_tick} _tick_counter: {_tick_counter}");
             }
 
             /// <summary>
-            /// clears this state.
+            /// clears this tick state.
             /// </summary>
-            public static void Clear() {
-                _begin_meas = _end_meas = _begin_tick = _end_tick = 0;
+            public static void ClearTick() {
+                _begin_tick = _end_tick = 0;
             }
 
             /// <summary>
             /// resets the tick counter.
             /// </summary>
             public static void ResetTickCounter() {
-                _tick_counter = _begin_tick -30;
+                _tick_counter = _begin_tick - TICK_INTERVAL;
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -299,26 +293,47 @@ namespace Meowziq.Core {
             /// <summary>
             /// length of the tick in repeat.
             /// </summary>
-            public static int repeatTickLength {
-                get => (_end_meas - _begin_meas) * 480 * 4; 
+            static int repeatTickLength {
+                get => (_end_meas - _begin_meas) * NOTE_RESOLUTION * TO_MEASURE; 
+            }
+
+            /// <summary>
+            /// gets the position of the current beat.
+            /// </summary>
+            static int beat {
+                get => (_tick / NOTE_RESOLUTION) + TO_ONE_BASE - _count_beat_length;
+            }
+
+            /// <summary>
+            /// gets the position of current measures.
+            /// </summary>
+            static int meas {
+                get {
+                    if (beat <= 0) { return 0; }
+                    return (beat - 1) / BEAT_TO_MEAS + TO_ONE_BASE;
+                }
             }
         }
 
         /// <summary>
-        /// SMF 出力用のトラック情報を保持
+        /// holds a piece of Track information for SMF output.
         /// </summary>
         public class Track {
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Fields
 
-            string _name;
+            int _midi_ch, _vol, _pan;
+
+            string _name, _instrument;
+
+            bool _mute;
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Properties [noun, adjective]
 
             public int MidiCh {
-                get; set;
+                get => _midi_ch; set => _midi_ch = value;
             }
 
             public string Name {
@@ -327,67 +342,71 @@ namespace Meowziq.Core {
             }
 
             public string Instrument {
-                get; set;
+                get => _instrument; set => _instrument = value;
             }
 
             public int Vol {
-                get; set;
+                get => _vol; set => _vol = value;
             }
 
             public int Pan {
-                get; set;
+                get => _pan; set => _pan = value;
             }
 
             public bool Mute {
-                get; set;
+                get => _mute; set => _mute = value;
             }
         }
 
         /// <summary>
-        /// どのようなキー、度数、旋法で演奏されているかを表す情報
-        /// NOTE: 16beat 毎に作成される
+        /// information about what key, degree, and mode it is played in.
         /// </summary>
+        /// <note>
+        /// created every 16 beats.
+        /// </note>
         public class Item16beat {
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Fields
 
-            string _span_mode; // TODO: Mode 型に変更
+            int _tick;
+
+            Key _key;
+
+            Degree _degree;
+
+            Mode _key_mode, _span_mode;
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Properties [noun, adjective]
 
             public int Tick {
-                get; set;
+                get => _tick; set => _tick = value;
             }
 
-            public string Key {
-                get; set;
+            public Key Key {
+                get => _key; set => _key = value;
             }
 
-            public string Degree {
-                get; set;
+            public Degree Degree {
+                get => _degree; set => _degree = value;
             }
 
-            public string KeyMode {
-                get; set;
+            public Mode KeyMode {
+                get => _key_mode; set => _key_mode = value;
             }
 
-            public string SpanMode {
+            public Mode SpanMode {
                 get {
-                    if (_span_mode.Equals("Undefined")) {
-                        return KeyMode;
-                    }
+                    if (_span_mode == Mode.Undefined) { return _key_mode; }
                     return _span_mode;
-                } 
+                }
                 set => _span_mode = value;
             }
 
             public bool AutoMode {
                 get {
-                    if (_span_mode.Equals("Undefined")) {
-                        return true;
-                    }
+                    if (_span_mode == Mode.Undefined) { return true; }
                     return false;
                 }
             }

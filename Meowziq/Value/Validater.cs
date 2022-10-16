@@ -30,11 +30,11 @@ namespace Meowziq.Value {
                 return target; // no value, return as is.
             }
             // whether the number of one beat data is 4 characters.
-            var target1 = target;
+            string target1 = target;
             target1 = target1.Replace("[", "|").Replace("]", "|"); // replaces the character. 
-            var array1 = target1.Split('|') // separates by delimiter.
-                .Where(x => !string.IsNullOrWhiteSpace(x)) // non empty characters are targeted.
-                .Where(x => x.Length != 4) // extracts the data is not 4 characters.
+            string[] array1 = target1.Split('|') // separates by delimiter.
+                .Where(predicate: x => !string.IsNullOrWhiteSpace(x)) // non empty characters are targeted.
+                .Where(predicate: x => x.Length != 4) // extracts the data is not 4 characters.
                 .ToArray();
             if (array1.Length != 0) { // throws an exception if the data exists.
                 throw new FormatException("a beat data count must be 4.");
@@ -72,9 +72,9 @@ namespace Meowziq.Value {
         /// 3バイトで表現すると "07", "A1", "20"
         /// </summary_jp>
         public static byte[] ToByteTempo(int tempo) {
-            var double_value = 60 * Math.Pow(10, 6) / tempo;
-            var hex = int.Parse(Math.Round(double_value).ToString()).ToString("X6"); // hexadecimal 6-digit conversion.
-            var char_array = hex.ToCharArray();
+            double double_value = 60 * Math.Pow(10, 6) / tempo;
+            string hex = int.Parse(Math.Round(double_value).ToString()).ToString("X6"); // hexadecimal 6-digit conversion.
+            char[] char_array = hex.ToCharArray();
             return new byte[3]{ // returns in 3 bytes.
                 Convert.ToByte(char_array[0].ToString() + char_array[1].ToString(), 16),
                 Convert.ToByte(char_array[2].ToString() + char_array[3].ToString(), 16),

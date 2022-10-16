@@ -24,7 +24,7 @@ using Meowziq.Core;
 
 namespace Meowziq.Loader {
     /// <summary>
-    /// loader class for player.
+    /// loader class for Player object.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class PlayerLoader<T> {
@@ -74,7 +74,7 @@ namespace Meowziq.Loader {
         }
 
         static Json loadJson(Stream target) {
-            var serializer = new DataContractJsonSerializer(typeof(Json));
+            DataContractJsonSerializer serializer = new(typeof(Json));
             return (Json) serializer.ReadObject(target);
         }
 
