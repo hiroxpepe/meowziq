@@ -17,6 +17,9 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 
+using static Meowziq.Value.Utils;
+using static Meowziq.Value.Validater;
+
 namespace Meowziq.Value {
     /// <summary>
     /// data class of phrase class.
@@ -106,28 +109,23 @@ namespace Meowziq.Value {
         // Properties [noun, adjective] 
 
         public Note Note {
-            get => _note;
-            set => _note = value;
+            get => _note; set => _note = value;
         }
 
         public bool Auto {
-            get => _auto;
-            set => _auto = value;
+            get => _auto; set => _auto = value;
         }
 
         public Chord Chord {
-            get => _chord;
-            set => _chord = value;
+            get => _chord; set => _chord = value;
         }
 
         public Seque Seque {
-            get => _seque;
-            set => _seque = value;
+            get => _seque; set => _seque = value;
         }
 
         public Exp Exp {
-            get => _exp;
-            set => _exp = value; // default value is 0
+            get => _exp; set => _exp = value; // default value is 0
         }
 
         /// <summary>
@@ -151,7 +149,7 @@ namespace Meowziq.Value {
             get => _beat_array;
             set {
                 if (!(value is null)) {
-                    value.ToList().ForEach(x => Validater.PhraseValue(x));
+                    value.ToList().ForEach(x => PhraseValue(target: x));
                 }
                 _beat_array = value;
             }
@@ -164,7 +162,7 @@ namespace Meowziq.Value {
             get => _note_array;
             set {
                 if (!(value is null)) {
-                    value.ToList().ForEach(x => Validater.PhraseValue(x));
+                    value.ToList().ForEach(x => PhraseValue(target: x));
                 }
                 _note_array = value;
             }
@@ -177,7 +175,7 @@ namespace Meowziq.Value {
             get => _auto_array;
             set {
                 if (!(value is null)) {
-                    value.ToList().ForEach(x => Validater.PhraseValue(x));
+                    value.ToList().ForEach(x => PhraseValue(target: x));
                 }
                 _auto_array = value;
                 if (!(value is null)) {
@@ -187,7 +185,7 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// "note", "auto" テキストのオクターブ設定
+        /// octave parameter for "note" and "auto" text. 
         /// </summary>
         public int[] OctArray {
             get => _oct_array;
@@ -205,7 +203,7 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// "beat", "note", "auto" テキストの前方音価設定
+        /// pre note parameter for "beat", "note" and "auto" text.
         /// </summary>
         public string[] PreArray {
             get => _pre_array;
@@ -217,14 +215,14 @@ namespace Meowziq.Value {
                 } else if (value.Length != arrayLength) {
                     throw new ArgumentException("preArray must be same count as beatArray or noteArray or autoArray.");
                 } else {
-                    value.ToList().ForEach(x => Validater.PhraseValue(x));
+                    value.ToList().ForEach(x => PhraseValue(target: x));
                     _pre_array = value;
                 }
             }
         }
 
         /// <summary>
-        /// "note", "auto" テキストの後方音価設定
+        /// post note parameter for "note" and "auto" text.
         /// </summary>
         public string[] PostArray {
             get => _post_array;
@@ -236,7 +234,7 @@ namespace Meowziq.Value {
                 } else if (value.Length != arrayLength) {
                     throw new ArgumentException("postArray must be same count as noteArray or autoArray.");
                 } else {
-                    value.ToList().ForEach(x => Validater.PhraseValue(x));
+                    value.ToList().ForEach(x => PhraseValue(target: x));
                     _post_array = value;
                 }
             }
@@ -392,7 +390,7 @@ namespace Meowziq.Value {
 
         public string Text {
             get => _text;
-            set => _text = Validater.PhraseValue(value);
+            set => _text = PhraseValue(target: value);
         }
 
         public int Oct {
@@ -407,7 +405,7 @@ namespace Meowziq.Value {
         }
 
         public char[] TextCharArray {
-            get => Text.HasValue() ? Utils.Filter(Text).ToCharArray() : null;
+            get => Text.HasValue() ? Filter(target: Text).ToCharArray() : null;
         }
     }
 
@@ -433,7 +431,7 @@ namespace Meowziq.Value {
 
         public string Text {
             get => _text;
-            set => _text = Validater.PhraseValue(value);
+            set => _text = PhraseValue(target: value);
         }
 
         public Range Range {
@@ -441,12 +439,12 @@ namespace Meowziq.Value {
         }
 
         public char[] TextCharArray {
-            get => Text.HasValue() ? Utils.Filter(Text).ToCharArray() : null;
+            get => Text.HasValue() ? Filter(target: Text).ToCharArray() : null;
         }
     }
 
     /// <summary>
-    /// arpeggio parameter class.
+    /// arpeggio parameter class
     /// </summary>
     public class Seque {
 
@@ -454,10 +452,17 @@ namespace Meowziq.Value {
         // Fields
 
         /// <summary>
-        /// MEMO: 120 が16分音符、30:60:90:120 で4音価にするか？ ⇒ 100%音価は効果が薄いので必要ない
-        ///     '-' は無効の文字としてのみ使用されるべき
-        ///     '+*>' の3文字で設定: ⇒ -: 0%, +: 25%, *:50%, >75%
         /// </summary>
+        /// <memo_jp>
+        /// + 120 が16分音符、30:60:90:120 で4音価にするか？
+        ///     + 100%音価は効果が薄いので必要ない
+        /// + "-" は無効の文字としてのみ使用されるべき
+        ///     + "+*>" の3文字で設定
+        ///         + -:  0% 
+        ///         + +: 25% 
+        ///         + *: 50% 
+        ///         + >: 75%
+        /// </memo_jp>
         string _text; // gate 設定用
 
         /// <summary>
@@ -481,7 +486,7 @@ namespace Meowziq.Value {
 
         public string Text {
             get => _text;
-            set => _text = Validater.PhraseValue(value);
+            set => _text = PhraseValue(target: value);
         }
 
         public int Stack {
@@ -496,7 +501,7 @@ namespace Meowziq.Value {
         }
 
         public char[] TextCharArray {
-            get => Text.HasValue() ? Utils.Filter(Text).ToCharArray() : null;
+            get => Text.HasValue() ? Filter(target: Text).ToCharArray() : null;
         }
 
         public bool Use {
@@ -541,8 +546,8 @@ namespace Meowziq.Value {
                 throw new ArgumentException("invalid range max.");
             }
             if (max - min != 11) { // octave out of range.
-                var ok_max = min + 11;
-                var ok_min = max - 11;
+                int ok_max = min + 11;
+                int ok_min = max - 11;
                 throw new ArgumentException($"invalid range length,\r\nmust set {min}:{ok_max} or {ok_min}:{max}.");
             }
             Min = min;
@@ -616,7 +621,7 @@ namespace Meowziq.Value {
                 if (Pre.Equals(string.Empty)) {
                     return null;
                 }
-                return Utils.Filter(Pre).ToCharArray();
+                return Filter(target: Pre).ToCharArray();
             }
         }
 
@@ -625,7 +630,7 @@ namespace Meowziq.Value {
                 if (Post.Equals(string.Empty)) {
                     return null;
                 }
-                return Utils.Filter(Post).ToCharArray();
+                return Filter(target: Post).ToCharArray();
             }
         }
 

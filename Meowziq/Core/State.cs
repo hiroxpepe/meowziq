@@ -102,9 +102,7 @@ namespace Meowziq.Core {
         /// shows as starting from 1 instead of starting from 0.
         /// </note>
         public static int Beat {
-            get {
-                return (_tick / NOTE_RESOLUTION) + TO_ONE_BASE - _count_beat_length;
-            }
+            get => (Repeat.Tick / NOTE_RESOLUTION) + TO_ONE_BASE - _count_beat_length;
         }
 
         /// <summary>
@@ -136,8 +134,7 @@ namespace Meowziq.Core {
         /// </summary>
         public static (int tempo, string name) TempoAndName {
             set {
-                _name = value.name;
-                _tempo = value.tempo;
+                _name = value.name; _tempo = value.tempo;
             }
         }
 
@@ -246,7 +243,7 @@ namespace Meowziq.Core {
             /// </summary>
             public static int Tick {
                 get {
-                    if (!has || (_begin_meas > Meas && _end_meas < Meas)) {
+                    if (!has || (_begin_meas > meas && _end_meas < meas)) {
                         return _tick;
                     }
                     return _tick_counter;
@@ -261,7 +258,7 @@ namespace Meowziq.Core {
             /// </summary>
             public static void IncrementTick() {
                 if (!has) { return; }
-                if (_begin_meas > Meas && _end_meas < Meas) { return; }
+                if (_begin_meas > meas && _end_meas < meas) { return; }
                 _tick_counter += TICK_INTERVAL;
                 // resets when repeat length is reached.
                 if (_tick_counter == _begin_tick + repeatTickLength) {
@@ -296,26 +293,47 @@ namespace Meowziq.Core {
             /// <summary>
             /// length of the tick in repeat.
             /// </summary>
-            public static int repeatTickLength {
+            static int repeatTickLength {
                 get => (_end_meas - _begin_meas) * NOTE_RESOLUTION * TO_MEASURE; 
+            }
+
+            /// <summary>
+            /// gets the position of the current beat.
+            /// </summary>
+            static int beat {
+                get => (_tick / NOTE_RESOLUTION) + TO_ONE_BASE - _count_beat_length;
+            }
+
+            /// <summary>
+            /// gets the position of current measures.
+            /// </summary>
+            static int meas {
+                get {
+                    if (beat <= 0) { return 0; }
+                    return (beat - 1) / BEAT_TO_MEAS + TO_ONE_BASE;
+                }
             }
         }
 
         /// <summary>
-        /// SMF 出力用のトラック情報を保持
+        /// holds a piece of Track information for SMF output.
         /// </summary>
         public class Track {
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Fields
 
-            string _name;
+            int _midi_ch, _vol, _pan;
+
+            string _name, _instrument;
+
+            bool _mute;
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Properties [noun, adjective]
 
             public int MidiCh {
-                get; set;
+                get => _midi_ch; set => _midi_ch = value;
             }
 
             public string Name {
@@ -324,19 +342,19 @@ namespace Meowziq.Core {
             }
 
             public string Instrument {
-                get; set;
+                get => _instrument; set => _instrument = value;
             }
 
             public int Vol {
-                get; set;
+                get => _vol; set => _vol = value;
             }
 
             public int Pan {
-                get; set;
+                get => _pan; set => _pan = value;
             }
 
             public bool Mute {
-                get; set;
+                get => _mute; set => _mute = value;
             }
         }
 

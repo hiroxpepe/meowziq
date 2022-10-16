@@ -147,7 +147,7 @@ namespace Meowziq.Midi {
         public static void ApplyNote(int tick, int midi_ch, Note note) {
             if (!_flag) {
                 if (note.HasPre) { // note has priority pronunciation,
-                    var note_off_tick = tick - Length.Of32beat.Int32(); // just in case, stop before the 32nd note.
+                    int note_off_tick = tick - Length.Of32beat.Int32(); // just in case, stop before the 32nd note.
                     if (Prime.AllNoteOffToAddArray[midi_ch].Add(note_off_tick)) { // forced stop for the note of tick only once per midi ch.
                         if (midi_ch != 9) { // exclude the drum midi channel.
                             add(tick: note_off_tick, message: new ChannelMessage(ChannelCommand.Controller, midi_ch, 120));
@@ -158,7 +158,7 @@ namespace Meowziq.Midi {
                 add(tick: tick + note.Gate, message: new ChannelMessage(ChannelCommand.NoteOff, midi_ch, note.Num, 0)); // midi note off.
             } else {
                 if (note.HasPre) { // note has priority pronunciation,
-                    var note_off_tick = tick - Length.Of32beat.Int32(); // just in case, stop before the 32nd note.
+                    int note_off_tick = tick - Length.Of32beat.Int32(); // just in case, stop before the 32nd note.
                     if (Second.AllNoteOffToAddArray[midi_ch].Add(note_off_tick)) { // forced stop for the note of tick only once per midi ch.
                         if (midi_ch != 9) { // exclude the drum midi channel.
                             add(tick: note_off_tick, message: new ChannelMessage(ChannelCommand.Controller, midi_ch, 120));

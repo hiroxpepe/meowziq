@@ -14,6 +14,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
@@ -44,9 +45,7 @@ namespace Meowziq.View {
 
         Manager _midi;
 
-        string _target_path;
-
-        string _ex_message;
+        string _target_path, _ex_message;
 
         DialogResult _result;
 
@@ -67,7 +66,7 @@ namespace Meowziq.View {
         async void buttonPlay_Click(object sender, EventArgs e) {
             try {
                 if (_textbox_song_name.Text.Equals("------------")) {
-                    var message = "please load a song.";
+                    string message = "please load a song.";
                     MessageBox.Show(text: message, caption: "Error", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Stop);
                     Log.Error(message);
                     return;
@@ -105,7 +104,7 @@ namespace Meowziq.View {
         async void buttonLoad_Click(object sender, EventArgs e) {
             try {
                 _folderbrowserdialog.SelectedPath = AppDomain.CurrentDomain.BaseDirectory;
-                var dr = _folderbrowserdialog.ShowDialog();
+                DialogResult dr = _folderbrowserdialog.ShowDialog();
                 if (dr == DialogResult.OK) {
                     _target_path = _folderbrowserdialog.SelectedPath;
                     _textbox_song_name.Text = await buildSong();
@@ -123,7 +122,7 @@ namespace Meowziq.View {
         async void buttonConvert_Click(object sender, EventArgs e) {
             try {
                 if (_textbox_song_name.Text.Equals("------------")) {
-                    var message = "please load a song.";
+                    string message = "please load a song.";
                     MessageBox.Show(text: message, caption: "Error", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Stop);
                     Log.Error(message);
                     return;
@@ -156,7 +155,7 @@ namespace Meowziq.View {
                 if (State.SameTick) { return; };
                 // MIDI message processing.
                 Midi.Message.ApplyTick(tick: State.Repeat.Tick, load: loadSong); // switches every 2 beats. MEMO: considers syncopation.
-                var list = Midi.Message.GetBy(tick: State.Repeat.Tick); // gets the list of midi messages.
+                List<ChannelMessage> list = Midi.Message.GetBy(tick: State.Repeat.Tick); // gets the list of midi messages.
                 if (list is not null) {
                     list.ForEach(x => {
                         _midi.OutDevice.Send(message: x); // sends messages to a midi device. // MEMO: throws cc directly here?
@@ -188,7 +187,7 @@ namespace Meowziq.View {
         /// also called from SMF output.
         /// </remarks>
         async Task<string> buildSong(bool smf = false) {
-            var name = "------------";
+            string name = "------------";
             await Task.Run(action: () => {
                 Mixer<ChannelMessage>.Clear(); // TODO: check if this process is ok here.
                 Cache.Clear();
@@ -262,7 +261,7 @@ namespace Meowziq.View {
                 /// <summary>
                 /// progress timer.
                 /// </summary>
-                var message = "PLEASE WAIT";
+                string message = "PLEASE WAIT";
                 IObservable<long> timer = Observable.Timer(dueTime: TimeSpan.FromSeconds(1), period: TimeSpan.FromSeconds(1));
                 IDisposable disposer = timer.Subscribe(onNext: x => {
                     Log.Info($"converting the song.. ({x})");
@@ -275,8 +274,8 @@ namespace Meowziq.View {
                 /// MIDI data generation.
                 /// </summary>
                 Midi.Message.Clear();
-                var song_name = await buildSong(smf: true);
-                var song_dir = _target_path.Split(Path.DirectorySeparatorChar).Last();
+                string song_name = await buildSong(smf: true);
+                string song_dir = _target_path.Split(Path.DirectorySeparatorChar).Last();
                 Midi.Message.Invert(); // inverse the flag after data generation.
                 /// <summary>
                 /// song information setting.
@@ -286,16 +285,16 @@ namespace Meowziq.View {
                 conductor_track.Insert(position: 0, new MetaMessage(MetaType.TrackName, Value.Converter.ToByteArray(State.Name)));
                 conductor_track.Insert(position: 0, new MetaMessage(MetaType.Copyright, Value.Converter.ToByteArray(State.Copyright)));
                 State.TrackList.ForEach(action: x => {
-                    var ch_track = Multi.Get(index: x.MidiCh);
+                    Track ch_track = Multi.Get(index: x.MidiCh);
                     ch_track.Insert(position: 0, new MetaMessage(MetaType.TrackName, Value.Converter.ToByteArray(x.Name)));
                     ch_track.Insert(position: 0, new MetaMessage(MetaType.ProgramName, Value.Converter.ToByteArray(x.Instrument))); // FIXME: not reflected?
                 });
                 /// <summary>
                 /// applies MIDI data.
                 /// </summary>
-                for (var index = 0; Midi.Message.Has(tick: index * 30); index++) { // loops every 30 ticks.
-                    var tick = index * 30; // manually generates 30 ticks.
-                    var list = Midi.Message.GetBy(tick: tick); // gets list of messages.
+                for (int index = 0; Midi.Message.Has(tick: index * 30); index++) { // loops every 30 ticks.
+                    int tick = index * 30; // manually generates 30 ticks.
+                    List<ChannelMessage> list = Midi.Message.GetBy(tick: tick); // gets list of messages.
                     if (list is not null) {
                         list.ForEach(action: x => Multi.Get(index: x.MidiChannel).Insert(position: tick, message: x));
                     }
@@ -437,8 +436,8 @@ namespace Meowziq.View {
                 MetaMessage tempo = new(type: MetaType.Tempo, data: Value.Converter.ToByteTempo(tempo: State.Tempo));
                 Track track = new();
                 track.Insert(position: 0, message: tempo);
-                for (var index = 0; index < 100000; index++) { // FIXME: number of loops.
-                    var tick = index * 30; // manually generates 30 ticks.
+                for (int index = 0; index < 100000; index++) { // FIXME: number of loops.
+                    int tick = index * 30; // manually generates 30 ticks.
                     track.Insert(position: tick, message: new ChannelMessage(command: ChannelCommand.NoteOn, midiChannel: 0, data1: 64, data2: 0));
                     track.Insert(position: tick + 30, message: new ChannelMessage(command: ChannelCommand.NoteOff, midiChannel: 0, data1: 64, data2: 0));
                 }
@@ -460,37 +459,28 @@ namespace Meowziq.View {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Fields
 
-            static bool _playing;
-
-            static bool _played;
-
-            static bool _stopping;
+            static bool _playing, _played, _stopping;
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Constructor
 
             static Sound() {
-                _playing = false;
-                _played = false;
-                _stopping = false;
+                _playing = _played = _stopping = false;
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Properties [noun, adjective] 
 
             public static bool Playing {
-                get => _playing;
-                set => _playing = value;
+                get => _playing; set => _playing = value;
             }
 
             public static bool Played {
-                get => _played;
-                set => _played = value;
+                get => _played; set => _played = value;
             }
 
             public static bool Stopping {
-                get => _stopping;
-                set => _stopping = value;
+                get => _stopping; set => _stopping = value;
             }
         }
     }
