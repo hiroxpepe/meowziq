@@ -20,7 +20,7 @@ using System.Runtime.Serialization.Json;
 
 namespace Meowziq.Loader {
     /// <summary>
-    /// loader class for mixer.
+    /// loader class for Mixer object.
     /// </summary>
    /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class MixerLoader<T> {
@@ -51,7 +51,7 @@ namespace Meowziq.Loader {
         // private static Methods [verb]
 
         static Json loadJson(Stream target) {
-            var serializer = new DataContractJsonSerializer(typeof(Json));
+            DataContractJsonSerializer serializer = new(typeof(Json));
             return (Json) serializer.ReadObject(target);
         }
 

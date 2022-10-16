@@ -52,8 +52,36 @@
             this._label_mode = new System.Windows.Forms.Label();
             this._label_modulation = new System.Windows.Forms.Label();
             this._label_modulation_text = new System.Windows.Forms.Label();
+            this._label_repeat_begin = new System.Windows.Forms.Label();
+            this._label_repeat_end = new System.Windows.Forms.Label();
+            this._numericupdown_repeat_begin = new System.Windows.Forms.NumericUpDown();
+            this._numericupdown_repeat_end = new System.Windows.Forms.NumericUpDown();
             this._folderbrowserdialog = new System.Windows.Forms.FolderBrowserDialog();
+            ((System.ComponentModel.ISupportInitialize)(this._numericupdown_repeat_begin)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this._numericupdown_repeat_end)).BeginInit();
             this.SuspendLayout();
+            // 
+            // _sequence
+            // 
+            this._sequence.Format = 1;
+            // 
+            // _sequencer
+            // 
+            this._sequencer.Position = 0;
+            this._sequencer.Sequence = this._sequence;
+            this._sequencer.ChannelMessagePlayed += new System.EventHandler<Sanford.Multimedia.Midi.ChannelMessageEventArgs>(this.sequencer_ChannelMessagePlayed);
+            // 
+            // _piano_control
+            // 
+            this._piano_control.HighNoteID = 109;
+            this._piano_control.Location = new System.Drawing.Point(15, 322);
+            this._piano_control.LowNoteID = 21;
+            this._piano_control.Name = "_piano_control";
+            this._piano_control.NoteOnColor = System.Drawing.Color.SkyBlue;
+            this._piano_control.Size = new System.Drawing.Size(915, 140);
+            this._piano_control.TabIndex = 4;
+            this._piano_control.TabStop = false;
+            this._piano_control.Text = "pianoControl";
             // 
             // _button_play
             // 
@@ -357,27 +385,49 @@
             this._label_modulation_text.TabIndex = 28;
             this._label_modulation_text.Text = "MODULATION";
             // 
-            // _sequence
+            // _label_repeat_begin
             // 
-            this._sequence.Format = 1;
+            this._label_repeat_begin.AutoSize = true;
+            this._label_repeat_begin.Font = new System.Drawing.Font("Meiryo UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this._label_repeat_begin.ForeColor = System.Drawing.Color.White;
+            this._label_repeat_begin.Location = new System.Drawing.Point(27, 227);
+            this._label_repeat_begin.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this._label_repeat_begin.Name = "_label_repeat_begin";
+            this._label_repeat_begin.Size = new System.Drawing.Size(88, 19);
+            this._label_repeat_begin.TabIndex = 29;
+            this._label_repeat_begin.Text = "REPE BEG";
             // 
-            // _sequencer
+            // _label_repeat_end
             // 
-            this._sequencer.Position = 0;
-            this._sequencer.Sequence = this._sequence;
-            this._sequencer.ChannelMessagePlayed += new System.EventHandler<Sanford.Multimedia.Midi.ChannelMessageEventArgs>(this.sequencer_ChannelMessagePlayed);
+            this._label_repeat_end.AutoSize = true;
+            this._label_repeat_end.Font = new System.Drawing.Font("Meiryo UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this._label_repeat_end.ForeColor = System.Drawing.Color.White;
+            this._label_repeat_end.Location = new System.Drawing.Point(27, 271);
+            this._label_repeat_end.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this._label_repeat_end.Name = "_label_repeat_end";
+            this._label_repeat_end.Size = new System.Drawing.Size(89, 19);
+            this._label_repeat_end.TabIndex = 30;
+            this._label_repeat_end.Text = "REPE END";
             // 
-            // _piano_control
+            // _numericupdown_repeat_begin
             // 
-            this._piano_control.HighNoteID = 109;
-            this._piano_control.Location = new System.Drawing.Point(15, 322);
-            this._piano_control.LowNoteID = 21;
-            this._piano_control.Name = "_piano_control";
-            this._piano_control.NoteOnColor = System.Drawing.Color.SkyBlue;
-            this._piano_control.Size = new System.Drawing.Size(915, 140);
-            this._piano_control.TabIndex = 4;
-            this._piano_control.TabStop = false;
-            this._piano_control.Text = "pianoControl";
+            this._numericupdown_repeat_begin.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this._numericupdown_repeat_begin.Font = new System.Drawing.Font("Meiryo UI", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this._numericupdown_repeat_begin.Location = new System.Drawing.Point(130, 220);
+            this._numericupdown_repeat_begin.Name = "_numericupdown_repeat_begin";
+            this._numericupdown_repeat_begin.Size = new System.Drawing.Size(87, 33);
+            this._numericupdown_repeat_begin.TabIndex = 31;
+            this._numericupdown_repeat_begin.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // _numericupdown_repeat_end
+            // 
+            this._numericupdown_repeat_end.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this._numericupdown_repeat_end.Font = new System.Drawing.Font("Meiryo UI", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this._numericupdown_repeat_end.Location = new System.Drawing.Point(130, 264);
+            this._numericupdown_repeat_end.Name = "_numericupdown_repeat_end";
+            this._numericupdown_repeat_end.Size = new System.Drawing.Size(87, 33);
+            this._numericupdown_repeat_end.TabIndex = 32;
+            this._numericupdown_repeat_end.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // FormMain
             // 
@@ -385,6 +435,10 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
             this.ClientSize = new System.Drawing.Size(945, 483);
+            this.Controls.Add(this._numericupdown_repeat_end);
+            this.Controls.Add(this._label_repeat_end);
+            this.Controls.Add(this._label_repeat_begin);
+            this.Controls.Add(this._numericupdown_repeat_begin);
             this.Controls.Add(this._piano_control);
             this.Controls.Add(this._label_modulation_text);
             this.Controls.Add(this._label_modulation);
@@ -414,6 +468,8 @@
             this.Controls.Add(this._button_play);
             this.Name = "FormMain";
             this.Text = "© STUDIO MeowToon";
+            ((System.ComponentModel.ISupportInitialize)(this._numericupdown_repeat_begin)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this._numericupdown_repeat_end)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -450,6 +506,10 @@
         private System.Windows.Forms.Label _label_mode;
         private System.Windows.Forms.Label _label_modulation;
         private System.Windows.Forms.Label _label_modulation_text;
+        private System.Windows.Forms.Label _label_repeat_begin;
+        private System.Windows.Forms.Label _label_repeat_end;
+        private System.Windows.Forms.NumericUpDown _numericupdown_repeat_begin;
+        private System.Windows.Forms.NumericUpDown _numericupdown_repeat_end;
         private System.Windows.Forms.FolderBrowserDialog _folderbrowserdialog;
     }
 }

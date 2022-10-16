@@ -17,6 +17,9 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 
+using static Meowziq.Value.Utils;
+using static Meowziq.Value.Validater;
+
 namespace Meowziq.Value {
     /// <summary>
     /// data class of phrase class.
@@ -33,21 +36,11 @@ namespace Meowziq.Value {
         /// <summary>
         /// "note" notated value.
         /// </summary>
-        /// <note_jp>
-        /// + note記法とは？ <br/>
-        /// + 度数指定に Key_mode の旋法が適用されます <br/>
-        /// + 歌メロなどを想定します <br/>
-        /// </note_jp>
         Note _note;
 
         /// <summary>
         /// whether "auto" notated value.
         /// </summary>
-        /// <note_jp>
-        /// + auto記法とは？ <br/>
-        /// + 度数指定に Span_mode の旋法が適用されます <br/>
-        /// + ベースラインなどを想定します <br/>
-        /// </note_jp>
         bool _auto;
 
         /// <summary>
@@ -63,32 +56,38 @@ namespace Meowziq.Value {
         Exp _exp;
 
         /// <summary>
-        /// data記述：ドラム Track パーカッション Note No
+        /// "data" notated: percussion names array.
         /// </summary>
         Percussion[] _percussion_array;
 
         /// <summary>
-        /// data記述：ドラム音符
+        /// "data" notated: drum value.
         /// </summary>
         string[] _beat_array;
 
         /// <summary>
-        /// data記述：Key 旋法の度数指定 ⇒ 歌メロなどを想定
+        /// "data" notated: degree value for key_mode.
         /// </summary>
-        string[] _note_array; 
+        string[] _note_array;
 
         /// <summary>
-        /// data記述：Span 旋法の度数指定 ⇒ ベースラインなどを想定
+        /// "data" notated: degree value for span_mode.
         /// </summary>
         string[] _auto_array;
 
         /// <summary>
-        /// data記述：オクターブ
+        /// "data" notated: octave value.
         /// </summary>
         int[] _oct_array;
 
+        /// <summary>
+        /// "data" notated: pre value.
+        /// </summary>
         string[] _pre_array;
 
+        /// <summary>
+        /// "data" notated: post value.
+        /// </summary>
         string[] _post_array;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -106,28 +105,23 @@ namespace Meowziq.Value {
         // Properties [noun, adjective] 
 
         public Note Note {
-            get => _note;
-            set => _note = value;
+            get => _note; set => _note = value;
         }
 
         public bool Auto {
-            get => _auto;
-            set => _auto = value;
+            get => _auto; set => _auto = value;
         }
 
         public Chord Chord {
-            get => _chord;
-            set => _chord = value;
+            get => _chord; set => _chord = value;
         }
 
         public Seque Seque {
-            get => _seque;
-            set => _seque = value;
+            get => _seque; set => _seque = value;
         }
 
         public Exp Exp {
-            get => _exp;
-            set => _exp = value; // default value is 0
+            get => _exp; set => _exp = value; // default value is 0
         }
 
         /// <summary>
@@ -145,39 +139,39 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// array of "beat" text
+        /// array of "beat" notated text
         /// </summary>
         public string[] BeatArray {
             get => _beat_array;
             set {
                 if (!(value is null)) {
-                    value.ToList().ForEach(x => Validater.PhraseValue(x));
+                    value.ToList().ForEach(x => PhraseValue(target: x));
                 }
                 _beat_array = value;
             }
         }
 
         /// <summary>
-        /// array of "note" text
+        /// array of "note" notated text
         /// </summary>
         public string[] NoteArray {
             get => _note_array;
             set {
                 if (!(value is null)) {
-                    value.ToList().ForEach(x => Validater.PhraseValue(x));
+                    value.ToList().ForEach(x => PhraseValue(target: x));
                 }
                 _note_array = value;
             }
         }
 
         /// <summary>
-        /// array of "auto" text
+        /// array of "auto" notated text
         /// </summary>
         public string[] AutoArray {
             get => _auto_array;
             set {
                 if (!(value is null)) {
-                    value.ToList().ForEach(x => Validater.PhraseValue(x));
+                    value.ToList().ForEach(x => PhraseValue(target: x));
                 }
                 _auto_array = value;
                 if (!(value is null)) {
@@ -187,7 +181,7 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// "note", "auto" テキストのオクターブ設定
+        /// octave parameter for "note" and "auto" notated text. 
         /// </summary>
         public int[] OctArray {
             get => _oct_array;
@@ -205,7 +199,7 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// "beat", "note", "auto" テキストの前方音価設定
+        /// pre note parameter for "beat", "note" and "auto" text.
         /// </summary>
         public string[] PreArray {
             get => _pre_array;
@@ -217,14 +211,14 @@ namespace Meowziq.Value {
                 } else if (value.Length != arrayLength) {
                     throw new ArgumentException("preArray must be same count as beatArray or noteArray or autoArray.");
                 } else {
-                    value.ToList().ForEach(x => Validater.PhraseValue(x));
+                    value.ToList().ForEach(x => PhraseValue(target: x));
                     _pre_array = value;
                 }
             }
         }
 
         /// <summary>
-        /// "note", "auto" テキストの後方音価設定
+        /// post note parameter for "note" and "auto" text.
         /// </summary>
         public string[] PostArray {
             get => _post_array;
@@ -236,7 +230,7 @@ namespace Meowziq.Value {
                 } else if (value.Length != arrayLength) {
                     throw new ArgumentException("postArray must be same count as noteArray or autoArray.");
                 } else {
-                    value.ToList().ForEach(x => Validater.PhraseValue(x));
+                    value.ToList().ForEach(x => PhraseValue(target: x));
                     _post_array = value;
                 }
             }
@@ -359,12 +353,12 @@ namespace Meowziq.Value {
     /// <summary>
     /// note parameter class.
     /// </summary>
-    /// <memo_jp>
-    /// + "note" 記法 <br/>
-    ///     + Key_mode の旋法で度数数値を note number に変換 <br/>
-    /// + "auto" 記法 <br/> 
-    ///     + Span_mode の旋法で度数数値を note number に変換 <br/>
-    /// </memo_jp>
+    /// <memo>
+    /// + "note" notated <br/>
+    ///     + converts a degree number to a note number in key_mode. <br/>
+    /// + "auto" notated <br/> 
+    ///     + converts a degree number to a note number in span_mode. <br/>
+    /// </memo>
     public class Note {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -372,42 +366,43 @@ namespace Meowziq.Value {
 
         string _text;
 
+        int _oct;
+
         // TODO: representing bass ghost notes with "gate".
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
         public Note() {
-            Text = string.Empty;
-            Oct = 0;
+            _text = string.Empty;
+            _oct = 0;
         }
 
         public Note(string text, int oct) {
             Text = text;
-            Oct = oct;
+            _oct = oct;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjective] 
 
         public string Text {
-            get => _text;
-            set => _text = Validater.PhraseValue(value);
+            get => _text; set => _text = PhraseValue(target: value);
         }
 
         public int Oct {
-            get; set;
+            get => _oct; set => _oct = value;
         }
 
         /// <summary>
         /// pitch difference of notes.
         /// </summary>
         public int Interval {
-            get => Oct * 12; // converts the octave value to the pitch difference of notes.
+            get => _oct * 12; // converts the octave value to the pitch difference of notes.
         }
 
         public char[] TextCharArray {
-            get => Text.HasValue() ? Utils.Filter(Text).ToCharArray() : null;
+            get => _text.HasValue() ? Filter(target: _text).ToCharArray() : null;
         }
     }
 
@@ -421,32 +416,33 @@ namespace Meowziq.Value {
 
         string _text;
 
+        Range _range;
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
         public Chord() {
-            Text = string.Empty;
+            _text = string.Empty;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjective] 
 
         public string Text {
-            get => _text;
-            set => _text = Validater.PhraseValue(value);
+            get => _text; set => _text = PhraseValue(target: value);
         }
 
         public Range Range {
-            get; set;
+            get => _range; set => _range = value;
         }
 
         public char[] TextCharArray {
-            get => Text.HasValue() ? Utils.Filter(Text).ToCharArray() : null;
+            get => _text.HasValue() ? Filter(target: _text).ToCharArray() : null;
         }
     }
 
     /// <summary>
-    /// arpeggio parameter class.
+    /// arpeggio parameter class
     /// </summary>
     public class Seque {
 
@@ -454,16 +450,30 @@ namespace Meowziq.Value {
         // Fields
 
         /// <summary>
-        /// MEMO: 120 が16分音符、30:60:90:120 で4音価にするか？ ⇒ 100%音価は効果が薄いので必要ない
-        ///     '-' は無効の文字としてのみ使用されるべき
-        ///     '+*>' の3文字で設定: ⇒ -: 0%, +: 25%, *:50%, >75%
         /// </summary>
+        /// <memo_jp>
+        /// + 120 が16分音符、30:60:90:120 で4音価にするか？
+        ///     + 100%音価は効果が薄いので必要ない
+        /// + "-" は無効の文字としてのみ使用されるべき
+        ///     + "+*>" の3文字で設定
+        ///         + -:  0% 
+        ///         + +: 25% 
+        ///         + *: 50% 
+        ///         + >: 75%
+        /// </memo_jp>
         string _text; // gate 設定用
 
-        /// <summary>
-        /// NOTE: Chord 記述の数値と同じ概念
-        /// </summary>
-        int _stack; // 何音コードにするか
+        /// <memo>
+        /// + same concept as "chord" notated numbers.
+        ///     + how many chords?
+        /// </memo>
+        int _stack; // * before development.
+
+        /// <memo>
+        /// + the concept of Range is easier to handle if it is one octave. <br/>
+        /// + isn't it easier to handle with a default range? <br/>
+        /// </memo>
+        Range _range;  // * before development.
 
         bool _use;
 
@@ -480,28 +490,23 @@ namespace Meowziq.Value {
         // Properties [noun, adjective] 
 
         public string Text {
-            get => _text;
-            set => _text = Validater.PhraseValue(value);
+            get => _text; set => _text = PhraseValue(target: value);
         }
 
         public int Stack {
-            get; set;
+            get => _stack; set => _stack = value;
         }
 
-        /// <summary>
-        /// MEMO: Range(範囲)という概念は1オクターブとした方が扱いやすいが
-        /// </summary>
         public Range Range {
-            get; set; // TODO: デフォルト範囲を設けた方が扱いやすいのでは？
+            get => _range; set => _range = value; 
         }
 
         public char[] TextCharArray {
-            get => Text.HasValue() ? Utils.Filter(Text).ToCharArray() : null;
+            get => Text.HasValue() ? Filter(target: Text).ToCharArray() : null;
         }
 
         public bool Use {
-            get => _use;
-            set => _use = value;
+            get => _use; set => _use = value;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -526,9 +531,14 @@ namespace Meowziq.Value {
     /// range parameter class.
     /// </summary>
     /// <todo>
-    /// 範囲を小節内で指定出来るように
+    /// range can be specified for each measure.
     /// </todo>
     public class Range {
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Fields
+
+        int _min, _max;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
@@ -541,99 +551,107 @@ namespace Meowziq.Value {
                 throw new ArgumentException("invalid range max.");
             }
             if (max - min != 11) { // octave out of range.
-                var ok_max = min + 11;
-                var ok_min = max - 11;
+                int ok_max = min + 11;
+                int ok_min = max - 11;
                 throw new ArgumentException($"invalid range length,\r\nmust set {min}:{ok_max} or {ok_min}:{max}.");
             }
-            Min = min;
-            Max = max;
+            _min = min;
+            _max = max;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjective] 
 
         public int Min {
-            get;
+            get => _min;
         }
 
         public int Max {
-            get;
+            get => _max;
         }
     }
 
     /// <summary>
     /// expansion parameter class.
     /// </summary>
-    /// <note>
-    /// 個別にプロパティ設定が必要
-    /// </note>
     public class Exp {
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Fields
+
+        string _pre, _post;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
         public Exp() {
-            Pre = string.Empty;
-            Post = string.Empty;
+            _pre = _post = string.Empty;
         }
 
         public Exp(string pre, string post) {
-            Pre = pre;
-            Post = post;
+            _pre = pre;
+            _post = post;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjective] 
 
         public string Pre {
-            get; set;
+            get => _pre; set => _pre = value;
         }
 
         public string Post {
-            get; set;
+            get => _post; set => _post = value;
         }
 
         public bool HasPre {
             get {
-                if (Pre is null) {
+                if (_pre is null) {
                     return false;
                 }
-                return !Pre.Equals(string.Empty);
+                return !_pre.Equals(string.Empty);
             }
         }
 
         public bool HasPost {
             get {
-                if (Post is null) {
+                if (_post is null) {
                     return false;
                 }
-                return !Post.Equals(string.Empty);
+                return !_post.Equals(string.Empty);
             }
         }
 
         public char[] PreCharArray {
             get {
-                if (Pre.Equals(string.Empty)) {
+                if (_pre == string.Empty) {
                     return null;
                 }
-                return Utils.Filter(Pre).ToCharArray();
+                return Filter(target: _pre).ToCharArray();
             }
         }
 
         public char[] PostCharArray {
             get {
-                if (Post.Equals(string.Empty)) {
+                if (_post == string.Empty) {
                     return null;
                 }
-                return Utils.Filter(Post).ToCharArray();
+                return Filter(target: _post).ToCharArray();
             }
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
 
+        /// <summary>
+        /// whether it matches as a pre parameter.
+        /// </summary>
+        /// <note>
+        /// + up to 120 * 2 ticks. <br/>
+        /// + sixteenth note and eighth note syncopation only. <br/>
+        /// </note>
         public bool IsMatchPre(char target) {
-            return Regex.IsMatch(target.ToString(), @"^[1-2]+$");  // 120 * 2 tick まで ⇒ 16分・8分音符のシンコぺのみ
+            return Regex.IsMatch(target.ToString(), @"^[1-2]+$");
         }
     }
 }

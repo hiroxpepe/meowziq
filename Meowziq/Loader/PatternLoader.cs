@@ -24,7 +24,7 @@ using static Meowziq.Env;
 
 namespace Meowziq.Loader {
     /// <summary>
-    /// loader class for pattern.
+    /// loader class for Pattern object.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class PatternLoader {
@@ -51,7 +51,7 @@ namespace Meowziq.Loader {
             // 旋法の省略記述を変換
             pattern_string = interpretModePrefix(pattern_string);
             // 小節に切り出す "[I:Aeo| | | ][IV| | | ][I| | | ][IV| | | ]"
-            var meas_string_array = pattern_string.Replace("][", "@")  // まず "][" を "@" に置き換え
+            string[] meas_string_array = pattern_string.Replace("][", "@")  // まず "][" を "@" に置き換え
                 .Split('@') // 小節で切り分ける
                 .Select(x => x.Replace("[", string.Empty).Replace("]", string.Empty)).ToArray(); // 不要文字削除
             // Span リストに変換してから Meas を作成してリストに変換
@@ -74,7 +74,7 @@ namespace Meowziq.Loader {
 
         static List<Span> convertSpanList(string meas_string) {
             // Span に切り出す "I:Aeo | | | "
-            var beat_array = meas_string.Split('|')
+            string[] beat_array = meas_string.Split('|')
                 .Select(x => x.Replace("     ", " ")) // 5空白を1空白に置き換え
                 .Select(x => x.Replace("    ", " ")) // 4空白を1空白に置き換え
                 .Select(x => x.Replace("   ", " ")) // 3空白を1空白に置き換え
@@ -117,7 +117,7 @@ namespace Meowziq.Loader {
         }
 
         static Span convertSpan(int beat, string beat_string) {
-            var part = beat_string.Split(':'); // ':' で分割
+            string[] part = beat_string.Split(':'); // ':' で分割
             if (part.Length == 1) {
                 return new Span(beat, Degree.Enum.Parse(part[0].Trim()));
             } else {
@@ -135,7 +135,7 @@ namespace Meowziq.Loader {
         }
 
         static Json loadJson(Stream target) {
-            var serializer = new DataContractJsonSerializer(typeof(Json));
+            DataContractJsonSerializer serializer = new(typeof(Json));
             return (Json) serializer.ReadObject(target);
         }
 

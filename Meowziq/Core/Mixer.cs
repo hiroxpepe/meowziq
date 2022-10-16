@@ -139,7 +139,7 @@ namespace Meowziq.Core {
         static void applyProgramChangeBy(int tick, int midi_ch, string type, string name) {
             if (!_use) { name = "default"; } // mixer.json なしは常に "default"
             if (changedProgramNum(type, name)) {
-                var program_num = _use ? _current_fader_map[$"{type}:{name}"].ProgramNum : _current_fader_map[$"{type}:{name}"].PlayerProgramNum;
+                int program_num = _use ? _current_fader_map[$"{type}:{name}"].ProgramNum : _current_fader_map[$"{type}:{name}"].PlayerProgramNum;
                 _message.ApplyProgramChange(tick, midi_ch, program_num);
             }
         }
@@ -256,8 +256,7 @@ namespace Meowziq.Core {
             }
 
             public bool Mute {
-                get => _mute;
-                set => _mute = value;
+                get => _mute; set => _mute = value;
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////

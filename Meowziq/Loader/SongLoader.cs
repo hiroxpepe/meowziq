@@ -24,7 +24,7 @@ using Meowziq.Core;
 
 namespace Meowziq.Loader {
     /// <summary>
-    /// loader class for song.
+    /// loader class for Song object.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class SongLoader {
@@ -51,8 +51,8 @@ namespace Meowziq.Loader {
             if (_pattern_list is null) {
                 throw new ArgumentException("need _pattern_list.");
             }
-            var song = loadJson(target).Song;
-            var section_list = song.Section.Select(x =>
+            Song song = loadJson(target).Song;
+            List<Core.Section> section_list = song.Section.Select(x =>
                 new Core.Section(
                     Key.Enum.Parse(x.Key),
                     Mode.Enum.Parse(x.Mode),
@@ -80,7 +80,7 @@ namespace Meowziq.Loader {
         }
 
         static Json loadJson(Stream target) {
-            var serializer = new DataContractJsonSerializer(typeof(Json));
+            DataContractJsonSerializer serializer = new(typeof(Json));
             return (Json) serializer.ReadObject(target);
         }
 

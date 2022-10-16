@@ -92,7 +92,7 @@ namespace Meowziq {
             /// adds the value to list.
             /// </remarks>
             else {
-                var list = this[key];
+                List<T> list = this[key];
                 list.Add(value);
             }
         }

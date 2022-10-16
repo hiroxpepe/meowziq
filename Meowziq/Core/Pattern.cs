@@ -97,17 +97,17 @@ namespace Meowziq.Core {
         /// コンストラクタだけが作成する唯一の方法
         /// </summary>
         public Meas(List<Span> spanList) {
-            var total_beat_count = 0;
-            spanList.ForEach(x => total_beat_count += x.Beat); // 拍を集計する
+            int total_beat_count = 0;
+            spanList.ForEach(action: x => total_beat_count += x.Beat); // 拍を集計する
             if (total_beat_count < 4 || total_beat_count > 4) {
                 // FIXME: 3拍子とかは？
                 throw new ArgumentException("beat counts needs 4."); // 1小節に足りない or 超過している
             }
             // Span を分解して1拍毎に追加する
             _span_list = new();
-            spanList.ForEach(x => {
+            spanList.ForEach(action: x => {
                 Enumerable.Range(start: 0, count: x.Beat).ToList().ForEach(
-                    _x => _span_list.Add(new Span(1, x.Degree, x.SpanMode))
+                    action: _x => _span_list.Add(new Span(beat: 1, degree: x.Degree, span_mode: x.SpanMode))
                 );
             });
         }
@@ -116,7 +116,7 @@ namespace Meowziq.Core {
         // Properties [noun, adjective] 
 
         /// <summary>
-        /// Span のリストを返す
+        /// returns a list of Span objects.
         /// </summary>
         public List<Span> AllSpan {
             get => _span_list;
@@ -176,13 +176,11 @@ namespace Meowziq.Core {
         }
 
         public Key Key {
-            get => _key;
-            set => _key = value;
+            get => _key; set => _key = value;
         }
 
         public Mode KeyMode {
-            get => _key_mode;
-            set => _key_mode = value;
+            get => _key_mode; set => _key_mode = value;
         }
 
         public Mode SpanMode {

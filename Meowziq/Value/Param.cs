@@ -31,9 +31,6 @@ namespace Meowziq.Value {
         /// <summary>
         /// creates as a "note" notated parameter.
         /// </summary>
-        /// <memo_jp>
-        /// + ハモリ記述と共用出来る？ <br/> 
-        /// </memo_jp>
         public Param(Note note, Exp exp, DataType type, bool auto_note = true) {
             this.note = note;
             Exp = exp;

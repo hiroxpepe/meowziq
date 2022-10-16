@@ -103,15 +103,15 @@ namespace Meowziq.Core {
             }
 
             // Note データ作成のループ
-            var locate = new Locate(tick, smf);
-            foreach (var section in _song.AllSection) { // 演奏順に並んだ Section のリスト
-                foreach (var pattern in section.AllPattern) { // 演奏順に並んだ Pattern のリスト
+            Locate locate = new(tick, smf);
+            foreach (Section section in _song.AllSection) { // 演奏順に並んだ Section のリスト
+                foreach (Pattern pattern in section.AllPattern) { // 演奏順に並んだ Pattern のリスト
                     locate.BeatCount = pattern.BeatCount;
                     pattern.AllMeas.ForEach(x => x.AllSpan.ForEach(_x => { _x.Key = section.Key; _x.KeyMode = section.KeyMode; })); // Span に この Section のキーと旋法を追加
                     if (locate.Changed) { // 演奏 tick とデータ処理の tick が一致した ⇒ パターン切り替え
                         Log.Trace($"pattarn changed. tick: {tick} {pattern.Name} {_type}");
                     }
-                    foreach (var phrase in _phrase_list.Where(x => x.Name.Equals(pattern.Name))) { // Pattern の名前で Phrase を引き当てる
+                    foreach (Phrase phrase in _phrase_list.Where(x => x.Name.Equals(pattern.Name))) { // Pattern の名前で Phrase を引き当てる
                         if (smf) { // NOTE: 全て Build
                             phrase.Build(locate.Head, pattern); // SMF出力モードの場合全ての tick で処理ログ出力無し
                         } else if (locate.NeedBuild) { // この tick が含まれてる、かつ _tickOfPatternHead に16小節(パターン最大長)を足した長さ以下 pattern のみ Build する 
@@ -120,7 +120,7 @@ namespace Meowziq.Core {
                         }
                         Mixer<T>.ApplyVaule(locate.Head, _midi_ch, Type, pattern.Name, _program_num); // Mixer に値の変更を適用 NOTE: Note より先に設定することに意味がある
                         if (!locate.Name.Equals(string.Empty) && (smf || locate.NeedBuild)) { // FIXME: tick で判定しないと全検索になってる
-                            var previousPhraseList = _phrase_list.Where(x => x.Name.Equals(locate.Name)).ToList(); // 一つ前の Phrase を引き当てる 
+                            List<Phrase> previousPhraseList = _phrase_list.Where(x => x.Name.Equals(locate.Name)).ToList(); // 一つ前の Phrase を引き当てる 
                             if (previousPhraseList.Count != 0) {
                                 if (!_type.ToLower().Contains("drum")) { // ドラム以外
                                     optimize(previousPhraseList[0], phrase); // 最適化
@@ -134,16 +134,16 @@ namespace Meowziq.Core {
             }
             // Note データ適用のループ NOTE: Pattern を回す必要はない
             // それぞれの Phrase に曲を通しての Note が充填されている
-            foreach (var phrase in _phrase_list) {
-                var note_list = phrase.AllNote;
-                var hash_set = new HashSet<int>();
-                foreach (var note in note_list) {
-                    Mixer<T>.ApplyNote(note.Tick, _midi_ch, note); // Note の適用
+            foreach (Phrase phrase in _phrase_list) {
+                List<Note> note_list = phrase.AllNote;
+                HashSet<int> hash_set = new();
+                foreach (Note note in note_list) {
+                    Mixer<T>.ApplyNote(tick: note.Tick, midi_ch: _midi_ch, note: note); // Note の適用
                 }
                 note_list.Clear(); // 必要
             }
             if (smf) { // SMF 出力時用の情報 NOTE: 1回だけ呼ばれる
-                State.TrackMap.Add(_midi_ch, new State.Track(){ MidiCh = _midi_ch, Name = _type, Instrument = _instrument_name });
+                State.TrackMap.Add(key: _midi_ch, value: new State.Track(){ MidiCh = _midi_ch, Name = _type, Instrument = _instrument_name });
             }
         }
 
@@ -161,9 +161,9 @@ namespace Meowziq.Core {
         ///       or 最初から Dictionary のリストを返すメソッドを実装しておく？
         /// </summary>
         void optimize(Phrase previous, Phrase current) {
-            foreach (var stopNote in current.AllNote.Where(x => x.HasPre)) { // 優先ノートのリスト
-                foreach (var note in previous.AllNote) { // 直前のフレーズの全てのノートの中で
-                    if (note.Tick == stopNote.Tick) { // 優先ノートと発音タイミングがかぶったら
+            foreach (Note stop_note in current.AllNote.Where(x => x.HasPre)) { // 優先ノートのリスト
+                foreach (Note note in previous.AllNote) { // 直前のフレーズの全てのノートの中で
+                    if (note.Tick == stop_note.Tick) { // 優先ノートと発音タイミングがかぶったら
                         previous.RemoveBy(note); // ノートを削除
                     }
                 }
@@ -211,8 +211,7 @@ namespace Meowziq.Core {
             // Properties [noun, adjective] 
 
             public int Head {
-                get => _head_tick;
-                set => _head_tick = value;
+                get => _head_tick; set => _head_tick = value;
             }
 
             public int BeatCount {
@@ -220,8 +219,7 @@ namespace Meowziq.Core {
             }
 
             public string Name {
-                get => _previous_name;
-                set => _previous_name = value;
+                get => _previous_name; set => _previous_name = value;
             }
 
             public bool Changed {

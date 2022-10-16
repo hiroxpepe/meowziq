@@ -172,50 +172,50 @@ namespace Meowziq.Core {
         /// Note データを生成します
         /// </summary>
         protected void onBuild(int tick, Pattern pattern) {
-            var generator = Generator.GetInstance(_note_item);
+            var generator = Generator.GetInstance(note_item: _note_item);
             var data_type = defineDataType();
             switch (data_type) {
                 case DataType.Mono:
                     {
-                        var param = new Param(_data.Note, _data.Exp, data_type);
-                        generator.ApplyNote(tick, pattern.BeatCount, pattern.AllSpan, param);
+                        Param param = new(note: _data.Note, exp: _data.Exp, type: data_type);
+                        generator.ApplyNote(start_tick: tick, beat_count: pattern.BeatCount, span_list: pattern.AllSpan, param: param);
                     }
                     break;
                 case DataType.Chord:
                     {
-                        var param = new Param(_data.Chord, _data.Exp, data_type);
-                        generator.ApplyNote(tick, pattern.BeatCount, pattern.AllSpan, param);
+                        Param param = new(chord: _data.Chord, exp: _data.Exp, type: data_type);
+                        generator.ApplyNote(start_tick: tick, beat_count: pattern.BeatCount, span_list: pattern.AllSpan, param: param);
                     }
                     break;
                 case DataType.Multi:
                     var string_array = _data.Auto ? _data.AutoArray : _data.NoteArray;
-                    for (var idxindex = 0; idxindex < string_array.Length; idxindex++) {
-                        var param = new Param(
-                            new Value.Note(string_array[idxindex], _data.OctArray[idxindex]),
-                            new Value.Exp(_data.PreArray[idxindex], _data.PostArray[idxindex]),
-                            data_type,
-                            _data.Auto
+                    for (var index = 0; index < string_array.Length; index++) {
+                        Param param = new(
+                            note: new Value.Note(string_array[index], _data.OctArray[index]),
+                            exp: new Value.Exp(_data.PreArray[index], _data.PostArray[index]),
+                            type: data_type,
+                            auto_note: _data.Auto
                         );
-                        generator.ApplyNote(tick, pattern.BeatCount, pattern.AllSpan, param);
+                        generator.ApplyNote(start_tick: tick, beat_count: pattern.BeatCount, span_list: pattern.AllSpan, param: param);
                     }
                     break;
                 case DataType.Drum:
-                    _data.BeatArray.ToList().Select((x, idx) => new Param(
-                        new Value.Note(text: x, oct: 0), // octave is always 0.
-                        (int) _data.PercussionArray[idx],
-                        new Value.Exp(pre: _data.PreArray[idx], post: string.Empty),
-                        data_type
-                    )).ToList().ForEach(x => generator.ApplyDrumNote(tick, pattern.BeatCount, x));
+                    _data.BeatArray.ToList().Select(selector: (x, idx) => new Param(
+                        note: new Value.Note(text: x, oct: 0), // octave is always 0.
+                        percussion_note_num: (int) _data.PercussionArray[idx],
+                        exp: new Value.Exp(pre: _data.PreArray[idx], post: string.Empty),
+                        type: data_type
+                    )).ToList().ForEach(action: x => generator.ApplyDrumNote(start_tick: tick, beat_count: pattern.BeatCount, param: x));
                     break;
                 case DataType.Seque:
                     {
-                        var param = new Param(seque: _data.Seque, type: data_type);
-                        generator.ApplySequeNote(tick, pattern.BeatCount, pattern.AllSpan, param);
+                        Param param = new(seque: _data.Seque, type: data_type);
+                        generator.ApplySequeNote(start_tick: tick, beat_count: pattern.BeatCount, span_list: pattern.AllSpan, param: param);
                     }
                     break;
             }
-            // UI 表示情報作成
-            generator.ApplyInfo(tick, pattern.BeatCount, pattern.AllSpan);
+            // creates UI display information.
+            generator.ApplyInfo(start_tick: tick, beat_count: pattern.BeatCount, span_list: pattern.AllSpan);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
