@@ -154,10 +154,10 @@ namespace Meowziq.Core {
                 if (State.HashSet.Add(item: tick)) { // tick につき1度だけ
                     State.ItemMap.Add(key: tick, value: new State.Item16beat {
                         Tick = tick,
-                        Key = span.Key.ToString(),
-                        Degree = span.Degree.ToString(),
-                        KeyMode = span.KeyMode.ToString(),
-                        SpanMode = span.SpanMode.ToString()
+                        Key = span.Key,
+                        Degree = span.Degree,
+                        KeyMode = span.KeyMode,
+                        SpanMode = span.SpanMode
                     });
                 }
             }

@@ -359,50 +359,54 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// どのようなキー、度数、旋法で演奏されているかを表す情報
-        /// NOTE: 16beat 毎に作成される
+        /// information about what key, degree, and mode it is played in.
         /// </summary>
+        /// <note>
+        /// created every 16 beats.
+        /// </note>
         public class Item16beat {
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Fields
 
-            string _span_mode; // TODO: Mode 型に変更
+            int _tick;
+
+            Key _key;
+
+            Degree _degree;
+
+            Mode _key_mode, _span_mode;
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Properties [noun, adjective]
 
             public int Tick {
-                get; set;
+                get => _tick; set => _tick = value;
             }
 
-            public string Key {
-                get; set;
+            public Key Key {
+                get => _key; set => _key = value;
             }
 
-            public string Degree {
-                get; set;
+            public Degree Degree {
+                get => _degree; set => _degree = value;
             }
 
-            public string KeyMode {
-                get; set;
+            public Mode KeyMode {
+                get => _key_mode; set => _key_mode = value;
             }
 
-            public string SpanMode {
+            public Mode SpanMode {
                 get {
-                    if (_span_mode.Equals("Undefined")) {
-                        return KeyMode;
-                    }
+                    if (_span_mode == Mode.Undefined) { return _key_mode; }
                     return _span_mode;
-                } 
+                }
                 set => _span_mode = value;
             }
 
             public bool AutoMode {
                 get {
-                    if (_span_mode.Equals("Undefined")) {
-                        return true;
-                    }
+                    if (_span_mode == Mode.Undefined) { return true; }
                     return false;
                 }
             }

@@ -157,10 +157,10 @@ namespace Meowziq.View {
                 Midi.Message.ApplyTick(tick: State.Repeat.Tick, load: loadSong); // switches every 2 beats. MEMO: considers syncopation.
                 List<ChannelMessage> list = Midi.Message.GetBy(tick: State.Repeat.Tick); // gets the list of midi messages.
                 if (list is not null) {
-                    list.ForEach(x => {
+                    list.ForEach(action: x => {
                         _midi.OutDevice.Send(message: x); // sends messages to a midi device. // MEMO: throws cc directly here?
                     }); // MEMO: Parallel.ForEach was slow.
-                    list.ForEach(x => {
+                    list.ForEach(action: x => {
                         if (x.MidiChannel != 9 && x.MidiChannel != 1) { // FIXME: exclude sequences is provisional.
                             _piano_control.Send(message: x); // shows in piano roll except for drums.
                         }
@@ -244,7 +244,7 @@ namespace Meowziq.View {
             SongLoader.PatternList = PatternLoader.Build(target: current ? Cache.Current.PatternStream : Cache.Valid.PatternStream);
             Song song = SongLoader.Build(target: current ? Cache.Current.SongStream : Cache.Valid.SongStream);
             PlayerLoader<ChannelMessage>.PhraseList = PhraseLoader.Build(target: current ? Cache.Current.PhraseStream : Cache.Valid.PhraseStream);
-            PlayerLoader<ChannelMessage>.Build(target: current ? Cache.Current.PlayerStream : Cache.Valid.PlayerStream).ForEach(x => {
+            PlayerLoader<ChannelMessage>.Build(target: current ? Cache.Current.PlayerStream : Cache.Valid.PlayerStream).ForEach(action: x => {
                 x.Song = song; // sets song data.
                 x.Build(tick: tick, smf: smf); // builds MIDI data.
             });
@@ -360,14 +360,14 @@ namespace Meowziq.View {
             return () => {
                 _textbox_beat.Text = State.Beat.ToString();
                 _textbox_meas.Text = State.Meas.ToString();
-                _textbox_key.Text = item.Key;
-                _textbox_degree.Text = item.Degree;
-                _textbox_key_mode.Text = item.KeyMode;
+                _textbox_key.Text = item.Key.ToString();
+                _textbox_degree.Text = item.Degree.ToString();
+                _textbox_key_mode.Text = item.KeyMode.ToString();
                 _textbox_code.Text = ToSimpleCodeName(
-                    key: Key.Enum.Parse(item.Key),
-                    degree: Degree.Enum.Parse(item.Degree),
-                    key_mode: Mode.Enum.Parse(item.KeyMode),
-                    span_mode: Mode.Enum.Parse(item.SpanMode),
+                    key: item.Key,
+                    degree: item.Degree,
+                    key_mode: item.KeyMode,
+                    span_mode: item.SpanMode,
                     auto_mode: item.AutoMode
                 );
                 /// <remarks>
@@ -375,8 +375,8 @@ namespace Meowziq.View {
                 /// </remarks>
                 if (item.AutoMode) {
                     Mode auto_mode = ToSpanMode(
-                        degree: Degree.Enum.Parse(item.Degree),
-                        key_mode: Mode.Enum.Parse(item.KeyMode)
+                        degree: item.Degree,
+                        key_mode: item.KeyMode
                     );
                     _textbox_Mode.Text = auto_mode.ToString();
                     _label_modulation.ForeColor = DimGray;
@@ -385,14 +385,14 @@ namespace Meowziq.View {
                 /// using the span mode.
                 /// </remarks>
                 else {
-                    _textbox_Mode.Text = item.SpanMode;
+                    _textbox_Mode.Text = item.SpanMode.ToString();
                     Mode key_mode = ToKeyMode(
-                        key: Key.Enum.Parse(item.Key),
-                        degree: Degree.Enum.Parse(item.Degree),
-                        key_mode: Mode.Enum.Parse(item.KeyMode),
-                        span_mode: Mode.Enum.Parse(item.SpanMode)
+                        key: item.Key,
+                        degree: item.Degree,
+                        key_mode: item.KeyMode,
+                        span_mode: item.SpanMode
                     );
-                    _textbox_key_mode.Text = key_mode.ToString().Equals("Undefined") ? "---" : key_mode.ToString();
+                    _textbox_key_mode.Text = key_mode is Mode.Undefined ? "---" : key_mode.ToString();
                     _label_modulation.ForeColor = HotPink; // TODO: changes color depending on the degree.
                 }
             };
@@ -406,15 +406,9 @@ namespace Meowziq.View {
                 Enumerable.Range(start: 0, count: 88).ToList().ForEach(
                     action: x => _piano_control.Send(message: new ChannelMessage(command: ChannelCommand.NoteOff, midiChannel: 1, data1: x, data2: 0))
                 );
-                _label_play.ForeColor = DimGray;
-                _label_modulation.ForeColor = DimGray;
-                _textbox_beat.Text = "0";
-                _textbox_meas.Text = "0";
-                _textbox_key.Text = "---";
-                _textbox_degree.Text = "---";
-                _textbox_key_mode.Text = "---";
-                _textbox_Mode.Text = "---";
-                _textbox_code.Text = "---";
+                _label_play.ForeColor = _label_modulation.ForeColor = DimGray;
+                _textbox_beat.Text = _textbox_meas.Text = "0";
+                _textbox_key.Text = _textbox_degree.Text = _textbox_key_mode.Text = _textbox_Mode.Text = _textbox_code.Text = "---";
             };
         }
 
