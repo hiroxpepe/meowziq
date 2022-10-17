@@ -135,7 +135,7 @@ namespace Meowziq.Core {
                     char text = param.TextCharArray[I6beat_index.Idx];
                     if (param.Seque.Text.HasValue() && param.IsMatch(text)) {
                         int tick = start_tick + To16beatLength(index: I6beat_index.Idx);
-                        add(tick: tick, note: new Note(tick: tick, num: note_num, gate: Seque.ToGate(target: text.ToString()), velo: 104));
+                        add(tick: tick, note: new Note(tick: tick, num: note_num, gate: Seque.ToGateValue(target: text.ToString()), velo: 104));
                     }
                 } else {
                     int tick = start_tick + To16beatLength(index: I6beat_index.Idx);
