@@ -481,7 +481,7 @@ namespace Meowziq.Value {
         // Constructor
 
         public Seque() {
-            Text = string.Empty;
+            _text = string.Empty;
             _stack = 3;
             _use = false;
         }
