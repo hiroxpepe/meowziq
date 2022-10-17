@@ -84,6 +84,9 @@ namespace Meowziq.Loader {
             }
         }
 
+        /// <summary>
+        /// reads a .json file to the JSON object.
+        /// </summary>
         static Json loadJson(Stream target) {
             DataContractJsonSerializer serializer = new(typeof(Json));
             return (Json) serializer.ReadObject(target);

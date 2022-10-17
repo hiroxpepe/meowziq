@@ -29,32 +29,36 @@ namespace Meowziq.Loader {
         // public static Methods [verb]
 
         /// <summary>
-        /// Mixer を作成します
+        /// creates a Mixer object.
         /// </summary>
         public static void Build(Stream target) {
-            if (target is null) {
-                return;
-            }
-            loadJson(target).Mixer.Fader.ToList().Select(x =>
+            if (target is null) { return; }
+            loadJson(target).Mixer.Fader.ToList().Select(selector: x =>
                 new Core.Mixer<T>.Fader() {
                     Type = x.Type,
                     Name = x.Name,
-                    ProgramNum = drumInst(x.Inst) ? (int) DrumKit.Enum.Parse(x.Inst) : (int) Instrument.Enum.Parse(x.Inst),
+                    ProgramNum = drumInst(target: x.Inst) ? (int) DrumKit.Enum.Parse(target: x.Inst) : (int) Instrument.Enum.Parse(target: x.Inst),
                     Vol = x.Vol,
-                    Pan = Pan.Enum.Parse(x.Pan),
+                    Pan = Pan.Enum.Parse(target: x.Pan),
                     Mute = x.Mute
                 }
-            ).ToList().ForEach(x => Core.Mixer<T>.AddFader = x);
+            ).ToList().ForEach(action: x => Core.Mixer<T>.AddFader = x);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private static Methods [verb]
 
+        /// <summary>
+        /// reads a .json file to the JSON object.
+        /// </summary>
         static Json loadJson(Stream target) {
             DataContractJsonSerializer serializer = new(typeof(Json));
             return (Json) serializer.ReadObject(target);
         }
 
+        /// <summary>
+        /// whether it is a drum instrument.
+        /// </summary>
         static bool drumInst(string target) {
             return (target.Equals("Standard") || target.Equals("Room") || target.Equals("Power") ||
                 target.Equals("Electronic") || target.Equals("Analog") || target.Equals("Jazz") ||
