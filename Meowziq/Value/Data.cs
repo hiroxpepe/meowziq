@@ -450,18 +450,9 @@ namespace Meowziq.Value {
         // Fields
 
         /// <summary>
+        /// "gate" notated.
         /// </summary>
-        /// <memo_jp>
-        /// + 120 が16分音符、30:60:90:120 で4音価にするか？
-        ///     + 100%音価は効果が薄いので必要ない
-        /// + "-" は無効の文字としてのみ使用されるべき
-        ///     + "+*>" の3文字で設定
-        ///         + -:  0% 
-        ///         + +: 25% 
-        ///         + *: 50% 
-        ///         + >: 75%
-        /// </memo_jp>
-        string _text; // gate 設定用
+        string _text;
 
         /// <memo>
         /// + same concept as "chord" notated numbers.
@@ -473,16 +464,19 @@ namespace Meowziq.Value {
         /// + the concept of Range is easier to handle if it is one octave. <br/>
         /// + isn't it easier to handle with a default range? <br/>
         /// </memo>
-        Range _range;  // * before development.
+        Range _range;
 
+        /// <summary>
+        /// whether use or not.
+        /// </summary>
         bool _use;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
         public Seque() {
-            Text = string.Empty;
-            _stack = 3;
+            _text = string.Empty;
+            _stack = 3; // * before development.
             _use = false;
         }
 
@@ -515,15 +509,11 @@ namespace Meowziq.Value {
         /// <summary>
         /// converts the text mark to the note value.
         /// </summary>
-        public static int ToGate(string target) {
-            if (target.Equals("+")) {
-                return 30;
-            } else if (target.Equals("*")) {
-                return 60;
-            } else if (target.Equals(">")) {
-                return 90;
-            }
-            return 0;
+        public static int ToGateValue(string target) {
+            //if (target.Equals(">")) { return 95 /*(int) (127 * 75 * 0.01f)*/; } // ≒95
+            //if (target.Equals("*")) { return 64 /*(int) (127 * 50 * 0.01f)*/; } // ≒64
+            //if (target.Equals("+")) { return 32 /*(int) (127 * 25 * 0.01f)*/; } // ≒32
+            return 30;//0;
         }
     }
 
