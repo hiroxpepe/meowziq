@@ -66,7 +66,7 @@ namespace Meowziq.Core {
                     return;
                 }
                 _current_fader_map[$"{value.Type}:{value.Name}"] = value;
-                _previous_fader_map[value.Type] = Fader.NoVaule(value.Type);
+                _previous_fader_map[value.Type] = Fader.NoVaule(type: value.Type);
                 _use = true; // Fader を追加された、つまり mixier.json が存在する
             }
         }

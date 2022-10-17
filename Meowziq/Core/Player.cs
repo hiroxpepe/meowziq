@@ -97,9 +97,15 @@ namespace Meowziq.Core {
             // テンポ・曲名設定 FIXME: 全プレイヤーが設定しているが？
             State.TempoAndName = (_song.Tempo, _song.Name);
 
-            // 初期設定
-            if (tick is 0) { // TODO: player.json の音色を設定
-                Mixer<T>.ApplyVaule(0, _midi_ch, Type, "intro", _program_num); // TODO: 必要？ and "intro" ？
+            /// <summary>
+            /// adds initial parameters for Mixer object.
+            /// </summary>
+            /// <note>
+            /// sets instrument name in player.json.
+            /// </note>
+            if (tick is 0) {
+                string first_pattern_name = _song.AllSection.SelectMany(x => x.AllPattern).ToList().Where(x => x.Name is not "count").First().Name;
+                Mixer<T>.ApplyVaule(tick: 0, midi_ch: _midi_ch, type: Type, name: "intro", program_num: _program_num);
             }
 
             // Note データ作成のループ
