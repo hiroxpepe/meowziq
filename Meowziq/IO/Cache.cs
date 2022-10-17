@@ -14,11 +14,10 @@
  */
 
 using System.IO;
-using System.Text;
 
 namespace Meowziq.IO {
     /// <summary>
-    /// キャッシュ クラス
+    /// cache class
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Cache {
@@ -26,76 +25,83 @@ namespace Meowziq.IO {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Fields
 
-        static Resourse _current; // この tick で読み込まれた json データの内容を保持
-
-        static Resourse _valid; // 全てのバリデーションを通過した json データの内容を保持
+        static Resourse _current_resourse, _valid_resourse;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Constructor
 
         static Cache() {
-            _current = new();
-            _valid = new();
+            _current_resourse = new();
+            _valid_resourse = new();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Properties [noun, adjective] 
 
+        /// <summary>
+        /// holds the contents of the json data read in this tick.
+        /// </summary>
         public static Resourse Current {
-            get => _current;
+            get => _current_resourse;
         }
 
+        /// <summary>
+        /// holds the final contents of json data that passed all validations.
+        /// </summary>
         public static Resourse Valid {
-            get => _valid;
+            get => _valid_resourse;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]
 
         /// <summary>
-        /// json ファイルを文字列として読み込みます
+        /// reads json files as strings.
         /// </summary>
         public static void Load(string targetPath) {
-            using var stream1 = new StreamReader($"{targetPath}/pattern.json");
-            _current.Pattern = stream1.ReadToEnd();
-            using var stream2 = new StreamReader($"{targetPath}/song.json");
-            _current.Song = stream2.ReadToEnd();
-            using var stream3 = new StreamReader($"{targetPath}/phrase.json");
-            _current.Phrase = stream3.ReadToEnd();
-            using var stream4 = new StreamReader($"{targetPath}/player.json");
-            _current.Player = stream4.ReadToEnd();
+            using StreamReader stream1 = new($"{targetPath}/pattern.json");
+            _current_resourse.Pattern = stream1.ReadToEnd();
+            using StreamReader stream2 = new($"{targetPath}/song.json");
+            _current_resourse.Song = stream2.ReadToEnd();
+            using StreamReader stream3 = new($"{targetPath}/phrase.json");
+            _current_resourse.Phrase = stream3.ReadToEnd();
+            using StreamReader stream4 = new($"{targetPath}/player.json");
+            _current_resourse.Player = stream4.ReadToEnd();
             if (File.Exists($"{targetPath}/mixer.json")) {
-                using var stream5 = new StreamReader($"{targetPath}/mixer.json");
-                _current.Mixer = stream5.ReadToEnd();
+                using StreamReader stream5 = new($"{targetPath}/mixer.json");
+                _current_resourse.Mixer = stream5.ReadToEnd();
             }
         }
 
         /// <summary>
-        /// バリデーションが通過した最新の内容として更新します
+        /// updates as the latest resourse that has passed validation.
         /// </summary>
         public static void Update() {
-            _valid.Pattern = _current.Pattern;
-            _valid.Song = _current.Song;
-            _valid.Phrase = _current.Phrase;
-            _valid.Player = _current.Player;
-            _valid.Mixer = _current.Mixer;
+            _valid_resourse.Pattern = _current_resourse.Pattern;
+            _valid_resourse.Song = _current_resourse.Song;
+            _valid_resourse.Phrase = _current_resourse.Phrase;
+            _valid_resourse.Player = _current_resourse.Player;
+            _valid_resourse.Mixer = _current_resourse.Mixer;
         }
 
         /// <summary>
-        /// 内容を初期化します
+        /// initializes the resourses.
         /// </summary>
         public static void Clear() {
-            _current.Clear();
-            _valid.Clear();
+            _current_resourse.Clear();
+            _valid_resourse.Clear();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // inner Classes
 
         /// <summary>
-        /// json ファイルの内容保持用 クラス
+        /// class for holding the contents of json files as strings.
         /// </summary>
         public class Resourse {
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // public Properties [noun, adjective] 
 
             public Stream PatternStream {
                 get => Pattern.ToMemoryStream();
@@ -144,34 +150,8 @@ namespace Meowziq.IO {
             // internal Methods [verb]
 
             internal void Clear() {
-                Pattern = null;
-                Song = null;
-                Phrase = null;
-                Player = null;
-                Mixer = null;
+                Pattern = Song = Phrase = Player = Mixer = null;
             }
-        }
-    }
-
-    /// <summary>
-    /// IO系拡張メソッド
-    /// </summary>
-    public static class Extensions {
-
-        public static MemoryStream ToMemoryStream(this string source) {
-            return new MemoryStream(Encoding.UTF8.GetBytes(source));
-        }
-
-        public static bool Is(this string source, string target) { // is でいい？
-            return source == target;
-        }
-
-        public static void Set(this string source, string target) {
-            source = target; // FIXME: 値渡しなのでこれでは無理 ⇒ C# の仕様で出来ない
-        }
-
-        public static void Clear(this string source) {
-            source = string.Empty; // FIXME: 値渡しなのでこれでは無理 ⇒ C# の仕様で出来ない
         }
     }
 }

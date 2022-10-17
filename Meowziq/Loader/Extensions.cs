@@ -13,23 +13,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System.IO;
+using System.Linq;
 
-namespace Meowziq.IO {
+namespace Meowziq.Loader {
     /// <summary>
-    /// IO utils functions.
+    /// loader extension methods.
+    /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
-    public static class IOUtils {
+    internal static class Extensions {
         /// <summary>
-        /// creates a directory if necessary.
+        /// gets the length of the beat.
         /// </summary>
-        public static DirectoryInfo MakeDirectoryIfNecessary(string target) {
-            string directory = Path.GetDirectoryName(target);
-            bool exists = Directory.Exists(directory);
-            if (!exists) {
-                return Directory.CreateDirectory(directory);
-            }
-            return null;
+        internal static int GetBeatLength(this string source) {
+            const int MEAS_TO_BEAT = 4;
+            int length = source.Replace("][", "@").Split('@').Select(x => x.Replace("[", string.Empty).Replace("]", string.Empty)).ToArray().Length;
+            return length * MEAS_TO_BEAT;
         }
     }
 }
