@@ -416,7 +416,7 @@ namespace Meowziq.View {
         // inner Classes
 
         /// <summary>
-        /// a front class for processing.
+        /// front class for processing.
         /// </summary>
         static class Facade {
 

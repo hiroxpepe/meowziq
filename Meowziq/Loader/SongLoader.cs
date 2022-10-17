@@ -48,9 +48,7 @@ namespace Meowziq.Loader {
         /// creates a song.
         /// </summary>
         public static Core.Song Build(Stream target) {
-            if (_pattern_list is null) {
-                throw new ArgumentException("need _pattern_list.");
-            }
+            if (_pattern_list is null) { throw new ArgumentException("need _pattern_list."); }
             Song song = loadJson(target).Song;
             List<Core.Section> section_list = song.Section.Select(x =>
                 new Core.Section(
@@ -73,12 +71,15 @@ namespace Meowziq.Loader {
                 /// <remarks>
                 /// first element with matching name.
                 /// </remarks>
-                return _pattern_list.Where(x => x.Name.Equals(pattern_name)).First();
+                return _pattern_list.Where(predicate: x => x.Name.Equals(pattern_name)).First();
             } catch {
                 throw new ArgumentException("undefined pattern.");
             }
         }
 
+        /// <summary>
+        /// reads a .json file to the JSON object.
+        /// </summary>
         static Json loadJson(Stream target) {
             DataContractJsonSerializer serializer = new(typeof(Json));
             return (Json) serializer.ReadObject(target);

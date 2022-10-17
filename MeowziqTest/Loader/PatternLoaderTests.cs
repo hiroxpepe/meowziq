@@ -17,7 +17,7 @@ namespace MeowziqTest.Loader {
         [TestMethod()]
         public void BuildTest() {
             using (var stream = new StreamReader($"../data/pattern.json")) {
-                var list = PatternLoader.Build(stream.ReadToEnd().ToMemoryStream());
+                //var list = PatternLoader.Build(stream.ReadToEnd().ToMemoryStream());
             }
         }
     }

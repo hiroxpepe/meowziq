@@ -13,31 +13,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.Linq;
-using System.Text.RegularExpressions;
+using System.IO;
 
-namespace Meowziq {
+namespace Meowziq.IO {
     /// <summary>
-    /// common extension methods.
-    /// </summary>
+    /// IO utils functions.
     /// <author>h.adachi (STUDIO MeowToon)</author>
-    public static class Extensions {
+    internal static class Utils {
         /// <summary>
-        /// converts a character to a number.
+        /// creates a directory if necessary.
         /// </summary>
-        public static int Int32(this char source) {
-            if (!Regex.IsMatch(source.ToString(), @"^[0-9]+$")) { // only 0 to 9 are valid.
-                throw new FormatException("a char value must be 0～9.");
+        internal static DirectoryInfo MakeDirectoryIfNecessary(string target) {
+            string directory = Path.GetDirectoryName(target);
+            bool exists = Directory.Exists(directory);
+            if (!exists) {
+                return Directory.CreateDirectory(directory);
             }
-            return int.Parse(source.ToString());
-        }
-
-        /// <summary>
-        /// returns true if the string is not a null or empty string.
-        /// </summary>
-        public static bool HasValue(this string source) {
-            return !(source is null || source.Equals(string.Empty));
+            return null;
         }
     }
 }
