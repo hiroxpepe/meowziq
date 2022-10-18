@@ -53,8 +53,11 @@ namespace Meowziq.Win64 {
         // Constructor
 
         public MainForm() {
+            const int MIDI_OUT_DEFAULT = 0;
             InitializeComponent();
-            _midi = new(); // creates a midi manager class.
+            _midi = Manager.GetInstance(); // creates a midi manager class.
+            _midi.OutDeviceName.ForEach(action: x => _combobox_midi_out.Items.Add(item: x));
+            _combobox_midi_out.SelectedIndex = MIDI_OUT_DEFAULT;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -134,6 +137,19 @@ namespace Meowziq.Win64 {
                 MessageBox.Show(text: ex.Message, caption: "Error", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Stop);
                 Log.Error(ex.Message);
                 await stopSound();
+            }
+        }
+
+        /// <summary>
+        /// selects MIDI output device.
+        /// </summary>
+        private void _combobox_midi_out_SelectedIndexChanged(object sender, EventArgs e) {
+            try {
+                _midi.OutDeviceId = _combobox_midi_out.SelectedIndex;
+            }
+            catch (Exception ex) {
+                MessageBox.Show(text: ex.Message, caption: "Error", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Stop);
+                Log.Error(ex.Message);
             }
         }
 

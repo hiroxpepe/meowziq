@@ -54,8 +54,10 @@
             this._label_modulation_text = new System.Windows.Forms.Label();
             this._label_repeat_begin = new System.Windows.Forms.Label();
             this._label_repeat_end = new System.Windows.Forms.Label();
+            this._label_midi_out = new System.Windows.Forms.Label();
             this._numericupdown_repeat_begin = new System.Windows.Forms.NumericUpDown();
             this._numericupdown_repeat_end = new System.Windows.Forms.NumericUpDown();
+            this._combobox_midi_out = new System.Windows.Forms.ComboBox();
             this._folderbrowserdialog = new System.Windows.Forms.FolderBrowserDialog();
             ((System.ComponentModel.ISupportInitialize)(this._numericupdown_repeat_begin)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._numericupdown_repeat_end)).BeginInit();
@@ -76,7 +78,7 @@
             this._pianocontrol.HighNoteID = 109;
             this._pianocontrol.Location = new System.Drawing.Point(15, 322);
             this._pianocontrol.LowNoteID = 21;
-            this._pianocontrol.Name = "_piano_control";
+            this._pianocontrol.Name = "_pianocontrol";
             this._pianocontrol.NoteOnColor = System.Drawing.Color.SkyBlue;
             this._pianocontrol.Size = new System.Drawing.Size(915, 140);
             this._pianocontrol.TabIndex = 4;
@@ -395,7 +397,7 @@
             this._label_repeat_begin.Name = "_label_repeat_begin";
             this._label_repeat_begin.Size = new System.Drawing.Size(88, 19);
             this._label_repeat_begin.TabIndex = 29;
-            this._label_repeat_begin.Text = "REPE BEG";
+            this._label_repeat_begin.Text = "REPT BEG";
             // 
             // _label_repeat_end
             // 
@@ -407,7 +409,19 @@
             this._label_repeat_end.Name = "_label_repeat_end";
             this._label_repeat_end.Size = new System.Drawing.Size(89, 19);
             this._label_repeat_end.TabIndex = 30;
-            this._label_repeat_end.Text = "REPE END";
+            this._label_repeat_end.Text = "REPT END";
+            // 
+            // _label_midi_out
+            // 
+            this._label_midi_out.AutoSize = true;
+            this._label_midi_out.Font = new System.Drawing.Font("Meiryo UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this._label_midi_out.ForeColor = System.Drawing.Color.White;
+            this._label_midi_out.Location = new System.Drawing.Point(235, 271);
+            this._label_midi_out.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this._label_midi_out.Name = "_label_midi_out";
+            this._label_midi_out.Size = new System.Drawing.Size(90, 19);
+            this._label_midi_out.TabIndex = 33;
+            this._label_midi_out.Text = "MIDI OUT";
             // 
             // _numericupdown_repeat_begin
             // 
@@ -429,12 +443,24 @@
             this._numericupdown_repeat_end.TabIndex = 32;
             this._numericupdown_repeat_end.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
+            // _combobox_midi_out
+            // 
+            this._combobox_midi_out.Font = new System.Drawing.Font("Meiryo UI", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this._combobox_midi_out.FormattingEnabled = true;
+            this._combobox_midi_out.Location = new System.Drawing.Point(341, 260);
+            this._combobox_midi_out.Name = "_combobox_midi_out";
+            this._combobox_midi_out.Size = new System.Drawing.Size(433, 37);
+            this._combobox_midi_out.TabIndex = 34;
+            this._combobox_midi_out.SelectedIndexChanged += new System.EventHandler(this._combobox_midi_out_SelectedIndexChanged);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
             this.ClientSize = new System.Drawing.Size(945, 483);
+            this.Controls.Add(this._combobox_midi_out);
+            this.Controls.Add(this._label_midi_out);
             this.Controls.Add(this._numericupdown_repeat_end);
             this.Controls.Add(this._label_repeat_end);
             this.Controls.Add(this._label_repeat_begin);
@@ -508,8 +534,10 @@
         private System.Windows.Forms.Label _label_modulation_text;
         private System.Windows.Forms.Label _label_repeat_begin;
         private System.Windows.Forms.Label _label_repeat_end;
+        private System.Windows.Forms.Label _label_midi_out;
         private System.Windows.Forms.NumericUpDown _numericupdown_repeat_begin;
         private System.Windows.Forms.NumericUpDown _numericupdown_repeat_end;
+        private System.Windows.Forms.ComboBox _combobox_midi_out;
         private System.Windows.Forms.FolderBrowserDialog _folderbrowserdialog;
     }
 }
