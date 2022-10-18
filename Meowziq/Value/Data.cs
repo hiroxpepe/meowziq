@@ -510,10 +510,10 @@ namespace Meowziq.Value {
         /// converts the text mark to the note value.
         /// </summary>
         public static int ToGateValue(string target) {
-            //if (target.Equals(">")) { return 95 /*(int) (127 * 75 * 0.01f)*/; } // ≒95
-            //if (target.Equals("*")) { return 64 /*(int) (127 * 50 * 0.01f)*/; } // ≒64
-            //if (target.Equals("+")) { return 32 /*(int) (127 * 25 * 0.01f)*/; } // ≒32
-            return 30;//0; // FIXME: this value is tick!!!!!!
+            if (target.Equals(">")) { return 90; }
+            if (target.Equals("*")) { return 60; }
+            if (target.Equals("+")) { return 30; }
+            return 0;
         }
     }
 
