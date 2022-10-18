@@ -63,7 +63,7 @@ namespace Meowziq.Core {
                 char text = param.TextCharArray[I6beat_index.Idx];
                 if (param.IsMatch(text)) {
                     Span span = span_list[I6beat_index.SpanIndex]; // 16beat 4個で1拍進む
-                    int[] note_num_array = (new int[7]).Select(x => -1).ToArray();  // ノートNo 配列を -1 で初期化: 後ではじく為
+                    int[] note_num_array = (new int[7]).Select(selector: x => -1).ToArray();  // ノートNo 配列を -1 で初期化: 後ではじく為
                     if (param.IsNote) { // "note", "auto" 記述
                         note_num_array[0] = ToNote(
                             span.Key, span.Degree, span.KeyMode, span.SpanMode, text.Int32(), param.AutoNote
@@ -91,10 +91,12 @@ namespace Meowziq.Core {
                             gate.ApplyPre(pre_string: pre.ToString());
                         }
                     }
-                    if (param.Exp.HasPost) { // TODO: post設定があれば ロングノート
+                    if (param.Exp.HasPost) {
+                        // TODO: to a long note if has a post parameter.
                     }
                     int tick = gate.PreLength + start_tick + To16beatLength(I6beat_index.Idx);
-                    note_num_array.Where(x => x != -1).ToList().ForEach(x => 
+                    // adds a Note object to Item.
+                    note_num_array.Where(predicate: x => x != -1).ToList().ForEach(action: x => 
                         add(tick: tick, note: new Note(tick: tick, num: x + param.Interval, gate: gate.Value, velo: 104, pre_count: gate.PreCount))
                     );
                 }
@@ -110,7 +112,7 @@ namespace Meowziq.Core {
                 if (param.IsMatch(text)) {
                     Gete gate = new();
                     if (param.Exp.HasPre) { // pre設定があれば シンコペーション
-                        var pre = param.Exp.PreCharArray[I6beat_index.Idx];
+                        char pre = param.Exp.PreCharArray[I6beat_index.Idx];
                         if (param.Exp.IsMatchPre(pre)) {
                             gate.ApplyPre(pre_string: pre.ToString());
                         }
@@ -172,8 +174,8 @@ namespace Meowziq.Core {
         /// converts all notes into the specified range.
         /// </summary>
         int[] applyRange(int[] target, Range range) {
-            var new_array = new int[target.Length];
-            for (var index = 0; index < target.Length; index++) {
+            int[] new_array = new int[target.Length];
+            for (int index = 0; index < target.Length; index++) {
                 if (target[index] < range.Min) { new_array[index] = target[index] + 12; } 
                 else if (target[index] > range.Max) { new_array[index] = target[index] - 12; } 
                 else { new_array[index] = target[index]; }
@@ -318,6 +320,8 @@ namespace Meowziq.Core {
 
             int _index_for_16beat; // 16beatを4回数える用
 
+            int _index, _span_index;
+
             #endregion
 
             ///////////////////////////////////////////////////////////////////////////////////////////
@@ -326,7 +330,7 @@ namespace Meowziq.Core {
             public Index(int beat_count) {
                 _beat_count = beat_count;
                 _index_for_16beat = 0;
-                SpanIndex = 0;
+                _span_index = 0;
             }
 
             #endregion
@@ -338,13 +342,11 @@ namespace Meowziq.Core {
             /// 16beat の index 値
             /// </summary>
             public int Idx {
-                get;
-                private set;
+                get => _index;
             }
 
             public int SpanIndex {
-                get;
-                private set;
+                get => _span_index;
             }
 
             /// <summary>
@@ -352,7 +354,7 @@ namespace Meowziq.Core {
             /// </summary>
             public bool HasNext {
                 get {
-                    if (Idx < To16beatCount(_beat_count)) {
+                    if (_index < To16beatCount(_beat_count)) {
                         return true; // index 値がパターンの16beatの長さ以下なら true
                     }
                     return false;
@@ -365,11 +367,11 @@ namespace Meowziq.Core {
             #region public Methods [verb]
 
             public void Increment() {
-                Idx++; // increments 16 beats.
+                _index++; // increments 16 beats.
                 _index_for_16beat++; // 16beat のカウントをインクリメント
                 if (_index_for_16beat == 4) { // 4カウント溜まったら
                     _index_for_16beat = 0;
-                    SpanIndex++; // Span index をインクリメント MEMO: 1拍のこと
+                    _span_index++; // Span index をインクリメント MEMO: 1拍のこと
                 } // TODO: 必要なのは1小節をカウントすることとそのindex値
             }
 

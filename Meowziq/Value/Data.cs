@@ -379,7 +379,7 @@ namespace Meowziq.Value {
         }
 
         public Note(string text, int oct) {
-            Text = text;
+            _text = PhraseValue(target: text);
             _oct = oct;
         }
 
@@ -455,8 +455,8 @@ namespace Meowziq.Value {
         string _text;
 
         /// <memo>
-        /// + same concept as "chord" notated numbers.
-        ///     + how many chords?
+        /// + same concept as "chord" notated numbers. <br/>
+        ///     + how many chords? <br/>
         /// </memo>
         int _stack; // * before development.
 
@@ -513,7 +513,7 @@ namespace Meowziq.Value {
             //if (target.Equals(">")) { return 95 /*(int) (127 * 75 * 0.01f)*/; } // ≒95
             //if (target.Equals("*")) { return 64 /*(int) (127 * 50 * 0.01f)*/; } // ≒64
             //if (target.Equals("+")) { return 32 /*(int) (127 * 25 * 0.01f)*/; } // ≒32
-            return 30;//0;
+            return 30;//0; // FIXME: this value is tick!!!!!!
         }
     }
 

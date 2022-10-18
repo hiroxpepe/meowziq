@@ -36,18 +36,23 @@ namespace Meowziq.Midi {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
-        public Manager() {
+        Manager() {
             _out_device_name_list = MidiDevice.GetOutDeviceName();
-            _out_device = new OutputDevice(_out_device_id);
+            loadDevice();
+        }
+
+        /// <summary>
+        /// returns an initialized instance.
+        /// </summary>
+        public static Manager GetInstance() {
+            return new Manager();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjective] 
 
         public OutputDevice OutDevice {
-            get {
-                return _out_device;
-            }
+            get => _out_device;
         }
 
         public List<string> OutDeviceName {
@@ -55,7 +60,23 @@ namespace Meowziq.Midi {
         }
 
         public int OutDeviceId {
-            set => _out_device_id = value;
+            set { 
+                _out_device_id = value;
+                Log.Info($"midi # of devs: {_out_device_id}");
+                loadDevice();
+            }
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private Methods [verb]
+
+        void loadDevice() {
+            if (_out_device is not null) {
+                _out_device.Reset();
+                _out_device.Close();
+                _out_device.Dispose();
+            }
+            _out_device = new OutputDevice(_out_device_id);
         }
     }
 

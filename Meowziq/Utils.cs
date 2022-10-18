@@ -81,7 +81,7 @@ namespace Meowziq {
                 scale7 = scale7By(key: Key.Enum.Parse(degree_note), key_mode: mode); // そのルート音の旋法スケールを取得
             } else { // キーの旋法を自動判定してそちらから取得
                 Mode key_mode_current = ToKeyMode(key: key, degree: degree, key_mode: key_mode, span_mode: mode);
-                if (!key_mode_current.ToString().Equals("Undefined")) { // 旋法が判定出来れば
+                if (key_mode_current is not Mode.Undefined) { // 旋法が判定出来れば
                     scale7 = scale7By(key: key, key_mode: key_mode_current); // 判定した曲の旋法を取得
                 }
             }

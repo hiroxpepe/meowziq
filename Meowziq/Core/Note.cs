@@ -40,7 +40,6 @@ namespace Meowziq.Core {
             _gate = gate;
             _velo = velo;
             _pre_count = pre_count;
-            Log.Trace($"tick: {tick}");
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
