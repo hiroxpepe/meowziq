@@ -33,7 +33,7 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        string _type;
+        string _type, _name, _base;
 
         Data _data; // json から読み込んだデータを格納
 
@@ -61,16 +61,15 @@ namespace Meowziq.Core {
         }
 
         public string Name {
-            get; set;
+            get => _name; set => _name = value;
         }
 
         public string Base {
-            get; set;
+            get => _base; set => _base = value;
         }
 
         public Data Data {
-            get => _data;
-            set => _data = value;
+            get => _data; set => _data = value;
         }
 
         /// <summary>
@@ -78,14 +77,12 @@ namespace Meowziq.Core {
         /// </summary>
         public string Range {
             set {
-                if (value is null) {
-                    return;
-                }
-                var range_text = value;
+                if (value is null) { return; }
+                string range_text = value;
                 if (!range_text.Contains(":")) {
                     throw new ArgumentException("invalid range format.");
                 }
-                var range_array = range_text.Split(':');
+                string[] range_array = range_text.Split(':');
                 if (range_array.Length != 2) {
                     throw new ArgumentException("invalid range format.");
                 }
@@ -129,7 +126,7 @@ namespace Meowziq.Core {
                 if (!Type.ToLower().Contains("drum")) { // ドラム以外 TODO: これで良いか確認
                     optimize(); // 最適化する
                 }
-                return _note_item.SelectMany(x => x.Value).Select(x => x).ToList();
+                return _note_item.SelectMany(selector: x => x.Value).Select(selector: x => x).ToList(); // FIXME: 二重？
             }
         }
 
@@ -151,16 +148,16 @@ namespace Meowziq.Core {
         /// FIXME: バグあり ⇒ シンコペーションは小節の頭だけ許可する？
         /// </summary>
         public void RemoveBy(Note target) {
-            var tick1 = target.Tick;
-            var note_list1 = _note_item.Get(tick1);
-            note_list1 = note_list1.Where(x => !(!x.HasPre && x.Tick == tick1)).ToList(); // 優先ノートではなく tick が同じものを削除 // FIXME: ドラムは音毎？
-            _note_item.SetBy(tick1, note_list1);
+            int tick1 = target.Tick;
+            List<Note> note_list1 = _note_item.Get(key: tick1);
+            note_list1 = note_list1.Where(predicate: x => !(!x.HasPre && x.Tick == tick1)).ToList(); // 優先ノートではなく tick が同じものを削除 // FIXME: ドラムは音毎？
+            _note_item.SetBy(key: tick1, value: note_list1);
             if (target.PreCount > 1) { // さらにシンコぺの設定値が2の場合
-                var tick2 = target.Tick + Length.Of16beat.Int32();
-                var note_list2 = _note_item.Get(tick2);
+                int tick2 = target.Tick + Length.Of16beat.Int32();
+                List<Note> note_list2 = _note_item.Get(tick2);
                 if (note_list2 != null) {
                     note_list2 = note_list2.Where(x => !(!x.HasPre && x.Tick == tick2)).ToList(); // さらに被る16音符を削除
-                    _note_item.SetBy(tick2, note_list2);
+                    _note_item.SetBy(key: tick2, value: note_list2);
                 }
             }
         }
@@ -172,8 +169,8 @@ namespace Meowziq.Core {
         /// Note データを生成します
         /// </summary>
         protected void onBuild(int tick, Pattern pattern) {
-            var generator = Generator.GetInstance(note_item: _note_item);
-            var data_type = defineDataType();
+            Generator generator = Generator.GetInstance(note_item: _note_item);
+            DataType data_type = defineDataType();
             switch (data_type) {
                 case DataType.Mono:
                     {
@@ -188,8 +185,8 @@ namespace Meowziq.Core {
                     }
                     break;
                 case DataType.Multi:
-                    var string_array = _data.Auto ? _data.AutoArray : _data.NoteArray;
-                    for (var index = 0; index < string_array.Length; index++) {
+                    string[] string_array = _data.Auto ? _data.AutoArray : _data.NoteArray;
+                    for (int index = 0; index < string_array.Length; index++) {
                         Param param = new(
                             note: new Value.Note(string_array[index], _data.OctArray[index]),
                             exp: new Value.Exp(_data.PreArray[index], _data.PostArray[index]),
@@ -236,9 +233,9 @@ namespace Meowziq.Core {
         /// + current の シンコペ Note <= 判定済み
         /// </memo_jp>
         void optimize() {
-            var note_list = _note_item.SelectMany(x => x.Value).Select(x => x).ToList();
-            foreach (var stop_note in note_list.Where(x => x.HasPre)) { // 優先ノートのリスト
-                foreach (var note in note_list) { // このフレーズの全てのノートの中で
+            List<Note> note_list = _note_item.SelectMany(x => x.Value).Select(x => x).ToList(); // ??? 二重？
+            foreach (Note stop_note in note_list.Where(x => x.HasPre)) { // 優先ノートのリスト
+                foreach (Note note in note_list) { // このフレーズの全てのノートの中で
                     if (note.Tick == stop_note.Tick) { // 優先ノートと発音タイミングがかぶったら
                         RemoveBy(note); // ノートを削除
                     }

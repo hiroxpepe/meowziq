@@ -16,7 +16,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace Meowziq.View {
+namespace Meowziq.Win64 {
     /// <summary>
     /// the application.
     /// </summary>
@@ -29,7 +29,7 @@ namespace Meowziq.View {
         static void Main() {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FormMain());
+            Application.Run(new MainForm());
         }
     }
 }

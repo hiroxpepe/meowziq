@@ -30,7 +30,7 @@ using Meowziq.Midi;
 using static Meowziq.Env;
 using static Meowziq.Utils;
 
-namespace Meowziq.View {
+namespace Meowziq.Win64 {
     /// <summary>
     /// main form of the application.
     /// </summary>
@@ -38,7 +38,7 @@ namespace Meowziq.View {
     /// exclusive control.
     /// </todo>
     /// <author>h.adachi (STUDIO MeowToon)</author>
-    public partial class FormMain : Form {
+    public partial class MainForm : Form {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
@@ -52,9 +52,12 @@ namespace Meowziq.View {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
-        public FormMain() {
+        public MainForm() {
+            const int MIDI_OUT_DEFAULT = 0;
             InitializeComponent();
-            _midi = new(); // creates a midi manager class.
+            _midi = Manager.GetInstance(); // creates a midi manager class.
+            _midi.OutDeviceName.ForEach(action: x => _combobox_midi_out.Items.Add(item: x));
+            _combobox_midi_out.SelectedIndex = MIDI_OUT_DEFAULT;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -138,6 +141,19 @@ namespace Meowziq.View {
         }
 
         /// <summary>
+        /// selects MIDI output device.
+        /// </summary>
+        private void _combobox_midi_out_SelectedIndexChanged(object sender, EventArgs e) {
+            try {
+                _midi.OutDeviceId = _combobox_midi_out.SelectedIndex;
+            }
+            catch (Exception ex) {
+                MessageBox.Show(text: ex.Message, caption: "Error", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Stop);
+                Log.Error(ex.Message);
+            }
+        }
+
+        /// <summary>
         /// throws MIDI data to the device.
         /// </summary>
         /// <remarks>
@@ -162,7 +178,7 @@ namespace Meowziq.View {
                     }); // MEMO: Parallel.ForEach was slow.
                     list.ForEach(action: x => {
                         if (x.MidiChannel != 9 && x.MidiChannel != 1) { // FIXME: exclude sequences is provisional.
-                            _piano_control.Send(message: x); // shows in piano roll except for drums.
+                            _pianocontrol.Send(message: x); // shows in piano roll except for drums.
                         }
                         if (x.MidiChannel == 2) {
                             //Log.Trace($"Data1: {x.Data1} Data2: {x.Data2}");
@@ -404,7 +420,7 @@ namespace Meowziq.View {
         MethodInvoker resetDisplay() {
             return () => {
                 Enumerable.Range(start: 0, count: 88).ToList().ForEach(
-                    action: x => _piano_control.Send(message: new ChannelMessage(command: ChannelCommand.NoteOff, midiChannel: 1, data1: x, data2: 0))
+                    action: x => _pianocontrol.Send(message: new ChannelMessage(command: ChannelCommand.NoteOff, midiChannel: 1, data1: x, data2: 0))
                 );
                 _label_play.ForeColor = _label_modulation.ForeColor = DimGray;
                 _textbox_beat.Text = _textbox_meas.Text = "0";

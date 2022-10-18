@@ -214,6 +214,12 @@ namespace Meowziq.Core {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Fields
 
+            string _type, _name;
+
+            int _program_num, _player_program_num, _vol;
+
+            Pan _pan;
+
             bool _mute = false;
 
             ///////////////////////////////////////////////////////////////////////////////////////////
@@ -223,36 +229,36 @@ namespace Meowziq.Core {
             /// NOTE: Player と紐づけ
             /// </summary>
             public string Type {
-                get; set;
+                get => _type; set => _type = value;
             }
 
             /// <summary>
             /// NOTE: Pattern と紐づけ
             /// </summary>
             public string Name {
-                get; set;
+                get => _name; set => _name = value;
             }
 
             /// <summary>
             /// NOTE: mixer.json に設定された値
             /// </summary>
             public int ProgramNum {
-                get; set;
+                get => _program_num; set => _program_num = value;
             }
 
             /// <summary>
             /// NOTE: player.json に設定された値
             /// </summary>
             public int PlayerProgramNum {
-                get; set;
+                get => _player_program_num; set => _player_program_num = value;
             }
 
             public int Vol {
-                get; set;
+                get => _vol; set => _vol = value;
             }
 
             public Pan Pan {
-                get; set;
+                get => _pan; set => _pan = value;
             }
 
             public bool Mute {
@@ -264,25 +270,25 @@ namespace Meowziq.Core {
 
             public static Fader NoVaule(string type) {
                 return new Fader() {
-                    Type = type,
-                    Name = "undefined",
-                    ProgramNum = -1,
-                    PlayerProgramNum = -1,
-                    Vol = -1,
-                    Pan = Pan.Undefined,
-                    Mute = false
+                    _type = type,
+                    _name = "undefined",
+                    _program_num = -1,
+                    _player_program_num = -1,
+                    _vol = -1,
+                    _pan = Pan.Undefined,
+                    _mute = false
                 };
             }
 
             public static Fader Default(string type) {
                 return new Fader() {
-                    Type = type,
-                    Name = "default",
-                    ProgramNum = -1,
-                    PlayerProgramNum = -1,
-                    Vol = 100,
-                    Pan = Pan.Center,
-                    Mute = false
+                    _type = type,
+                    _name = "default",
+                    _program_num = -1,
+                    _player_program_num = -1,
+                    _vol = 100,
+                    _pan = Pan.Center,
+                    _mute = false
                 };
             }
         }
