@@ -1,5 +1,5 @@
-﻿namespace Meowziq.View {
-    partial class FormMain {
+﻿namespace Meowziq.Win64 {
+    partial class MainForm {
         /// <summary>
         /// 必要なデザイナー変数です。
         /// </summary>
@@ -25,7 +25,7 @@
         private void InitializeComponent() {
             this._sequence = new Sanford.Multimedia.Midi.Sequence();
             this._sequencer = new Sanford.Multimedia.Midi.Sequencer();
-            this._piano_control = new Sanford.Multimedia.Midi.UI.PianoControl();
+            this._pianocontrol = new Sanford.Multimedia.Midi.UI.PianoControl();
             this._button_play = new System.Windows.Forms.Button();
             this._button_stop = new System.Windows.Forms.Button();
             this._button_load = new System.Windows.Forms.Button();
@@ -71,17 +71,17 @@
             this._sequencer.Sequence = this._sequence;
             this._sequencer.ChannelMessagePlayed += new System.EventHandler<Sanford.Multimedia.Midi.ChannelMessageEventArgs>(this.sequencer_ChannelMessagePlayed);
             // 
-            // _piano_control
+            // _pianocontrol
             // 
-            this._piano_control.HighNoteID = 109;
-            this._piano_control.Location = new System.Drawing.Point(15, 322);
-            this._piano_control.LowNoteID = 21;
-            this._piano_control.Name = "_piano_control";
-            this._piano_control.NoteOnColor = System.Drawing.Color.SkyBlue;
-            this._piano_control.Size = new System.Drawing.Size(915, 140);
-            this._piano_control.TabIndex = 4;
-            this._piano_control.TabStop = false;
-            this._piano_control.Text = "pianoControl";
+            this._pianocontrol.HighNoteID = 109;
+            this._pianocontrol.Location = new System.Drawing.Point(15, 322);
+            this._pianocontrol.LowNoteID = 21;
+            this._pianocontrol.Name = "_piano_control";
+            this._pianocontrol.NoteOnColor = System.Drawing.Color.SkyBlue;
+            this._pianocontrol.Size = new System.Drawing.Size(915, 140);
+            this._pianocontrol.TabIndex = 4;
+            this._pianocontrol.TabStop = false;
+            this._pianocontrol.Text = "pianoControl";
             // 
             // _button_play
             // 
@@ -429,7 +429,7 @@
             this._numericupdown_repeat_end.TabIndex = 32;
             this._numericupdown_repeat_end.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
-            // FormMain
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -439,7 +439,7 @@
             this.Controls.Add(this._label_repeat_end);
             this.Controls.Add(this._label_repeat_begin);
             this.Controls.Add(this._numericupdown_repeat_begin);
-            this.Controls.Add(this._piano_control);
+            this.Controls.Add(this._pianocontrol);
             this.Controls.Add(this._label_modulation_text);
             this.Controls.Add(this._label_modulation);
             this.Controls.Add(this._label_mode);
@@ -466,7 +466,7 @@
             this.Controls.Add(this._button_load);
             this.Controls.Add(this._button_stop);
             this.Controls.Add(this._button_play);
-            this.Name = "FormMain";
+            this.Name = "MainForm";
             this.Text = "© STUDIO MeowToon";
             ((System.ComponentModel.ISupportInitialize)(this._numericupdown_repeat_begin)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this._numericupdown_repeat_end)).EndInit();
@@ -479,7 +479,7 @@
 
         private Sanford.Multimedia.Midi.Sequence _sequence;
         private Sanford.Multimedia.Midi.Sequencer _sequencer;
-        private Sanford.Multimedia.Midi.UI.PianoControl _piano_control;
+        private Sanford.Multimedia.Midi.UI.PianoControl _pianocontrol;
         private System.Windows.Forms.Button _button_play;
         private System.Windows.Forms.Button _button_stop;
         private System.Windows.Forms.Button _button_load;
