@@ -75,13 +75,11 @@ namespace Meowziq.Core {
         }
 
         public string Type {
-            get => _type;
-            set => _type = value;
+            get => _type; set => _type = value;
         }
 
         public List<Phrase> PhraseList {
-            get => _phrase_list;
-            set => _phrase_list = value;
+            get => _phrase_list; set => _phrase_list = value;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
