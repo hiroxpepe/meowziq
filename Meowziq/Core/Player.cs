@@ -26,13 +26,13 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        Song _song;
-
-        List<Phrase> _phrase_list;
+        string _instrument_name, _type;
 
         int _midi_ch, _program_num;
 
-        string _instrument_name, _type;
+        Song _song;
+
+        List<Phrase> _phrase_list;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
@@ -44,8 +44,8 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjective] 
 
-        public Song Song {
-            set => _song = value;
+        public string Type {
+            get => _type; set => _type = value;
         }
 
         public MidiChannel MidiCh {
@@ -66,8 +66,8 @@ namespace Meowziq.Core {
             }
         }
 
-        public string Type {
-            get => _type; set => _type = value;
+        public Song Song {
+            set => _song = value;
         }
 
         public List<Phrase> PhraseList {

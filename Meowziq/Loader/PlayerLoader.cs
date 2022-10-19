@@ -62,10 +62,12 @@ namespace Meowziq.Loader {
         static Core.Player<T> convertPlayer(Player player) {
             Core.Player<T> new_player = new();
             new_player.MidiCh = MidiChannel.Enum.Parse(player.Midi);
-            if (int.Parse(player.Midi) == MIDI_CH_DRUM) { // FIXME: enables drums other than 10ch.
-                new_player.DrumKit = DrumKit.Enum.Parse(player.Inst);
-            } else {
-                new_player.Instrument = Instrument.Enum.Parse(player.Inst);
+            if (player.Inst is not null) { // FIXME: checks for presence of mixer.json.
+                if (int.Parse(player.Midi) == MIDI_CH_DRUM) { // FIXME: enables drums other than 10ch.
+                    new_player.DrumKit = DrumKit.Enum.Parse(player.Inst);
+                } else {
+                    new_player.Instrument = Instrument.Enum.Parse(player.Inst);
+                }
             }
             new_player.Type = player.Type;
             new_player.PhraseList = _phrase_list.Where(predicate: x => x.Type.Equals(new_player.Type)).ToList(); // matched the type of Player and Phrase. 

@@ -60,12 +60,12 @@ namespace Meowziq.Core {
             get => _name; set => _name = value;
         }
 
-        public string Base {
-            get => _base; set => _base = value;
-        }
-
         public Data Data {
             get => _data; set => _data = value;
+        }
+
+        public string Base {
+            get => _base; set => _base = value;
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// returns the number of beats in the phrase.
+        /// gets the number of beats in the phrase.
         /// </summary>
         /// <remarks>
         /// not used yet.

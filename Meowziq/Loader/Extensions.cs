@@ -27,7 +27,6 @@ namespace Meowziq.Loader {
         /// </summary>
         internal static int GetBeatLength(this string source) {
             const int MEAS_TO_BEAT = 4;
-            //int length = source.Replace("][", "@").Split('@').Select(selector: x => x.Replace("[", string.Empty).Replace("]", string.Empty)).ToArray().Length;
             int length = GetMeasStringArray(source: source).Length;
             return length * MEAS_TO_BEAT;
         }
