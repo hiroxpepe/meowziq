@@ -23,6 +23,7 @@ namespace Meowziq {
 
         public static readonly int MIDI_TRACK_BASE = 0;
         public static readonly int MIDI_TRACK_COUNT = 16;
+        public static readonly int MIDI_CH_DRUM = 9;
 
         /// <summary>
         /// tick interval of the sequencer.
@@ -33,9 +34,13 @@ namespace Meowziq {
         /// </summary>
         public static readonly int NOTE_RESOLUTION = 480;
         /// <summary>
+        /// beat count in 1 measure.
+        /// </summary>
+        public static readonly int BEAT_COUNT_IN_MEASURE = 4;
+        /// <summary>
         /// 1 measure consists of 4 beats.
         /// </summary>
-        public static readonly int TO_MEASURE = 4;
+        public static readonly int TIMES_TO_MEASURE = 4;
         /// <summary>
         /// set it to 4 can change every 1 measure. <br/>
         /// also set it to 1 can change every 1 beat. 

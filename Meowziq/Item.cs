@@ -21,7 +21,7 @@ namespace Meowziq {
     /// name of Dictionary is too long, it be named Map.
     /// </summary>
     /// <note>
-    /// used in the Meowziq namespace.
+    /// + used in the Meowziq namespace. <br/>
     /// </note>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Map<K, V> : Dictionary<K, V> {
@@ -43,15 +43,16 @@ namespace Meowziq {
     public delegate void Changed(object sender, EvtArgs e);
 
     /// <summary>
-    /// the item class.
+    /// item class.
     /// </summary>
     /// <note>
-    /// Map(Dictionary) class that can take out from the key of the value only once.
-    /// </note>
-    /// <note>
-    /// used in the Meowziq namespace.
+    /// + Map(Dictionary) class that can take out from the key of the value only once. <br/>
+    /// + used in the Meowziq namespace. <br/>
     /// </note>
     public class Item<T> : Map<int, List<T>> {
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Fields
 
         /// <summary>
         /// hasset for whether the key was added.
@@ -78,19 +79,19 @@ namespace Meowziq {
         /// adds the value of the key to list.
         /// </summary>
         public void Add(int key, T value) {
-            /// <remarks>
+            /// <note>
             /// creates a new list if this does not have a key. <br/>
             /// adds the value to the list and adds as new to this.
-            /// </remarks>
+            /// </note>
             if (!ContainsKey(key)) {
                 List<T> new_list = new();
                 new_list.Add(value);
                 Add(key, new_list);
             }
-            /// <remarks>
+            /// <note>
             /// gets the list of the key from this. <br/>
             /// adds the value to list.
-            /// </remarks>
+            /// </note>
             else {
                 List<T> list = this[key];
                 list.Add(value);
@@ -101,15 +102,15 @@ namespace Meowziq {
         /// returns the value of the key.
         /// </summary>
         public List<T> Get(int key) {
-            /// <remarks>
+            /// <note>
             /// returns null if the key does not exist.
-            /// </remarks>
+            /// </note>
             if (!ContainsKey(key)) {
                 return null;
             }
-            /// <remarks>
+            /// <note>
             /// returns the value of the key.
-            /// </remarks>
+            /// </note>
             return this[key];
         }
 
@@ -117,22 +118,22 @@ namespace Meowziq {
         /// returns the value of the key only once.
         /// </summary>
         public List<T> GetOnce(int key) {
-            /// <remarks>
+            /// <note>
             /// adds the key to hashset for whether the key was taken out. <br/>
             /// if the return value is false, already being taken out once, so return null.
-            /// </remarks>
+            /// </note>
             if (!_take_out_hashset.Add(key)) {
                 return null;
             }
-            /// <remarks>
+            /// <note>
             /// returns null if the key does not exist.
-            /// </remarks>
+            /// </note>
             if (!ContainsKey(key)) {
                 return null;
             }
-            /// <remarks>
+            /// <note>
             /// first time returns the value of the key.
-            /// </remarks>
+            /// </note>
             /// <todo>
             /// needs a sorting parameter, such as drums first and melody later?
             /// </todo>
@@ -154,9 +155,9 @@ namespace Meowziq {
         /// what about duplicate keys?
         /// </todo>
         public new void Add(int key, List<T> value) {
-            /// <remarks>
+            /// <note>
             /// adds the added key to hashset.
-            /// </remarks>
+            /// </note>
             _to_add_hashset.Add(key);
             base.Add(key, value);
         }
@@ -165,9 +166,9 @@ namespace Meowziq {
         /// returns true if the key exists, false otherwise.
         /// </summary>
         public new bool ContainsKey(int key) {
-            /// <remarks>
+            /// <note>
             /// HashSet.Contains() is fast.
-            /// </remarks>
+            /// </note>
             return _to_add_hashset.Contains(key);
         }
 

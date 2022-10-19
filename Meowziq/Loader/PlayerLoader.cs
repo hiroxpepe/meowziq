@@ -21,6 +21,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 
 using Meowziq.Core;
+using static Meowziq.Env;
 
 namespace Meowziq.Loader {
     /// <summary>
@@ -45,29 +46,31 @@ namespace Meowziq.Loader {
         // public static Methods [verb]
 
         /// <summary>
-        /// creates a list of players.
+        /// creates a list of Core.Player objects.
         /// </summary>
         public static List<Core.Player<T>> Build(Stream target) {
             if (_phrase_list is null) { throw new ArgumentException("need _phrase_list."); }
-            /// <remarks>
-            /// converts to a list of Core.Player.
-            /// </remarks>
             return loadJson(target).PlayerArray.Select(x => convertPlayer(x)).ToList();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private static Methods [verb]
 
+        /// <summary>
+        /// converts a Player object to a Core.Player object.
+        /// </summary>
         static Core.Player<T> convertPlayer(Player player) {
             Core.Player<T> new_player = new();
             new_player.MidiCh = MidiChannel.Enum.Parse(player.Midi);
-            if (int.Parse(player.Midi) is 9) { // FIXME: 10ch 以外のドラムを可能にする
-                new_player.DrumKit = DrumKit.Enum.Parse(player.Inst); // FIXME: 設定が違う場合
-            } else {
-                new_player.Instrument = Instrument.Enum.Parse(player.Inst); // FIXME: 設定が違う場合
+            if (player.Inst is not null) { // FIXME: checks for presence of mixer.json.
+                if (int.Parse(player.Midi) == MIDI_CH_DRUM) { // FIXME: enables drums other than 10ch.
+                    new_player.DrumKit = DrumKit.Enum.Parse(player.Inst);
+                } else {
+                    new_player.Instrument = Instrument.Enum.Parse(player.Inst);
+                }
             }
             new_player.Type = player.Type;
-            new_player.PhraseList = _phrase_list.Where(x => x.Type.Equals(new_player.Type)).ToList(); // Player と Phrase の type が一致したら
+            new_player.PhraseList = _phrase_list.Where(predicate: x => x.Type.Equals(new_player.Type)).ToList(); // matched the type of Player and Phrase. 
             return new_player;
         }
 

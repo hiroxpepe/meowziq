@@ -22,7 +22,7 @@ namespace Meowziq.Loader {
     /// <summary>
     /// loader class for Mixer object.
     /// </summary>
-   /// <author>h.adachi (STUDIO MeowToon)</author>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class MixerLoader<T> {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,7 +57,7 @@ namespace Meowziq.Loader {
         }
 
         /// <summary>
-        /// whether it is a drum instrument.
+        /// gets whether it is a drum instrument.
         /// </summary>
         static bool drumInst(string target) {
             return (target.Equals("Standard") || target.Equals("Room") || target.Equals("Power") ||

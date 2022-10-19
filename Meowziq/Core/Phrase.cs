@@ -21,12 +21,8 @@ using Meowziq.Value;
 
 namespace Meowziq.Core {
     /// <summary>
-    /// Phrase クラス
+    /// phrase class
     /// </summary>
-    /// <note>
-    /// + キーと旋法は外部から与えられる
-    /// + Note オブジェクトのリストを管理する
-    /// </note>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Phrase {
 
@@ -64,12 +60,12 @@ namespace Meowziq.Core {
             get => _name; set => _name = value;
         }
 
-        public string Base {
-            get => _base; set => _base = value;
-        }
-
         public Data Data {
             get => _data; set => _data = value;
+        }
+
+        public string Base {
+            get => _base; set => _base = value;
         }
 
         /// <summary>
@@ -101,7 +97,7 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// returns the number of beats in the phrase.
+        /// gets the number of beats in the phrase.
         /// </summary>
         /// <remarks>
         /// not used yet.
@@ -166,7 +162,7 @@ namespace Meowziq.Core {
         // protected Methods [verb]
 
         /// <summary>
-        /// Note データを生成します
+        /// creates Note objects by executing the appropriate method of the Generator object.
         /// </summary>
         protected void onBuild(int tick, Pattern pattern) {
             Generator generator = Generator.GetInstance(note_item: _note_item);

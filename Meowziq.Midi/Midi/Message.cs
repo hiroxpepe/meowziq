@@ -26,7 +26,7 @@ namespace Meowziq.Midi {
     /// message class using Sanford.Multimedia.Midi
     /// </summary>
     /// <fixme>
-    /// relies on abstraction instead of ChannelMessage.
+    /// + relies on abstraction instead of ChannelMessage. <br/>
     /// </fixme>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Message {
@@ -52,10 +52,10 @@ namespace Meowziq.Midi {
         /// <summary>
         /// returns the list of ChannelMessages for the argument tick.
         /// </summary>
-        /// <remarks>
-        /// returns null if the list does not exist.<br/>
-        /// run in "Prime" start.
-        /// </remarks>
+        /// <note>
+        /// + returns null if the list does not exist. <br/>
+        /// + run in "Prime" start. <br/>
+        /// </note>
         public static List<ChannelMessage> GetBy(int tick) {
             if (_flag) {
                 return Prime.Item.Get(key: tick); // TODO: checks for problems.
@@ -67,9 +67,9 @@ namespace Meowziq.Midi {
         /// <summary>
         /// whether has the item with the argument tick.
         /// </summary>
-        /// <remarks>
-        /// run in "Prime" start.
-        /// </remarks>
+        /// <note>
+        /// + run in "Prime" start. <br/>
+        /// </note>
         public static bool Has(int tick) {
             if (_flag) {
                 return Prime.Item.Select(x => x.Key).Max() > tick;
@@ -107,9 +107,9 @@ namespace Meowziq.Midi {
         /// <summary>
         /// applies program_num as ChannelMessage.
         /// </summary>
-        /// <remarks>
-        /// program change.
-        /// </remarks> 
+        /// <note>
+        /// + program change. <br/>
+        /// </note> 
         public static void ApplyProgramChange(int tick, int midi_ch, int program_num ) {
             add(tick: tick, message: new ChannelMessage(ChannelCommand.ProgramChange, midi_ch, program_num, 127));
         }
@@ -141,9 +141,9 @@ namespace Meowziq.Midi {
         /// <summary>
         /// applies note as ChannelMessage.
         /// </summary>
-        /// <remarks>
-        /// run in "Second" start.
-        /// </remarks>
+        /// <note>
+        /// + run in "Second" start. <br/>
+        /// </note>
         public static void ApplyNote(int tick, int midi_ch, Note note) {
             if (!_flag) {
                 if (note.HasPre) { // note has priority pronunciation,
@@ -194,9 +194,9 @@ namespace Meowziq.Midi {
         /// <summary>
         /// adds a ChannelMessage to the list.
         /// </summary>
-        /// <remarks>
-        /// run in "Second" start.
-        /// </remarks>
+        /// <note>
+        /// + run in "Second" start. <br/>
+        /// </note>
         static void add(int tick, ChannelMessage message) {
             if (!_flag) {
                 Prime.Item.Add(tick, message);
@@ -235,26 +235,24 @@ namespace Meowziq.Midi {
             /// <summary>
             /// array for note forced stop.
             /// </summary>
-            static HashSet<int>[] _all_note_off_to_add_array = new HashSet<int>[16];
+            static HashSet<int>[] _all_note_off_to_add_array = new HashSet<int>[MIDI_TRACK_COUNT];
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Constructor
 
             static Prime() {
-                _all_note_off_to_add_array = _all_note_off_to_add_array.Select(x => x = new HashSet<int>()).ToArray();
+                _all_note_off_to_add_array = _all_note_off_to_add_array.Select(selector: x => x = new()).ToArray();
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Properties [noun, adjective] 
 
             public static Item<ChannelMessage> Item {
-                get => _item;
-                set => _item = value;
+                get => _item; set => _item = value;
             }
 
             public static HashSet<int>[] AllNoteOffToAddArray {
-                get => _all_note_off_to_add_array;
-                set => _all_note_off_to_add_array = value;
+                get => _all_note_off_to_add_array; set => _all_note_off_to_add_array = value;
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
@@ -279,26 +277,24 @@ namespace Meowziq.Midi {
             /// <summary>
             /// array for note forced stop.
             /// </summary>
-            static HashSet<int>[] _all_note_off_to_add_array = new HashSet<int>[16];
+            static HashSet<int>[] _all_note_off_to_add_array = new HashSet<int>[MIDI_TRACK_COUNT];
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Constructor
 
             static Second() {
-                _all_note_off_to_add_array = _all_note_off_to_add_array.Select(x => x = new HashSet<int>()).ToArray();
+                _all_note_off_to_add_array = _all_note_off_to_add_array.Select(selector: x => x = new()).ToArray();
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Properties [noun, adjective] 
 
             public static Item<ChannelMessage> Item {
-                get => _item;
-                set => _item = value;
+                get => _item; set => _item = value;
             }
 
             public static HashSet<int>[] AllNoteOffToAddArray {
-                get => _all_note_off_to_add_array;
-                set => _all_note_off_to_add_array = value;
+                get => _all_note_off_to_add_array; set => _all_note_off_to_add_array = value;
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////

@@ -45,33 +45,33 @@ namespace Meowziq.Loader {
         // public static Methods [verb]
 
         /// <summary>
-        /// creates a song.
+        /// creates a Core.Song object.
         /// </summary>
         public static Core.Song Build(Stream target) {
             if (_pattern_list is null) { throw new ArgumentException("need _pattern_list."); }
             Song song = loadJson(target).Song;
-            List<Core.Section> section_list = song.Section.Select(x =>
+            List<Core.Section> section_list = song.Section.Select(selector: x =>
                 new Core.Section(
-                    Key.Enum.Parse(x.Key),
-                    Mode.Enum.Parse(x.Mode),
-                    x.PatternArray.Select(_x => searchPattern(_x)).ToList()
+                    key: Key.Enum.Parse(x.Key),
+                    key_mode: Mode.Enum.Parse(x.Mode),
+                    pattern_list: x.PatternArray.Select(selector: _x => searchPattern(pattern_name: _x)).ToList()
             )).ToList();
             return new Core.Song(
-                song.Name,
-                int.Parse(song.Tempo),
-                section_list
+                name: song.Name,
+                tempo: int.Parse(song.Tempo),
+                section_list: section_list
             );
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private static Methods [verb]
 
+        /// <summary>
+        /// searches the Pattern object.
+        /// </summary>
         static Pattern searchPattern(string pattern_name) {
             try {
-                /// <remarks>
-                /// first element with matching name.
-                /// </remarks>
-                return _pattern_list.Where(predicate: x => x.Name.Equals(pattern_name)).First();
+                return _pattern_list.Where(predicate: x => x.Name.Equals(pattern_name)).First(); // first element with matching name.
             } catch {
                 throw new ArgumentException("undefined pattern.");
             }

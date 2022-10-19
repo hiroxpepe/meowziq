@@ -59,21 +59,21 @@ namespace Meowziq {
         ///     Span に旋法なし：キーの旋法と度数から旋法に対応したその度数の旋法を取得
         ///     Span に旋法あり：Span に設定した旋法を使用
         /// </summary>
-        public static int[] ToNoteArray(Key key, Degree degree, Mode key_mode, Mode span_mode, int index) {
+        public static int[] ToNoteArray(Key key, Degree degree, Mode key_mode, Mode span_mode, int number) {
             int degree_note = rootNoteBy(key: key, degree: degree, key_mode: key_mode); // 曲のキーの度数と旋法から度数のルート音を取得
             Mode mode = span_mode is Mode.Undefined ? spanModeBy(degree: degree, key_mode: key_mode) : span_mode; // Span に旋法がなければ自動旋法
             int[] scale7 = scale7By(key: Key.Enum.Parse(degree_note), key_mode: mode); // そのルート音の旋法スケールを取得
-            return noteArrayBy(index: index, scale7: scale7); // 旋法スケールから引数indexに対応したコード構成音の配列を返す
+            return noteArrayBy(number: number, scale7: scale7); // 旋法スケールから引数indexに対応したコード構成音の配列を返す
         }
 
         /// <summary>
-        /// 1～7の Phrase ノート記法から Note No を取得します
+        /// 1～7の Phrase ノート記法から Note No を取得します 1～7の数値が index
         /// ※ "auto": 自動的に旋法を決定、Span の旋法両対応
         ///     Span に旋法なし：キーの旋法と度数から旋法に対応したその度数の旋法を取得
         ///     Span に旋法あり：Span に設定した旋法を使用
         /// ※ "note": キーの旋法を自動判定し、その旋法の ノート記法の対応 Note No を返す
         /// </summary>
-        public static int ToNote(Key key, Degree degree, Mode key_mode, Mode span_mode, int index, bool auto_note = true) {
+        public static int ToNote(Key key, Degree degree, Mode key_mode, Mode span_mode, int number, bool auto_note = true) {
             int degree_note = rootNoteBy(key: key, degree: degree, key_mode: key_mode); // 曲のキーの度数と旋法から度数のルート音を取得
             Mode mode = span_mode is Mode.Undefined ? spanModeBy(degree: degree, key_mode: key_mode) : span_mode; // Span に旋法がなければ自動旋法
             int[] scale7 = null;
@@ -85,7 +85,7 @@ namespace Meowziq {
                     scale7 = scale7By(key: key, key_mode: key_mode_current); // 判定した曲の旋法を取得
                 }
             }
-            return scale7[index - 1]; // 0基底のスケール配列から引数添え字のノートを返す
+            return scale7[number - 1]; // 0基底のスケール配列から引数添え字のノートを返す
         }
 
         /// <summary>
@@ -175,12 +175,12 @@ namespace Meowziq {
         /// <summary>
         /// 1～9のコード記法から Note No の配列を返します
         /// </summary>
-        static int[] noteArrayBy(int index, int[] scale7) {
+        static int[] noteArrayBy(int number, int[] scale7) {
             // TODO: validate
             int[] note2 = new int[2]; // extracts two notes as chord notes from scale notes.
             int[] note3 = new int[3]; // extracts three notes as chord notes from scale notes.
             int[] note4 = new int[4]; // extracts four notes as chord notes from scale notes.
-            switch (index) {
+            switch (number) {
                 // FIXME: index = 2.
                 case 3: // e.g. C, Cm, Cm(b5)
                     note3[0] = scale7[1 - 1];
@@ -783,7 +783,7 @@ namespace Meowziq {
             int[] key_scale = scale7By(key: key, key_mode: key_mode); // キーの旋法でスケールを取得
             int degree_note = key_scale[(int) degree]; // そのスケールの度数の音を取得
             int[] scale7 = scale7By(key: Key.Enum.Parse(degree_note), key_mode: mode); // その音のこの旋法でのスケールを取得
-            int[] note_array3 = noteArrayBy(index: 3, scale7: scale7); // スケールから3和音を取得
+            int[] note_array3 = noteArrayBy(number: 3, scale7: scale7); // スケールから3和音を取得
             int random = _random.Next(minValue: 0, maxValue: 3); // ランダム値作成: 0 から 2 // FIXME:
             return note_array3[random]; // そのスケールの3音のどれかを取得
         }

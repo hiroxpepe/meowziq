@@ -14,16 +14,11 @@
  */
 
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Meowziq.Core {
     /// <summary>
-    /// Song クラス
+    /// song class
     /// </summary>
-    /// <note>
-    /// + Pattern のオブジェクトのリストを管理する
-    /// + フリジアンやロクリアンの調性感というより上5度転調、下4度転調の概念を取り入れる
-    /// </note>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Song {
 
@@ -49,63 +44,60 @@ namespace Meowziq.Core {
         // Properties [noun, adjective] 
 
         /// <summary>
-        /// 曲の名前
+        /// gets the song name.
         /// </summary>
         public string Name {
             get => _name;
         }
 
         /// <summary>
-        /// 曲のテンポ
+        /// gets the song tempo.
         /// </summary>
         public int Tempo {
             get => _tempo;
         }
 
         /// <summary>
-        /// 全ての Pattern
+        /// gets all Section objects.
+        /// </summary>
+        public List<Section> AllSection {
+            get => _section_list;
+        }
+
+        /// <summary>
+        /// gets all Pattern objects.
         /// </summary>
         public List<Pattern> AllPattern {
             get {
                 List<Pattern> new_pattern_list = new();
-                _section_list.ForEach(x => x.AllPattern.ForEach(_x => new_pattern_list.Add(_x)));
+                _section_list.ForEach(action: x => x.AllPattern.ForEach(action: _x => new_pattern_list.Add(_x))); // TODO: SelectMany ?
                 return new_pattern_list;
             }
-        }
-
-        /// <summary>
-        /// 全ての Section
-        /// </summary>
-        public List<Section> AllSection {
-            get => _section_list;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private Methods [verb]
 
         /// <summary>
-        /// TODO: 使われていない？
+        /// not used yet.
         /// </summary>
         Pattern checkeMode(Pattern pattern) {
-            pattern.AllMeas.ForEach(x => {
-                x.AllSpan.ForEach(_x => _x.KeyMode = Mode.Undefined); // FIXME: 暫定
-            });
+            pattern.AllMeas.ForEach(action: x => x.AllSpan.ForEach(action: _x => _x.KeyMode = Mode.Undefined)); // TODO: SelectMany ?
             return pattern;
         }
     }
 
     /// <summary>
-    /// Section クラス
-    ///     + Pattern オブジェクトのリストを管理します
+    /// section class
     /// </summary>
     public class Section {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        Key _key; // NOTE: ここは単体で良い
+        Key _key;
 
-        Mode _key_mode; // NOTE: ここは単体で良い
+        Mode _key_mode;
 
         List<Pattern> _pattern_list;
 
@@ -122,21 +114,21 @@ namespace Meowziq.Core {
         // Properties [noun, adjective] 
 
         /// <summary>
-        /// この Section のキー
+        /// gets the key of this section.
         /// </summary>
         public Key Key {
-            get => _key; // NOTE: 後から変更できない
+            get => _key;
         }
 
         /// <summary>
-        /// この Section の旋法
+        /// gets the church mode of this section.
         /// </summary>
         public Mode KeyMode {
-            get => _key_mode; // NOTE: 後から変更できない
+            get => _key_mode;
         }
 
         /// <summary>
-        /// 全ての Pattern
+        /// gets all Pattern objects.
         /// </summary>
         public List<Pattern> AllPattern {
             get => _pattern_list;
