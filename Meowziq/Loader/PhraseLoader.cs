@@ -33,52 +33,61 @@ namespace Meowziq.Loader {
         // public static Methods [verb]
 
         /// <summary>
-        /// Phrase のリストを作成します
-        /// NOTE: Core.Phrase のリストに変換します
-        /// NOTE: "base": 指定がある場合 Phrase を継承します
+        /// creates a list of Core.Phrase objects.
         /// </summary>
+        /// <note>
+        /// inherits a Phrase if "base" is given.
+        /// </note>
         public static List<Core.Phrase> Build(Stream target) {
-            List<Core.Phrase> list = loadJson(target).PhraseArray.Select(x => convertPhrase(x)).ToList();
-            return list.Select(x => x = !(x.Base is null) ? Inheritor.Apply(x, searchBasePhrase(x.Type, x.Base, list)) : x).ToList();
+            List<Core.Phrase> list = loadJson(target).PhraseArray.Select(selector: x => convertPhrase(phrase: x)).ToList();
+            return list.Select(selector: x => x = x.Base is not null ? 
+                Inheritor.Apply(target: x, baze: searchBasePhrase(phrase_type: x.Type, phrase_name: x.Base, list: list)) : x
+            ).ToList();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private static Methods [verb]
 
+        /// <summary>
+        /// converts a Phrase object to a Core.Phrase object.
+        /// </summary>
         static Core.Phrase convertPhrase(Phrase phrase) {
             Core.Phrase new_phrase = new();
             new_phrase.Type = phrase.Type;
             new_phrase.Name = phrase.Name;
             new_phrase.Base = phrase.Base;
-            if (phrase.Note != null) { // キーの旋法を自動判定するモード
+            if (phrase.Note is not null) { // determines from the key mode.
                 new_phrase.Data.Note.Text = phrase.Note;
-            } else if (phrase.Auto != null) { // Spanの旋法を自動判定するモード
+            } else if (phrase.Auto is not null) { // determines from the span mode.
                 new_phrase.Data.Note.Text = phrase.Auto;
                 new_phrase.Data.Auto = true;
             }
             new_phrase.Data.Note.Oct = phrase.Oct;
             new_phrase.Data.Chord.Text = phrase.Chord;
-            new_phrase.Data.Seque.Text = phrase.Gete;
+            new_phrase.Data.Seque.Text = phrase.Gate;
             new_phrase.Range = phrase.Range;
             new_phrase.Data.Exp.Pre = phrase.Pre;
             new_phrase.Data.Exp.Post = phrase.Post;
-            if (phrase.Data != null) { // 複合データがある場合
+            if (phrase.Data is not null) { // has compound data.
                 new_phrase.Data.BeatArray = phrase.Data.BeatArray;
                 new_phrase.Data.NoteArray = phrase.Data.NoteArray;
                 new_phrase.Data.AutoArray = phrase.Data.AutoArray;
                 new_phrase.Data.OctArray = phrase.Data.OctArray;
                 new_phrase.Data.PreArray = phrase.Data.PreArray;
                 new_phrase.Data.PostArray = phrase.Data.PostArray;
-                if (phrase.Data.InstArray != null) { // ドラム用音名データがある場合
+                if (phrase.Data.InstArray is not null) { // has an instrument name array for drums.
                     new_phrase.Data.PercussionArray = phrase.Data.InstArray.Select(x => Percussion.Enum.Parse(x)).ToArray();
                 }
             }
             return new_phrase;
         }
 
+        /// <summary>
+        /// searches the base Phrase object.
+        /// </summary>
         static Core.Phrase searchBasePhrase(string phrase_type, string phrase_name, List<Core.Phrase> list) {
             try {
-                return list.Where(x => x.Type.Equals(phrase_type) && x.Name.Equals(phrase_name)).First();
+                return list.Where(predicate: x => x.Type.Equals(phrase_type) && x.Name.Equals(phrase_name)).First();
             } catch {
                 throw new ArgumentException("undefined pattern.");
             }
@@ -137,8 +146,8 @@ namespace Meowziq.Loader {
             public string Chord {
                 get; set;
             }
-            [DataMember(Name = "gete")]
-            public string Gete {
+            [DataMember(Name = "gate")]
+            public string Gate {
                 get; set;
             }
             [DataMember(Name = "range")]

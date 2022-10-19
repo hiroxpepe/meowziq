@@ -17,6 +17,7 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 
+using static Meowziq.Env;
 using static Meowziq.Value.Utils;
 using static Meowziq.Value.Validater;
 
@@ -125,7 +126,7 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// percussion sound array.
+        /// provides the array of percussion sounds.
         /// </summary>
         public Percussion[] PercussionArray {
             get => _percussion_array;
@@ -139,39 +140,39 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// array of "beat" notated text
+        /// provides array of "beat" notated text.
         /// </summary>
         public string[] BeatArray {
             get => _beat_array;
             set {
                 if (!(value is null)) {
-                    value.ToList().ForEach(x => PhraseValue(target: x));
+                    value.ToList().ForEach(action: x => PhraseValue(target: x));
                 }
                 _beat_array = value;
             }
         }
 
         /// <summary>
-        /// array of "note" notated text
+        /// provides array of "note" notated text.
         /// </summary>
         public string[] NoteArray {
             get => _note_array;
             set {
                 if (!(value is null)) {
-                    value.ToList().ForEach(x => PhraseValue(target: x));
+                    value.ToList().ForEach(action: x => PhraseValue(target: x));
                 }
                 _note_array = value;
             }
         }
 
         /// <summary>
-        /// array of "auto" notated text
+        /// provides array of "auto" notated text.
         /// </summary>
         public string[] AutoArray {
             get => _auto_array;
             set {
                 if (!(value is null)) {
-                    value.ToList().ForEach(x => PhraseValue(target: x));
+                    value.ToList().ForEach(action: x => PhraseValue(target: x));
                 }
                 _auto_array = value;
                 if (!(value is null)) {
@@ -181,7 +182,7 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// octave parameter for "note" and "auto" notated text. 
+        /// provides the octave parameter for "note" and "auto" notated text. 
         /// </summary>
         public int[] OctArray {
             get => _oct_array;
@@ -189,7 +190,7 @@ namespace Meowziq.Value {
                 checkTextArray();
                 if (value is null) {
                     _oct_array = new int[arrayLength];
-                    _oct_array.Select(x => x = 0); // automatically generate octave values.
+                    _oct_array.Select(selector: x => x = 0); // automatically generate octave values.
                 } else if (value.Length != arrayLength) {
                     throw new ArgumentException("noteOctArray must be same count as noteArray or autoArray.");
                 } else {
@@ -199,7 +200,7 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// pre note parameter for "beat", "note" and "auto" text.
+        /// provides the pre note parameter for "beat", "note" and "auto" text.
         /// </summary>
         public string[] PreArray {
             get => _pre_array;
@@ -207,18 +208,18 @@ namespace Meowziq.Value {
                 checkTextArray();
                 if (value is null) {
                     _pre_array = new string[arrayLength];
-                    _pre_array.Select(x => x = null); // automatically generate initial values.
+                    _pre_array.Select(selector: x => x = null); // automatically generate initial values.
                 } else if (value.Length != arrayLength) {
                     throw new ArgumentException("preArray must be same count as beatArray or noteArray or autoArray.");
                 } else {
-                    value.ToList().ForEach(x => PhraseValue(target: x));
+                    value.ToList().ForEach(action: x => PhraseValue(target: x));
                     _pre_array = value;
                 }
             }
         }
 
         /// <summary>
-        /// post note parameter for "note" and "auto" text.
+        /// provides the post note parameter for "note" and "auto" text.
         /// </summary>
         public string[] PostArray {
             get => _post_array;
@@ -226,60 +227,60 @@ namespace Meowziq.Value {
                 checkTextArray();
                 if (value is null) {
                     _post_array = new string[arrayLength];
-                    _post_array.Select(x => x = null); // automatically generate initial values.
+                    _post_array.Select(selector: x => x = null); // automatically generate initial values.
                 } else if (value.Length != arrayLength) {
                     throw new ArgumentException("postArray must be same count as noteArray or autoArray.");
                 } else {
-                    value.ToList().ForEach(x => PhraseValue(target: x));
+                    value.ToList().ForEach(action: x => PhraseValue(target: x));
                     _post_array = value;
                 }
             }
         }
 
         /// <summary>
-        /// whether or not to have "beat" notated data.
+        /// gets whether has "beat" notated data.
         /// </summary>
         public bool HasBeat {
             get => !hasNote && !hasAuto && !hasChord && !hasSeque && hasBeatArray && !hasNoteArray && !hasAutoArray;
         }
 
         /// <summary>
-        /// whether or not to have "chord" notated data.
+        /// gets whether has "chord" notated data.
         /// </summary>
         public bool HasChord {
             get => !hasNote && !hasAuto && hasChord && !hasSeque && !hasBeatArray && !hasNoteArray && !hasAutoArray;
         }
 
         /// <summary>
-        /// whether or not to have "seque" notated data.
+        /// gets whether has "seque" notated data.
         /// </summary>
         public bool HasSeque {
             get => !hasNote && !hasAuto && !hasChord && hasSeque && !hasBeatArray && !hasNoteArray && !hasAutoArray;
         }
 
         /// <summary>
-        /// whether or not to have "note" notated data.
+        /// gets whether has "note" notated data.
         /// </summary>
         public bool HasNote {
             get => (hasNote || hasNoteArray) && !hasAuto && !hasChord && !hasSeque && !hasBeatArray && !hasAutoArray;
         }
 
         /// <summary>
-        /// whether or not to have "auto" notated data.
+        /// gets whether has "auto" notated data.
         /// </summary>
         public bool HasAuto {
             get => !hasNote && !hasNoteArray && (hasAuto || hasAutoArray) && !hasChord && !hasSeque && !hasBeatArray;
         }
 
         /// <summary>
-        /// whether or not to have array notated data.
+        /// gets whether has the array notated data.
         /// </summary>
         public bool HasMulti {
             get => !hasNote && !hasAuto && !hasChord && !hasSeque && (hasBeatArray || hasNoteArray || hasAutoArray);
         }
 
         /// <summary>
-        /// whether or not to have data.
+        /// gets whether has no data.
         /// </summary>
         public bool HasNoData {
             get => !hasNote && !hasAuto && !hasChord && !hasSeque && !hasBeatArray && !hasNoteArray && !hasAutoArray;
@@ -395,7 +396,7 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// pitch difference of notes.
+        /// gets the pitch difference of notes.
         /// </summary>
         public int Interval {
             get => _oct * 12; // converts the octave value to the pitch difference of notes.
@@ -510,10 +511,10 @@ namespace Meowziq.Value {
         /// converts the text mark to the note value.
         /// </summary>
         public static int ToGateValue(string target) {
-            if (target.Equals(">")) { return 90; }
-            if (target.Equals("*")) { return 60; }
-            if (target.Equals("+")) { return 30; }
-            return 0;
+            if (target.Equals(">")) { return TICK_INTERVAL * 3; }
+            if (target.Equals("*")) { return TICK_INTERVAL * 2; }
+            if (target.Equals("+")) { return TICK_INTERVAL * 1; }
+            return TICK_INTERVAL * 0;
         }
     }
 
@@ -634,7 +635,7 @@ namespace Meowziq.Value {
         // public Methods [verb]
 
         /// <summary>
-        /// whether it matches as a pre parameter.
+        /// gets whether it matches as a pre parameter.
         /// </summary>
         /// <note>
         /// + up to 120 * 2 ticks. <br/>

@@ -29,10 +29,10 @@ namespace Meowziq.Value {
         /// converts numeric BPM to tempo information for SMF.
         /// </summary>
         /// <summary_jp>
-        /// BPM = 120 (1分あたり四分音符が120個) の場合、<br/>
-        /// 四分音符の長さは 60 x 10 の6乗 / 120 = 500,000 (μsec) <br/>
-        /// これを16進にすると 0x07A120 <br/>
-        /// 3バイトで表現すると "07", "A1", "20"
+        /// + BPM = 120 (1分あたり四分音符が120個) の場合、<br/>
+        /// + 四分音符の長さは 60 x 10 の6乗 / 120 = 500,000 (μsec) <br/>
+        /// + これを16進にすると 0x07A120 <br/>
+        /// + 3バイトで表現すると "07", "A1", "20"
         /// </summary_jp>
         public static byte[] ToByteTempo(int tempo) {
             double double_value = 60 * Math.Pow(10, 6) / tempo;

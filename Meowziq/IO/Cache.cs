@@ -39,14 +39,14 @@ namespace Meowziq.IO {
         // static Properties [noun, adjective] 
 
         /// <summary>
-        /// holds the contents of the json data read in this tick.
+        /// gets the contents of the json data read in this tick.
         /// </summary>
         public static Resourse Current {
             get => _current_resourse;
         }
 
         /// <summary>
-        /// holds the final contents of json data that passed all validations.
+        /// gets the final contents of json data that passed all validations.
         /// </summary>
         public static Resourse Valid {
             get => _valid_resourse;
