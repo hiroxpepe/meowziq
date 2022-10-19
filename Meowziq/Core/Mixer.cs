@@ -14,22 +14,11 @@
  */
 
 using System;
-using System.Linq;
 
 namespace Meowziq.Core {
     /// <summary>
-    /// PA クラス
+    /// mixer class
     /// </summary>
-    /// <note>
-    /// + ボリューム調整、パン、ミュートとか
-    /// + 全体のエフェクトとか
-    /// + 曲の演奏者について責任を持つ
-    /// + 演奏中にパンやボリュームが指定できるように
-    /// + ここを唯一の IMessage へのインタフェースにしてはどうか？
-    /// + そもそもこのアプリでボリュームやパンを詳細に設定出来る必要があるのか？
-    /// + Mixer に設定がある場合は楽器は Mixer の設定を使用する
-    ///     + ただし Mixer 経由で値を Message に適用した方が好ましい
-    /// </note>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Mixer<T> {
 
@@ -38,9 +27,9 @@ namespace Meowziq.Core {
 
         static bool _use;
 
-        static Map<string, Fader> _previous_fader_map; // key は "type" 形式とする
+        static Map<string, Fader> _previous_fader_map; // key should be of the form "type".
 
-        static Map<string, Fader> _current_fader_map; // key は "type:name" 形式とする
+        static Map<string, Fader> _current_fader_map; // key should be of the form "type:name".
 
         static IMessage<T, Note> _message;
 
@@ -57,22 +46,22 @@ namespace Meowziq.Core {
         // static Properties [noun, adjective] 
 
         /// <summary>
-        /// NOTE: 演奏中に値が変更される可能性あり
-        /// FIXME: SMF 出力でバグあり
+        /// adds a Fader object.
         /// </summary>
+        /// <fixme>
+        /// FIXME: bug in SMF output.
+        /// </fixme>
         public static Fader AddFader {
             set {
-                if (value is null) {
-                    return;
-                }
+                if (value is null) { return; }
                 _current_fader_map[$"{value.Type}:{value.Name}"] = value;
                 _previous_fader_map[value.Type] = Fader.NoVaule(type: value.Type);
-                _use = true; // Fader を追加された、つまり mixier.json が存在する
+                _use = true; // added Fader, so mixier.json exists.
             }
         }
 
         /// <summary>
-        /// Message オブジェクトを設定します
+        /// sets the Message object.
         /// </summary>
         public static IMessage<T, Note> Message {
             set => _message = value;
@@ -82,9 +71,11 @@ namespace Meowziq.Core {
         // public static Methods [verb]
 
         /// <summary>
-        /// 状態を初期化します
-        /// NOTE: 初回に1回だけ実行
+        /// initializes the state.
         /// </summary>
+        /// <note>
+        /// runs only once the first time.
+        /// </note>
         public static void Clear() {
             _previous_fader_map.Clear();
             _current_fader_map.Clear();
@@ -92,22 +83,22 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// Message に対して Note を適用します
+        /// applies the Note object to the Message object.
         /// </summary>
         public static void ApplyNote(int tick, int midi_ch, Note note) {
             _message.ApplyNote(tick, midi_ch, note);
         }
 
         /// <summary>
-        /// Message に対してプログラムチェンジ、ボリューム、Pan、その他の設定を適用します
+        /// applies the program change, volume, pan, and other parameters to the Message object.
         /// </summary>
         public static void ApplyVaule(int tick, int midi_ch, string type, string name, int program_num) {
             if (!_use && !_current_fader_map.ContainsKey(key: $"{type}:default")) {
                 _previous_fader_map[type] = Fader.NoVaule(type);
-                _current_fader_map[$"{type}:default"] = Fader.Default(type: type); // mixer.json なしの初回
+                _current_fader_map[$"{type}:default"] = Fader.Default(type: type); // first time without mixer.json.
             }
             if (_use && !_current_fader_map.ContainsKey(key: $"{type}:{name}")) {
-                return; // mixer.json 使用時で存在しないキー
+                return; // missing key when using mixer.json.
             }
             playerProgramNum = (programNum: program_num, type: type, name: name);
             applyValueBy(tick, midi_ch, type, name);
@@ -117,11 +108,11 @@ namespace Meowziq.Core {
         // private Properties [noun, adjective] 
 
         /// <summary>
-        /// player.json に記述された 音色を設定します
+        /// sets the instrument name in player.json.
         /// </summary>
         static (int programNum, string type, string name) playerProgramNum {
             set {
-                if (!_use) { value.name = "default"; } // mixer.json なしは常に "default"
+                if (!_use) { value.name = "default"; } // no mixer.json is always "default".
                 _current_fader_map[$"{value.type}:{value.name}"].PlayerProgramNum = value.programNum;
             }
         }
@@ -137,7 +128,7 @@ namespace Meowziq.Core {
         }
 
         static void applyProgramChangeBy(int tick, int midi_ch, string type, string name) {
-            if (!_use) { name = "default"; } // mixer.json なしは常に "default"
+            if (!_use) { name = "default"; } // no mixer.json is always "default".
             if (changedProgramNum(type, name)) {
                 int program_num = _use ? _current_fader_map[$"{type}:{name}"].ProgramNum : _current_fader_map[$"{type}:{name}"].PlayerProgramNum;
                 _message.ApplyProgramChange(tick, midi_ch, program_num);
@@ -145,26 +136,26 @@ namespace Meowziq.Core {
         }
 
         static void applyVolumeBy(int tick, int midi_ch, string type, string name) {
-            if (!_use) { name = "default"; } // mixer.json なしは常に "default"
+            if (!_use) { name = "default"; } // no mixer.json is always "default".
             if (changedVol(type, name)) {
                 _message.ApplyVolume(tick, midi_ch, volume: _current_fader_map[$"{type}:{name}"].Vol);
             }
         }
 
         static void applyPanBy(int tick, int midi_ch, string type, string name) {
-            if (!_use) { name = "default"; } // mixer.json なしは常に "default"
+            if (!_use) { name = "default"; } // no mixer.json is always "default".
             if (changedPan(type, name)) {
                 _message.ApplyPan(tick, midi_ch, pan: _current_fader_map[$"{type}:{name}"].Pan);
             }
         }
 
         static void applyMuteBy(int tick, int midi_ch, string type, string name) {
-            if (!_use) { name = "default"; } // mixer.json なしは常に "default"
+            if (!_use) { name = "default"; } // no mixer.json is always "default".
             _message.ApplyMute(tick, midi_ch, mute: _current_fader_map[$"{type}:{name}"].Mute);
         }
 
         /// <summary>
-        /// whether the program number has changed.
+        /// gets whether the program number has changed.
         /// </summary>
         static bool changedProgramNum(string type, string name) {
             int program_num = _use ? _current_fader_map[$"{type}:{name}"].ProgramNum : _current_fader_map[$"{type}:{name}"].PlayerProgramNum;
@@ -179,7 +170,7 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// whether the volume has changed.
+        /// gets whether the volume has changed.
         /// </summary>
         static bool changedVol(string type, string name) {
             int vol = _current_fader_map[$"{type}:{name}"].Vol;
@@ -193,7 +184,7 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// whether the pan has changed.
+        /// gets whether the pan has changed.
         /// </summary>
         static bool changedPan(string type, string name) {
             Pan pan = _current_fader_map[$"{type}:{name}"].Pan;
@@ -225,29 +216,29 @@ namespace Meowziq.Core {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Properties [noun, adjective]
 
-            /// <summary>
-            /// NOTE: Player と紐づけ
-            /// </summary>
+            /// <note>
+            /// associates with the Player object.
+            /// </note>
             public string Type {
                 get => _type; set => _type = value;
             }
 
-            /// <summary>
-            /// NOTE: Pattern と紐づけ
-            /// </summary>
+            /// <note>
+            /// associates with the Pattern object.
+            /// </note>
             public string Name {
                 get => _name; set => _name = value;
             }
 
             /// <summary>
-            /// NOTE: mixer.json に設定された値
+            /// gets the program number set in mixer.json.
             /// </summary>
             public int ProgramNum {
                 get => _program_num; set => _program_num = value;
             }
 
             /// <summary>
-            /// NOTE: player.json に設定された値
+            /// gets the program number set in player.json.
             /// </summary>
             public int PlayerProgramNum {
                 get => _player_program_num; set => _player_program_num = value;

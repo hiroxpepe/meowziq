@@ -17,13 +17,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using static Meowziq.Env;
+
 namespace Meowziq.Core {
     /// <summary>
-    /// Pattern クラス
+    /// pattern class
     /// </summary>
-    /// <note>
-    /// + Meas オブジェクトのリストを管理します
-    /// </note>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Pattern {
 
@@ -37,12 +36,9 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
-        /// <summary>
-        /// NOTE: コンストラクタだけが作成する唯一の方法
-        /// </summary>
         public Pattern(string name, List<Meas> meas_list) {
-            if (meas_list.Count > Meowziq.Measure.Max.Int32()) {
-                throw new ArgumentException($"measure counts are until {Meowziq.Measure.Max.Int32()}."); // 1パターンは12小節まで
+            if (meas_list.Count > Measure.Max.Int32()) {
+                throw new ArgumentException($"measure counts are until {Measure.Max.Int32()}.");
             }
             _name = name;
             _meas_list = meas_list;
@@ -51,37 +47,37 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjective] 
 
+        /// <summary>
+        /// gets the pattern name.
+        /// </summary>
         public string Name {
             get => _name;
         }
 
         /// <summary>
-        /// Pattern の拍数を返す
+        /// gets the number of beats.
         /// </summary>
         public int BeatCount {
-            // FIXME: 1小節を4拍として計算
-            get => _meas_list.Count * 4;
+            get => _meas_list.Count * BEAT_COUNT_IN_MEASURE;
         }
 
         /// <summary>
-        /// Meas のリストを返す
+        /// gets all Meas objects.
         /// </summary>
         public List<Meas> AllMeas {
             get => _meas_list;
         }
 
         /// <summary>
-        /// Span のリストを返す
+        /// gets all Span objects.
         /// </summary>
         public List<Span> AllSpan {
-            get => _meas_list.SelectMany(x => x.AllSpan).ToList();
+            get => _meas_list.SelectMany(selector: x => x.AllSpan).ToList();
         }
     }
 
     /// <summary>
-    /// Meas クラス
-    ///     + 小節を表すクラス
-    ///     + Span オブジェクトのリストを管理する
+    /// measure class
     /// </summary>
     public class Meas {
 
@@ -93,17 +89,16 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
-        /// <summary>
-        /// コンストラクタだけが作成する唯一の方法
-        /// </summary>
         public Meas(List<Span> spanList) {
             int total_beat_count = 0;
-            spanList.ForEach(action: x => total_beat_count += x.Beat); // 拍を集計する
-            if (total_beat_count < 4 || total_beat_count > 4) {
-                // FIXME: 3拍子とかは？
-                throw new ArgumentException("beat counts needs 4."); // 1小節に足りない or 超過している
+            spanList.ForEach(action: x => total_beat_count += x.Beat); // count beats.
+            if (total_beat_count < BEAT_COUNT_IN_MEASURE || total_beat_count > BEAT_COUNT_IN_MEASURE) {
+                throw new ArgumentException($"beat counts needs {BEAT_COUNT_IN_MEASURE}."); // not enough for one measure or more than one measure.
             }
-            // Span を分解して1拍毎に追加する
+            /// <note>
+            /// + divides a span to every beat. <br/>
+            /// + important! <br/>
+            /// </note>
             _span_list = new();
             spanList.ForEach(action: x => {
                 Enumerable.Range(start: 0, count: x.Beat).ToList().ForEach(
@@ -116,7 +111,7 @@ namespace Meowziq.Core {
         // Properties [noun, adjective] 
 
         /// <summary>
-        /// returns a list of Span objects.
+        /// gets the list of Span objects.
         /// </summary>
         public List<Span> AllSpan {
             get => _span_list;
@@ -124,26 +119,24 @@ namespace Meowziq.Core {
     }
 
     /// <summary>
-    /// Span クラス
-    ///     + 調性が続く期間(拍)を表すクラス
+    /// span class
     /// </summary>
-    /// <remarks>
-    /// 1～7の数値をどのキースケールの音に変換するのか<br/>
-    /// </remarks>
+    /// <note>
+    /// a class representing the duration (beat) of the tonality. <br/>
+    /// to convert the numbers 1 to 7 into which scale note of the church mode. <br/>
+    /// </note>
     public class Span {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        int _beat; // 拍数
+        int _beat;
 
-        Key _key; // 曲のキー
+        Key _key;
 
-        Degree _degree; // キーに対する度数
+        Degree _degree;
 
-        Mode _key_mode; // キーの旋法
-
-        Mode _span_mode; // この期間の旋法
+        Mode _key_mode, _span_mode;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
@@ -167,24 +160,39 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjective] 
 
+        /// <summary>
+        /// gets the number of beats.
+        /// </summary>
         public int Beat {
             get => _beat;
         }
 
+        /// <summary>
+        /// gets the degree from the key of the song.
+        /// </summary>
         public Degree Degree {
             get => _degree;
         }
 
+        /// <summary>
+        /// provides the key of the song.
+        /// </summary>
         public Key Key {
             get => _key; set => _key = value;
         }
 
+        /// <summary>
+        /// provides the church mode of the key of the song.
+        /// </summary>
         public Mode KeyMode {
             get => _key_mode; set => _key_mode = value;
         }
 
+        /// <summary>
+        /// gets the church mode of this span.
+        /// </summary>
         public Mode SpanMode {
-            get => _span_mode; // 一度設定した spanMode は変更しない
+            get => _span_mode; // do not change the span mode once set.
         }
     }
 }

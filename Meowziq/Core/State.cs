@@ -24,7 +24,7 @@ namespace Meowziq.Core {
     /// state class
     /// </summary>
     /// <note>
-    /// + holds information about how the song is being played.
+    /// + holds information about how the song is being played. <br/>
     /// </note>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class State {
@@ -89,7 +89,7 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// whether given the same tick.
+        /// gets whether given the same tick.
         /// </summary>
         public static bool SameTick {
             get => _same_tick;
@@ -160,7 +160,7 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// whether has the Item of the current tick.
+        /// gets whether has the Item of the current tick.
         /// </summary>
         public static bool Has {
             get => _hashset.Contains(Repeat.Tick);
@@ -224,17 +224,23 @@ namespace Meowziq.Core {
             ///////////////////////////////////////////////////////////////////////////////////////////////
             // public static Properties [noun, adjective] 
 
+            /// <summary>
+            /// gets the begin measure number of repeats.
+            /// </summary>
             public static int BeginMeas {
                 set {
                     _begin_meas = value;
-                    _begin_tick = ((_begin_meas - 1) * NOTE_RESOLUTION * TO_MEASURE) + (CountBeatLength * NOTE_RESOLUTION);
+                    _begin_tick = ((_begin_meas - 1) * NOTE_RESOLUTION * TIMES_TO_MEASURE) + (CountBeatLength * NOTE_RESOLUTION);
                 }
             }
 
+            /// <summary>
+            /// gets the end measure number of repeats.
+            /// </summary>
             public static int EndMeas {
                 set { 
                     _end_meas = value;
-                    _end_tick = ((_end_meas - 1) * NOTE_RESOLUTION * TO_MEASURE) + (CountBeatLength * NOTE_RESOLUTION);
+                    _end_tick = ((_end_meas - 1) * NOTE_RESOLUTION * TIMES_TO_MEASURE) + (CountBeatLength * NOTE_RESOLUTION);
                 }
             }
 
@@ -284,17 +290,17 @@ namespace Meowziq.Core {
             // private static Properties [noun, adjective]
 
             /// <summary>
-            /// whether has set.
+            /// gets whether has set.
             /// </summary>
             static bool has {
                 get => _begin_meas >= 0 && _end_meas >= 0 && _begin_meas < _end_meas;
             }
 
             /// <summary>
-            /// length of the tick in repeat.
+            /// gets the length of the tick in repeat.
             /// </summary>
             static int repeatTickLength {
-                get => (_end_meas - _begin_meas) * NOTE_RESOLUTION * TO_MEASURE; 
+                get => (_end_meas - _begin_meas) * NOTE_RESOLUTION * TIMES_TO_MEASURE; 
             }
 
             /// <summary>

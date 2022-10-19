@@ -13,12 +13,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System;
+
+using static Meowziq.Env;
+
 namespace Meowziq.Core {
     /// <summary>
-    /// note class.
+    /// note class
     /// </summary>
     /// <note>
-    /// + converts to ChannelMessage
+    /// + converts to ChannelMessage. <br/>
+    /// + not provide modify operations. <br/>
     /// </note>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Note {
@@ -32,12 +37,12 @@ namespace Meowziq.Core {
         // Constructor
 
         /// <note>
-        /// + states cannot be changed once created.
+        /// + states cannot be changed once created. <br/>
         /// </note>
         public Note(int tick, int num, int gate, int velo, int pre_count = 0) {
             _tick = tick;
             _num = num;
-            _gate = gate;
+            _gate = gateValue(target: gate);
             _velo = velo;
             _pre_count = pre_count;
         }
@@ -46,64 +51,63 @@ namespace Meowziq.Core {
         // Properties [noun, adjective] 
 
         /// <summary>
-        /// tick value of the quarter note 480 resolution sequencer.
+        /// gets the tick value of the quarter note 480 resolution sequencer.
         /// </summary>
         /// <note>
         /// + always an absolute value. <br/>
-        /// + not provide modify operations. <br/>
         /// </note>
         public int Tick {
             get => _tick;
         }
 
         /// <summary>
-        /// MIDI note number.
+        /// gets the MIDI note number.
         /// </summary>
-        /// <note>
-        /// + not provide modify operations.
-        /// </note>
         public int Num {
             get => _num;
         }
 
         /// <summary>
-        /// length from a note on to a note off of MIDI.
+        /// gets the length from a note on to a note off of MIDI.
         /// </summary>
-        /// <note>
-        /// + not provide modify operations.
-        /// </note>
         public int Gate {
             get => _gate;
         }
 
         /// <summary>
-        /// MIDI note strength.
+        /// gets the MIDI note strength.
         /// </summary>
-        /// <note>
-        /// + not provide modify operations.
-        /// </note>
         public int Velo {
             get => _velo;
         }
 
         /// <summary>
-        /// whether has a syncopation parameter.
+        /// gets whether has a syncopation parameter.
         /// </summary>
-        /// <note>
-        /// + not provide modify operations.
-        /// </note>
         public bool HasPre {
             get => _pre_count > 0;
         }
 
         /// <summary>
-        /// syncopation parameter.
+        /// gets the syncopation parameter.
         /// </summary>
-        /// <note>
-        /// + not provide modify operations.
-        /// </note>
         public int PreCount {
             get => _pre_count;
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private Methods [verb]
+
+        /// <summary>
+        /// checks the length of the gate.
+        /// </summary>
+        static int gateValue(int target) {
+            if (target is 0) { return target; } // no value, return as is.
+            // whether the length of the gate is divisible by the tick interval.
+            if (target % TICK_INTERVAL is not 0) {
+                throw new FormatException($"a gate length must be divisible by the tick interval: {TICK_INTERVAL}.");
+            }
+            return target; // returns the original value if validation is ok.
         }
     }
 }

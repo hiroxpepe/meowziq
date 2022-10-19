@@ -18,12 +18,8 @@ using System.Linq;
 
 namespace Meowziq.Core {
     /// <summary>
-    /// Player クラス
+    /// player class
     /// </summary>
-    /// <note>
-    /// + Phrase オブジェクトのリストを管理
-    /// + Phrase オブジェクトを適切なタイミングで Build します
-    /// </note>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Player<T> {
 
@@ -32,15 +28,11 @@ namespace Meowziq.Core {
 
         Song _song;
 
-        int _midi_ch;
-
-        int _program_num;
-
-        string _instrument_name;
-
-        string _type;
-
         List<Phrase> _phrase_list;
+
+        int _midi_ch, _program_num;
+
+        string _instrument_name, _type;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
@@ -92,8 +84,8 @@ namespace Meowziq.Core {
         /// MEMO: SMF出力の場合はここは1回呼ぶだけで良い
         /// </summary>
         public void Build(int tick, bool smf = false) {
-            // テンポ・曲名設定 FIXME: 全プレイヤーが設定しているが？
-            State.TempoAndName = (_song.Tempo, _song.Name);
+            // sets the tempo and song name.
+            State.TempoAndName = (_song.Tempo, _song.Name); // FIXME: looks like all players have it set up?
 
             /// <summary>
             /// adds initial parameters for Mixer object.
@@ -103,7 +95,7 @@ namespace Meowziq.Core {
             /// </note>
             if (tick is 0) {
                 string first_pattern_name = _song.AllSection.SelectMany(x => x.AllPattern).ToList().Where(x => x.Name is not "count").First().Name;
-                Mixer<T>.ApplyVaule(tick: 0, midi_ch: _midi_ch, type: Type, name: "intro", program_num: _program_num);
+                Mixer<T>.ApplyVaule(tick: 0, midi_ch: _midi_ch, type: Type, name: first_pattern_name, program_num: _program_num);
             }
 
             // Note データ作成のループ
@@ -142,11 +134,11 @@ namespace Meowziq.Core {
                 List<Note> note_list = phrase.AllNote;
                 HashSet<int> hash_set = new();
                 foreach (Note note in note_list) {
-                    Mixer<T>.ApplyNote(tick: note.Tick, midi_ch: _midi_ch, note: note); // Note の適用
+                    Mixer<T>.ApplyNote(tick: note.Tick, midi_ch: _midi_ch, note: note); // applies Note objects.
                 }
-                note_list.Clear(); // 必要
+                note_list.Clear(); // it's necessary.
             }
-            if (smf) { // SMF 出力時用の情報 NOTE: 1回だけ呼ばれる
+            if (smf) { // information for SMF output, called only once.
                 State.TrackMap.Add(key: _midi_ch, value: new State.Track(){ MidiCh = _midi_ch, Name = _type, Instrument = _instrument_name });
             }
         }
@@ -193,7 +185,7 @@ namespace Meowziq.Core {
 
             int _length; // 処理してる Pattern の長さ
 
-            int _max; // 処理してる Pattern の想定する最大の長さ ※ Pattern は最大16小節まで
+            int _max; // 処理してる Pattern の想定する最大の長さ ※ Pattern は最大12小節まで
 
             string _previous_name; // 前回処理した Pattern の名前
 
@@ -206,7 +198,7 @@ namespace Meowziq.Core {
                 _current_tick = tick;
                 _head_tick = 0;
                 _length = 0;
-                _max = tick + Length.Of4beat.Int32() * 4 * Meowziq.Measure.Max.Int32(); // Pattern の最大の長さ ※最大12小節まで
+                _max = tick + Length.Of4beat.Int32() * 4 * Measure.Max.Int32(); // Pattern の最大の長さ ※最大12小節まで
                 _previous_name = string.Empty;
                 _smf = smf;
             }
