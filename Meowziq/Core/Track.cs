@@ -48,8 +48,24 @@ namespace Meowziq.Core {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
+        // static Properties [noun, adjective] 
+
+        /// <summary>
+        /// gets the all Note objects of this song.
+        /// </summary>
+        /// <note>
+        /// not used yet.
+        /// </note>
+        public static List<Note> AllNote {
+            get => _note_item_map.SelectMany(x => x.Value).SelectMany(x => x.Value).ToList();
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjective] 
 
+        /// <summary>
+        /// gets the Item<Note> object.
+        /// </summary>
         public Item<Note> NoteItem {
             get => _note_item;
         }
