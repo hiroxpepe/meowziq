@@ -40,7 +40,6 @@ namespace Meowziq.Core {
 
         public Phrase() {
             _data = new(); // json から詰められるデータ
-            //_note_item = new();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -222,11 +221,6 @@ namespace Meowziq.Core {
         // private Methods [verb]
 
         /// <summary>
-        /// MEMO: 消したい音はこのフレーズではない場合もある ⇒ Player で処理を定義
-        /// TODO: この処理の高速化が必須：何が必要で何がひつようでないか
-        ///       previous の発音が続いてる Note を識別する？：どのように？
-        ///           previous.AllNote.Were(なんとか) 
-        ///       current の シンコペ Note () ← 判定済み
         /// </summary>
         /// <memo_jp>
         /// + 消したい音はこのフレーズではない場合もある => Player で処理を定義

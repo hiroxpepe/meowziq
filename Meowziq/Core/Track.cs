@@ -14,6 +14,7 @@
  */
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Meowziq.Core {
     /// <summary>
@@ -38,7 +39,11 @@ namespace Meowziq.Core {
         // Constructor
 
         public Track(string type) {
+            _type = type;
             _note_item = new();
+            if (_note_item_map.ContainsKey(key: type)) {
+                _note_item_map.Remove(key: type);
+            }
             _note_item_map.Add(key: type, value: _note_item);
         }
 
@@ -47,6 +52,20 @@ namespace Meowziq.Core {
 
         public Item<Note> NoteItem {
             get => _note_item;
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Methods [verb]
+
+        /// <summary>
+        /// initializes the contents.
+        /// </summary>
+        /// <note>
+        /// not used yet.
+        /// </note>
+        public void Clear() {
+            foreach (Item<Note> value in _note_item_map.Values) { value.Clear(); }
+            _note_item_map.Clear();
         }
     }
 }
