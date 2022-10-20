@@ -34,6 +34,8 @@ namespace Meowziq.Core {
 
         List<Phrase> _phrase_list;
 
+        Track _track;
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
@@ -45,8 +47,12 @@ namespace Meowziq.Core {
         // Properties [noun, adjective] 
 
         public string Type {
-            get => _type; set => _type = value;
-        }
+            get => _type;
+            set {
+                _type = value;
+                _track = new(type: _type);
+            }
+        }        
 
         public MidiChannel MidiCh {
             set => _midi_ch = (int) value;
@@ -71,7 +77,11 @@ namespace Meowziq.Core {
         }
 
         public List<Phrase> PhraseList {
-            get => _phrase_list; set => _phrase_list = value;
+            get => _phrase_list;
+            set { 
+                _phrase_list = value;
+                _phrase_list.ForEach(action: x => x.NoteItem = _track.NoteItem);
+            }
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -128,17 +138,14 @@ namespace Meowziq.Core {
                     locate.Next(); // Pattern の長さ分 Pattern 開始 tick を移動する
                 }
             }
-            // Note データ適用のループ NOTE: Pattern を回す必要はない
-            // それぞれの Phrase に曲を通しての Note が充填されている
-            foreach (Phrase phrase in _phrase_list) {
-                List<Note> note_list = phrase.AllNote;
-                HashSet<int> hash_set = new();
-                foreach (Note note in note_list) {
-                    Mixer<T>.ApplyNote(tick: note.Tick, midi_ch: _midi_ch, note: note); // applies Note objects.
-                }
-                note_list.Clear(); // it's necessary.
-            }
-            if (smf) { // information for SMF output, called only once.
+            /// <summary>
+            /// applies Note objects.
+            /// </summary>
+            _track.NoteItem.SelectMany(selector: x => x.Value).ToList().ForEach(action: x => Mixer<T>.ApplyNote(tick: x.Tick, midi_ch: _midi_ch, note: x));
+            /// <summary>
+            /// information for SMF output, called only once.
+            /// </summary>
+            if (smf) {
                 State.TrackMap.Add(key: _midi_ch, value: new State.Track(){ MidiCh = _midi_ch, Name = _type, Instrument = _instrument_name });
             }
         }

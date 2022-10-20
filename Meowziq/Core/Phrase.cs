@@ -40,7 +40,6 @@ namespace Meowziq.Core {
 
         public Phrase() {
             _data = new(); // json から詰められるデータ
-            _note_item = new();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -99,9 +98,9 @@ namespace Meowziq.Core {
         /// <summary>
         /// gets the number of beats in the phrase.
         /// </summary>
-        /// <remarks>
+        /// <note>
         /// not used yet.
-        /// </remarks>
+        /// </note>
         public int BeatCount {
             get {
                 switch (defineDataType()) {
@@ -122,8 +121,15 @@ namespace Meowziq.Core {
                 if (!Type.ToLower().Contains("drum")) { // ドラム以外 TODO: これで良いか確認
                     optimize(); // 最適化する
                 }
-                return _note_item.SelectMany(selector: x => x.Value).Select(selector: x => x).ToList(); // FIXME: 二重？
+                return _note_item.SelectMany(selector: x => x.Value).ToList();
             }
+        }
+
+        /// <summary>
+        /// sets the Item<Note> object.
+        /// </summary>
+        public Item<Note> NoteItem {
+            set => _note_item = value;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -215,11 +221,7 @@ namespace Meowziq.Core {
         // private Methods [verb]
 
         /// <summary>
-        /// MEMO: 消したい音はこのフレーズではない場合もある ⇒ Player で処理を定義
-        /// TODO: この処理の高速化が必須：何が必要で何がひつようでないか
-        ///       previous の発音が続いてる Note を識別する？：どのように？
-        ///           previous.AllNote.Were(なんとか) 
-        ///       current の シンコペ Note () ← 判定済み
+        /// TBA
         /// </summary>
         /// <memo_jp>
         /// + 消したい音はこのフレーズではない場合もある => Player で処理を定義
@@ -229,7 +231,7 @@ namespace Meowziq.Core {
         /// + current の シンコペ Note <= 判定済み
         /// </memo_jp>
         void optimize() {
-            List<Note> note_list = _note_item.SelectMany(x => x.Value).Select(x => x).ToList(); // ??? 二重？
+            List<Note> note_list = _note_item.SelectMany(x => x.Value).ToList();
             foreach (Note stop_note in note_list.Where(x => x.HasPre)) { // 優先ノートのリスト
                 foreach (Note note in note_list) { // このフレーズの全てのノートの中で
                     if (note.Tick == stop_note.Tick) { // 優先ノートと発音タイミングがかぶったら
