@@ -40,7 +40,7 @@ namespace Meowziq.Core {
 
         public Phrase() {
             _data = new(); // json から詰められるデータ
-            _note_item = new();
+            //_note_item = new();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -124,6 +124,13 @@ namespace Meowziq.Core {
                 }
                 return _note_item.SelectMany(selector: x => x.Value).Select(selector: x => x).ToList(); // FIXME: 二重？
             }
+        }
+
+        /// <summary>
+        /// sets the Item<Note> object.
+        /// </summary>
+        public Item<Note> NoteItem {
+            set => _note_item = value;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

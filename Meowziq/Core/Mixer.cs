@@ -92,6 +92,9 @@ namespace Meowziq.Core {
         /// <summary>
         /// applies the program change, volume, pan, and other parameters to the Message object.
         /// </summary>
+        /// <note>
+        /// + applying values is only executed at pattern changes. <br/>
+        /// </note>
         public static void ApplyVaule(int tick, int midi_ch, string type, string name, int program_num) {
             if (!_use && !_current_fader_map.ContainsKey(key: $"{type}:default")) {
                 _previous_fader_map[type] = Fader.NoVaule(type);

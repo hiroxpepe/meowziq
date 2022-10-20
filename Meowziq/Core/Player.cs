@@ -34,6 +34,8 @@ namespace Meowziq.Core {
 
         List<Phrase> _phrase_list;
 
+        Track _track;
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
@@ -45,8 +47,12 @@ namespace Meowziq.Core {
         // Properties [noun, adjective] 
 
         public string Type {
-            get => _type; set => _type = value;
-        }
+            get => _type;
+            set {
+                _type = value;
+                _track = new(type: _type);
+            }
+        }        
 
         public MidiChannel MidiCh {
             set => _midi_ch = (int) value;
@@ -71,7 +77,11 @@ namespace Meowziq.Core {
         }
 
         public List<Phrase> PhraseList {
-            get => _phrase_list; set => _phrase_list = value;
+            get => _phrase_list;
+            set { 
+                _phrase_list = value;
+                _phrase_list.ForEach(action: x => x.NoteItem = _track.NoteItem);
+            }
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
