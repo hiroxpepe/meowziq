@@ -22,6 +22,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Drawing.Color;
 using Sanford.Multimedia.Midi;
+using MidiTrack = Sanford.Multimedia.Midi.Track;
 
 using Meowziq.Core;
 using Meowziq.IO;
@@ -296,12 +297,12 @@ namespace Meowziq.Win64 {
                 /// <summary>
                 /// song information setting.
                 /// </summary>
-                Track conductor_track = new();
+                MidiTrack conductor_track = new();
                 conductor_track.Insert(position: 0, new MetaMessage(MetaType.Tempo, Value.Converter.ToByteTempo(State.Tempo)));
                 conductor_track.Insert(position: 0, new MetaMessage(MetaType.TrackName, Value.Converter.ToByteArray(State.Name)));
                 conductor_track.Insert(position: 0, new MetaMessage(MetaType.Copyright, Value.Converter.ToByteArray(State.Copyright)));
                 State.TrackList.ForEach(action: x => {
-                    Track ch_track = Multi.Get(index: x.MidiCh);
+                    MidiTrack ch_track = Multi.Get(index: x.MidiCh);
                     ch_track.Insert(position: 0, new MetaMessage(MetaType.TrackName, Value.Converter.ToByteArray(x.Name)));
                     ch_track.Insert(position: 0, new MetaMessage(MetaType.ProgramName, Value.Converter.ToByteArray(x.Instrument))); // FIXME: not reflected?
                 });
@@ -444,7 +445,7 @@ namespace Meowziq.Win64 {
             /// </summary>
             public static void CreateConductor(Sequence sequence) {
                 MetaMessage tempo = new(type: MetaType.Tempo, data: Value.Converter.ToByteTempo(tempo: State.Tempo));
-                Track track = new();
+                MidiTrack track = new();
                 track.Insert(position: 0, message: tempo);
                 for (int index = 0; index < 100000; index++) { // FIXME: number of loops.
                     int tick = index * 30; // manually generates 30 ticks.
