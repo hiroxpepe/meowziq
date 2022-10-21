@@ -125,14 +125,14 @@ namespace Meowziq.Core {
                             Log.Trace($"Build: tick: {tick} head: {locate.Head} to end: {locate.end} {pattern.Name} {_type}");
                         }
                         Mixer<T>.ApplyVaule(locate.Head, _midi_ch, Type, pattern.Name, _program_num); // Mixer に値の変更を適用 NOTE: Note より先に設定することに意味がある
-                        if (!locate.Name.Equals(string.Empty) && (smf || locate.NeedBuild)) { // FIXME: tick で判定しないと全検索になってる
-                            List<Phrase> previousPhraseList = _phrase_list.Where(x => x.Name.Equals(locate.Name)).ToList(); // 一つ前の Phrase を引き当てる 
-                            if (previousPhraseList.Count != 0) {
-                                if (!_type.ToLower().Contains("drum")) { // ドラム以外
-                                    optimize(previousPhraseList[0], phrase); // 最適化
-                                }
-                            }
-                        }
+                        //if (!locate.Name.Equals(string.Empty) && (smf || locate.NeedBuild)) { // FIXME: tick で判定しないと全検索になってる
+                        //    List<Phrase> previousPhraseList = _phrase_list.Where(x => x.Name.Equals(locate.Name)).ToList(); // 一つ前の Phrase を引き当てる 
+                        //    if (previousPhraseList.Count != 0) {
+                        //        if (!_type.ToLower().Contains("drum")) { // ドラム以外
+                        //            optimize(previousPhraseList[0], phrase); // 最適化
+                        //        }
+                        //    }
+                        //}
                     }
                     locate.Name = pattern.Name; // 次の直前のフレーズ名として保持 MEMO: この位置での処理が必要
                     locate.Next(); // Pattern の長さ分 Pattern 開始 tick を移動する
@@ -147,29 +147,6 @@ namespace Meowziq.Core {
             /// </summary>
             if (smf) {
                 State.TrackMap.Add(key: _midi_ch, value: new State.Track(){ MidiCh = _midi_ch, Name = _type, Instrument = _instrument_name });
-            }
-        }
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // private Methods [verb]
-
-        /// <summary>
-        /// MEMO: 消したい音は current フレーズの直前の previous フレーズが対象
-        /// TODO: この処理の高速化が必須：何が必要で何がひつようでないか
-        ///       previous の発音が続いてる Note を識別する？：どのように？
-        ///           previous.AllNote.Were(なんとか) 
-        ///       current の シンコペ Note () ← 判定済み
-        ///       AllNote.ToDictionary(x => x.StopPre); というようにフラグをキー化して検索をかける
-        ///       previous も同様にする
-        ///       or 最初から Dictionary のリストを返すメソッドを実装しておく？
-        /// </summary>
-        void optimize(Phrase previous, Phrase current) {
-            foreach (Note stop_note in current.AllNote.Where(x => x.HasPre)) { // 優先ノートのリスト
-                foreach (Note note in previous.AllNote) { // 直前のフレーズの全てのノートの中で
-                    if (note.Tick == stop_note.Tick) { // 優先ノートと発音タイミングがかぶったら
-                        previous.RemoveBy(note); // ノートを削除
-                    }
-                }
             }
         }
 
