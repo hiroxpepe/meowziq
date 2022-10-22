@@ -46,18 +46,27 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjective] 
 
+        /// <summary>
+        /// gets the player type.
+        /// </summary>
         public string Type {
             get => _type;
             set {
                 _type = value;
                 _track = new(type: _type);
             }
-        }        
+        }
 
+        /// <summary>
+        /// sets the MidiChannel value.
+        /// </summary>
         public MidiChannel MidiCh {
             set => _midi_ch = (int) value;
         }
 
+        /// <summary>
+        /// sets the Instrument value.
+        /// </summary>
         public Instrument Instrument {
             set {
                 _program_num = (int) value;
@@ -65,6 +74,9 @@ namespace Meowziq.Core {
             }
         }
 
+        /// <summary>
+        /// sets the DrumKit value.
+        /// </summary>
         public DrumKit DrumKit {
             set {
                 _program_num = (int) value;
@@ -72,10 +84,16 @@ namespace Meowziq.Core {
             }
         }
 
+        /// <summary>
+        /// sets the Song object.
+        /// </summary>
         public Song Song {
             set => _song = value;
         }
 
+        /// <summary>
+        /// provides all phrase lists.
+        /// </summary>
         public List<Phrase> PhraseList {
             get => _phrase_list;
             set { 
@@ -88,11 +106,11 @@ namespace Meowziq.Core {
         // public Methods [verb]
 
         /// <summary>
-        /// MIDI ノートを生成します
-        /// NOTE: Phrase は前後の関連があるのでシンコペーションなどで MIDI 化前に Note を調整する必要あり
-        /// NOTE: Player と Phrase の type が一致ものしか入ってない
-        /// MEMO: SMF出力の場合はここは1回呼ぶだけで良い
+        /// builds Phrase objects.
         /// </summary>
+        /// <note>
+        /// + used to SMF output, called only once. <br/>
+        /// </note>
         public void Build(int tick, bool smf = false) {
             // sets the tempo and song name.
             State.TempoAndName = (_song.Tempo, _song.Name); // FIXME: looks like all players have it set up?
@@ -108,37 +126,38 @@ namespace Meowziq.Core {
                 Mixer<T>.ApplyVaule(tick: 0, midi_ch: _midi_ch, type: Type, name: first_pattern_name, program_num: _program_num);
             }
 
-            // Note データ作成のループ
             Locate locate = new(tick, smf);
             HashSet<string> processed_pattern_name_hashset = new();
-            foreach (Section section in _song.AllSection) { // 演奏順に並んだ Section のリスト
-                foreach (Pattern pattern in section.AllPattern) { // 演奏順に並んだ Pattern のリスト
+            foreach (Section section in _song.AllSection) {
+                foreach (Pattern pattern in section.AllPattern) {
                     locate.BeatCount = pattern.BeatCount;
-                    pattern.AllMeas.ForEach(x => x.AllSpan.ForEach(_x => { _x.Key = section.Key; _x.KeyMode = section.KeyMode; })); // Span に この Section のキーと旋法を追加
-                    if (locate.Changed) { // 演奏 tick とデータ処理の tick が一致した ⇒ パターン切り替え
+                    pattern.AllMeas.SelectMany(selector: x => x.AllSpan).ToList().ForEach(
+                        action: x => { x.Key = section.Key; x.KeyMode = section.KeyMode; } // initializes Span objects.
+                    );
+                    if (locate.ChangedPattarn) { // matched the playing tick and the data processing tick.
                         Log.Trace($"pattarn changed. tick: {tick} {pattern.Name} {_type}");
                     }
-                    foreach (Phrase phrase in _phrase_list.Where(x => x.Name.Equals(pattern.Name))) { // Pattern の名前で Phrase を引き当てる
-                        if (smf) { // NOTE: 全て Build
-                            phrase.Build(locate.Head, pattern); // SMF出力モードの場合全ての tick で処理ログ出力無し
-                        } else if (locate.NeedBuild) { // この tick が含まれてる、かつ _tickOfPatternHead に16小節(パターン最大長)を足した長さ以下 pattern のみ Build する 
-                            phrase.Build(locate.Head, pattern); // Note データを作成：tick 毎に数回分の Pattern のデータが作成される
-                            processed_pattern_name_hashset.Add(pattern.Name); // 処理したパターン名を保持
-                            Log.Info($"Build: tick: {tick} head: {locate.Head} to end: {locate.end} {pattern.Name} {_type}");
-                            if (locate.Head == State.Repeat.BeginTick && State.Repeat.BeginTick is not 0) {
-                                State.Repeat.BeginPatternName = pattern.Name;
+                    foreach (Phrase phrase in _phrase_list.Where(predicate: x => x.Name.Equals(pattern.Name))) {
+                        if (smf) { // builds all phrases.
+                            phrase.Build(tick: locate.HeadTick, pattern: pattern);
+                        } else if (locate.NeedPhraseBuild) { // needs to build a Phrase object.
+                            phrase.Build(tick: locate.HeadTick, pattern: pattern); // creates Note objects.
+                            processed_pattern_name_hashset.Add(pattern.Name); // holds processed pattern names.
+                            Log.Info($"Build: tick: {tick} head: {locate.HeadTick} to end: {locate.endTick} {pattern.Name} {_type}");
+                            if (locate.HeadTick == State.Repeat.BeginTick && State.Repeat.BeginTick is not 0) {
+                                State.Repeat.BeginPatternName = pattern.Name; // holds the pattern name of repeat begins.
                             }
                         }
                         string begin_pattern_name = State.Repeat.BeginPatternName;
                         if (pattern.Name == begin_pattern_name && processed_pattern_name_hashset.Add(begin_pattern_name) && State.Repeat.BeginTick is not 0) {
                             Pattern repeat_begin_pattern = section.AllPattern.Where(predicate: x => x.Name == State.Repeat.BeginPatternName).First();
                             phrase.Build(tick: State.Repeat.BeginTick, pattern: repeat_begin_pattern); // builds the pattern of repeat begins.
-                            Log.Info($"■■■■■ Build: tick: {State.Repeat.BeginTick} {pattern.Name} {_type}");
+                            Log.Info($"■■■ Build: tick: {State.Repeat.BeginTick} {pattern.Name} {_type}");
                         }
-                        Mixer<T>.ApplyVaule(locate.Head, _midi_ch, Type, pattern.Name, _program_num); // Mixer に値の変更を適用 NOTE: Note より先に設定することに意味がある
+                        Mixer<T>.ApplyVaule(locate.HeadTick, _midi_ch, Type, pattern.Name, _program_num); // applies value changes to Mixer: to set it before Note.
                     }
-                    locate.Name = pattern.Name; // 次の直前のフレーズ名として保持 MEMO: この位置での処理が必要
-                    locate.Next(); // Pattern の長さ分 Pattern 開始 tick を移動する
+                    locate.PreviousPatternName = pattern.Name; // holds as the previous phrase name.
+                    locate.NextHeadTick();
                 }
             }
             /// <summary>
@@ -157,26 +176,42 @@ namespace Meowziq.Core {
         // inner Classes
 
         /// <summary>
-        /// Pattern の開始 tick 終了 tick 最大 tick についての情報を保持します
-        /// NOTE: Pattern に対する処理位置カーソルのような役目を提供
-        /// NOTE: この Pattern と次の Pattern を処理しないといけない
+        /// holds state about the start tick end tick maximum tick of the Pattern.
         /// </summary>
         class Locate {
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Fields
 
-            int _current_tick; // 現在の tick ※絶対値
+            /// <summary>
+            /// current tick: absolute value.
+            /// </summary>
+            int _current_tick;
 
-            int _head_tick; // 処理してる Pattern の頭の tick ※絶対値
+            /// <summary>
+            /// head tick of the Pattern in processing: absolute value.
+            /// </summary>
+            int _head_tick;
 
-            int _length; // 処理してる Pattern の長さ
+            /// <summary>
+            /// length of the Pattern in processing.
+            /// </summary>
+            int _length;
 
-            int _max; // 処理してる Pattern の想定する最大の長さ ※ Pattern は最大12小節まで
+            /// <summary>
+            /// maximum expected length of the Pattern in processing.
+            /// </summary>
+            int _max;
 
-            string _previous_name; // 前回処理した Pattern の名前
+            /// <summary>
+            /// name of the Pattern that last processed.
+            /// </summary>
+            string _previous_name;
 
-            bool _smf; // SMF エクスポートモードかどうか
+            /// <summary>
+            /// whether in SMF export mode.
+            /// </summary>
+            bool _smf;
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Constructor
@@ -185,7 +220,7 @@ namespace Meowziq.Core {
                 _current_tick = tick;
                 _head_tick = 0;
                 _length = 0;
-                _max = tick + Length.Of4beat.Int32() * 4 * Measure.Max.Int32(); // Pattern の最大の長さ ※最大12小節まで
+                _max = tick + Length.Of4beat.Int32() * 4 * Measure.Max.Int32(); // maximum pattern length.
                 _previous_name = string.Empty;
                 _smf = smf;
             }
@@ -193,50 +228,66 @@ namespace Meowziq.Core {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Properties [noun, adjective] 
 
-            public int Head {
+            /// <summary>
+            /// head tick of the Pattern in processing.
+            /// </summary>
+            public int HeadTick {
                 get => _head_tick; set => _head_tick = value;
             }
 
+            /// <summary>
+            /// number of beats in the Pattern in processing.
+            /// </summary>
             public int BeatCount {
-                set => _length = value * Length.Of4beat.Int32(); // この Pattern の長さ
+                set => _length = value * Length.Of4beat.Int32();
             }
 
-            public string Name {
+            /// <summary>
+            /// provides the previous phrase name.
+            /// </summary>
+            public string PreviousPatternName {
                 get => _previous_name; set => _previous_name = value;
             }
 
-            public bool Changed {
-                get => _current_tick == Head && !_smf;
+            /// <summary>
+            /// whether the pattern has changed.
+            /// </summary>
+            public bool ChangedPattarn {
+                get => _current_tick == HeadTick && !_smf;
             }
 
-            public bool NeedBuild {
-                get => _current_tick <= end && beforeMax;
+            /// <summary>
+            /// whether a Phrase build is needed.
+            /// </summary>
+            public bool NeedPhraseBuild {
+                get => _current_tick <= endTick && beforeMax;
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // public Methods [verb]
 
             /// <summary>
-            /// この Pattern の長さ分 Head(tick) を移動します
-            /// NOTE: ここが回され tick と比較する数値が作成される
-            /// TODO: 範囲外と判明したらループから抜ける判定を追加？
+            /// moves the head tick by the length of this Pattern.
             /// </summary>
-            public void Next() {
-                _head_tick += _length; // Pattern の長さ分 Pattern 開始 tick を移動する
+            public void NextHeadTick() {
+                _head_tick += _length; // moves the Pattern start tick by the length of the Pattern.
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // private Properties [noun, adjective] 
 
-            public int end {
+            /// <summary>
+            /// end tick of the Pattern in processing.
+            /// </summary>
+            public int endTick {
                 get => _head_tick + _length;
             }
 
             /// <summary>
-            /// NOTE: bool値
+            /// whether before the maximum value.
             /// </summary>
             public bool beforeMax {
-                get => _head_tick < _max; // 次のパターンが必要、そのパターンは最大で12小節
+                get => _head_tick < _max;
             }
         }
     }
