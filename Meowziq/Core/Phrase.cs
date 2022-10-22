@@ -44,6 +44,9 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjective] 
 
+        /// <summary>
+        /// gets the phrase type.
+        /// </summary>
         public string Type {
             get => _type;
             set {
@@ -54,20 +57,29 @@ namespace Meowziq.Core {
             }
         }
 
+        /// <summary>
+        /// gets the phrase name.
+        /// </summary>
         public string Name {
             get => _name; set => _name = value;
         }
 
+        /// <summary>
+        /// gets the Data object.
+        /// </summary>
         public Data Data {
             get => _data; set => _data = value;
         }
 
+        /// <summary>
+        /// provides the name of the base phrase.
+        /// </summary>
         public string Base {
             get => _base; set => _base = value;
         }
 
         /// <summary>
-        /// TODO: default レンジ
+        /// gets the range.
         /// </summary>
         public string Range {
             set {
@@ -100,33 +112,6 @@ namespace Meowziq.Core {
         public Item<Note> NoteItem {
             set => _note_item = value;
         }
-
-        /// <summary>
-        /// gets the number of beats in the phrase.
-        /// </summary>
-        /// <note>
-        /// not used yet.
-        /// </note>
-        //public int BeatCount {
-        //    get {
-        //        switch (defineDataType()) {
-        //            case DataType.Mono:
-        //                return measCount(_data.Note.Text);
-        //            default:
-        //                throw new ArgumentException("not understandable DataType.");
-        //        }
-        //    }
-        //}
-
-        /// <summary>
-        /// gets the List<Note> object.
-        /// </summary>
-        /// <note>
-        /// not used yet.
-        /// </note> 
-        //public List<Note> AllNote {
-        //    get => _note_item.SelectMany(selector: x => x.Value).ToList();
-        //}
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
@@ -214,26 +199,6 @@ namespace Meowziq.Core {
                 return DataType.Seque;
             }
             throw new ArgumentException("not understandable DataType.");
-        }
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // private static Methods [verb]
-
-        /// <summary>
-        /// returns the number of measures.
-        /// </summary>
-        /// <remarks>
-        /// not used yet.
-        /// </remarks>
-        static int measCount(string target) {
-            if (target == null) {
-                throw new ArgumentException("target must not be null.");
-            }
-            // divides into measures.
-            string[] meas_string_array = target.Replace("][", "@")  // replaces "][" with "@" first.
-                .Split('@') // divides with that mark.
-                .Select(x => x.Replace("[", string.Empty).Replace("]", string.Empty)).ToArray(); // removes unnecessary characters.
-            return meas_string_array.Length * 4; // 1 measure is calculated as 4 beats.
         }
     }
 }

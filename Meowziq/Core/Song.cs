@@ -14,7 +14,6 @@
  */
 
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Meowziq.Core {
     /// <summary>
@@ -64,27 +63,6 @@ namespace Meowziq.Core {
         public List<Section> AllSection {
             get => _section_list;
         }
-
-        /// <summary>
-        /// gets all Pattern objects.
-        /// </summary>
-        /// <note>
-        /// not used yet.
-        /// </note>
-        //public List<Pattern> AllPattern {
-        //    get => _section_list.Select(x => x.AllPattern).SelectMany(x => x).ToList();
-        //}
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // private Methods [verb]
-
-        /// <summary>
-        /// not used yet.
-        /// </summary>
-        //Pattern checkeMode(Pattern pattern) {
-        //    pattern.AllMeas.ForEach(action: x => x.AllSpan.ForEach(action: _x => _x.KeyMode = Mode.Undefined));
-        //    return pattern;
-        //}
     }
 
     /// <summary>
