@@ -110,6 +110,7 @@ namespace Meowziq.Core {
 
             // Note データ作成のループ
             Locate locate = new(tick, smf);
+            HashSet<string> processed_pattern_name_hashset = new();
             foreach (Section section in _song.AllSection) { // 演奏順に並んだ Section のリスト
                 foreach (Pattern pattern in section.AllPattern) { // 演奏順に並んだ Pattern のリスト
                     locate.BeatCount = pattern.BeatCount;
@@ -122,17 +123,19 @@ namespace Meowziq.Core {
                             phrase.Build(locate.Head, pattern); // SMF出力モードの場合全ての tick で処理ログ出力無し
                         } else if (locate.NeedBuild) { // この tick が含まれてる、かつ _tickOfPatternHead に16小節(パターン最大長)を足した長さ以下 pattern のみ Build する 
                             phrase.Build(locate.Head, pattern); // Note データを作成：tick 毎に数回分の Pattern のデータが作成される
-                            Log.Trace($"Build: tick: {tick} head: {locate.Head} to end: {locate.end} {pattern.Name} {_type}");
-                        }
-                        Mixer<T>.ApplyVaule(locate.Head, _midi_ch, Type, pattern.Name, _program_num); // Mixer に値の変更を適用 NOTE: Note より先に設定することに意味がある
-                        if (!locate.Name.Equals(string.Empty) && (smf || locate.NeedBuild)) { // FIXME: tick で判定しないと全検索になってる
-                            List<Phrase> previousPhraseList = _phrase_list.Where(x => x.Name.Equals(locate.Name)).ToList(); // 一つ前の Phrase を引き当てる 
-                            if (previousPhraseList.Count != 0) {
-                                if (!_type.ToLower().Contains("drum")) { // ドラム以外
-                                    optimize(previousPhraseList[0], phrase); // 最適化
-                                }
+                            processed_pattern_name_hashset.Add(pattern.Name); // 処理したパターン名を保持
+                            Log.Info($"Build: tick: {tick} head: {locate.Head} to end: {locate.end} {pattern.Name} {_type}");
+                            if (locate.Head == State.Repeat.BeginTick && State.Repeat.BeginTick is not 0) {
+                                State.Repeat.BeginPatternName = pattern.Name;
                             }
                         }
+                        string begin_pattern_name = State.Repeat.BeginPatternName;
+                        if (pattern.Name == begin_pattern_name && processed_pattern_name_hashset.Add(begin_pattern_name) && State.Repeat.BeginTick is not 0) {
+                            Pattern repeat_begin_pattern = section.AllPattern.Where(predicate: x => x.Name == State.Repeat.BeginPatternName).First();
+                            phrase.Build(tick: State.Repeat.BeginTick, pattern: repeat_begin_pattern); // builds the pattern of repeat begins.
+                            Log.Info($"■■■■■ Build: tick: {State.Repeat.BeginTick} {pattern.Name} {_type}");
+                        }
+                        Mixer<T>.ApplyVaule(locate.Head, _midi_ch, Type, pattern.Name, _program_num); // Mixer に値の変更を適用 NOTE: Note より先に設定することに意味がある
                     }
                     locate.Name = pattern.Name; // 次の直前のフレーズ名として保持 MEMO: この位置での処理が必要
                     locate.Next(); // Pattern の長さ分 Pattern 開始 tick を移動する
@@ -147,29 +150,6 @@ namespace Meowziq.Core {
             /// </summary>
             if (smf) {
                 State.TrackMap.Add(key: _midi_ch, value: new State.Track(){ MidiCh = _midi_ch, Name = _type, Instrument = _instrument_name });
-            }
-        }
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // private Methods [verb]
-
-        /// <summary>
-        /// MEMO: 消したい音は current フレーズの直前の previous フレーズが対象
-        /// TODO: この処理の高速化が必須：何が必要で何がひつようでないか
-        ///       previous の発音が続いてる Note を識別する？：どのように？
-        ///           previous.AllNote.Were(なんとか) 
-        ///       current の シンコペ Note () ← 判定済み
-        ///       AllNote.ToDictionary(x => x.StopPre); というようにフラグをキー化して検索をかける
-        ///       previous も同様にする
-        ///       or 最初から Dictionary のリストを返すメソッドを実装しておく？
-        /// </summary>
-        void optimize(Phrase previous, Phrase current) {
-            foreach (Note stop_note in current.AllNote.Where(x => x.HasPre)) { // 優先ノートのリスト
-                foreach (Note note in previous.AllNote) { // 直前のフレーズの全てのノートの中で
-                    if (note.Tick == stop_note.Tick) { // 優先ノートと発音タイミングがかぶったら
-                        previous.RemoveBy(note); // ノートを削除
-                    }
-                }
             }
         }
 
