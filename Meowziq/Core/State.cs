@@ -232,6 +232,8 @@ namespace Meowziq.Core {
 
             static int _begin_meas, _end_meas, _begin_tick, _end_tick, _tick_counter = 0;
 
+            static string _begin_pattern_name = string.Empty;
+
             ///////////////////////////////////////////////////////////////////////////////////////////////
             // public static Properties [noun, adjective] 
 
@@ -265,6 +267,20 @@ namespace Meowziq.Core {
                     }
                     return _tick_counter;
                 }
+            }
+
+            /// <summary>
+            /// gets the repeat begin tick.
+            /// </summary>
+            public static int BeginTick {
+                get => _begin_tick;
+            }
+
+            /// <summary>
+            /// provides the repeat begin pattern name.
+            /// </summary>
+            public static string BeginPatternName {
+                get => _begin_pattern_name; set => _begin_pattern_name = value;
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////////

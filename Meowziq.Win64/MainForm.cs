@@ -168,17 +168,11 @@ namespace Meowziq.Win64 {
         void sequencer_ChannelMessagePlayed(object sender, ChannelMessageEventArgs e) {
             if (Sound.Stopping) { return; }
             if (Visible) {
-                //Log.Info($"_sequencer.Position: {_sequencer.Position}");
                 State.Tick = _sequencer.Position - 1; // NOTE: tick position comes with 1, 31, so subtract 1 in advance.
                 if (State.SameTick) { return; };
-                //Log.Info($"State.Tick: {State.Tick}");
                 // MIDI message processing.
-                Log.Info($"_tick: {State.Tick} _tick_counter: {State.Repeat.Tick}");
                 Midi.Message.ApplyTick(tick: State.Repeat.Tick, load: loadSong); // switches every 2 beats. MEMO: considers syncopation.
                 List<ChannelMessage> list = Midi.Message.GetBy(tick: State.Repeat.Tick); // gets the list of midi messages.
-                if (State.Repeat.Tick == 1920) {
-                    //Log.Info($"_tick: {State.Tick} _tick_counter: {State.Repeat.Tick} list: {list.Count}");
-                }
                 if (list is not null) {
                     list.ForEach(action: x => {
                         _midi.OutDevice.Send(message: x); // sends messages to a midi device. // MEMO: throws cc directly here?

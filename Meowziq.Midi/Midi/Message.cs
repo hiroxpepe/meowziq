@@ -58,10 +58,8 @@ namespace Meowziq.Midi {
         /// </note>
         public static List<ChannelMessage> GetBy(int tick) {
             if (_flag) {
-                Log.Info($"to get from Prime tick: {tick}");
                 return Prime.Item.Get(key: tick); // TODO: checks for problems.
             } else {
-                Log.Info($"to get from Second tick: {tick}");
                 return Second.Item.Get(key: tick); // TODO: checks for problems.
             }
         }
@@ -216,11 +214,9 @@ namespace Meowziq.Midi {
             if (_flag) {
                 Second.Clear();
                 State.Clear();
-                Log.Info($"clear Second");
             } else {
                 Prime.Clear();
                 State.Clear();
-                Log.Info($"clear Prime");
             }
         }
 

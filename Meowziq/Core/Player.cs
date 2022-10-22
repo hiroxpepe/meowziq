@@ -110,6 +110,7 @@ namespace Meowziq.Core {
 
             // Note データ作成のループ
             Locate locate = new(tick, smf);
+            HashSet<string> processed_pattern_name_hashset = new();
             foreach (Section section in _song.AllSection) { // 演奏順に並んだ Section のリスト
                 foreach (Pattern pattern in section.AllPattern) { // 演奏順に並んだ Pattern のリスト
                     locate.BeatCount = pattern.BeatCount;
@@ -122,7 +123,17 @@ namespace Meowziq.Core {
                             phrase.Build(locate.Head, pattern); // SMF出力モードの場合全ての tick で処理ログ出力無し
                         } else if (locate.NeedBuild) { // この tick が含まれてる、かつ _tickOfPatternHead に16小節(パターン最大長)を足した長さ以下 pattern のみ Build する 
                             phrase.Build(locate.Head, pattern); // Note データを作成：tick 毎に数回分の Pattern のデータが作成される
-                            Log.Trace($"Build: tick: {tick} head: {locate.Head} to end: {locate.end} {pattern.Name} {_type}");
+                            processed_pattern_name_hashset.Add(pattern.Name); // 処理したパターン名を保持
+                            Log.Info($"Build: tick: {tick} head: {locate.Head} to end: {locate.end} {pattern.Name} {_type}");
+                            if (locate.Head == State.Repeat.BeginTick && State.Repeat.BeginTick is not 0) {
+                                State.Repeat.BeginPatternName = pattern.Name;
+                            }
+                        }
+                        string begin_pattern_name = State.Repeat.BeginPatternName;
+                        if (pattern.Name == begin_pattern_name && processed_pattern_name_hashset.Add(begin_pattern_name) && State.Repeat.BeginTick is not 0) {
+                            Pattern repeat_begin_pattern = section.AllPattern.Where(predicate: x => x.Name == State.Repeat.BeginPatternName).First();
+                            phrase.Build(tick: State.Repeat.BeginTick, pattern: repeat_begin_pattern); // builds the pattern of repeat begins.
+                            Log.Info($"■■■■■ Build: tick: {State.Repeat.BeginTick} {pattern.Name} {_type}");
                         }
                         Mixer<T>.ApplyVaule(locate.Head, _midi_ch, Type, pattern.Name, _program_num); // Mixer に値の変更を適用 NOTE: Note より先に設定することに意味がある
                     }

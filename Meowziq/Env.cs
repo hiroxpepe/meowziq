@@ -45,7 +45,7 @@ namespace Meowziq {
         /// set it to 4 can change every 1 measure. <br/>
         /// also set it to 1 can change every 1 beat. 
         /// </summary>
-        public static readonly int LOAD_EVERY_BEAT = 256;
+        public static readonly int LOAD_EVERY_BEAT = 1;
 
         public static readonly string COUNT_PATTERN = "count";
         public static readonly string CONDUCTOR_MIDI = "./data/conductor.mid";
