@@ -209,6 +209,16 @@ namespace Meowziq.Core {
             _track_map.Clear();
         }
 
+        /// <summary>
+        /// initializes the tick.
+        /// </summary>
+        /// <note>
+        /// necessary when starting for _sameTick.
+        /// </note>
+        public static void InitTick() {
+            _tick = -1;
+        }
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // inner Classes
 
@@ -267,9 +277,10 @@ namespace Meowziq.Core {
                 if (!has) { return; }
                 if (_begin_meas > meas && _end_meas < meas) { return; }
                 _tick_counter += TICK_INTERVAL;
+                //Log.Info($"_tick: {_tick} _tick_counter: {_tick_counter}");
                 // resets when repeat length is reached.
-                if (_tick_counter == _begin_tick + repeatTickLength) {
-                    _tick_counter = _begin_tick - TICK_INTERVAL;
+                if (_tick_counter == _begin_tick + repeatTickLength ) {
+                    _tick_counter = _begin_tick;
                 }
             }
 

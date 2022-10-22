@@ -125,14 +125,6 @@ namespace Meowziq.Core {
                             Log.Trace($"Build: tick: {tick} head: {locate.Head} to end: {locate.end} {pattern.Name} {_type}");
                         }
                         Mixer<T>.ApplyVaule(locate.Head, _midi_ch, Type, pattern.Name, _program_num); // Mixer に値の変更を適用 NOTE: Note より先に設定することに意味がある
-                        //if (!locate.Name.Equals(string.Empty) && (smf || locate.NeedBuild)) { // FIXME: tick で判定しないと全検索になってる
-                        //    List<Phrase> previousPhraseList = _phrase_list.Where(x => x.Name.Equals(locate.Name)).ToList(); // 一つ前の Phrase を引き当てる 
-                        //    if (previousPhraseList.Count != 0) {
-                        //        if (!_type.ToLower().Contains("drum")) { // ドラム以外
-                        //            optimize(previousPhraseList[0], phrase); // 最適化
-                        //        }
-                        //    }
-                        //}
                     }
                     locate.Name = pattern.Name; // 次の直前のフレーズ名として保持 MEMO: この位置での処理が必要
                     locate.Next(); // Pattern の長さ分 Pattern 開始 tick を移動する
