@@ -178,6 +178,7 @@ namespace Meowziq.Midi {
             Prime.Clear();
             Second.Clear();
             State.Clear();
+            State.InitTick(); // necessary when starting for State.SameTick.
             _flag = true;
         }
 

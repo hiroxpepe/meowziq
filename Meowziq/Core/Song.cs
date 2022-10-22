@@ -71,11 +71,9 @@ namespace Meowziq.Core {
         /// <note>
         /// not used yet.
         /// </note>
-        public List<Pattern> AllPattern {
-            get {
-                return _section_list.Select(x => x.AllPattern).SelectMany(x => x).ToList();
-            }
-        }
+        //public List<Pattern> AllPattern {
+        //    get => _section_list.Select(x => x.AllPattern).SelectMany(x => x).ToList();
+        //}
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private Methods [verb]
@@ -83,10 +81,10 @@ namespace Meowziq.Core {
         /// <summary>
         /// not used yet.
         /// </summary>
-        Pattern checkeMode(Pattern pattern) {
-            pattern.AllMeas.ForEach(action: x => x.AllSpan.ForEach(action: _x => _x.KeyMode = Mode.Undefined));
-            return pattern;
-        }
+        //Pattern checkeMode(Pattern pattern) {
+        //    pattern.AllMeas.ForEach(action: x => x.AllSpan.ForEach(action: _x => _x.KeyMode = Mode.Undefined));
+        //    return pattern;
+        //}
     }
 
     /// <summary>

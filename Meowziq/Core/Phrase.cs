@@ -14,7 +14,6 @@
  */
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 using Meowziq.Value;
@@ -31,15 +30,15 @@ namespace Meowziq.Core {
 
         string _type, _name, _base;
 
-        Data _data; // json から読み込んだデータを格納
+        Data _data;
 
-        Item<Note> _note_item; // Tick 毎の Note のリスト、Pattern の設定回数分の Note を格納
+        Item<Note> _note_item;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
         public Phrase() {
-            _data = new(); // json から詰められるデータ
+            _data = new();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -96,72 +95,47 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// gets the number of beats in the phrase.
-        /// </summary>
-        /// <note>
-        /// not used yet.
-        /// </note>
-        public int BeatCount {
-            get {
-                switch (defineDataType()) {
-                    case DataType.Mono:
-                        return measCount(_data.Note.Text);
-                    default:
-                        throw new ArgumentException("not understandable DataType.");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Note のリストを返します
-        /// </summary>
-        public List<Note> AllNote {
-            get {
-                // TODO: 返すたびに optimize 必要？ ⇒ 必要ない：修正が必要
-                if (!Type.ToLower().Contains("drum")) { // ドラム以外 TODO: これで良いか確認
-                    optimize(); // 最適化する
-                }
-                return _note_item.SelectMany(selector: x => x.Value).ToList();
-            }
-        }
-
-        /// <summary>
         /// sets the Item<Note> object.
         /// </summary>
         public Item<Note> NoteItem {
             set => _note_item = value;
         }
 
+        /// <summary>
+        /// gets the number of beats in the phrase.
+        /// </summary>
+        /// <note>
+        /// not used yet.
+        /// </note>
+        //public int BeatCount {
+        //    get {
+        //        switch (defineDataType()) {
+        //            case DataType.Mono:
+        //                return measCount(_data.Note.Text);
+        //            default:
+        //                throw new ArgumentException("not understandable DataType.");
+        //        }
+        //    }
+        //}
+
+        /// <summary>
+        /// gets the List<Note> object.
+        /// </summary>
+        /// <note>
+        /// not used yet.
+        /// </note> 
+        //public List<Note> AllNote {
+        //    get => _note_item.SelectMany(selector: x => x.Value).ToList();
+        //}
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
 
         /// <summary>
-        /// Note データを生成します
-        /// NOTE: Player オブジェクトから呼ばれます
+        /// creates Note objects.
         /// </summary>
         public void Build(int tick, Pattern pattern) {
             onBuild(tick, pattern);
-        }
-
-        /// <summary>
-        /// シンコペーションで被る Note を除外します
-        /// NOTE: all sound off された後の tick の note を消せばよい
-        /// TODO: この処理の高速化が必要：List が遅い？ LINQ が遅い？
-        /// FIXME: バグあり ⇒ シンコペーションは小節の頭だけ許可する？
-        /// </summary>
-        public void RemoveBy(Note target) {
-            int tick1 = target.Tick;
-            List<Note> note_list1 = _note_item.Get(key: tick1);
-            note_list1 = note_list1.Where(predicate: x => !(!x.HasPre && x.Tick == tick1)).ToList(); // 優先ノートではなく tick が同じものを削除 // FIXME: ドラムは音毎？
-            _note_item.SetBy(key: tick1, value: note_list1);
-            if (target.PreCount > 1) { // さらにシンコぺの設定値が2の場合
-                int tick2 = target.Tick + Length.Of16beat.Int32();
-                List<Note> note_list2 = _note_item.Get(tick2);
-                if (note_list2 != null) {
-                    note_list2 = note_list2.Where(x => !(!x.HasPre && x.Tick == tick2)).ToList(); // さらに被る16音符を削除
-                    _note_item.SetBy(key: tick2, value: note_list2);
-                }
-            }
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -219,27 +193,6 @@ namespace Meowziq.Core {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private Methods [verb]
-
-        /// <summary>
-        /// TBA
-        /// </summary>
-        /// <memo_jp>
-        /// + 消したい音はこのフレーズではない場合もある => Player で処理を定義
-        /// + この処理の高速化が必須：何が必要で何が必要でないか
-        /// + previous の発音が続いてる Note を識別する？ => どのように？
-        ///     + previous.AllNote.Were(なんとか) 
-        /// + current の シンコペ Note <= 判定済み
-        /// </memo_jp>
-        void optimize() {
-            List<Note> note_list = _note_item.SelectMany(x => x.Value).ToList();
-            foreach (Note stop_note in note_list.Where(x => x.HasPre)) { // 優先ノートのリスト
-                foreach (Note note in note_list) { // このフレーズの全てのノートの中で
-                    if (note.Tick == stop_note.Tick) { // 優先ノートと発音タイミングがかぶったら
-                        RemoveBy(note); // ノートを削除
-                    }
-                }
-            }
-        }
 
         /// <summary>
         /// determines the type of data written in json.

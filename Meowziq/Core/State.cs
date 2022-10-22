@@ -13,6 +13,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -208,6 +209,16 @@ namespace Meowziq.Core {
             _track_map.Clear();
         }
 
+        /// <summary>
+        /// initializes the tick.
+        /// </summary>
+        /// <note>
+        /// necessary when starting for _sameTick.
+        /// </note>
+        public static void InitTick() {
+            _tick = -1;
+        }
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // inner Classes
 
@@ -220,6 +231,8 @@ namespace Meowziq.Core {
             // static Fields [nouns, noun phrases]
 
             static int _begin_meas, _end_meas, _begin_tick, _end_tick, _tick_counter = 0;
+
+            static string _begin_pattern_name = string.Empty;
 
             ///////////////////////////////////////////////////////////////////////////////////////////////
             // public static Properties [noun, adjective] 
@@ -256,6 +269,20 @@ namespace Meowziq.Core {
                 }
             }
 
+            /// <summary>
+            /// gets the repeat begin tick.
+            /// </summary>
+            public static int BeginTick {
+                get => _begin_tick;
+            }
+
+            /// <summary>
+            /// provides the repeat begin pattern name.
+            /// </summary>
+            public static string BeginPatternName {
+                get => _begin_pattern_name; set => _begin_pattern_name = value;
+            }
+
             ///////////////////////////////////////////////////////////////////////////////////////////////
             // public static Methods [verb]
 
@@ -266,9 +293,10 @@ namespace Meowziq.Core {
                 if (!has) { return; }
                 if (_begin_meas > meas && _end_meas < meas) { return; }
                 _tick_counter += TICK_INTERVAL;
+                //Log.Info($"_tick: {_tick} _tick_counter: {_tick_counter}");
                 // resets when repeat length is reached.
-                if (_tick_counter == _begin_tick + repeatTickLength) {
-                    _tick_counter = _begin_tick - TICK_INTERVAL;
+                if (_tick_counter == _begin_tick + repeatTickLength ) {
+                    _tick_counter = _begin_tick;
                 }
             }
 
