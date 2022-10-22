@@ -30,14 +30,12 @@ namespace Meowziq.Core {
     public class Generator {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        #region Fields
+        // Fields
 
         Item<Note> _note_item;
 
-        #endregion
-
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        #region Constructor
+        // Constructor
 
         Generator(Item<Note> note_item) {
             _note_item = note_item;
@@ -50,10 +48,8 @@ namespace Meowziq.Core {
             return new Generator(note_item);
         }
 
-        #endregion
-
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        #region public Methods [verb]
+        // public Methods [verb]
 
         /// <summary>
         /// creates and applies a Note object.
@@ -165,10 +161,8 @@ namespace Meowziq.Core {
             }
         }
 
-        #endregion
-
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        #region private Methods [verb]
+        // private Methods [verb]
 
         /// <summary>
         /// converts all notes into the specified range.
@@ -193,12 +187,8 @@ namespace Meowziq.Core {
             _note_item.Add(key: tick, value: note);
         }
 
-        #endregion
-
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        #region inner Classes
-
-        #region Gate
+        // inner Classes
 
         /// <summary>
         /// class that holds note value information.
@@ -206,21 +196,17 @@ namespace Meowziq.Core {
         class Gate {
 
             ///////////////////////////////////////////////////////////////////////////////////////////
-            #region Const [nouns]
+            // Const [nouns]
 
             const int TEXT_VALUE_LENGTH = 1;
 
-            #endregion
-
             ///////////////////////////////////////////////////////////////////////////////////////////
-            #region Fields
+            // Fields
 
             int _beat_count, _gate_count, _search_index, _pre_length, _pre_count;
 
-            #endregion
-
             ///////////////////////////////////////////////////////////////////////////////////////////
-            #region Constructor
+            // Constructor
 
             public Gate(int search_idx, int beat_count) {
                 _beat_count = beat_count;
@@ -232,100 +218,99 @@ namespace Meowziq.Core {
                 _gate_count = _pre_length = _pre_count = 0;
             }
 
-            #endregion
-
             ///////////////////////////////////////////////////////////////////////////////////////////
-            #region Properties [noun, adjective] 
+            // Properties [noun, adjective] 
 
             /// <summary>
-            /// この Pattern に次の 16beat が存在するかどうか
+            /// whether has the next 16beats in this Pattern.
             /// </summary>
             public bool HasNextSearch {
                 get {
                     if (_search_index < To16beatCount(_beat_count)) {
-                        return true; // index 値がパターンの16beatの長さ以下なら true
+                        return true; // true if the index value is less than or equal to the 16 beats length of the Pattern.
                     }
                     return false;
                 }
             }
 
+            /// <summary>
+            /// index value pointing to the array position.
+            /// </summary>
             public int SearchIndex {
                 get => _search_index;
             }
 
             /// <summary>
-            /// Note を前方に移動する数値 tick を返します
-            /// NOTE: シンコペーション
+            /// gets the number that moves the tick of notes forward.
             /// </summary>
             public int PreLength {
                 get => _pre_length;
             }
 
             /// <summary>
-            /// シンコペーションの数値設定
+            /// get the count of syncopation.
             /// </summary>
             public int PreCount {
                 get => _pre_count;
             }
 
+            /// <summary>
+            /// gets the gate value of the note.
+            /// </summary>
             public int Value {
                 get => To16beatLength(_gate_count + TEXT_VALUE_LENGTH);
             }
 
-            #endregion
-
             ///////////////////////////////////////////////////////////////////////////////////////////
-            #region public Methods [verb]
+            // public Methods [verb]
 
             /// <summary>
-            /// シンコペーションの設定を適用します
+            /// applies a syncopation parameter.
             /// </summary>
             public void ApplyPre(string pre_string) {
                 int pre_int = int.Parse(pre_string.ToString());
-                _gate_count += pre_int; // pre の数値を音価に加算
-                _pre_length = -To16beatLength(pre_int); // pre の数値 * 16beat分前にする
+                _gate_count += pre_int;
+                _pre_length = -To16beatLength(pre_int);
                 if (_pre_length != 0) {
-                    _pre_count = pre_int; // シンコペーションの数値設定
+                    _pre_count = pre_int;
                 }
             }
 
+            /// <summary>
+            /// increments the search value.
+            /// </summary>
             public void IncrementSearch() {
                 _search_index++;
             }
 
+            /// <summary>
+            /// increments the gate value.
+            /// </summary>
             public void IncrementGate() {
                 _gate_count++;
             }
-
-            #endregion
         }
 
-        #endregion
-
-        #region Index
-
         /// <summary>
-        /// 16beatのカウントを保持するクラス
+        /// class that holds 16 beats count.
         /// </summary>
         /// <note>
-        /// + 4インクリメントされる毎に1インクリメントした Span の index 値も返す
-        /// + ここの Span は必ず1拍である
+        /// + returns the index value of Span incremented by 1 every time it is incremented by 4. <br/>
+        /// + always 1 beat in Span objects here. <br/>
         /// </note>
         class Index {
 
             ///////////////////////////////////////////////////////////////////////////////////////////
-            #region Fields
+            // Fields
 
-            int _beat_count; // この Pattern の拍数
+            int _beat_count;
 
-            int _index_for_16beat; // 16beatを4回数える用
+            int _index_for_16beat;
 
             int _index, _span_index;
 
-            #endregion
-
             ///////////////////////////////////////////////////////////////////////////////////////////
-            #region Constructor
+            // Constructor
 
             public Index(int beat_count) {
                 _beat_count = beat_count;
@@ -333,56 +318,49 @@ namespace Meowziq.Core {
                 _span_index = 0;
             }
 
-            #endregion
-
             ///////////////////////////////////////////////////////////////////////////////////////////
-            #region Properties [noun, adjective] 
+            // Properties [noun, adjective] 
 
             /// <summary>
-            /// 16beat の index 値
+            /// index value of 16 beats.
             /// </summary>
             public int Idx {
                 get => _index;
             }
 
+            /// <summary>
+            /// index value of the Span object.
+            /// </summary>
             public int SpanIndex {
                 get => _span_index;
             }
 
             /// <summary>
-            /// この Pattern に次の 16beat が存在するかどうか
+            /// whether has the next 16 beats in this Pattern.
             /// </summary>
             public bool HasNext {
                 get {
                     if (_index < To16beatCount(_beat_count)) {
-                        return true; // index 値がパターンの16beatの長さ以下なら true
+                        return true;
                     }
                     return false;
                 }
             }
 
-            #endregion
-
             ///////////////////////////////////////////////////////////////////////////////////////////
-            #region public Methods [verb]
+            // public Methods [verb]
 
             /// <summary>
             /// increments 16 beats.
             /// </summary>
             public void Increment() {
                 _index++; // increments 16 beats.
-                _index_for_16beat++; // 16beat のカウントをインクリメント
-                if (_index_for_16beat == 4) { // 4カウント溜まったら
+                _index_for_16beat++;
+                if (_index_for_16beat == 4) {
                     _index_for_16beat = 0;
-                    _span_index++; // Span index をインクリメント MEMO: 1拍のこと
-                } // TODO: 必要なのは1小節をカウントすることとそのindex値
+                    _span_index++;
+                }
             }
-
-            #endregion
         }
-
-        #endregion
-
-        #endregion
     }
 }

@@ -181,9 +181,6 @@ namespace Meowziq.Win64 {
                         if (x.MidiChannel != 9 && x.MidiChannel != 1) { // FIXME: exclude sequences is provisional.
                             _pianocontrol.Send(message: x); // shows in piano roll except for drums.
                         }
-                        if (x.MidiChannel == 2) {
-                            //Log.Trace($"Data1: {x.Data1} Data2: {x.Data2}");
-                        }
                     });
                 }
                 // updates UI information.

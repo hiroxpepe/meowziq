@@ -91,40 +91,32 @@ namespace Meowziq.Core {
         // private Methods [verb]
 
         /// <summary>
-        /// TBA
+        /// optimizes notes.
         /// </summary>
-        /// <memo_jp>
-        /// + previous の発音が続いてる Note を識別する？ => どのように？
-        ///     + previous.AllNote.Were(なんとか) 
-        /// + current の シンコペ Note <= 判定済み
-        /// </memo_jp>
         void optimize() {
-            List<Note> note_list = _note_item.SelectMany(x => x.Value).ToList();
-            foreach (Note stop_note in note_list.Where(x => x.HasPre)) { // 優先ノートのリスト
-                foreach (Note note in note_list) { // このフレーズの全てのノートの中で
-                    if (note.Tick == stop_note.Tick) { // 優先ノートと発音タイミングがかぶったら
-                        removeBy(note); // ノートを削除
+            List<Note> all_note_list = _note_item.SelectMany(selector: x => x.Value).ToList();
+            foreach (Note syncopation_note in all_note_list.Where(predicate: x => x.HasPre)) {
+                foreach (Note note in all_note_list) {
+                    if (note.Tick == syncopation_note.Tick) {
+                        removeBy(note);
                     }
                 }
             }
         }
 
         /// <summary>
-        /// シンコペーションで被る Note を除外します
-        /// NOTE: all sound off された後の tick の note を消せばよい
-        /// TODO: この処理の高速化が必要：List が遅い？ LINQ が遅い？
-        /// FIXME: バグあり ⇒ シンコペーションは小節の頭だけ許可する？
+        /// removes notes that overlap with syncopation.
         /// </summary>
         public void removeBy(Note target) {
             int tick1 = target.Tick;
             List<Note> note_list1 = _note_item.Get(key: tick1);
-            note_list1 = note_list1.Where(predicate: x => !(!x.HasPre && x.Tick == tick1)).ToList(); // 優先ノートではなく tick が同じものを削除 // FIXME: ドラムは音毎？
+            note_list1 = note_list1.Where(predicate: x => !(!x.HasPre && x.Tick == tick1)).ToList(); // removes the same tick and a non-priority note.
             _note_item.SetBy(key: tick1, value: note_list1);
-            if (target.PreCount > 1) { // さらにシンコぺの設定値が2の場合
+            if (target.PreCount > 1) { // has a syncopation parameter 2.
                 int tick2 = target.Tick + Length.Of16beat.Int32();
                 List<Note> note_list2 = _note_item.Get(tick2);
                 if (note_list2 != null) {
-                    note_list2 = note_list2.Where(x => !(!x.HasPre && x.Tick == tick2)).ToList(); // さらに被る16音符を削除
+                    note_list2 = note_list2.Where(predicate: x => !(!x.HasPre && x.Tick == tick2)).ToList(); // removes more overlapping 16 beats notes.
                     _note_item.SetBy(key: tick2, value: note_list2);
                 }
             }
