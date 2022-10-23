@@ -60,23 +60,17 @@ namespace Meowziq.Core {
         /// <summary>
         /// gets the phrase name.
         /// </summary>
-        public string Name {
-            get => _name; set => _name = value;
-        }
+        public string Name { get => _name; set => _name = value; }
 
         /// <summary>
         /// gets the Data object.
         /// </summary>
-        public Data Data {
-            get => _data; set => _data = value;
-        }
+        public Data Data { get => _data; set => _data = value; }
 
         /// <summary>
         /// provides the name of the base phrase.
         /// </summary>
-        public string Base {
-            get => _base; set => _base = value;
-        }
+        public string Base { get => _base; set => _base = value; }
 
         /// <summary>
         /// gets the range.
@@ -109,9 +103,7 @@ namespace Meowziq.Core {
         /// <summary>
         /// sets the Item<Note> object.
         /// </summary>
-        public Item<Note> NoteItem {
-            set => _note_item = value;
-        }
+        public Item<Note> NoteItem { set => _note_item = value; }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
@@ -183,21 +175,11 @@ namespace Meowziq.Core {
         /// determines the type of data written in json.
         /// </summary>
         DataType defineDataType() {
-            if (!_data.HasMulti && (_data.HasNote || _data.HasAuto)) {
-                return DataType.Mono;
-            }
-            else if (_data.HasMulti && (_data.HasNote || _data.HasAuto)) {
-                return DataType.Multi;
-            }
-            else if (_data.HasChord) {
-                return DataType.Chord;
-            }
-            else if (_data.HasBeat) {
-                return DataType.Drum;
-            }
-            else if (_data.HasSeque) {
-                return DataType.Seque;
-            }
+            if (!_data.HasMulti && (_data.HasNote || _data.HasAuto)) { return DataType.Mono; }
+            if (_data.HasMulti && (_data.HasNote || _data.HasAuto)) { return DataType.Multi; }
+            if (_data.HasChord) { return DataType.Chord; }
+            if (_data.HasBeat) { return DataType.Drum; }
+            if (_data.HasSeque) { return DataType.Seque; }
             throw new ArgumentException("not understandable DataType.");
         }
     }

@@ -51,13 +51,9 @@ namespace Meowziq.Midi {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjective] 
 
-        public OutputDevice OutDevice {
-            get => _out_device;
-        }
+        public OutputDevice OutDevice { get => _out_device; }
 
-        public List<string> OutDeviceName {
-            get => _out_device_name_list;
-        }
+        public List<string> OutDeviceName { get => _out_device_name_list; }
 
         public int OutDeviceId {
             set { 

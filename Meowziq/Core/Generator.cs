@@ -236,30 +236,22 @@ namespace Meowziq.Core {
             /// <summary>
             /// index value pointing to the array position.
             /// </summary>
-            public int SearchIndex {
-                get => _search_index;
-            }
+            public int SearchIndex { get => _search_index; }
 
             /// <summary>
             /// gets the number that moves the tick of notes forward.
             /// </summary>
-            public int PreLength {
-                get => _pre_length;
-            }
+            public int PreLength { get => _pre_length; }
 
             /// <summary>
             /// get the count of syncopation.
             /// </summary>
-            public int PreCount {
-                get => _pre_count;
-            }
+            public int PreCount { get => _pre_count; }
 
             /// <summary>
             /// gets the gate value of the note.
             /// </summary>
-            public int Value {
-                get => To16beatLength(_gate_count + TEXT_VALUE_LENGTH);
-            }
+            public int Value { get => To16beatLength(_gate_count + TEXT_VALUE_LENGTH); }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // public Methods [verb]
@@ -324,16 +316,12 @@ namespace Meowziq.Core {
             /// <summary>
             /// index value of 16 beats.
             /// </summary>
-            public int Idx {
-                get => _index;
-            }
+            public int Idx { get => _index; }
 
             /// <summary>
             /// index value of the Span object.
             /// </summary>
-            public int SpanIndex {
-                get => _span_index;
-            }
+            public int SpanIndex { get => _span_index; }
 
             /// <summary>
             /// whether has the next 16 beats in this Pattern.

@@ -479,17 +479,11 @@ namespace Meowziq.Win64 {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Properties [noun, adjective] 
 
-            public static bool Playing {
-                get => _playing; set => _playing = value;
-            }
+            public static bool Playing { get => _playing; set => _playing = value; }
 
-            public static bool Played {
-                get => _played; set => _played = value;
-            }
+            public static bool Played { get => _played; set => _played = value; }
 
-            public static bool Stopping {
-                get => _stopping; set => _stopping = value;
-            }
+            public static bool Stopping { get => _stopping; set => _stopping = value; }
         }
     }
 }

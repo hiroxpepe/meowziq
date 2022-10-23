@@ -248,13 +248,9 @@ namespace Meowziq.Midi {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Properties [noun, adjective] 
 
-            public static Item<ChannelMessage> Item {
-                get => _item; set => _item = value;
-            }
+            public static Item<ChannelMessage> Item { get => _item; set => _item = value; }
 
-            public static HashSet<int>[] AllNoteOffToAddArray {
-                get => _all_note_off_to_add_array; set => _all_note_off_to_add_array = value;
-            }
+            public static HashSet<int>[] AllNoteOffToAddArray { get => _all_note_off_to_add_array; set => _all_note_off_to_add_array = value; }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // private Methods [verb]
@@ -290,13 +286,9 @@ namespace Meowziq.Midi {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Properties [noun, adjective] 
 
-            public static Item<ChannelMessage> Item {
-                get => _item; set => _item = value;
-            }
+            public static Item<ChannelMessage> Item { get => _item; set => _item = value; }
 
-            public static HashSet<int>[] AllNoteOffToAddArray {
-                get => _all_note_off_to_add_array; set => _all_note_off_to_add_array = value;
-            }
+            public static HashSet<int>[] AllNoteOffToAddArray { get => _all_note_off_to_add_array; set => _all_note_off_to_add_array = value; }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // private Methods [verb]

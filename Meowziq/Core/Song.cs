@@ -46,23 +46,17 @@ namespace Meowziq.Core {
         /// <summary>
         /// gets the song name.
         /// </summary>
-        public string Name {
-            get => _name;
-        }
+        public string Name { get => _name; }
 
         /// <summary>
         /// gets the song tempo.
         /// </summary>
-        public int Tempo {
-            get => _tempo;
-        }
+        public int Tempo { get => _tempo; }
 
         /// <summary>
         /// gets all Section objects.
         /// </summary>
-        public List<Section> AllSection {
-            get => _section_list;
-        }
+        public List<Section> AllSection { get => _section_list; }
     }
 
     /// <summary>
@@ -94,22 +88,16 @@ namespace Meowziq.Core {
         /// <summary>
         /// gets the key of this section.
         /// </summary>
-        public Key Key {
-            get => _key;
-        }
+        public Key Key { get => _key; }
 
         /// <summary>
         /// gets the church mode of this section.
         /// </summary>
-        public Mode KeyMode {
-            get => _key_mode;
-        }
+        public Mode KeyMode { get => _key_mode; }
 
         /// <summary>
         /// gets all Pattern objects.
         /// </summary>
-        public List<Pattern> AllPattern {
-            get => _pattern_list;
-        }
+        public List<Pattern> AllPattern { get => _pattern_list; }
     }
 }

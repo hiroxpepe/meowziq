@@ -38,9 +38,7 @@ namespace Meowziq.Loader {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Properties [noun, adjective] 
 
-        public static List<Phrase> PhraseList {
-            set => _phrase_list = value;
-        }
+        public static List<Phrase> PhraseList { set => _phrase_list = value; }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]
@@ -88,25 +86,17 @@ namespace Meowziq.Loader {
         [DataContract]
         public class Json {
             [DataMember(Name = "player")]
-            public Player[] PlayerArray {
-                get; set;
-            }
+            public Player[] PlayerArray { get; set; }
         }
 
         [DataContract]
         public class Player {
             [DataMember(Name = "type")]
-            public string Type {
-                get; set;
-            }
+            public string Type { get; set; }
             [DataMember(Name = "midi")]
-            public string Midi {
-                get; set;
-            }
+            public string Midi { get; set; }
             [DataMember(Name = "inst")]
-            public string Inst {
-                get; set;
-            }
+            public string Inst { get; set; }
         }
     }
 }

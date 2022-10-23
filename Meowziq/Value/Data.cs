@@ -105,25 +105,15 @@ namespace Meowziq.Value {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjective] 
 
-        public Note Note {
-            get => _note; set => _note = value;
-        }
+        public Note Note { get => _note; set => _note = value; }
 
-        public bool Auto {
-            get => _auto; set => _auto = value;
-        }
+        public bool Auto { get => _auto; set => _auto = value; }
 
-        public Chord Chord {
-            get => _chord; set => _chord = value;
-        }
+        public Chord Chord { get => _chord; set => _chord = value; }
 
-        public Seque Seque {
-            get => _seque; set => _seque = value;
-        }
+        public Seque Seque { get => _seque; set => _seque = value; }
 
-        public Exp Exp {
-            get => _exp; set => _exp = value; // default value is 0
-        }
+        public Exp Exp { get => _exp; set => _exp = value; } // default value is 0.
 
         /// <summary>
         /// provides the array of percussion sounds.
@@ -240,51 +230,37 @@ namespace Meowziq.Value {
         /// <summary>
         /// gets whether has "beat" notated data.
         /// </summary>
-        public bool HasBeat {
-            get => !hasNote && !hasAuto && !hasChord && !hasSeque && hasBeatArray && !hasNoteArray && !hasAutoArray;
-        }
+        public bool HasBeat { get => !hasNote && !hasAuto && !hasChord && !hasSeque && hasBeatArray && !hasNoteArray && !hasAutoArray; }
 
         /// <summary>
         /// gets whether has "chord" notated data.
         /// </summary>
-        public bool HasChord {
-            get => !hasNote && !hasAuto && hasChord && !hasSeque && !hasBeatArray && !hasNoteArray && !hasAutoArray;
-        }
+        public bool HasChord { get => !hasNote && !hasAuto && hasChord && !hasSeque && !hasBeatArray && !hasNoteArray && !hasAutoArray; }
 
         /// <summary>
         /// gets whether has "seque" notated data.
         /// </summary>
-        public bool HasSeque {
-            get => !hasNote && !hasAuto && !hasChord && hasSeque && !hasBeatArray && !hasNoteArray && !hasAutoArray;
-        }
+        public bool HasSeque { get => !hasNote && !hasAuto && !hasChord && hasSeque && !hasBeatArray && !hasNoteArray && !hasAutoArray; }
 
         /// <summary>
         /// gets whether has "note" notated data.
         /// </summary>
-        public bool HasNote {
-            get => (hasNote || hasNoteArray) && !hasAuto && !hasChord && !hasSeque && !hasBeatArray && !hasAutoArray;
-        }
+        public bool HasNote { get => (hasNote || hasNoteArray) && !hasAuto && !hasChord && !hasSeque && !hasBeatArray && !hasAutoArray; }
 
         /// <summary>
         /// gets whether has "auto" notated data.
         /// </summary>
-        public bool HasAuto {
-            get => !hasNote && !hasNoteArray && (hasAuto || hasAutoArray) && !hasChord && !hasSeque && !hasBeatArray;
-        }
+        public bool HasAuto { get => !hasNote && !hasNoteArray && (hasAuto || hasAutoArray) && !hasChord && !hasSeque && !hasBeatArray; }
 
         /// <summary>
         /// gets whether has the array notated data.
         /// </summary>
-        public bool HasMulti {
-            get => !hasNote && !hasAuto && !hasChord && !hasSeque && (hasBeatArray || hasNoteArray || hasAutoArray);
-        }
+        public bool HasMulti { get => !hasNote && !hasAuto && !hasChord && !hasSeque && (hasBeatArray || hasNoteArray || hasAutoArray); }
 
         /// <summary>
         /// gets whether has no data.
         /// </summary>
-        public bool HasNoData {
-            get => !hasNote && !hasAuto && !hasChord && !hasSeque && !hasBeatArray && !hasNoteArray && !hasAutoArray;
-        }
+        public bool HasNoData { get => !hasNote && !hasAuto && !hasChord && !hasSeque && !hasBeatArray && !hasNoteArray && !hasAutoArray; }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private Properties [noun, adjective] 
@@ -313,33 +289,19 @@ namespace Meowziq.Value {
             }
         }
 
-        public bool hasBeatArray {
-            get => _beat_array != null;
-        }
+        public bool hasBeatArray { get => _beat_array != null; }
 
-        public bool hasNoteArray {
-            get => _note_array != null && _auto == false;
-        }
+        public bool hasNoteArray { get => _note_array != null && _auto == false; }
 
-        public bool hasAutoArray {
-            get => _auto_array != null && _auto == true;
-        }
+        public bool hasAutoArray { get => _auto_array != null && _auto == true; }
 
-        bool hasNote {
-            get => !_note.Text.Equals(string.Empty) && _auto == false;
-        }
+        bool hasNote { get => !_note.Text.Equals(string.Empty) && _auto == false; }
 
-        bool hasAuto {
-            get => !_note.Text.Equals(string.Empty) && _auto == true;
-        }
+        bool hasAuto { get => !_note.Text.Equals(string.Empty) && _auto == true; }
 
-        bool hasChord {
-            get => _chord.Text != null; // TODO: is Text.Equals("") correct?
-        }
+        bool hasChord { get => _chord.Text != null; } // TODO: is Text.Equals("") correct?
 
-        bool hasSeque {
-            get => _seque.Use;
-        }
+        bool hasSeque { get => _seque.Use; }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private Methods [verb]
@@ -387,24 +349,16 @@ namespace Meowziq.Value {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjective] 
 
-        public string Text {
-            get => _text; set => _text = PhraseValue(target: value);
-        }
+        public string Text { get => _text; set => _text = PhraseValue(target: value); }
 
-        public int Oct {
-            get => _oct; set => _oct = value;
-        }
+        public int Oct { get => _oct; set => _oct = value; }
 
         /// <summary>
         /// gets the pitch difference of notes.
         /// </summary>
-        public int Interval {
-            get => _oct * 12; // converts the octave value to the pitch difference of notes.
-        }
+        public int Interval { get => _oct * 12; } // converts the octave value to the pitch difference of notes.
 
-        public char[] TextCharArray {
-            get => _text.HasValue() ? Filter(target: _text).ToCharArray() : null;
-        }
+        public char[] TextCharArray { get => _text.HasValue() ? Filter(target: _text).ToCharArray() : null; }
     }
 
     /// <summary>
@@ -429,17 +383,11 @@ namespace Meowziq.Value {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjective] 
 
-        public string Text {
-            get => _text; set => _text = PhraseValue(target: value);
-        }
+        public string Text { get => _text; set => _text = PhraseValue(target: value); }
 
-        public Range Range {
-            get => _range; set => _range = value;
-        }
+        public Range Range { get => _range; set => _range = value; }
 
-        public char[] TextCharArray {
-            get => _text.HasValue() ? Filter(target: _text).ToCharArray() : null;
-        }
+        public char[] TextCharArray { get => _text.HasValue() ? Filter(target: _text).ToCharArray() : null; }
     }
 
     /// <summary>
@@ -484,25 +432,15 @@ namespace Meowziq.Value {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjective] 
 
-        public string Text {
-            get => _text; set => _text = PhraseValue(target: value);
-        }
+        public string Text { get => _text; set => _text = PhraseValue(target: value); }
 
-        public int Stack {
-            get => _stack; set => _stack = value;
-        }
+        public int Stack { get => _stack; set => _stack = value; }
 
-        public Range Range {
-            get => _range; set => _range = value; 
-        }
+        public Range Range { get => _range; set => _range = value; }
 
-        public char[] TextCharArray {
-            get => Text.HasValue() ? Filter(target: Text).ToCharArray() : null;
-        }
+        public char[] TextCharArray { get => Text.HasValue() ? Filter(target: Text).ToCharArray() : null; }
 
-        public bool Use {
-            get => _use; set => _use = value;
-        }
+        public bool Use { get => _use; set => _use = value; }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]
@@ -553,13 +491,9 @@ namespace Meowziq.Value {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjective] 
 
-        public int Min {
-            get => _min;
-        }
+        public int Min { get => _min; }
 
-        public int Max {
-            get => _max;
-        }
+        public int Max { get => _max; }
     }
 
     /// <summary>
@@ -587,13 +521,9 @@ namespace Meowziq.Value {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjective] 
 
-        public string Pre {
-            get => _pre; set => _pre = value;
-        }
+        public string Pre { get => _pre; set => _pre = value; }
 
-        public string Post {
-            get => _post; set => _post = value;
-        }
+        public string Post { get => _post; set => _post = value; }
 
         public bool HasPre {
             get {

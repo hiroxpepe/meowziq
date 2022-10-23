@@ -60,9 +60,7 @@ namespace Meowziq.Core {
         /// <summary>
         /// sets the MidiChannel value.
         /// </summary>
-        public MidiChannel MidiCh {
-            set => _midi_ch = (int) value;
-        }
+        public MidiChannel MidiCh { set => _midi_ch = (int) value; }
 
         /// <summary>
         /// sets the Instrument value.
@@ -87,9 +85,7 @@ namespace Meowziq.Core {
         /// <summary>
         /// sets the Song object.
         /// </summary>
-        public Song Song {
-            set => _song = value;
-        }
+        public Song Song { set => _song = value; }
 
         /// <summary>
         /// provides all phrase lists.
@@ -229,39 +225,29 @@ namespace Meowziq.Core {
             // Properties [noun, adjective] 
 
             /// <summary>
-            /// head tick of the Pattern in processing.
+            /// provides the head tick of the Pattern in processing.
             /// </summary>
-            public int HeadTick {
-                get => _head_tick; set => _head_tick = value;
-            }
+            public int HeadTick { get => _head_tick; set => _head_tick = value; }
 
             /// <summary>
-            /// number of beats in the Pattern in processing.
+            /// sets the number of beats in the Pattern in processing.
             /// </summary>
-            public int BeatCount {
-                set => _length = value * Length.Of4beat.Int32();
-            }
+            public int BeatCount { set => _length = value * Length.Of4beat.Int32(); }
 
             /// <summary>
             /// provides the previous phrase name.
             /// </summary>
-            public string PreviousPatternName {
-                get => _previous_name; set => _previous_name = value;
-            }
+            public string PreviousPatternName { get => _previous_name; set => _previous_name = value; }
 
             /// <summary>
             /// whether the pattern has changed.
             /// </summary>
-            public bool ChangedPattarn {
-                get => _current_tick == HeadTick && !_smf;
-            }
+            public bool ChangedPattarn { get => _current_tick == HeadTick && !_smf; }
 
             /// <summary>
             /// whether a Phrase build is needed.
             /// </summary>
-            public bool NeedPhraseBuild {
-                get => _current_tick <= endTick && beforeMax;
-            }
+            public bool NeedPhraseBuild { get => _current_tick <= endTick && beforeMax; }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // public Methods [verb]
@@ -277,18 +263,14 @@ namespace Meowziq.Core {
             // private Properties [noun, adjective] 
 
             /// <summary>
-            /// end tick of the Pattern in processing.
+            /// gets the end tick of the Pattern in processing.
             /// </summary>
-            public int endTick {
-                get => _head_tick + _length;
-            }
+            public int endTick {  get => _head_tick + _length; }
 
             /// <summary>
             /// whether before the maximum value.
             /// </summary>
-            public bool beforeMax {
-                get => _head_tick < _max;
-            }
+            public bool beforeMax { get => _head_tick < _max; }
         }
     }
 }

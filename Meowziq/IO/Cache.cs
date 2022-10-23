@@ -41,16 +41,12 @@ namespace Meowziq.IO {
         /// <summary>
         /// gets the contents of the json data read in this tick.
         /// </summary>
-        public static Resourse Current {
-            get => _current_resourse;
-        }
+        public static Resourse Current { get => _current_resourse; }
 
         /// <summary>
         /// gets the final contents of json data that passed all validations.
         /// </summary>
-        public static Resourse Valid {
-            get => _valid_resourse;
-        }
+        public static Resourse Valid { get => _valid_resourse; }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]
@@ -103,48 +99,28 @@ namespace Meowziq.IO {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // public Properties [noun, adjective] 
 
-            public Stream PatternStream {
-                get => Pattern.ToMemoryStream();
-            }
+            public Stream PatternStream { get => Pattern.ToMemoryStream(); }
 
-            public Stream SongStream {
-                get => Song.ToMemoryStream();
-            }
+            public Stream SongStream { get => Song.ToMemoryStream(); }
 
-            public Stream PhraseStream {
-                get => Phrase.ToMemoryStream();
-            }
+            public Stream PhraseStream { get => Phrase.ToMemoryStream(); }
 
-            public Stream PlayerStream {
-                get => Player.ToMemoryStream();
-            }
+            public Stream PlayerStream { get => Player.ToMemoryStream(); }
 
-            public Stream MixerStream {
-                get => Mixer is null ? null : Mixer.ToMemoryStream();
-            }
+            public Stream MixerStream { get => Mixer is null ? null : Mixer.ToMemoryStream(); }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // internal Properties [noun, adjective] 
 
-            internal string Pattern {
-                get; set;
-            }
+            internal string Pattern { get; set; }
 
-            internal string Song {
-                get; set;
-            }
+            internal string Song { get; set; }
 
-            internal string Phrase {
-                get; set;
-            }
+            internal string Phrase { get; set; }
 
-            internal string Player {
-                get; set;
-            }
+            internal string Player { get; set; }
 
-            internal string Mixer {
-                get; set;
-            }
+            internal string Mixer { get; set; }
 
             ///////////////////////////////////////////////////////////////////////////////////////////////
             // internal Methods [verb]
