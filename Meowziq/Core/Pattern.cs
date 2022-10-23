@@ -50,30 +50,22 @@ namespace Meowziq.Core {
         /// <summary>
         /// gets the pattern name.
         /// </summary>
-        public string Name {
-            get => _name;
-        }
+        public string Name { get => _name; }
 
         /// <summary>
         /// gets the number of beats.
         /// </summary>
-        public int BeatCount {
-            get => _meas_list.Count * BEAT_COUNT_IN_MEASURE;
-        }
+        public int BeatCount { get => _meas_list.Count * BEAT_COUNT_IN_MEASURE; }
 
         /// <summary>
         /// gets all Meas objects.
         /// </summary>
-        public List<Meas> AllMeas {
-            get => _meas_list;
-        }
+        public List<Meas> AllMeas { get => _meas_list; }
 
         /// <summary>
         /// gets all Span objects.
         /// </summary>
-        public List<Span> AllSpan {
-            get => _meas_list.SelectMany(selector: x => x.AllSpan).ToList();
-        }
+        public List<Span> AllSpan { get => _meas_list.SelectMany(selector: x => x.AllSpan).ToList(); }
     }
 
     /// <summary>
@@ -113,9 +105,7 @@ namespace Meowziq.Core {
         /// <summary>
         /// gets the list of Span objects.
         /// </summary>
-        public List<Span> AllSpan {
-            get => _span_list;
-        }
+        public List<Span> AllSpan { get => _span_list; }
     }
 
     /// <summary>
@@ -163,36 +153,26 @@ namespace Meowziq.Core {
         /// <summary>
         /// gets the number of beats.
         /// </summary>
-        public int Beat {
-            get => _beat;
-        }
+        public int Beat { get => _beat; }
 
         /// <summary>
         /// gets the degree from the key of the song.
         /// </summary>
-        public Degree Degree {
-            get => _degree;
-        }
+        public Degree Degree { get => _degree; }
 
         /// <summary>
         /// provides the key of the song.
         /// </summary>
-        public Key Key {
-            get => _key; set => _key = value;
-        }
+        public Key Key { get => _key; set => _key = value; }
 
         /// <summary>
         /// provides the church mode of the key of the song.
         /// </summary>
-        public Mode KeyMode {
-            get => _key_mode; set => _key_mode = value;
-        }
+        public Mode KeyMode { get => _key_mode; set => _key_mode = value; }
 
         /// <summary>
         /// gets the church mode of this span.
         /// </summary>
-        public Mode SpanMode {
-            get => _span_mode; // do not change the span mode once set.
-        }
+        public Mode SpanMode { get => _span_mode; } // do not change the span mode once set.
     }
 }

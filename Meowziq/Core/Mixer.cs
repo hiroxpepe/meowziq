@@ -63,9 +63,7 @@ namespace Meowziq.Core {
         /// <summary>
         /// sets the Message object.
         /// </summary>
-        public static IMessage<T, Note> Message {
-            set => _message = value;
-        }
+        public static IMessage<T, Note> Message { set => _message = value; }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]
@@ -222,42 +220,28 @@ namespace Meowziq.Core {
             /// <note>
             /// associates with the Player object.
             /// </note>
-            public string Type {
-                get => _type; set => _type = value;
-            }
+            public string Type { get => _type; set => _type = value; }
 
             /// <note>
             /// associates with the Pattern object.
             /// </note>
-            public string Name {
-                get => _name; set => _name = value;
-            }
+            public string Name { get => _name; set => _name = value; }
 
             /// <summary>
-            /// gets the program number set in mixer.json.
+            /// provides the program number set in mixer.json.
             /// </summary>
-            public int ProgramNum {
-                get => _program_num; set => _program_num = value;
-            }
+            public int ProgramNum { get => _program_num; set => _program_num = value; }
 
             /// <summary>
-            /// gets the program number set in player.json.
+            /// provides the program number set in player.json.
             /// </summary>
-            public int PlayerProgramNum {
-                get => _player_program_num; set => _player_program_num = value;
-            }
+            public int PlayerProgramNum { get => _player_program_num; set => _player_program_num = value; }
 
-            public int Vol {
-                get => _vol; set => _vol = value;
-            }
+            public int Vol { get => _vol; set => _vol = value; }
 
-            public Pan Pan {
-                get => _pan; set => _pan = value;
-            }
+            public Pan Pan { get => _pan; set => _pan = value; }
 
-            public bool Mute {
-                get => _mute; set => _mute = value;
-            }
+            public bool Mute { get => _mute; set => _mute = value; }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // private static Properties [noun, adjective] 

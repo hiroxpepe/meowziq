@@ -170,8 +170,6 @@ namespace Meowziq.Value {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private Properties [noun, adjective] 
 
-        Note note {
-            get;
-        }
+        Note note { get; }
     }
 }
