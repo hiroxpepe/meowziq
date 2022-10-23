@@ -50,9 +50,7 @@ namespace Meowziq.Midi {
         /// <summary>
         /// gets the Track list.
         /// </summary>
-        public static List<Track> List {
-            get => _track_map.Select(selector: x => x.Value).ToList();
-        }
+        public static List<Track> List { get => _track_map.Select(selector: x => x.Value).ToList(); }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]

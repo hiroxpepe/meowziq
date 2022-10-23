@@ -153,21 +153,15 @@ namespace Meowziq.Loader {
         [DataContract]
         class Json {
             [DataMember(Name = "pattern")]
-            public Pattern[] PatternArray {
-                get; set;
-            }
+            public Pattern[] PatternArray { get; set; }
         }
 
         [DataContract]
         class Pattern {
             [DataMember(Name = "name")]
-            public string Name {
-                get; set;
-            }
+            public string Name { get; set; }
             [DataMember(Name = "data")]
-            public string Data {
-                get; set;
-            }
+            public string Data { get; set; }
         }
     }
 }

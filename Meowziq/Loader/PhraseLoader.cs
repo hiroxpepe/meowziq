@@ -107,93 +107,53 @@ namespace Meowziq.Loader {
         [DataContract]
         class Json {
             [DataMember(Name = "phrase")]
-            public Phrase[] PhraseArray {
-                get; set;
-            }
+            public Phrase[] PhraseArray { get; set; }
         }
 
         [DataContract]
         class Phrase {
             [DataMember(Name = "type")]
-            public string Type {
-                get; set;
-            }
+            public string Type { get; set; }
             [DataMember(Name = "name")]
-            public string Name {
-                get; set;
-            }
+            public string Name { get; set; }
             [DataMember(Name = "base")]
-            public string Base {
-                get; set;
-            }
+            public string Base { get; set; }
             [DataMember(Name = "data")]
-            public Data Data {
-                get; set;
-            }
+            public Data Data { get; set; }
             [DataMember(Name = "note")]
-            public string Note {
-                get; set;
-            }
+            public string Note { get; set; }
             [DataMember(Name = "auto")]
-            public string Auto {
-                get; set;
-            }
+            public string Auto { get; set; }
             [DataMember(Name = "oct")]
-            public int Oct {
-                get; set;
-            }
+            public int Oct { get; set; }
             [DataMember(Name = "chord")]
-            public string Chord {
-                get; set;
-            }
+            public string Chord { get; set; }
             [DataMember(Name = "gate")]
-            public string Gate {
-                get; set;
-            }
+            public string Gate { get; set; }
             [DataMember(Name = "range")]
-            public string Range {
-                get; set;
-            }
+            public string Range { get; set; }
             [DataMember(Name = "pre")]
-            public string Pre {
-                get; set;
-            }
+            public string Pre { get; set; }
             [DataMember(Name = "post")]
-            public string Post {
-                get; set;
-            }
+            public string Post { get; set; }
         }
 
         [DataContract]
         class Data {
             [DataMember(Name = "inst")]
-            public string[] InstArray {
-                get; set;
-            }
+            public string[] InstArray { get; set; }
             [DataMember(Name = "beat")]
-            public string[] BeatArray {
-                get; set;
-            }
+            public string[] BeatArray { get; set; }
             [DataMember(Name = "note")]
-            public string[] NoteArray {
-                get; set;
-            }
+            public string[] NoteArray { get; set; }
             [DataMember(Name = "auto")]
-            public string[] AutoArray {
-                get; set;
-            }
+            public string[] AutoArray { get; set; }
             [DataMember(Name = "oct")]
-            public int[] OctArray {
-                get; set;
-            }
+            public int[] OctArray { get; set; }
             [DataMember(Name = "pre")]
-            public string[] PreArray {
-                get; set;
-            }
+            public string[] PreArray { get; set; }
             [DataMember(Name = "post")]
-            public string[] PostArray {
-                get; set;
-            }
+            public string[] PostArray { get; set; }
         }
     }
 }

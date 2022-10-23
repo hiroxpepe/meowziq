@@ -71,45 +71,29 @@ namespace Meowziq.Loader {
         [DataContract]
         class Json {
             [DataMember(Name = "mixer")]
-            public Mixer Mixer {
-                get; set;
-            }
+            public Mixer Mixer { get; set; }
         }
 
         [DataContract]
         class Mixer {
             [DataMember(Name = "fader")]
-            public Fader[] Fader {
-                get; set;
-            }
+            public Fader[] Fader { get; set; }
         }
 
         [DataContract]
         class Fader {
             [DataMember(Name = "type")]
-            public string Type {
-                get; set;
-            }
+            public string Type { get; set; }
             [DataMember(Name = "name")]
-            public string Name {
-                get; set;
-            }
+            public string Name { get; set; }
             [DataMember(Name = "inst")]
-            public string Inst {
-                get; set;
-            }
+            public string Inst { get; set; }
             [DataMember(Name = "vol")]
-            public int Vol {
-                get; set;
-            }
+            public int Vol { get; set; }
             [DataMember(Name = "pan")]
-            public string Pan {
-                get; set;
-            }
+            public string Pan { get; set; }
             [DataMember(Name = "mute")]
-            public bool Mute {
-                get; set;
-            }
+            public bool Mute { get; set; }
         }
     }
 }

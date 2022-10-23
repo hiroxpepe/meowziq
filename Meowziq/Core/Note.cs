@@ -56,44 +56,32 @@ namespace Meowziq.Core {
         /// <note>
         /// + always an absolute value. <br/>
         /// </note>
-        public int Tick {
-            get => _tick;
-        }
+        public int Tick { get => _tick; }
 
         /// <summary>
         /// gets the MIDI note number.
         /// </summary>
-        public int Num {
-            get => _num;
-        }
+        public int Num { get => _num; }
 
         /// <summary>
         /// gets the length from a note on to a note off of MIDI.
         /// </summary>
-        public int Gate {
-            get => _gate;
-        }
+        public int Gate { get => _gate; }
 
         /// <summary>
         /// gets the MIDI note strength.
         /// </summary>
-        public int Velo {
-            get => _velo;
-        }
+        public int Velo { get => _velo; }
 
         /// <summary>
         /// gets whether has a syncopation parameter.
         /// </summary>
-        public bool HasPre {
-            get => _pre_count > 0;
-        }
+        public bool HasPre { get => _pre_count > 0; }
 
         /// <summary>
         /// gets the syncopation parameter.
         /// </summary>
-        public int PreCount {
-            get => _pre_count;
-        }
+        public int PreCount { get => _pre_count; }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private Methods [verb]
