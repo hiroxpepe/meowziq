@@ -47,7 +47,7 @@ namespace Meowziq.Core {
         // Properties [noun, adjective] 
 
         /// <summary>
-        /// gets the player type.
+        /// provides the player type.
         /// </summary>
         public string Type {
             get => _type;
@@ -109,7 +109,7 @@ namespace Meowziq.Core {
         /// </note>
         public void Build(int tick, bool smf = false) {
             // sets the tempo and song name.
-            State.TempoAndName = (_song.Tempo, _song.Name); // FIXME: looks like all players have it set up?
+            State.TempoAndName = (tempo: _song.Tempo, name: _song.Name); // FIXME: looks like all players have it set up?
 
             /// <summary>
             /// adds initial parameters for Mixer object.
@@ -118,7 +118,7 @@ namespace Meowziq.Core {
             /// sets instrument name in player.json.
             /// </note>
             if (tick is 0) {
-                string first_pattern_name = _song.AllSection.SelectMany(x => x.AllPattern).ToList().Where(x => x.Name is not "count").First().Name;
+                string first_pattern_name = _song.AllSection.SelectMany(selector: x => x.AllPattern).ToList().Where(predicate: x => x.Name is not "count").First().Name;
                 Mixer<T>.ApplyVaule(tick: 0, midi_ch: _midi_ch, type: Type, name: first_pattern_name, program_num: _program_num);
             }
 
@@ -138,19 +138,19 @@ namespace Meowziq.Core {
                             phrase.Build(tick: locate.HeadTick, pattern: pattern);
                         } else if (locate.NeedPhraseBuild) { // needs to build a Phrase object.
                             phrase.Build(tick: locate.HeadTick, pattern: pattern); // creates Note objects.
-                            processed_pattern_name_hashset.Add(pattern.Name); // holds processed pattern names.
+                            processed_pattern_name_hashset.Add(item: pattern.Name); // holds processed pattern names.
                             Log.Info($"Build: tick: {tick} head: {locate.HeadTick} to end: {locate.endTick} {pattern.Name} {_type}");
                             if (locate.HeadTick == State.Repeat.BeginTick && State.Repeat.BeginTick is not 0) {
                                 State.Repeat.BeginPatternName = pattern.Name; // holds the pattern name of repeat begins.
                             }
                         }
                         string begin_pattern_name = State.Repeat.BeginPatternName;
-                        if (pattern.Name == begin_pattern_name && processed_pattern_name_hashset.Add(begin_pattern_name) && State.Repeat.BeginTick is not 0) {
+                        if (pattern.Name == begin_pattern_name && processed_pattern_name_hashset.Add(item: begin_pattern_name) && State.Repeat.BeginTick is not 0) {
                             Pattern repeat_begin_pattern = section.AllPattern.Where(predicate: x => x.Name == State.Repeat.BeginPatternName).First();
                             phrase.Build(tick: State.Repeat.BeginTick, pattern: repeat_begin_pattern); // builds the pattern of repeat begins.
                             Log.Info($"■■■ Build: tick: {State.Repeat.BeginTick} {pattern.Name} {_type}");
                         }
-                        Mixer<T>.ApplyVaule(locate.HeadTick, _midi_ch, Type, pattern.Name, _program_num); // applies value changes to Mixer: to set it before Note.
+                        Mixer<T>.ApplyVaule(tick: locate.HeadTick, midi_ch: _midi_ch, type: Type, name: pattern.Name, program_num: _program_num); // applies value changes to Mixer: to set it before Note.
                     }
                     locate.PreviousPatternName = pattern.Name; // holds as the previous phrase name.
                     locate.NextHeadTick();

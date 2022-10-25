@@ -234,7 +234,7 @@ namespace Meowziq.Core {
             }
 
             /// <summary>
-            /// index value pointing to the array position.
+            /// gets the index value pointing to the array position.
             /// </summary>
             public int SearchIndex { get => _search_index; }
 
@@ -314,12 +314,12 @@ namespace Meowziq.Core {
             // Properties [noun, adjective] 
 
             /// <summary>
-            /// index value of 16 beats.
+            /// gets the index value of 16 beats.
             /// </summary>
             public int Idx { get => _index; }
 
             /// <summary>
-            /// index value of the Span object.
+            /// gets the index value of the Span object.
             /// </summary>
             public int SpanIndex { get => _span_index; }
 

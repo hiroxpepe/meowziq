@@ -72,9 +72,9 @@ namespace Meowziq.Midi {
         /// </note>
         public static bool Has(int tick) {
             if (_flag) {
-                return Prime.Item.Select(x => x.Key).Max() > tick;
+                return Prime.Item.Select(selector: x => x.Key).Max() > tick;
             } else {
-                return Second.Item.Select(x => x.Key).Max() > tick;
+                return Second.Item.Select(selector: x => x.Key).Max() > tick;
             }
         }
 
@@ -111,21 +111,21 @@ namespace Meowziq.Midi {
         /// + program change. <br/>
         /// </note> 
         public static void ApplyProgramChange(int tick, int midi_ch, int program_num ) {
-            add(tick: tick, message: new ChannelMessage(ChannelCommand.ProgramChange, midi_ch, program_num, 127));
+            add(tick: tick, message: new ChannelMessage(command: ChannelCommand.ProgramChange, midi_ch, data1: program_num, data2: 127));
         }
 
         /// <summary>
         /// applies volume as ChannelMessage.
         /// </summary>
         public static void ApplyVolume(int tick, int midi_ch, int volume) {
-            add(tick: tick, message: new ChannelMessage(ChannelCommand.Controller, midi_ch, 7, volume));
+            add(tick, message: new ChannelMessage(command: ChannelCommand.Controller, midi_ch, data1: 7, data2: volume));
         }
 
         /// <summary>
         /// applies pan as ChannelMessage.
         /// </summary>
         public static void ApplyPan(int tick, int midi_ch, Pan pan) {
-            add(tick: tick, message: new ChannelMessage(ChannelCommand.Controller, midi_ch, 10, (int) pan));
+            add(tick, message: new ChannelMessage(command: ChannelCommand.Controller, midi_ch, data1: 10, data2: (int) pan));
         }
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace Meowziq.Midi {
             if (!mute) {
                 return;
             }
-            add(tick: tick, message: new ChannelMessage(ChannelCommand.Controller, midi_ch, 7, 0));
+            add(tick, message: new ChannelMessage(command: ChannelCommand.Controller, midi_ch, data1: 7, data2: 0));
         }
 
         /// <summary>
@@ -148,25 +148,25 @@ namespace Meowziq.Midi {
             if (!_flag) {
                 if (note.HasPre) { // note has priority pronunciation,
                     int note_off_tick = tick - Length.Of32beat.Int32(); // just in case, stop before the 32nd note.
-                    if (Prime.AllNoteOffToAddArray[midi_ch].Add(note_off_tick)) { // forced stop for the note of tick only once per midi ch.
+                    if (Prime.AllNoteOffToAddArray[midi_ch].Add(item: note_off_tick)) { // forced stop for the note of tick only once per midi ch.
                         if (midi_ch != 9) { // exclude the drum midi channel.
-                            add(tick: note_off_tick, message: new ChannelMessage(ChannelCommand.Controller, midi_ch, 120));
+                            add(tick: note_off_tick, message: new ChannelMessage(command: ChannelCommand.Controller, midi_ch, data1: 120));
                         }
                     }
                 }
-                add(tick: tick, message: new ChannelMessage(ChannelCommand.NoteOn, midi_ch, note.Num, note.Velo)); // midi note on.
-                add(tick: tick + note.Gate, message: new ChannelMessage(ChannelCommand.NoteOff, midi_ch, note.Num, 0)); // midi note off.
+                add(tick, message: new ChannelMessage(command: ChannelCommand.NoteOn, midi_ch, data1: note.Num, data2: note.Velo)); // midi note on.
+                add(tick + note.Gate, message: new ChannelMessage(command: ChannelCommand.NoteOff, midi_ch, data1: note.Num, data2: 0)); // midi note off.
             } else {
                 if (note.HasPre) { // note has priority pronunciation,
                     int note_off_tick = tick - Length.Of32beat.Int32(); // just in case, stop before the 32nd note.
-                    if (Second.AllNoteOffToAddArray[midi_ch].Add(note_off_tick)) { // forced stop for the note of tick only once per midi ch.
+                    if (Second.AllNoteOffToAddArray[midi_ch].Add(item: note_off_tick)) { // forced stop for the note of tick only once per midi ch.
                         if (midi_ch != 9) { // exclude the drum midi channel.
-                            add(tick: note_off_tick, message: new ChannelMessage(ChannelCommand.Controller, midi_ch, 120));
+                            add(tick: note_off_tick, message: new ChannelMessage(command: ChannelCommand.Controller, midi_ch, data1: 120));
                         }
                     }
                 }
-                add(tick: tick, message: new ChannelMessage(ChannelCommand.NoteOn, midi_ch, note.Num, note.Velo)); // midi note on.
-                add(tick: tick + note.Gate, message: new ChannelMessage(ChannelCommand.NoteOff, midi_ch, note.Num, 0)); // midi note off.
+                add(tick, message: new ChannelMessage(command: ChannelCommand.NoteOn, midi_ch, data1: note.Num, data2: note.Velo)); // midi note on.
+                add(tick + note.Gate, message: new ChannelMessage(command: ChannelCommand.NoteOff, midi_ch, data1: note.Num, data2: 0)); // midi note off.
             }
         }
 
@@ -200,9 +200,9 @@ namespace Meowziq.Midi {
         /// </note>
         static void add(int tick, ChannelMessage message) {
             if (!_flag) {
-                Prime.Item.Add(tick, message);
+                Prime.Item.Add(key: tick, value: message);
             } else {
-                Second.Item.Add(tick, message);
+                Second.Item.Add(key: tick, value: message);
             }
         }
 
@@ -257,7 +257,7 @@ namespace Meowziq.Midi {
 
             public static void Clear() {
                 _item.Clear();
-                _all_note_off_to_add_array.ToList().ForEach(x => x.Clear());
+                _all_note_off_to_add_array.ToList().ForEach(action: x => x.Clear());
             }
         }
 
@@ -295,7 +295,7 @@ namespace Meowziq.Midi {
 
             public static void Clear() {
                 _item.Clear();
-                _all_note_off_to_add_array.ToList().ForEach(x => x.Clear());
+                _all_note_off_to_add_array.ToList().ForEach(action: x => x.Clear());
             }
         }
     }

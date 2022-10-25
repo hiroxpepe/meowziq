@@ -13,8 +13,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
 using System.Linq;
+using static System.Convert;
+using static System.Math;
 
 namespace Meowziq.Value {
     /// <summary>
@@ -30,13 +31,13 @@ namespace Meowziq.Value {
         /// </summary>
         /// <summary_jp>
         public static byte[] ToByteTempo(int tempo) {
-            double double_value = 60 * Math.Pow(10, 6) / tempo;
-            string hex = int.Parse(Math.Round(double_value).ToString()).ToString("X6"); // hexadecimal 6-digit conversion.
+            double double_value = 60 * Pow(x: 10, y: 6) / tempo;
+            string hex = int.Parse(s: Round(a: double_value).ToString()).ToString("X6"); // hexadecimal 6-digit conversion.
             char[] char_array = hex.ToCharArray();
             return new byte[3]{ // returns in 3 bytes.
-                Convert.ToByte(char_array[0].ToString() + char_array[1].ToString(), 16),
-                Convert.ToByte(char_array[2].ToString() + char_array[3].ToString(), 16),
-                Convert.ToByte(char_array[4].ToString() + char_array[5].ToString(), 16)
+                ToByte(value: char_array[0].ToString() + char_array[1].ToString(), fromBase: 16),
+                ToByte(value: char_array[2].ToString() + char_array[3].ToString(), fromBase: 16),
+                ToByte(value: char_array[4].ToString() + char_array[5].ToString(), fromBase: 16)
             };
         }
 
@@ -44,7 +45,7 @@ namespace Meowziq.Value {
         /// converts string to byte array.
         /// </summary>
         public static byte[] ToByteArray(string target) {
-            return target.ToCharArray().Select(selector: x => Convert.ToByte(x)).ToArray();
+            return target.ToCharArray().Select(selector: x => ToByte(value: x)).ToArray();
         }
     }
 }

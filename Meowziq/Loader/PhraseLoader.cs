@@ -76,7 +76,7 @@ namespace Meowziq.Loader {
                 new_phrase.Data.PreArray = phrase.Data.PreArray;
                 new_phrase.Data.PostArray = phrase.Data.PostArray;
                 if (phrase.Data.InstArray is not null) { // has an instrument name array for drums.
-                    new_phrase.Data.PercussionArray = phrase.Data.InstArray.Select(x => Percussion.Enum.Parse(x)).ToArray();
+                    new_phrase.Data.PercussionArray = phrase.Data.InstArray.Select(selector: x => Percussion.Enum.Parse(x)).ToArray();
                 }
             }
             return new_phrase;
@@ -97,8 +97,8 @@ namespace Meowziq.Loader {
         /// reads a .json file to the JSON object.
         /// </summary>
         static Json loadJson(Stream target) {
-            DataContractJsonSerializer serializer = new(typeof(Json));
-            return (Json) serializer.ReadObject(target);
+            DataContractJsonSerializer serializer = new(type: typeof(Json));
+            return (Json) serializer.ReadObject(stream: target);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

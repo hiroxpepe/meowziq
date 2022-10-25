@@ -214,7 +214,7 @@ namespace Meowziq.Core {
             // public static Properties [noun, adjective] 
 
             /// <summary>
-            /// gets the begin measure number of repeats.
+            /// sets the begin measure number of repeats.
             /// </summary>
             public static int BeginMeas {
                 set {
@@ -224,7 +224,7 @@ namespace Meowziq.Core {
             }
 
             /// <summary>
-            /// gets the end measure number of repeats.
+            /// sets the end measure number of repeats.
             /// </summary>
             public static int EndMeas {
                 set { 
@@ -265,7 +265,6 @@ namespace Meowziq.Core {
                 if (!has) { return; }
                 if (_begin_meas > meas && _end_meas < meas) { return; }
                 _tick_counter += TICK_INTERVAL;
-                //Log.Info($"_tick: {_tick} _tick_counter: {_tick_counter}");
                 // resets when repeat length is reached.
                 if (_tick_counter == _begin_tick + repeatTickLength ) {
                     _tick_counter = _begin_tick;
@@ -290,7 +289,7 @@ namespace Meowziq.Core {
             // private static Properties [noun, adjective]
 
             /// <summary>
-            /// gets whether has set.
+            /// gets whether has a repeat value.
             /// </summary>
             static bool has { get => _begin_meas >= 0 && _end_meas >= 0 && _begin_meas < _end_meas; }
 
