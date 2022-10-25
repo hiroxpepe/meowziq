@@ -90,7 +90,7 @@ namespace Meowziq {
                     scale7 = scale7By(key, key_mode: key_mode_current); // 判定した曲の旋法を取得
                 }
             }
-            return scale7[number - 1]; // 0基底のスケール配列から引数添え字のノートを返す
+            return scale7[number - TO_ZERO_BASE]; // 0基底のスケール配列から引数添え字のノートを返す
         }
 
         /// <summary>
@@ -104,39 +104,37 @@ namespace Meowziq {
         }
 
         /// <summary>
-        /// 度数とキーの旋法から旋法に対応したその度数の旋法を返します
+        /// gets the church mode used in that degree from the church mode of the song's key and that degree.
         /// </summary>
         public static Mode ToSpanMode(Degree degree, Mode key_mode) {
             return spanModeBy(degree, key_mode);
         }
 
         /// <summary>
-        /// Span の旋法から曲の旋法を判定する
+        /// gets the church mode of the song's key from the church mode of the span.
         /// </summary>
         public static Mode ToKeyMode(Key key, Degree degree, Mode key_mode, Mode span_mode) {
-            // NOTE: 旋法チェンジ判定不能なものをはねる
-            // MEMO: C キーにおける A の表示の仕方は後で考える
-            Mode key_mode_maybe = keyModeMaybeBy(degree, span_mode); // span の度数と旋法からこの旋法と推測される
-            int[] key_scale = scale7By(key, key_mode: key_mode_maybe); // この旋法と曲キーで作成したスケールの構成音が同じになるはずである
-            int degree_note = rootNoteBy(key, degree, key_mode); // 曲のキーの度数と旋法から度数のルート音を取得
-            int[] span_scale = scale7By(key: Key.Enum.Parse(degree_note), key_mode: span_mode); // span の度数と旋法でもスケールを作成してみる
-            if (!compareScale(scale1: key_scale, scale2: span_scale)) { // 比較して構成音は同じはず
-                return Mode.Undefined; // 構成音が違う場合
+            Mode key_mode_maybe = keyModeMaybeBy(degree, span_mode); // gets the church mode of the key from the church mode of the span and that degree.
+            int[] key_scale = scale7By(key, key_mode: key_mode_maybe); // creates a scale from the degree and church mode of the key.
+            int degree_note = rootNoteBy(key, degree, key_mode); // gets the root note number from the key, the degree, and the mode of the song.
+            int[] span_scale = scale7By(key: Key.Enum.Parse(degree_note), key_mode: span_mode); // creates a scale from the degree and church mode of span.
+            if (!compareScale(scale1: key_scale, scale2: span_scale)) { // two scales should be the same.
+                return Mode.Undefined; // when two scales are different.
             }
-            return key_mode_maybe; // TODO: これで正しいかテストを作成して確認
+            return key_mode_maybe;
         }
 
         /// <summary>
-        /// メジャーかマイナーかシンプルなコードネームを返します
+        /// gets a simple chord name as major or minor.
         /// </summary>
         public static string ToSimpleCodeName(Key key, Degree degree, Mode key_mode, Mode span_mode, bool auto_mode = true) {
-            int degree_note = rootNoteBy(key, degree, key_mode); // 曲のキーの度数と旋法から度数のルート音を取得
-            string code_base = Key.Enum.Parse(degree_note).ToString(); // コードネームの基本取得
+            int degree_note = rootNoteBy(key, degree, key_mode); // gets the root note of the degree from the degree and the key mode of the song.
+            string code_base = Key.Enum.Parse(degree_note).ToString(); // gets the code name basics.
             Mode mode;
-            if (auto_mode) { // 旋法を取得する
-                mode = spanModeBy(degree, key_mode);
+            if (auto_mode) {
+                mode = spanModeBy(degree, key_mode); // gets the church mode of this span.
             } else {
-                mode = span_mode; // Spanの旋法をそのまま適用
+                mode = span_mode; // applies Span mode as is.
             }
             string major_or_miner_string = majorOrMiner(mode: mode) ? string.Empty : "m";
             return code_base + major_or_miner_string;
@@ -159,7 +157,7 @@ namespace Meowziq {
         }
 
         /// <summary>
-        /// その旋法がメジャーかマイナーかbool値を返します
+        /// gets whether the church mode is major or minor.
         /// </summary>
         static bool majorOrMiner(Mode mode) {
             switch (mode) {
@@ -178,7 +176,7 @@ namespace Meowziq {
         }
 
         /// <summary>
-        /// 1～9のコード記法から Note No の配列を返します
+        /// gets an array of note numbers from 3-9 "chord" notated.
         /// </summary>
         static int[] noteArrayBy(int number, int[] scale7) {
             // TODO: validate
@@ -226,7 +224,7 @@ namespace Meowziq {
         }
 
         /// <summary>
-        /// returns root note number from the key, the degree, and the mode of the song.
+        /// gets the root note number from the key, the degree, and the mode of the song.
         /// </summary>
         static int rootNoteBy(Key key, Degree degree, Mode key_mode) {
             key.Validate();
@@ -519,9 +517,7 @@ namespace Meowziq {
         }
 
         /// <summary>
-        /// MEMO: ここで引いた Mode と元々の曲 key でスケールを作成してルート音が合っているか調べる
-        /// TODO: ※仮 -- Span の度数と旋法でキーの旋法を返す
-        /// TODO: C キーで Am が A になる時は？ ⇒ ※暫定: 後続でチェックして Mode.Undefined を返すようにした
+        /// gets the church mode of the key from the church mode of the span and that degree.
         /// </summary>
         static Mode keyModeMaybeBy(Degree degree, Mode span_mode) {
             span_mode.Validate();
