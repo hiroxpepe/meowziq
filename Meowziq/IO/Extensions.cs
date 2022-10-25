@@ -25,7 +25,7 @@ namespace Meowziq.IO {
         /// converts a string to a MemoryStream.
         /// </summary>
         internal static MemoryStream ToMemoryStream(this string source) {
-            return new MemoryStream(Encoding.UTF8.GetBytes(source));
+            return new MemoryStream(buffer: Encoding.UTF8.GetBytes(source));
         }
 
         /// <summary>

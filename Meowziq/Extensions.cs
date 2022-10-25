@@ -27,10 +27,10 @@ namespace Meowziq {
         /// converts a character to a number.
         /// </summary>
         public static int Int32(this char source) {
-            if (!Regex.IsMatch(source.ToString(), @"^[0-9]+$")) { // only 0 to 9 are valid.
+            if (!Regex.IsMatch(input: source.ToString(), pattern: @"^[0-9]+$")) { // only 0 to 9 are valid.
                 throw new FormatException("a char value must be 0～9.");
             }
-            return int.Parse(source.ToString());
+            return int.Parse(s: source.ToString());
         }
 
         /// <summary>

@@ -26,43 +26,60 @@ namespace Meowziq.Value {
     public class Param {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Fields
+
+        Note _note;
+
+        Chord _chord;
+
+        Seque _seque;
+
+        Exp _exp;
+
+        int _percussion_note_num;
+
+        DataType _type;
+
+        bool _auto_note;
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
         /// <summary>
         /// creates as a "note" notated parameter.
         /// </summary>
         public Param(Note note, Exp exp, DataType type, bool auto_note = true) {
-            this.note = note;
-            Exp = exp;
-            Type = type;
-            AutoNote = auto_note;
+            _note = note;
+            _exp = exp;
+            _type = type;
+            _auto_note = auto_note;
         }
 
         /// <summary>
         /// creates as a "beat" notated parameter.
         /// </summary>
         public Param(Note note, int percussion_note_num, Exp exp, DataType type) {
-            this.note = note;
-            PercussionNoteNum = percussion_note_num;
-            Exp = exp;
-            Type = type;
+            _note = note;
+            _percussion_note_num = percussion_note_num;
+            _exp = exp;
+            _type = type;
         }
 
         /// <summary>
         /// creates as a "chord" notated parameter.
         /// </summary>
         public Param(Chord chord, Exp exp, DataType type) {
-            Chord = chord;
-            Exp = exp;
-            Type = type;
+            _chord = chord;
+            _exp = exp;
+            _type = type;
         }
 
         /// <summary>
         /// creates as a "seque" notated parameter.
         /// </summary>
         public Param(Seque seque, DataType type) {
-            Seque = seque;
-            Type = type;
+            _seque = seque;
+            _type = type;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -71,54 +88,38 @@ namespace Meowziq.Value {
         /// <memo>
         /// range is used from Generator.
         /// </memo>
-        public Chord Chord {
-            get;
-        }
+        public Chord Chord { get => _chord; }
 
         /// <memo>
         /// range is used from Generator.
         /// </memo>
-        public Seque Seque {
-            get;
-        }
+        public Seque Seque { get => _seque; }
 
-        public Exp Exp {
-            get;
-        }
+        public Exp Exp { get => _exp; }
 
-        public int PercussionNoteNum {
-            get;
-        }
+        public int PercussionNoteNum { get => _percussion_note_num; }
 
-        public DataType Type {
-            get;
-        }
+        public DataType Type { get => _type; }
 
         /// <memo>
         /// if a char array can be returned here, there is no problem on the Generator side.
         /// </memo>
         public char[] TextCharArray {
             get {
-                if (Type is DataType.Mono || Type is DataType.Multi || Type is DataType.Drum) {
-                    return note.TextCharArray;
-                } else if (Type is DataType.Chord) {
-                    return Chord.TextCharArray;
-                } else if (Type is DataType.Seque) {
-                    return Seque.TextCharArray;
-                }
+                if (_type is DataType.Mono || _type is DataType.Multi || _type is DataType.Drum) { return _note.TextCharArray; }
+                if (_type is DataType.Chord) { return _chord.TextCharArray; }
+                if (_type is DataType.Seque) { return _seque.TextCharArray; }
                 return null;
             }
         }
 
         public bool HasTextCharArray {
-            get => !(note is null || note.TextCharArray is null) || !(Chord is null || Chord.TextCharArray is null) || !(Seque is null || Seque.TextCharArray is null);
+            get => !(_note is null || _note.TextCharArray is null) || !(_chord is null || _chord.TextCharArray is null) || !(_seque is null || _seque.TextCharArray is null);
         }
 
         public int Interval {
             get {
-                if (Type is DataType.Mono || Type is DataType.Multi) {
-                    return note.Interval;
-                }
+                if (_type is DataType.Mono || _type is DataType.Multi) { return _note.Interval; }
                 return 0; // Chord has no interval.
             }
         }
@@ -129,9 +130,7 @@ namespace Meowziq.Value {
         /// <memo>
         /// used from the Generator class.
         /// </memo>
-        public bool IsNote {
-            get => Type is DataType.Mono || Type is DataType.Multi;
-        }
+        public bool IsNote { get => _type is DataType.Mono || _type is DataType.Multi; }
 
         /// <summary>
         /// whether "chord" notated parameter.
@@ -139,37 +138,22 @@ namespace Meowziq.Value {
         /// <memo>
         /// used from the Generator class.
         /// </memo>
-        public bool IsChord {
-            get => Type is DataType.Chord;
-        }
+        public bool IsChord { get => _type is DataType.Chord; }
 
         /// <summary>
         /// whether gets a note number in span mode.
         /// </summary>
-        public bool AutoNote {
-            get;
-            private set;
-        }
+        public bool AutoNote { get => _auto_note; }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
 
         public bool IsMatch(char target) {
-            if (Type is DataType.Mono || Type is DataType.Multi) {
-                return Regex.IsMatch(target.ToString(), @"^[1-7]+$"); // 1 to 7 for Mono and Multi.
-            } else if (Type is DataType.Chord) {
-                return Regex.IsMatch(target.ToString(), @"^[1-9]+$"); // 1 to 9 for Chord.
-            } else if (Type is DataType.Drum) {
-                return target.ToString().Equals("x"); // Drum is 'x'.
-            } else if (Type is DataType.Seque) {
-                return target.ToString().Equals("+") || target.ToString().Equals("*") || target.ToString().Equals(">"); // Seque is '+', '*', '>'.
-            }
+            if (_type is DataType.Mono || _type is DataType.Multi) { return Regex.IsMatch(target.ToString(), @"^[1-7]+$"); } // 1 to 7 for Mono and Multi.
+            if (_type is DataType.Chord) { return Regex.IsMatch(target.ToString(), @"^[1-9]+$"); } // 1 to 9 for Chord.
+            if (_type is DataType.Drum) { return target.ToString().Equals("x"); } // Drum is 'x'.
+            if (_type is DataType.Seque) { return target.ToString().Equals("+") || target.ToString().Equals("*") || target.ToString().Equals(">"); } // Seque is '+', '*', '>'.
             return false;
         }
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // private Properties [noun, adjective] 
-
-        Note note { get; }
     }
 }

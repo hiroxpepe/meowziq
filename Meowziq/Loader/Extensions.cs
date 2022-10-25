@@ -45,7 +45,9 @@ namespace Meowziq.Loader {
         /// splits the meas string as it correct.
         /// </summary>
         static IEnumerable<string> getMeasEnumerable(string target) {
-            return target.Replace("][", "@").Split('@').Select(selector: x => x.Replace("[", string.Empty).Replace("]", string.Empty));
+            return target.Replace(oldValue: "][", newValue: "@").Split(separator: '@').Select(
+                selector: x => x.Replace(oldValue: "[", newValue: string.Empty).Replace(oldValue: "]", newValue: string.Empty)
+            );
         }
     }
 }

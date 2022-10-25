@@ -103,7 +103,7 @@ namespace Meowziq.Core {
         // Properties [noun, adjective] 
 
         /// <summary>
-        /// gets the list of Span objects.
+        /// gets all Span objects.
         /// </summary>
         public List<Span> AllSpan { get => _span_list; }
     }

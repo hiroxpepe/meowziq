@@ -121,11 +121,8 @@ namespace Meowziq.Value {
         public Percussion[] PercussionArray {
             get => _percussion_array;
             set {
-                if (value.Length != arrayLength) {
-                    throw new ArgumentException("percussionArray must be same count as beatArray.");
-                } else {
-                    _percussion_array = value;
-                }
+                if (value.Length != arrayLength) { throw new ArgumentException("percussionArray must be same count as beatArray."); }
+                _percussion_array = value;
             }
         }
 
@@ -135,9 +132,7 @@ namespace Meowziq.Value {
         public string[] BeatArray {
             get => _beat_array;
             set {
-                if (!(value is null)) {
-                    value.ToList().ForEach(action: x => PhraseValue(target: x));
-                }
+                if (value is not null) { value.ToList().ForEach(action: x => PhraseValue(target: x)); }
                 _beat_array = value;
             }
         }
@@ -148,9 +143,7 @@ namespace Meowziq.Value {
         public string[] NoteArray {
             get => _note_array;
             set {
-                if (!(value is null)) {
-                    value.ToList().ForEach(action: x => PhraseValue(target: x));
-                }
+                if (value is not null) { value.ToList().ForEach(action: x => PhraseValue(target: x)); }
                 _note_array = value;
             }
         }
@@ -161,13 +154,8 @@ namespace Meowziq.Value {
         public string[] AutoArray {
             get => _auto_array;
             set {
-                if (!(value is null)) {
-                    value.ToList().ForEach(action: x => PhraseValue(target: x));
-                }
+                if (value is not null) { value.ToList().ForEach(action: x => PhraseValue(target: x)); _auto = true; }
                 _auto_array = value;
-                if (!(value is null)) {
-                    _auto = true;
-                }
             }
         }
 
@@ -267,24 +255,16 @@ namespace Meowziq.Value {
 
         int arrayLength {
             get {
-                if (_beat_array != null) {
-                    return _beat_array.Length;
-                }
-                if (_note_array != null) {
-                    return _note_array.Length;
-                }
-                if (_auto_array != null) {
-                    return _auto_array.Length;
-                }
+                if (_beat_array != null) { return _beat_array.Length; }
+                if (_note_array != null) { return _note_array.Length; }
+                if (_auto_array != null) { return _auto_array.Length; }
                 return 0;
             }
         }
 
         bool hasAnyArray {
             get {
-                if (_beat_array != null || _note_array != null || _auto_array != null) { // have something.
-                    return true;
-                }
+                if (_beat_array != null || _note_array != null || _auto_array != null) { return true; } // have something.
                 return false; // does not have beat, note, or auto.
             }
         }
@@ -307,9 +287,7 @@ namespace Meowziq.Value {
         // private Methods [verb]
 
         void checkTextArray() {
-            if (!hasAnyArray) {
-                throw new ArgumentException("must set beatArray or noteArray or autoArray.");
-            }
+            if (!hasAnyArray) { throw new ArgumentException("must set beatArray or noteArray or autoArray."); }
         }
     }
 
@@ -572,7 +550,7 @@ namespace Meowziq.Value {
         /// + sixteenth note and eighth note syncopation only. <br/>
         /// </note>
         public bool IsMatchPre(char target) {
-            return Regex.IsMatch(target.ToString(), @"^[1-2]+$");
+            return Regex.IsMatch(input: target.ToString(), pattern: @"^[1-2]+$");
         }
     }
 }

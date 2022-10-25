@@ -49,7 +49,7 @@ namespace Meowziq.Core {
         /// adds a Fader object.
         /// </summary>
         /// <fixme>
-        /// FIXME: bug in SMF output.
+        /// FIXME: bug in SMF output. <br/>
         /// </fixme>
         public static Fader AddFader {
             set {
@@ -72,7 +72,7 @@ namespace Meowziq.Core {
         /// initializes the state.
         /// </summary>
         /// <note>
-        /// runs only once the first time.
+        /// + runs only once the first time. <br/>
         /// </note>
         public static void Clear() {
             _previous_fader_map.Clear();
@@ -217,13 +217,19 @@ namespace Meowziq.Core {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Properties [noun, adjective]
 
+            /// <summary>
+            /// provides the type name.
+            /// </summary>
             /// <note>
-            /// associates with the Player object.
+            /// + associates with the Player object. <br/>
             /// </note>
             public string Type { get => _type; set => _type = value; }
 
+            /// <summary>
+            /// provides the name.
+            /// </summary>
             /// <note>
-            /// associates with the Pattern object.
+            /// + associates with the Pattern object. <br/>
             /// </note>
             public string Name { get => _name; set => _name = value; }
 
@@ -237,10 +243,19 @@ namespace Meowziq.Core {
             /// </summary>
             public int PlayerProgramNum { get => _player_program_num; set => _player_program_num = value; }
 
+            /// <summary>
+            /// provides the volume set in mixer.json.
+            /// </summary>
             public int Vol { get => _vol; set => _vol = value; }
 
+            /// <summary>
+            /// provides the pan value set in mixer.json.
+            /// </summary>
             public Pan Pan { get => _pan; set => _pan = value; }
 
+            /// <summary>
+            /// provides the mute value set in mixer.json.
+            /// </summary>
             public bool Mute { get => _mute; set => _mute = value; }
 
             ///////////////////////////////////////////////////////////////////////////////////////////

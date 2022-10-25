@@ -51,7 +51,7 @@ namespace Meowziq.Core {
         // static Properties [noun, adjective] 
 
         /// <summary>
-        /// gets the all Note objects of this song.
+        /// gets all Note objects of this song.
         /// </summary>
         /// <note>
         /// not used yet.

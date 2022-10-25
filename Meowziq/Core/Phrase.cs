@@ -45,7 +45,7 @@ namespace Meowziq.Core {
         // Properties [noun, adjective] 
 
         /// <summary>
-        /// gets the phrase type.
+        /// provides the phrase type.
         /// </summary>
         public string Type {
             get => _type;
@@ -58,12 +58,12 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// gets the phrase name.
+        /// provides the phrase name.
         /// </summary>
         public string Name { get => _name; set => _name = value; }
 
         /// <summary>
-        /// gets the Data object.
+        /// provides the Data object.
         /// </summary>
         public Data Data { get => _data; set => _data = value; }
 
@@ -73,7 +73,7 @@ namespace Meowziq.Core {
         public string Base { get => _base; set => _base = value; }
 
         /// <summary>
-        /// gets the range.
+        /// sets the range.
         /// </summary>
         public string Range {
             set {
@@ -88,13 +88,13 @@ namespace Meowziq.Core {
                 }
                 if (_data.HasChord) {
                     _data.Chord.Range = new(
-                        int.Parse(range_array[0]),
-                        int.Parse(range_array[1])
+                        min: int.Parse(range_array[0]),
+                        max: int.Parse(range_array[1])
                     );
                 } else if (_data.HasSeque) {
                     _data.Seque.Range = new(
-                        int.Parse(range_array[0]),
-                        int.Parse(range_array[1])
+                        min: int.Parse(range_array[0]),
+                        max: int.Parse(range_array[1])
                     );
                 }
             }

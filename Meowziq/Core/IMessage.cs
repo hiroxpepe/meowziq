@@ -24,13 +24,15 @@ namespace Meowziq {
     public interface IMessage<T1, T2> {
 
         /// <summary>
-        /// returns a list of T1 of the argument tick
-        /// NOTE: returns null if the list of T1 for the argument tick does not exist
+        /// gets the list of T1 of the argument tick
         /// </summary>
+        /// <note>
+        /// + returns null if the list of T1 for the argument tick does not exist. <br/>
+        /// </note>
         List<T1> GetBy(int tick);
 
         /// <summary>
-        /// returns whether it has an item with the argument tick
+        /// whether has an item with the argument tick
         /// </summary>
         bool Has(int tick);
 
@@ -65,12 +67,12 @@ namespace Meowziq {
         void ApplyNote(int tick, int midi_ch, T2 note);
 
         /// <summary>
-        /// initialize the state
+        /// initializes the state
         /// </summary>
         void Clear();
 
         /// <summary>
-        /// invert the internal flag
+        /// inverts the internal flag
         /// </summary>
         void Invert();
     }

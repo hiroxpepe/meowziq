@@ -33,10 +33,10 @@ namespace Meowziq.Value {
             string target1 = target;
             target1 = target1.Replace("[", "|").Replace("]", "|"); // replaces the character. 
             string[] array1 = target1.Split('|') // separates by delimiter.
-                .Where(predicate: x => !string.IsNullOrWhiteSpace(x)) // non empty characters are targeted.
+                .Where(predicate: x => !string.IsNullOrWhiteSpace(value: x)) // non empty characters are targeted.
                 .Where(predicate: x => x.Length != 4) // extracts the data is not 4 characters.
                 .ToArray();
-            if (array1.Length != 0) { // throws an exception if the data exists.
+            if (array1.Length is not 0) { // throws an exception if the data exists.
                 throw new FormatException("a beat data count must be 4.");
             }
             return target; // returns the original string if validation is ok.

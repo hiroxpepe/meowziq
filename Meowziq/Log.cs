@@ -34,36 +34,36 @@ namespace Meowziq {
         // public static Methods [verb]
 
         public static void Fatal(string target) {
-            LogEventInfo event_info = new(LogLevel.Fatal, _logger.Name, target);
-            _logger.Log(typeof(Log), event_info);
+            LogEventInfo log_event = new(level: LogLevel.Fatal, loggerName: _logger.Name, message: target);
+            _logger.Log(wrapperType: typeof(Log), logEvent: log_event);
         }
 
         public static void Error(string target) {
-            LogEventInfo event_info = new(LogLevel.Error, _logger.Name, target);
-            _logger.Log(typeof(Log), event_info);
+            LogEventInfo log_event = new(level: LogLevel.Error, loggerName: _logger.Name, message: target);
+            _logger.Log(wrapperType: typeof(Log), logEvent: log_event);
         }
 
         public static void Warn(string target) {
-            LogEventInfo event_info = new(LogLevel.Warn, _logger.Name, target);
-            _logger.Log(typeof(Log), event_info);
+            LogEventInfo log_event = new(level: LogLevel.Warn, loggerName: _logger.Name, message: target);
+            _logger.Log(wrapperType: typeof(Log), logEvent: log_event);
         }
 
         public static void Info(string target) {
-            LogEventInfo event_info = new(LogLevel.Info, _logger.Name, target);
-            _logger.Log(typeof(Log), event_info);
+            LogEventInfo log_event = new(level: LogLevel.Info, loggerName: _logger.Name, message: target);
+            _logger.Log(wrapperType: typeof(Log), logEvent: log_event);
         }
 
         public static void Debug(string target) {
 #if DEBUG
-            LogEventInfo event_info = new(LogLevel.Debug, _logger.Name, target);
-            _logger.Log(typeof(Log), event_info);
+            LogEventInfo log_event = new(level: LogLevel.Debug, loggerName: _logger.Name, message: target);
+            _logger.Log(wrapperType: typeof(Log), logEvent: log_event);
 #endif
         }
 
         public static void Trace(string target) {
 #if DEBUG
-            LogEventInfo event_info = new(LogLevel.Trace, _logger.Name, target);
-            _logger.Log(typeof(Log), event_info);
+            LogEventInfo log_event = new(level: LogLevel.Trace, loggerName: _logger.Name, message: target);
+            _logger.Log(wrapperType: typeof(Log), logEvent: log_event);
 #endif
         }
     }

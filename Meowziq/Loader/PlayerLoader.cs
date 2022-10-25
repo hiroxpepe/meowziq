@@ -48,7 +48,7 @@ namespace Meowziq.Loader {
         /// </summary>
         public static List<Core.Player<T>> Build(Stream target) {
             if (_phrase_list is null) { throw new ArgumentException("need _phrase_list."); }
-            return loadJson(target).PlayerArray.Select(x => convertPlayer(x)).ToList();
+            return loadJson(target).PlayerArray.Select(selector: x => convertPlayer(player: x)).ToList();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -76,8 +76,8 @@ namespace Meowziq.Loader {
         /// reads a .json file to the JSON object.
         /// </summary>
         static Json loadJson(Stream target) {
-            DataContractJsonSerializer serializer = new(typeof(Json));
-            return (Json) serializer.ReadObject(target);
+            DataContractJsonSerializer serializer = new(type: typeof(Json));
+            return (Json) serializer.ReadObject(stream: target);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

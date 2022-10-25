@@ -81,7 +81,7 @@ namespace Meowziq.Value {
             if (target.Count() != baze.Count()) { // target and baze data should be the same number.
                 throw new FormatException("inherited arrray count must be the same as the base.");
             }
-            string[] result = target.Select(selector: (x, index) => applyString(x, baze[index])).ToArray();
+            string[] result = target.Select(selector: (x, index) => applyString(target: x, baze: baze[index])).ToArray();
             return result;
         }
     }
