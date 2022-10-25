@@ -23,7 +23,7 @@ namespace Meowziq.Value {
         /// removes unnecessary characters "[", "]", "|".
         /// </summary>
         internal static string Filter(string target) {
-            return target.Replace("|", string.Empty).Replace("[", string.Empty).Replace("]", string.Empty); // removes unnecessary characters.
+            return target.Replace(oldValue: "|", newValue: string.Empty).Replace(oldValue: "[", newValue: string.Empty).Replace(oldValue: "]", newValue: string.Empty); // removes unnecessary characters.
         }
     }
 }

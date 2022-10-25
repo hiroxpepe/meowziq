@@ -94,7 +94,7 @@ namespace Meowziq.Midi {
             Log.Info($"midi # of devs: {midi_out_num_devs}");
             for (uint index = 0; index < midi_out_num_devs; index++) {
                 MidiOutCaps midi_out_caps = new MidiOutCaps();
-                midiOutGetDevCaps(uDevID: index, pmic: out midi_out_caps, cbmic: Marshal.SizeOf(typeof(MidiOutCaps)));
+                midiOutGetDevCaps(uDevID: index, pmic: out midi_out_caps, cbmic: Marshal.SizeOf(t: typeof(MidiOutCaps)));
                 Log.Info($"#{index}: {midi_out_caps.szPname}");
                 out_device_name_list.Add(item: midi_out_caps.szPname);
             }

@@ -25,9 +25,9 @@ namespace Meowziq.IO {
         /// </summary>
         internal static DirectoryInfo MakeDirectoryIfNecessary(string target) {
             string directory = Path.GetDirectoryName(target);
-            bool exists = Directory.Exists(directory);
+            bool exists = Directory.Exists(path: directory);
             if (!exists) {
-                return Directory.CreateDirectory(directory);
+                return Directory.CreateDirectory(path: directory);
             }
             return null;
         }

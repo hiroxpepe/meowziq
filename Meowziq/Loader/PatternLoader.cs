@@ -62,13 +62,13 @@ namespace Meowziq.Loader {
         /// interprets the church mode abbreviations.
         /// </summary>
         static string interpretModePrefix(string target) {
-            target = target.Replace(":l", ":Lyd");
-            target = target.Replace(":i", ":Ion");
-            target = target.Replace(":m", ":Mix");
-            target = target.Replace(":d", ":Dor");
-            target = target.Replace(":a", ":Aeo");
-            target = target.Replace(":p", ":Phr");
-            target = target.Replace(":o", ":Loc");
+            target = target.Replace(oldValue: ":l", newValue: ":Lyd");
+            target = target.Replace(oldValue: ":i", newValue: ":Ion");
+            target = target.Replace(oldValue: ":m", newValue: ":Mix");
+            target = target.Replace(oldValue: ":d", newValue: ":Dor");
+            target = target.Replace(oldValue: ":a", newValue: ":Aeo");
+            target = target.Replace(oldValue: ":p", newValue: ":Phr");
+            target = target.Replace(oldValue: ":o", newValue: ":Loc");
             return target;
         }
 
@@ -78,37 +78,37 @@ namespace Meowziq.Loader {
         static List<Span> convertSpanList(string meas_string) {
             // splits a meas string into beats.
             string[] beat_array = meas_string.Split('|')
-                .Select(x => x.Replace("     ", " ")) // replaces 5 spaces with 1 space.
-                .Select(x => x.Replace("    ", " ")) // replaces 4 spaces with 1 space.
-                .Select(x => x.Replace("   ", " ")) // replaces 3 spaces with 1 space.
-                .Select(x => x.Replace("  ", " ")) // replaces 2 spaces with 1 space.
+                .Select(selector: x => x.Replace(oldValue: "     ", newValue: " ")) // replaces 5 spaces with 1 space.
+                .Select(selector: x => x.Replace(oldValue: "    ", newValue: " ")) // replaces 4 spaces with 1 space.
+                .Select(selector: x => x.Replace(oldValue: "   ", newValue: " ")) // replaces 3 spaces with 1 space.
+                .Select(selector: x => x.Replace(oldValue: "  ", newValue: " ")) // replaces 2 spaces with 1 space.
                 .ToArray();
             // creates a list of Span objects.
             List<Span> span_list = new();
             // all 4 beats : "I | | | "
             if (beat_array[1].Equals(" ") && beat_array[2].Equals(" ") && beat_array[3].Equals(" ")) {
-                span_list.Add(convertSpan(beat: 4, beat_string: beat_array[0])); // 1st beat.
+                span_list.Add(item: convertSpan(beat: 4, beat_string: beat_array[0])); // 1st beat.
             }
             // 3 beats and 1 beat : "I | | |V "
             else if (beat_array[1].Equals(" ") && beat_array[2].Equals(" ") && !beat_array[3].Equals(" ")) {
-                span_list.Add(convertSpan(beat: 3, beat_string: beat_array[0])); // 1st beat.
-                span_list.Add(convertSpan(beat: 1, beat_string: beat_array[3])); // 4th beat.
+                span_list.Add(item: convertSpan(beat: 3, beat_string: beat_array[0])); // 1st beat.
+                span_list.Add(item: convertSpan(beat: 1, beat_string: beat_array[3])); // 4th beat.
             }
             // 2 beats and 2 beats : "I | |V | "
             else if (beat_array[1].Equals(" ") && !beat_array[2].Equals(" ") && beat_array[3].Equals(" ")) {
-                span_list.Add(convertSpan(beat: 2, beat_string: beat_array[0])); // 1st beat.
-                span_list.Add(convertSpan(beat: 2, beat_string: beat_array[2])); // 3rd beat.
+                span_list.Add(item: convertSpan(beat: 2, beat_string: beat_array[0])); // 1st beat.
+                span_list.Add(item: convertSpan(beat: 2, beat_string: beat_array[2])); // 3rd beat.
             }
             // 1 beat and 3 beats : "I |V | | "
             else if (!beat_array[1].Equals(" ") && beat_array[2].Equals(" ") && beat_array[3].Equals(" ")) {
-                span_list.Add(convertSpan(beat: 1, beat_string: beat_array[0])); // 1st beat.
-                span_list.Add(convertSpan(beat: 3, beat_string: beat_array[1])); // 2nd beat.
+                span_list.Add(item: convertSpan(beat: 1, beat_string: beat_array[0])); // 1st beat.
+                span_list.Add(item: convertSpan(beat: 3, beat_string: beat_array[1])); // 2nd beat.
             }
             // 1 beat and 2 beats and 1 beat : "I |V | |I |"
             else if (!beat_array[1].Equals(" ") && beat_array[2].Equals(" ") && !beat_array[3].Equals(" ")) {
-                span_list.Add(convertSpan(beat: 1, beat_string: beat_array[0])); // 1st beat.
-                span_list.Add(convertSpan(beat: 2, beat_string: beat_array[1])); // 2nd beat.
-                span_list.Add(convertSpan(beat: 1, beat_string: beat_array[3])); // 4th beat.
+                span_list.Add(item: convertSpan(beat: 1, beat_string: beat_array[0])); // 1st beat.
+                span_list.Add(item: convertSpan(beat: 2, beat_string: beat_array[1])); // 2nd beat.
+                span_list.Add(item: convertSpan(beat: 1, beat_string: beat_array[3])); // 4th beat.
             }
             // FIXME: 2 beats and 1 beat and 1 beat.           : "I | |V |I "
             // FIXME: 1 beat and 1 beat and 2 beats.           : "I |V |I | |"
@@ -143,8 +143,8 @@ namespace Meowziq.Loader {
         /// reads a .json file to the JSON object.
         /// </summary>
         static Json loadJson(Stream target) {
-            DataContractJsonSerializer serializer = new(typeof(Json));
-            return (Json) serializer.ReadObject(target);
+            DataContractJsonSerializer serializer = new(type: typeof(Json));
+            return (Json) serializer.ReadObject(stream: target);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
