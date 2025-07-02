@@ -17,7 +17,7 @@ using System.Collections.Generic;
 
 namespace Meowziq.Core {
     /// <summary>
-    /// song class
+    /// Represents a song.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Song {
@@ -44,23 +44,23 @@ namespace Meowziq.Core {
         // Properties [noun, adjective] 
 
         /// <summary>
-        /// gets the song name.
+        /// Gets the song name.
         /// </summary>
         public string Name { get => _name; }
 
         /// <summary>
-        /// gets the song tempo.
+        /// Gets the song tempo.
         /// </summary>
         public int Tempo { get => _tempo; }
 
         /// <summary>
-        /// gets all Section objects.
+        /// Gets all Section objects.
         /// </summary>
         public List<Section> AllSection { get => _section_list; }
     }
 
     /// <summary>
-    /// section class
+    /// Represents a section.
     /// </summary>
     public class Section {
 
@@ -86,17 +86,17 @@ namespace Meowziq.Core {
         // Properties [noun, adjective] 
 
         /// <summary>
-        /// gets the key of this section.
+        /// Gets the key of this section.
         /// </summary>
         public Key Key { get => _key; }
 
         /// <summary>
-        /// gets the church mode of this section.
+        /// Gets the church mode of this section.
         /// </summary>
         public Mode KeyMode { get => _key_mode; }
 
         /// <summary>
-        /// gets all Pattern objects.
+        /// Gets all Pattern objects.
         /// </summary>
         public List<Pattern> AllPattern { get => _pattern_list; }
     }

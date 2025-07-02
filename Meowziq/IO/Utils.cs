@@ -17,12 +17,15 @@ using System.IO;
 
 namespace Meowziq.IO {
     /// <summary>
-    /// IO utils functions.
+    /// Provides IO utility functions.
+    /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     internal static class Utils {
         /// <summary>
-        /// creates a directory if necessary.
+        /// Creates a directory for the specified path if it does not already exist.
         /// </summary>
+        /// <param name="target">The file or directory path to check.</param>
+        /// <returns>The created <see cref="DirectoryInfo"/> if a new directory was created; otherwise, <c>null</c>.</returns>
         internal static DirectoryInfo MakeDirectoryIfNecessary(string target) {
             string directory = Path.GetDirectoryName(target);
             bool exists = Directory.Exists(path: directory);

@@ -21,7 +21,7 @@ using static Meowziq.Env;
 
 namespace Meowziq.Core {
     /// <summary>
-    /// pattern class
+    /// Represents a pattern.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Pattern {
@@ -48,28 +48,28 @@ namespace Meowziq.Core {
         // Properties [noun, adjective] 
 
         /// <summary>
-        /// gets the pattern name.
+        /// Gets the pattern name.
         /// </summary>
         public string Name { get => _name; }
 
         /// <summary>
-        /// gets the number of beats.
+        /// Gets the number of beats.
         /// </summary>
         public int BeatCount { get => _meas_list.Count * BEAT_COUNT_IN_MEASURE; }
 
         /// <summary>
-        /// gets all Meas objects.
+        /// Gets all Meas objects.
         /// </summary>
         public List<Meas> AllMeas { get => _meas_list; }
 
         /// <summary>
-        /// gets all Span objects.
+        /// Gets all Span objects.
         /// </summary>
         public List<Span> AllSpan { get => _meas_list.SelectMany(selector: x => x.AllSpan).ToList(); }
     }
 
     /// <summary>
-    /// measure class
+    /// Represents a measure.
     /// </summary>
     public class Meas {
 
@@ -83,13 +83,13 @@ namespace Meowziq.Core {
 
         public Meas(List<Span> spanList) {
             int total_beat_count = 0;
-            spanList.ForEach(action: x => total_beat_count += x.Beat); // count beats.
+            spanList.ForEach(action: x => total_beat_count += x.Beat); // Count beats.
             if (total_beat_count < BEAT_COUNT_IN_MEASURE || total_beat_count > BEAT_COUNT_IN_MEASURE) {
-                throw new ArgumentException($"beat counts needs {BEAT_COUNT_IN_MEASURE}."); // not enough for one measure or more than one measure.
+                throw new ArgumentException($"Beat count must be {BEAT_COUNT_IN_MEASURE}."); // Not enough for one measure or more than one measure.
             }
             /// <note>
-            /// + divides a span to every beat. <br/>
-            /// + important! <br/>
+            /// + Divides a span to every beat. <br/>
+            /// + Important! <br/>
             /// </note>
             _span_list = new();
             spanList.ForEach(action: x => {
@@ -103,17 +103,17 @@ namespace Meowziq.Core {
         // Properties [noun, adjective] 
 
         /// <summary>
-        /// gets all Span objects.
+        /// Gets all Span objects.
         /// </summary>
         public List<Span> AllSpan { get => _span_list; }
     }
 
     /// <summary>
-    /// span class
+    /// Represents a span.
     /// </summary>
     /// <note>
-    /// a class representing the duration (beat) of the tonality. <br/>
-    /// to convert the numbers 1 to 7 into which scale note of the church mode. <br/>
+    /// Represents the duration (beat) of the tonality.<br/>
+    /// Converts the numbers 1 to 7 into the scale note of the church mode.<br/>
     /// </note>
     public class Span {
 
@@ -151,28 +151,28 @@ namespace Meowziq.Core {
         // Properties [noun, adjective] 
 
         /// <summary>
-        /// gets the number of beats.
+        /// Gets the number of beats.
         /// </summary>
         public int Beat { get => _beat; }
 
         /// <summary>
-        /// gets the degree from the key of the song.
+        /// Gets the degree from the key of the song.
         /// </summary>
         public Degree Degree { get => _degree; }
 
         /// <summary>
-        /// provides the key of the song.
+        /// Gets or sets the key of the song.
         /// </summary>
         public Key Key { get => _key; set => _key = value; }
 
         /// <summary>
-        /// provides the church mode of the key of the song.
+        /// Gets or sets the church mode of the key of the song.
         /// </summary>
         public Mode KeyMode { get => _key_mode; set => _key_mode = value; }
 
         /// <summary>
-        /// gets the church mode of this span.
+        /// Gets the church mode of this span.
         /// </summary>
-        public Mode SpanMode { get => _span_mode; } // do not change the span mode once set.
+        public Mode SpanMode { get => _span_mode; } // Do not change the span mode once set.
     }
 }

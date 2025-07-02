@@ -49,16 +49,20 @@ namespace Meowziq.Loader {
         // private static Methods [verb]
 
         /// <summary>
-        /// reads a .json file to the JSON object.
+        /// Reads a .json file and deserializes it to a <see cref="Json"/> object.
         /// </summary>
+        /// <param name="target">The stream containing the JSON data.</param>
+        /// <returns>The deserialized <see cref="Json"/> object.</returns>
         static Json loadJson(Stream target) {
             DataContractJsonSerializer serializer = new(type: typeof(Json));
             return (Json) serializer.ReadObject(stream: target);
         }
 
         /// <summary>
-        /// gets whether it is a drum instrument.
+        /// Determines whether the specified instrument name is a drum kit.
         /// </summary>
+        /// <param name="target">The instrument name to check.</param>
+        /// <returns><c>true</c> if the instrument is a drum kit; otherwise, <c>false</c>.</returns>
         static bool drumInst(string target) {
             return (target.Equals("Standard") || target.Equals("Room") || target.Equals("Power") ||
                 target.Equals("Electronic") || target.Equals("Analog") || target.Equals("Jazz") ||
@@ -68,30 +72,63 @@ namespace Meowziq.Loader {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // inner Classes
 
+        /// <summary>
+        /// Represents the root JSON object for mixer data.
+        /// </summary>
         [DataContract]
         class Json {
+            /// <summary>
+            /// Gets or sets the mixer data.
+            /// </summary>
             [DataMember(Name = "mixer")]
             public Mixer Mixer { get; set; }
         }
 
+        /// <summary>
+        /// Represents the mixer data containing fader information.
+        /// </summary>
         [DataContract]
         class Mixer {
+            /// <summary>
+            /// Gets or sets the array of fader data.
+            /// </summary>
             [DataMember(Name = "fader")]
             public Fader[] Fader { get; set; }
         }
 
+        /// <summary>
+        /// Represents a fader entry in the mixer.
+        /// </summary>
         [DataContract]
         class Fader {
+            /// <summary>
+            /// Gets or sets the fader type.
+            /// </summary>
             [DataMember(Name = "type")]
             public string Type { get; set; }
+            /// <summary>
+            /// Gets or sets the fader name.
+            /// </summary>
             [DataMember(Name = "name")]
             public string Name { get; set; }
+            /// <summary>
+            /// Gets or sets the instrument name.
+            /// </summary>
             [DataMember(Name = "inst")]
             public string Inst { get; set; }
+            /// <summary>
+            /// Gets or sets the volume value.
+            /// </summary>
             [DataMember(Name = "vol")]
             public int Vol { get; set; }
+            /// <summary>
+            /// Gets or sets the pan value.
+            /// </summary>
             [DataMember(Name = "pan")]
             public string Pan { get; set; }
+            /// <summary>
+            /// Gets or sets a value indicating whether the fader is muted.
+            /// </summary>
             [DataMember(Name = "mute")]
             public bool Mute { get; set; }
         }

@@ -19,11 +19,11 @@ using static Meowziq.Env;
 
 namespace Meowziq.Core {
     /// <summary>
-    /// note class
+    /// Represents a note.
     /// </summary>
     /// <note>
-    /// + converts to ChannelMessage. <br/>
-    /// + not provide modify operations. <br/>
+    /// Converts to ChannelMessage.<br/>
+    /// Does not provide modify operations.<br/>
     /// </note>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Note {
@@ -37,7 +37,7 @@ namespace Meowziq.Core {
         // Constructor
 
         /// <note>
-        /// + states cannot be changed once created. <br/>
+        /// States cannot be changed once created.<br/>
         /// </note>
         public Note(int tick, int num, int gate, int velo, int pre_count = 0) {
             _tick = tick;
@@ -51,35 +51,35 @@ namespace Meowziq.Core {
         // Properties [noun, adjective] 
 
         /// <summary>
-        /// gets the tick value of the quarter note 480 resolution sequencer.
+        /// Gets the tick value of the quarter note (480 resolution sequencer).
         /// </summary>
         /// <note>
-        /// + always an absolute value. <br/>
+        /// Always an absolute value.<br/>
         /// </note>
         public int Tick { get => _tick; }
 
         /// <summary>
-        /// gets the MIDI note number.
+        /// Gets the MIDI note number.
         /// </summary>
         public int Num { get => _num; }
 
         /// <summary>
-        /// gets the length from a note on to a note off of MIDI.
+        /// Gets the length from note on to note off in MIDI.
         /// </summary>
         public int Gate { get => _gate; }
 
         /// <summary>
-        /// gets the MIDI note strength.
+        /// Gets the MIDI note velocity.
         /// </summary>
         public int Velo { get => _velo; }
 
         /// <summary>
-        /// gets whether has a syncopation parameter.
+        /// Gets a value indicating whether there is a syncopation parameter.
         /// </summary>
         public bool HasPre { get => _pre_count > 0; }
 
         /// <summary>
-        /// gets the syncopation parameter.
+        /// Gets the syncopation parameter.
         /// </summary>
         public int PreCount { get => _pre_count; }
 
@@ -87,15 +87,15 @@ namespace Meowziq.Core {
         // private Methods [verb]
 
         /// <summary>
-        /// checks the length of the gate.
+        /// Checks the length of the gate.
         /// </summary>
         static int gateValue(int target) {
-            if (target is 0) { return target; } // no value, return as is.
-            // whether the length of the gate is divisible by the tick interval.
+            if (target is 0) { return target; } // No value, return as is.
+            // Check if the gate length is divisible by the tick interval.
             if (target % TICK_INTERVAL is not 0) {
-                throw new FormatException($"a gate length must be divisible by the tick interval: {TICK_INTERVAL}.");
+                throw new FormatException($"A gate length must be divisible by the tick interval: {TICK_INTERVAL}.");
             }
-            return target; // returns the original value if validation is ok.
+            return target; // Returns the original value if validation is ok.
         }
     }
 }

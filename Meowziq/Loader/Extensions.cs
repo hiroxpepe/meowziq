@@ -18,13 +18,15 @@ using System.Linq;
 
 namespace Meowziq.Loader {
     /// <summary>
-    /// loader extension methods.
+    /// Provides loader-related extension methods for string operations.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     internal static class Extensions {
         /// <summary>
-        /// gets the length of the beat.
+        /// Gets the total beat length represented by the string.
         /// </summary>
+        /// <param name="source">The source string representing measures.</param>
+        /// <returns>The total number of beats.</returns>
         internal static int GetBeatLength(this string source) {
             const int MEAS_TO_BEAT = 4;
             int length = GetMeasStringArray(source: source).Length;
@@ -32,8 +34,10 @@ namespace Meowziq.Loader {
         }
 
         /// <summary>
-        /// gets the meas string as string array.
+        /// Splits the measure string into an array of measure strings.
         /// </summary>
+        /// <param name="source">The source string representing measures.</param>
+        /// <returns>An array of measure strings.</returns>
         internal static string[] GetMeasStringArray(this string source) {
             return getMeasEnumerable(target: source).ToArray();
         }
@@ -42,8 +46,10 @@ namespace Meowziq.Loader {
         // private static Methods [verb]
 
         /// <summary>
-        /// splits the meas string as it correct.
+        /// Splits the measure string into its individual measure components.
         /// </summary>
+        /// <param name="target">The target string to split.</param>
+        /// <returns>An enumerable collection of measure strings.</returns>
         static IEnumerable<string> getMeasEnumerable(string target) {
             return target.Replace(oldValue: "][", newValue: "@").Split(separator: '@').Select(
                 selector: x => x.Replace(oldValue: "[", newValue: string.Empty).Replace(oldValue: "]", newValue: string.Empty)

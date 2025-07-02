@@ -22,10 +22,10 @@ using static Meowziq.Env;
 
 namespace Meowziq.Core {
     /// <summary>
-    /// state class
+    /// Represents the state of the song playback.
     /// </summary>
     /// <note>
-    /// + holds information about how the song is being played. <br/>
+    /// Holds information about how the song is being played.<br/>
     /// </note>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class State {
@@ -66,12 +66,12 @@ namespace Meowziq.Core {
         // public static Properties [noun, adjective] 
 
         /// <summary>
-        /// provides the song tempo.
+        /// Gets or sets the song tempo.
         /// </summary>
         public static int Tempo { get => _tempo; set => _tempo = value; }
 
         /// <summary>
-        /// provides the current tick.
+        /// Gets or sets the current tick.
         /// </summary>
         public static int Tick {
             get => _tick;
@@ -88,22 +88,22 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// gets whether given the same tick.
+        /// Gets a value indicating whether the same tick is given.
         /// </summary>
         public static bool SameTick { get => _same_tick; }
 
         /// <summary>
-        /// gets the position of the current beat.
+        /// Gets the position of the current beat.
         /// </summary>
         /// <note>
-        /// shows as starting from 1 instead of starting from 0.
+        /// Shows as starting from 1 instead of starting from 0.<br/>
         /// </note>
         public static int Beat {
             get => (Repeat.Tick / NOTE_RESOLUTION) + TO_ONE_BASE - _count_beat_length;
         }
 
         /// <summary>
-        /// gets the position of current measures.
+        /// Gets the position of the current measure.
         /// </summary>
         public static int Meas {
             get {
@@ -113,63 +113,63 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// provides the song name.
+        /// Gets or sets the song name.
         /// </summary>
         public static string Name { get => _name; set => _name = value; }
 
         /// <summary>
-        /// provides the song copyright.
+        /// Gets or sets the song copyright.
         /// </summary>
         public static string Copyright { get => _copyright; set => _copyright = value; }
 
         /// <summary>
-        /// sets the song tempo and name. 
+        /// Sets the song tempo and name.
         /// </summary>
         public static (int tempo, string name) TempoAndName {
             set { _name = value.name; _tempo = value.tempo; }
         }
 
         /// <summary>
-        /// provides the beat length of the "count" pattern. 
+        /// Gets or sets the beat length of the "count" pattern.
         /// </summary>
         public static int CountBeatLength { get => _count_beat_length; set => _count_beat_length = value; }
 
         /// <summary>
-        /// gets the hashset.
+        /// Gets the hashset.
         /// </summary>
         public static HashSet<int> HashSet { get => _hashset; }
 
         /// <summary>
-        /// gets the Item map.
+        /// Gets the Item map.
         /// </summary>
         public static Map<int, Item16beat> ItemMap { get => _item_map; }
 
         /// <summary>
-        /// gets whether has the Item of the current tick.
+        /// Gets a value indicating whether the Item of the current tick exists.
         /// </summary>
         public static bool Has { get => _hashset.Contains(Repeat.Tick); }
 
         /// <summary>
-        /// gets the current Item.
+        /// Gets the current Item.
         /// </summary>
         /// <note>
-        /// used in UI display.
+        /// Used in UI display.<br/>
         /// </note>
         public static Item16beat CurrentItem { get => _item_map[Repeat.Tick]; }
 
         /// <summary>
-        /// gets the Track map.
+        /// Gets the Track map.
         /// </summary>
         /// <note>
-        /// used when converting the song to SMF.
+        /// Used when converting the song to SMF.<br/>
         /// </note>
         public static Map<int, Track> TrackMap { get => _track_map; }
 
         /// <summary>
-        /// gets the Track list.
+        /// Gets the Track list.
         /// </summary>
         /// <note>
-        /// used when converting the song to SMF.
+        /// Used when converting the song to SMF.<br/>
         /// </note>
         public static List<Track> TrackList { get => _track_map.Select(x => x.Value).ToList(); }
 
@@ -177,7 +177,7 @@ namespace Meowziq.Core {
         // public static Methods [verb]
 
         /// <summary>
-        /// clears the list and the map data.
+        /// Clears the list and the map data.
         /// </summary>
         public static void Clear() {
             _hashset.Clear();
@@ -186,10 +186,10 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// initializes the tick.
+        /// Initializes the tick.
         /// </summary>
         /// <note>
-        /// necessary when starting for _sameTick.
+        /// Necessary when starting for _sameTick.<br/>
         /// </note>
         public static void InitTick() {
             _tick = -1;
@@ -199,7 +199,7 @@ namespace Meowziq.Core {
         // inner Classes
 
         /// <summary>
-        /// repeat class
+        /// Represents repeat information.
         /// </summary>
         public static class Repeat {
 
@@ -214,7 +214,7 @@ namespace Meowziq.Core {
             // public static Properties [noun, adjective] 
 
             /// <summary>
-            /// sets the begin measure number of repeats.
+            /// Sets the begin measure number of repeats.
             /// </summary>
             public static int BeginMeas {
                 set {
@@ -224,7 +224,7 @@ namespace Meowziq.Core {
             }
 
             /// <summary>
-            /// sets the end measure number of repeats.
+            /// Sets the end measure number of repeats.
             /// </summary>
             public static int EndMeas {
                 set { 
@@ -234,7 +234,7 @@ namespace Meowziq.Core {
             }
 
             /// <summary>
-            /// gets the repeat tick.
+            /// Gets the repeat tick.
             /// </summary>
             public static int Tick {
                 get {
@@ -246,12 +246,12 @@ namespace Meowziq.Core {
             }
 
             /// <summary>
-            /// gets the repeat begin tick.
+            /// Gets the repeat begin tick.
             /// </summary>
             public static int BeginTick { get => _begin_tick; }
 
             /// <summary>
-            /// provides the repeat begin pattern name.
+            /// Gets or sets the repeat begin pattern name.
             /// </summary>
             public static string BeginPatternName { get => _begin_pattern_name; set => _begin_pattern_name = value; }
 
@@ -259,7 +259,7 @@ namespace Meowziq.Core {
             // public static Methods [verb]
 
             /// <summary>
-            /// increments the tick.
+            /// Increments the tick.
             /// </summary>
             public static void IncrementTick() {
                 if (!has) { return; }
@@ -272,14 +272,14 @@ namespace Meowziq.Core {
             }
 
             /// <summary>
-            /// clears this tick state.
+            /// Clears this tick state.
             /// </summary>
             public static void ClearTick() {
                 _begin_tick = _end_tick = 0;
             }
 
             /// <summary>
-            /// resets the tick counter.
+            /// Resets the tick counter.
             /// </summary>
             public static void ResetTickCounter() {
                 _tick_counter = _begin_tick - TICK_INTERVAL;
@@ -289,22 +289,22 @@ namespace Meowziq.Core {
             // private static Properties [noun, adjective]
 
             /// <summary>
-            /// gets whether has a repeat value.
+            /// Gets a value indicating whether a repeat value exists.
             /// </summary>
             static bool has { get => _begin_meas >= 0 && _end_meas >= 0 && _begin_meas < _end_meas; }
 
             /// <summary>
-            /// gets the length of the tick in repeat.
+            /// Gets the length of the tick in repeat.
             /// </summary>
             static int repeatTickLength { get => (_end_meas - _begin_meas) * NOTE_RESOLUTION * TIMES_TO_MEASURE; }
 
             /// <summary>
-            /// gets the position of the current beat.
+            /// Gets the position of the current beat.
             /// </summary>
             static int beat { get => (_tick / NOTE_RESOLUTION) + TO_ONE_BASE - _count_beat_length; }
 
             /// <summary>
-            /// gets the position of current measures.
+            /// Gets the position of the current measure.
             /// </summary>
             static int meas {
                 get {
@@ -315,7 +315,7 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// holds a piece of Track information for SMF output.
+        /// Holds a piece of Track information for SMF output.
         /// </summary>
         public class Track {
 
@@ -331,27 +331,45 @@ namespace Meowziq.Core {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Properties [noun, adjective]
 
+            /// <summary>
+            /// Gets or sets the MIDI channel for this track.
+            /// </summary>
             public int MidiCh { get => _midi_ch; set => _midi_ch = value; }
 
+            /// <summary>
+            /// Gets or sets the name of this track. Returns the name in title case.
+            /// </summary>
             public string Name {
                 get => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(_name); 
                 set => _name = value;
             }
 
+            /// <summary>
+            /// Gets or sets the instrument name for this track.
+            /// </summary>
             public string Instrument { get => _instrument; set => _instrument = value; }
 
+            /// <summary>
+            /// Gets or sets the volume for this track.
+            /// </summary>
             public int Vol { get => _vol; set => _vol = value; }
 
+            /// <summary>
+            /// Gets or sets the pan position for this track.
+            /// </summary>
             public int Pan { get => _pan; set => _pan = value; }
 
+            /// <summary>
+            /// Gets or sets a value indicating whether this track is muted.
+            /// </summary>
             public bool Mute { get => _mute; set => _mute = value; }
         }
 
         /// <summary>
-        /// information about what key, degree, and mode it is played in.
+        /// Represents information about what key, degree, and mode it is played in.
         /// </summary>
         /// <note>
-        /// created every 16 beats.
+        /// Created every 16 beats.<br/>
         /// </note>
         public class Item16beat {
 
@@ -369,14 +387,29 @@ namespace Meowziq.Core {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Properties [noun, adjective]
 
+            /// <summary>
+            /// Gets or sets the tick position for this item.
+            /// </summary>
             public int Tick { get => _tick; set => _tick = value; }
 
+            /// <summary>
+            /// Gets or sets the key for this item.
+            /// </summary>
             public Key Key { get => _key; set => _key = value; }
 
+            /// <summary>
+            /// Gets or sets the degree for this item.
+            /// </summary>
             public Degree Degree { get => _degree; set => _degree = value; }
 
+            /// <summary>
+            /// Gets or sets the key mode for this item.
+            /// </summary>
             public Mode KeyMode { get => _key_mode; set => _key_mode = value; }
 
+            /// <summary>
+            /// Gets or sets the span mode for this item. Returns the key mode if undefined.
+            /// </summary>
             public Mode SpanMode {
                 get {
                     if (_span_mode == Mode.Undefined) { return _key_mode; }
@@ -385,6 +418,9 @@ namespace Meowziq.Core {
                 set => _span_mode = value;
             }
 
+            /// <summary>
+            /// Gets a value indicating whether the span mode is set to automatic (undefined).
+            /// </summary>
             public bool AutoMode {
                 get {
                     if (_span_mode == Mode.Undefined) { return true; }

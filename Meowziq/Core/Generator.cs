@@ -21,10 +21,10 @@ using static Meowziq.Utils;
 
 namespace Meowziq.Core {
     /// <summary>
-    /// generates Note objects and adds to the Item object.
+    /// Generate Note objects and add them to the Item object.
     /// </summary>
     /// <note>
-    /// + called from Meowziq.Core.Phrase.onBuild(). <br/>
+    /// + Called from Meowziq.Core.Phrase.onBuild().
     /// </note>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Generator {
@@ -42,7 +42,7 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// gets an initialized instance.
+        /// Get an initialized instance.
         /// </summary>
         public static Generator GetInstance(Item<Note> note_item) {
             return new Generator(note_item);
@@ -52,14 +52,14 @@ namespace Meowziq.Core {
         // public Methods [verb]
 
         /// <summary>
-        /// creates and applies a Note object.
+        /// Creates and applies a Note object.
         /// </summary>
         public void ApplyNote(int start_tick, int beat_count, List<Span> span_list, Param param) {
             for (Index I6beat_index = new(beat_count); I6beat_index.HasNext; I6beat_index.Increment()) {
                 char text = param.TextCharArray[I6beat_index.Idx];
                 if (param.IsMatch(text)) {
                     Span span = span_list[I6beat_index.SpanIndex]; // 4 times of 16 beats advance 1 beat.
-                    int[] note_num_array = (new int[7]).Select(selector: x => -1).ToArray();  // initializes an array of notes with -1 : to remove it later.
+                    int[] note_num_array = (new int[7]).Select(selector: x => -1).ToArray();  // Initializes an array of notes with -1 : to remove it later.
                     if (param.IsNote) { // "note", "auto" notated.
                         note_num_array[0] = ToNote(
                             key: span.Key, degree: span.Degree, key_mode: span.KeyMode, span_mode: span.SpanMode, number: text.Int32(), auto_note: param.AutoNote
@@ -68,30 +68,30 @@ namespace Meowziq.Core {
                         note_num_array = ToNoteArray(
                             key: span.Key, degree: span.Degree, key_mode: span.KeyMode, span_mode: span.SpanMode, number: text.Int32()
                         );
-                        note_num_array = applyRange(target: note_num_array, range: param.Chord.Range); // applies octave range to affect chord inversions.
+                        note_num_array = applyRange(target: note_num_array, range: param.Chord.Range); // Applies octave range to affect chord inversions.
                     }
-                    // creates the length of the note as a Gate object.
+                    // Creates the length of the note as a Gate object.
                     Gate gate = new(search_idx: I6beat_index.Idx, beat_count: beat_count);
                     for (; gate.HasNextSearch; gate.IncrementSearch()) {
                         char search = param.TextCharArray[gate.SearchIndex];
-                        if (search.Equals('>')) { // has a '>' character in the search result.
-                            gate.IncrementGate(); // extends length by 16 beats.
+                        if (search.Equals('>')) { // Has a '>' character in the search result.
+                            gate.IncrementGate(); // Extends length by 16 beats.
                         }
                         if (!search.Equals('>')) {
-                            break; // has not '>' character in the search result: exits.
+                            break; // Has not '>' character in the search result: exits.
                         }
                     }
-                    if (param.Exp.HasPre) { // has a pre parameter, it's syncopation.
+                    if (param.Exp.HasPre) { // Has a pre parameter, it's syncopation.
                         char pre = param.Exp.PreCharArray[I6beat_index.Idx];
                         if (param.Exp.IsMatchPre(pre)) {
                             gate.ApplyPre(pre_string: pre.ToString());
                         }
                     }
                     if (param.Exp.HasPost) {
-                        // TODO: to a long note if has a post parameter.
+                        // TODO: To a long note if has a post parameter.
                     }
                     int tick = gate.PreLength + start_tick + To16beatLength(I6beat_index.Idx);
-                    // adds a Note object to Item.
+                    // Adds a Note object to Item.
                     note_num_array.Where(predicate: x => x != -1).ToList().ForEach(action: x => 
                         add(tick: tick, note: new Note(tick: tick, num: x + param.Interval, gate: gate.Value, velo: 104, pre_count: gate.PreCount))
                     );
@@ -100,14 +100,14 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// creates and applies a Note object for drum.
+        /// Creates and applies a Note object for drum.
         /// </summary>
         public void ApplyDrumNote(int start_tick, int beat_count, Param param) {
             for (Index I6beat_index = new(beat_count); I6beat_index.HasNext; I6beat_index.Increment()) {
                 char text = param.TextCharArray[I6beat_index.Idx];
                 if (param.IsMatch(text)) {
                     Gate gate = new();
-                    if (param.Exp.HasPre) { // has a pre parameter, it's syncopation.
+                    if (param.Exp.HasPre) { // Has a pre parameter, it's syncopation.
                         char pre = param.Exp.PreCharArray[I6beat_index.Idx];
                         if (param.Exp.IsMatchPre(pre)) {
                             gate.ApplyPre(pre_string: pre.ToString());
@@ -120,14 +120,14 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// creates and applies a sequence Note object.
+        /// Creates and applies a sequence Note object.
         /// </summary>
         public void ApplySequeNote(int start_tick, int beat_count, List<Span> span_list, Param param) {
             for (Index I6beat_index = new(beat_count); I6beat_index.HasNext; I6beat_index.Increment()) {
                 Span span = span_list[I6beat_index.SpanIndex]; // 4 times of 16 beats advance 1 beat.
                 int note_num = ToRandomNote(key: span.Key, degree: span.Degree, key_mode: span.KeyMode, span_mode: span.SpanMode);
                 if (param.Seque.Range is not null) {
-                    note_num = applyRange(target: new int[] { note_num }, range: param.Seque.Range)[0]; // TODO: single note ver of applyRange.
+                    note_num = applyRange(target: new int[] { note_num }, range: param.Seque.Range)[0]; // TODO: Single note ver of applyRange.
                 }
                 if (param.HasTextCharArray) {
                     char text = param.TextCharArray[I6beat_index.Idx];
@@ -137,20 +137,20 @@ namespace Meowziq.Core {
                     }
                 } else {
                     int tick = start_tick + To16beatLength(index: I6beat_index.Idx);
-                    add(tick: tick, note: new Note(tick: tick, num: note_num, gate: 30, velo: 104)); // TODO: can be removed if you have a default Text description. : automatically generated by pattern length.
+                    add(tick: tick, note: new Note(tick: tick, num: note_num, gate: 30, velo: 104)); // TODO: Can be removed if you have a default Text description. : automatically generated by pattern length.
                 }
             }
         }
 
         /// <summary>
-        /// creates information for UI display.
+        /// Creates information for UI display (one State object per 16 beats).
         /// </summary>
         public void ApplyInfo(int start_tick, int beat_count, List<Span> span_list) {
             for (Index I6beat_index = new(beat_count); I6beat_index.HasNext; I6beat_index.Increment()) {
                 Span span = span_list[I6beat_index.SpanIndex]; // 4 times of 16 beats advance 1 beat.
-                int tick = start_tick + To16beatLength(index: I6beat_index.Idx); // processed every tick of 16 beats.
-                if (State.HashSet.Add(item: tick)) { // only once per tick.
-                    State.ItemMap.Add(key: tick, value: new State.Item16beat { // a State object is created every 16 beats.
+                int tick = start_tick + To16beatLength(index: I6beat_index.Idx); // Processed every tick of 16 beats.
+                if (State.HashSet.Add(item: tick)) { // Only once per tick.
+                    State.ItemMap.Add(key: tick, value: new State.Item16beat { // A State object is created every 16 beats.
                         Tick = tick,
                         Key = span.Key,
                         Degree = span.Degree,
@@ -165,7 +165,7 @@ namespace Meowziq.Core {
         // private Methods [verb]
 
         /// <summary>
-        /// converts all notes into the specified range.
+        /// Converts all notes into the specified range (octave shift if out of range).
         /// </summary>
         int[] applyRange(int[] target, Range range) {
             int[] new_array = new int[target.Length];
@@ -174,14 +174,14 @@ namespace Meowziq.Core {
                 else if (target[index] > range.Max) { new_array[index] = target[index] - 12; } 
                 else { new_array[index] = target[index]; }
             }
-            if ((target.Min() >= range.Min) && (target.Max() <= range.Max)) { // all notes became in the specified range.
+            if ((target.Min() >= range.Min) && (target.Max() <= range.Max)) { // All notes became in the specified range.
                 return new_array;
             }
-            return applyRange(target: new_array, range); // recursion
+            return applyRange(target: new_array, range); // Recursion
         }
 
         /// <summary>
-        /// adds a Note to the Item object with the tick.
+        /// Adds a Note to the Item object at the specified tick.
         /// </summary>
         void add(int tick, Note note) {
             _note_item.Add(key: tick, value: note);
@@ -191,7 +191,7 @@ namespace Meowziq.Core {
         // inner Classes
 
         /// <summary>
-        /// class that holds note value information.
+        /// Holds note gate (length, syncopation) information.
         /// </summary>
         class Gate {
 
@@ -222,34 +222,34 @@ namespace Meowziq.Core {
             // Properties [noun, adjective] 
 
             /// <summary>
-            /// whether has the next 16beats in this Pattern.
+            /// Gets a value indicating whether there is a next 16-beat in this Pattern.
             /// </summary>
             public bool HasNextSearch {
                 get {
                     if (_search_index < To16beatCount(_beat_count)) {
-                        return true; // true if the index value is less than or equal to the 16 beats length of the Pattern.
+                        return true; // True if the index is less than the 16-beat length of the Pattern.
                     }
                     return false;
                 }
             }
 
             /// <summary>
-            /// gets the index value pointing to the array position.
+            /// Gets the index pointing to the array position.
             /// </summary>
             public int SearchIndex { get => _search_index; }
 
             /// <summary>
-            /// gets the number that moves the tick of notes forward.
+            /// Gets the value that moves the tick of notes forward.
             /// </summary>
             public int PreLength { get => _pre_length; }
 
             /// <summary>
-            /// get the count of syncopation.
+            /// Gets the count of syncopation.
             /// </summary>
             public int PreCount { get => _pre_count; }
 
             /// <summary>
-            /// gets the gate value of the note.
+            /// Gets the gate value of the note.
             /// </summary>
             public int Value { get => To16beatLength(_gate_count + TEXT_VALUE_LENGTH); }
 
@@ -257,7 +257,7 @@ namespace Meowziq.Core {
             // public Methods [verb]
 
             /// <summary>
-            /// applies a syncopation parameter.
+            /// Applies a syncopation parameter.
             /// </summary>
             public void ApplyPre(string pre_string) {
                 int pre_int = int.Parse(pre_string.ToString());
@@ -269,14 +269,14 @@ namespace Meowziq.Core {
             }
 
             /// <summary>
-            /// increments the search value.
+            /// Increments the search value.
             /// </summary>
             public void IncrementSearch() {
                 _search_index++;
             }
 
             /// <summary>
-            /// increments the gate value.
+            /// Increments the gate value.
             /// </summary>
             public void IncrementGate() {
                 _gate_count++;
@@ -284,11 +284,11 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// class that holds 16 beats count.
+        /// Manages 16-beat index and Span index.
         /// </summary>
         /// <note>
-        /// + returns the index value of Span incremented by 1 every time it is incremented by 4. <br/>
-        /// + always 1 beat in Span objects here. <br/>
+        /// + Returns the Span index incremented by 1 every 4 increments.
+        /// + Always 1 beat per Span object here.
         /// </note>
         class Index {
 
@@ -314,17 +314,17 @@ namespace Meowziq.Core {
             // Properties [noun, adjective] 
 
             /// <summary>
-            /// gets the index value of 16 beats.
+            /// Gets the index of the current 16-beat position.
             /// </summary>
             public int Idx { get => _index; }
 
             /// <summary>
-            /// gets the index value of the Span object.
+            /// Gets the index of the current Span object.
             /// </summary>
             public int SpanIndex { get => _span_index; }
 
             /// <summary>
-            /// whether has the next 16 beats in this Pattern.
+            /// Returns true if there is a next 16-beat in this Pattern.
             /// </summary>
             public bool HasNext {
                 get {
@@ -339,10 +339,10 @@ namespace Meowziq.Core {
             // public Methods [verb]
 
             /// <summary>
-            /// increments 16 beats.
+            /// Increments the 16-beat index.
             /// </summary>
             public void Increment() {
-                _index++; // increments 16 beats.
+                _index++; // Increments the 16-beat index.
                 _index_for_16beat++;
                 if (_index_for_16beat == 4) {
                     _index_for_16beat = 0;
