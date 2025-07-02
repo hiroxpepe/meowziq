@@ -18,7 +18,7 @@ using System.Linq;
 
 namespace Meowziq.Core {
     /// <summary>
-    /// track class
+    /// Represents a track containing note items and related operations.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Track {
@@ -26,18 +26,31 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Fields
 
+        /// <summary>
+        /// Holds a map of note items for all track types.
+        /// </summary>
         static Map<string, Item<Note>> _note_item_map = new();
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
+        /// <summary>
+        /// Holds the type of this track.
+        /// </summary>
         string _type;
 
+        /// <summary>
+        /// Holds the note item for this track.
+        /// </summary>
         Item<Note> _note_item;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Track"/> class with the specified type.
+        /// </summary>
+        /// <param name="type">The type of the track.</param>
         public Track(string type) {
             _type = type;
             _note_item = new();
@@ -51,11 +64,11 @@ namespace Meowziq.Core {
         // static Properties [noun, adjective] 
 
         /// <summary>
-        /// gets all Note objects of this song.
+        /// Gets all <see cref="Note"/> objects of this song.
         /// </summary>
-        /// <note>
-        /// not used yet.
-        /// </note>
+        /// <remarks>
+        /// Not used yet.
+        /// </remarks>
         public static List<Note> AllNote {
             get => _note_item_map.SelectMany(selector: x => x.Value).SelectMany(selector: x => x.Value).ToList();
         }
@@ -64,7 +77,7 @@ namespace Meowziq.Core {
         // Properties [noun, adjective] 
 
         /// <summary>
-        /// gets the Item<Note> object.
+        /// Gets the <see cref="Item{Note}"/> object for this track.
         /// </summary>
         public Item<Note> NoteItem {
             get {
@@ -77,11 +90,11 @@ namespace Meowziq.Core {
         // public Methods [verb]
 
         /// <summary>
-        /// initializes the contents.
+        /// Clears the contents of all note items and the note item map.
         /// </summary>
-        /// <note>
-        /// not used yet.
-        /// </note>
+        /// <remarks>
+        /// Not used yet.
+        /// </remarks>
         public void Clear() {
             foreach (Item<Note> value in _note_item_map.Values) { value.Clear(); }
             _note_item_map.Clear();
@@ -91,7 +104,7 @@ namespace Meowziq.Core {
         // private Methods [verb]
 
         /// <summary>
-        /// optimizes notes.
+        /// Optimizes notes by removing overlapping notes with syncopation.
         /// </summary>
         void optimize() {
             List<Note> all_note_list = _note_item.SelectMany(selector: x => x.Value).ToList();
@@ -105,18 +118,19 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// removes notes that overlap with syncopation.
+        /// Removes notes that overlap with the specified syncopation note.
         /// </summary>
+        /// <param name="target">The syncopation note to use for removal.</param>
         public void removeBy(Note target) {
             int tick1 = target.Tick;
             List<Note> note_list1 = _note_item.Get(key: tick1);
-            note_list1 = note_list1.Where(predicate: x => !(!x.HasPre && x.Tick == tick1)).ToList(); // removes the same tick and a non-priority note.
+            note_list1 = note_list1.Where(predicate: x => !(!x.HasPre && x.Tick == tick1)).ToList(); // Removes the same tick and a non-priority note.
             _note_item.SetBy(key: tick1, value: note_list1);
-            if (target.PreCount > 1) { // has a syncopation parameter 2.
+            if (target.PreCount > 1) { // Has a syncopation parameter 2.
                 int tick2 = target.Tick + Length.Of16beat.Int32();
                 List<Note> note_list2 = _note_item.Get(tick2);
                 if (note_list2 != null) {
-                    note_list2 = note_list2.Where(predicate: x => !(!x.HasPre && x.Tick == tick2)).ToList(); // removes more overlapping 16 beats notes.
+                    note_list2 = note_list2.Where(predicate: x => !(!x.HasPre && x.Tick == tick2)).ToList(); // Removes more overlapping 16 beats notes.
                     _note_item.SetBy(key: tick2, value: note_list2);
                 }
             }

@@ -18,19 +18,24 @@ using System.Text;
 
 namespace Meowziq.IO {
     /// <summary>
-    /// IO related extension methods.
+    /// Provides IO-related extension methods for string operations.
     /// </summary>
     internal static class Extensions {
         /// <summary>
-        /// converts a string to a MemoryStream.
+        /// Converts the string to a UTF-8 encoded <see cref="MemoryStream"/>.
         /// </summary>
+        /// <param name="source">The source string to convert.</param>
+        /// <returns>A <see cref="MemoryStream"/> containing the UTF-8 bytes of the string.</returns>
         internal static MemoryStream ToMemoryStream(this string source) {
             return new MemoryStream(buffer: Encoding.UTF8.GetBytes(source));
         }
 
         /// <summary>
-        /// compares two strings.
+        /// Determines whether the source string is equal to the target string.
         /// </summary>
+        /// <param name="source">The source string.</param>
+        /// <param name="target">The string to compare with.</param>
+        /// <returns><c>true</c> if the strings are equal; otherwise, <c>false</c>.</returns>
         internal static bool Is(this string source, string target) {
             return source == target;
         }

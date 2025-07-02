@@ -18,61 +18,61 @@ using System.Collections.Generic;
 
 namespace Meowziq {
     /// <summary>
-    /// interface of Message.
+    /// Defines the interface for a Message.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public interface IMessage<T1, T2> {
 
         /// <summary>
-        /// gets the list of T1 of the argument tick
+        /// Gets the list of T1 at the specified tick.
         /// </summary>
         /// <note>
-        /// + returns null if the list of T1 for the argument tick does not exist. <br/>
+        /// Returns null if the list of T1 for the specified tick does not exist.<br/>
         /// </note>
         List<T1> GetBy(int tick);
 
         /// <summary>
-        /// whether has an item with the argument tick
+        /// Gets a value indicating whether there is an item at the specified tick.
         /// </summary>
         bool Has(int tick);
 
         /// <summary>
-        /// switching processing is performed starting from the argument tick
+        /// Applies switching processing starting from the specified tick.
         /// </summary>
         void ApplyTick(int tick, Action<int> load);
 
         /// <summary>
-        /// apply the program number (timbre) as T1
+        /// Applies the program number (timbre) as T1.
         /// </summary>
         void ApplyProgramChange(int tick, int midi_ch, int program_num);
 
         /// <summary>
-        /// apply volume as T1
+        /// Applies volume as T1.
         /// </summary>
         void ApplyVolume(int tick, int midi_ch, int volume);
 
         /// <summary>
-        /// apply pan as T1
+        /// Applies pan as T1.
         /// </summary>
         void ApplyPan(int tick, int midi_ch, Pan pan);
 
         /// <summary>
-        /// apply mute as T1
+        /// Applies mute as T1.
         /// </summary>
         void ApplyMute(int tick, int midi_ch, bool mute);
 
         /// <summary>
-        /// apply T2 as T1
+        /// Applies T2 as T1.
         /// </summary>
         void ApplyNote(int tick, int midi_ch, T2 note);
 
         /// <summary>
-        /// initializes the state
+        /// Clears the state.
         /// </summary>
         void Clear();
 
         /// <summary>
-        /// inverts the internal flag
+        /// Inverts the internal flag.
         /// </summary>
         void Invert();
     }

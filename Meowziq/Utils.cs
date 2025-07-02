@@ -46,14 +46,14 @@ namespace Meowziq {
         // public static Methods [verb]
 
         /// <summary>
-        /// returns the length in 16beats for the index value of the argument.
+        /// Returns the length in 16beats for the index value of the argument.
         /// </summary>
         public static int To16beatLength(int index) {
             return Length.Of16beat.Int32() * index;
         }
 
         /// <summary>
-        /// returns the length16beats in the count value (one beat) of the argument.
+        /// Returns the length16beats in the count value (one beat) of the argument.
         /// </summary>
         public static int To16beatCount(int beat_count) {
             return beat_count * 4; // multiplies by 4 because it is the number of 16beats in one beat.
@@ -94,7 +94,7 @@ namespace Meowziq {
         }
 
         /// <summary>
-        /// gets random note from parameters.
+        /// Gets random note from parameters.
         /// </summary>
         /// <fixme>
         /// FIXME: this
@@ -104,15 +104,23 @@ namespace Meowziq {
         }
 
         /// <summary>
-        /// gets the church mode used in that degree from the church mode of the song's key and that degree.
+        /// Gets the church mode used in that degree from the church mode of the song's key and that degree.
         /// </summary>
+        /// <param name="degree">The degree to use.</param>
+        /// <param name="key_mode">The key mode to use.</param>
+        /// <returns>The span mode for the given degree and key mode.</returns>
         public static Mode ToSpanMode(Degree degree, Mode key_mode) {
             return spanModeBy(degree, key_mode);
         }
 
         /// <summary>
-        /// gets the church mode of the song's key from the church mode of the span.
+        /// Gets the church mode of the song's key from the church mode of the span.
         /// </summary>
+        /// <param name="key">The key of the song.</param>
+        /// <param name="degree">The degree to use.</param>
+        /// <param name="key_mode">The key mode of the song.</param>
+        /// <param name="span_mode">The span mode to use.</param>
+        /// <returns>The key mode for the given parameters, or <see cref="Mode.Undefined"/> if the scales do not match.</returns>
         public static Mode ToKeyMode(Key key, Degree degree, Mode key_mode, Mode span_mode) {
             Mode key_mode_maybe = keyModeMaybeBy(degree, span_mode); // gets the church mode of the key from the church mode of the span and that degree.
             int[] key_scale = scale7By(key, key_mode: key_mode_maybe); // creates a scale from the degree and church mode of the key.
@@ -125,8 +133,14 @@ namespace Meowziq {
         }
 
         /// <summary>
-        /// gets a simple chord name as major or minor.
+        /// Gets a simple chord name as major or minor.
         /// </summary>
+        /// <param name="key">The key of the song.</param>
+        /// <param name="degree">The degree to use.</param>
+        /// <param name="key_mode">The key mode of the song.</param>
+        /// <param name="span_mode">The span mode to use.</param>
+        /// <param name="auto_mode">If true, determines the mode automatically; otherwise, uses the specified span mode.</param>
+        /// <returns>The chord name as a string (e.g., "C", "Cm").</returns>
         public static string ToSimpleCodeName(Key key, Degree degree, Mode key_mode, Mode span_mode, bool auto_mode = true) {
             int degree_note = rootNoteBy(key, degree, key_mode); // gets the root note of the degree from the degree and the key mode of the song.
             string code_base = Key.Enum.Parse(degree_note).ToString(); // gets the code name basics.
@@ -144,7 +158,7 @@ namespace Meowziq {
         // private static Methods [verb]
 
         /// <summary>
-        /// compares scale notes.
+        /// Compares scale notes.
         /// </summary>
         static bool compareScale(int[] scale1, int[] scale2) {
             List<Key> list1 = scale1.Select(selector: x => Key.Enum.Parse(target: x)).OrderBy(keySelector: x => x).ToList();
@@ -157,7 +171,7 @@ namespace Meowziq {
         }
 
         /// <summary>
-        /// gets whether the church mode is major or minor.
+        /// Gets whether the church mode is major or minor.
         /// </summary>
         static bool majorOrMiner(Mode mode) {
             switch (mode) {
@@ -176,7 +190,7 @@ namespace Meowziq {
         }
 
         /// <summary>
-        /// gets an array of note numbers from 3-9 "chord" notated.
+        /// Gets an array of note numbers from 3-9 "chord" notated.
         /// </summary>
         static int[] noteArrayBy(int number, int[] scale7) {
             // TODO: validate
@@ -224,7 +238,7 @@ namespace Meowziq {
         }
 
         /// <summary>
-        /// gets the root note number from the key, the degree, and the mode of the song.
+        /// Gets the root note number from the key, the degree, and the mode of the song.
         /// </summary>
         static int rootNoteBy(Key key, Degree degree, Mode key_mode) {
             key.Validate();

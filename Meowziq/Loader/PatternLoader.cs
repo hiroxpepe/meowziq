@@ -24,7 +24,7 @@ using static Meowziq.Env;
 
 namespace Meowziq.Loader {
     /// <summary>
-    /// loader class for Pattern object.
+    /// Provides methods for loading and converting Pattern objects from JSON data.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class PatternLoader {
@@ -33,8 +33,10 @@ namespace Meowziq.Loader {
         // public static Methods [verb]
 
         /// <summary>
-        /// creates a list of Core.Pattern objects.
+        /// Creates a list of <see cref="Core.Pattern"/> objects from the specified stream.
         /// </summary>
+        /// <param name="target">The stream containing the pattern JSON data.</param>
+        /// <returns>A list of <see cref="Core.Pattern"/> objects.</returns>
         public static List<Core.Pattern> Build(Stream target) {
             return loadJson(target).PatternArray.Select(selector: x => convertPattern(pattern: x)).ToList();
         }
@@ -43,24 +45,30 @@ namespace Meowziq.Loader {
         // private static Methods [verb]
 
         /// <summary>
-        /// converts a Pattern object to a Core.Pattern object.
+        /// Converts a <see cref="Pattern"/> object to a <see cref="Core.Pattern"/> object.
         /// </summary>
+        /// <param name="pattern">The pattern to convert.</param>
+        /// <returns>The converted <see cref="Core.Pattern"/> object.</returns>
         static Core.Pattern convertPattern(Pattern pattern) {
             getCountBeatLength(pattern);
             return new Core.Pattern(name: pattern.Name, meas_list: convertMeasList(pattern_string: pattern.Data));
         }
 
         /// <summary>
-        /// converts a pattern string to a list of Core.Meas objects.
+        /// Converts a pattern string to a list of <see cref="Meas"/> objects.
         /// </summary>
+        /// <param name="pattern_string">The pattern string to convert.</param>
+        /// <returns>A list of <see cref="Meas"/> objects.</returns>
         static List<Meas> convertMeasList(string pattern_string) {
             pattern_string = interpretModePrefix(pattern_string);
             return pattern_string.GetMeasStringArray().Select(selector: x => new Meas(convertSpanList(meas_string: x))).ToList();
         }
 
         /// <summary>
-        /// interprets the church mode abbreviations.
+        /// Interprets church mode abbreviations in the pattern string.
         /// </summary>
+        /// <param name="target">The pattern string to interpret.</param>
+        /// <returns>The pattern string with mode abbreviations replaced.</returns>
         static string interpretModePrefix(string target) {
             target = target.Replace(oldValue: ":l", newValue: ":Lyd");
             target = target.Replace(oldValue: ":i", newValue: ":Ion");
@@ -73,8 +81,10 @@ namespace Meowziq.Loader {
         }
 
         /// <summary>
-        /// converts a meas string to a list of Span objects.
+        /// Converts a measure string to a list of <see cref="Span"/> objects.
         /// </summary>
+        /// <param name="meas_string">The measure string to convert.</param>
+        /// <returns>A list of <see cref="Span"/> objects.</returns>
         static List<Span> convertSpanList(string meas_string) {
             // splits a meas string into beats.
             string[] beat_array = meas_string.Split('|')
@@ -117,8 +127,11 @@ namespace Meowziq.Loader {
         }
 
         /// <summary>
-        /// converts a beat string and number of beats to a Span object.
+        /// Converts a beat string and number of beats to a <see cref="Span"/> object.
         /// </summary>
+        /// <param name="beat">The number of beats.</param>
+        /// <param name="beat_string">The beat string to convert.</param>
+        /// <returns>The converted <see cref="Span"/> object.</returns>
         static Span convertSpan(int beat, string beat_string) {
             string[] part = beat_string.Split(separator: ':');
             if (part.Length == 1) {
@@ -131,8 +144,9 @@ namespace Meowziq.Loader {
         }
 
         /// <summary>
-        /// gets the length of the beat for the "count" pattern.
+        /// Gets the length of the beat for the "count" pattern and updates the state.
         /// </summary>
+        /// <param name="pattern">The pattern to check.</param>
         static void getCountBeatLength(Pattern pattern) {
             if (pattern.Name.Equals(COUNT_PATTERN)) {
                 State.CountBeatLength = pattern.Data.GetBeatLength();
@@ -140,8 +154,10 @@ namespace Meowziq.Loader {
         }
 
         /// <summary>
-        /// reads a .json file to the JSON object.
+        /// Reads a .json file and deserializes it to a <see cref="Json"/> object.
         /// </summary>
+        /// <param name="target">The stream containing the JSON data.</param>
+        /// <returns>The deserialized <see cref="Json"/> object.</returns>
         static Json loadJson(Stream target) {
             DataContractJsonSerializer serializer = new(type: typeof(Json));
             return (Json) serializer.ReadObject(stream: target);
@@ -150,16 +166,31 @@ namespace Meowziq.Loader {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // inner Classes
 
+        /// <summary>
+        /// Represents the root JSON object for pattern data.
+        /// </summary>
         [DataContract]
         class Json {
+            /// <summary>
+            /// Gets or sets the array of pattern data.
+            /// </summary>
             [DataMember(Name = "pattern")]
             public Pattern[] PatternArray { get; set; }
         }
 
+        /// <summary>
+        /// Represents a pattern entry in the JSON data.
+        /// </summary>
         [DataContract]
         class Pattern {
+            /// <summary>
+            /// Gets or sets the pattern name.
+            /// </summary>
             [DataMember(Name = "name")]
             public string Name { get; set; }
+            /// <summary>
+            /// Gets or sets the pattern data string.
+            /// </summary>
             [DataMember(Name = "data")]
             public string Data { get; set; }
         }
