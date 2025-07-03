@@ -27,6 +27,14 @@ namespace Meowziq.IO {
 
         static Resourse _current_resourse, _valid_resourse;
 
+        //static string _patter_json = string.Empty;
+
+        //static string _song_json = string.Empty;
+
+        //static string _phrase_json = string.Empty;
+
+        //static string _player_json = string.Empty;
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Constructor
 
@@ -68,6 +76,27 @@ namespace Meowziq.IO {
                 _current_resourse.Mixer = stream5.ReadToEnd();
             }
         }
+
+        /// <summary>
+        /// reads json files as strings.
+        /// </summary>
+        //public static void LoadOnlyOnce(string targetPath) {
+        //    using StreamReader stream1 = new($"{targetPath}/pattern.json");
+        //    _current_resourse.Pattern = _patter_json = stream1.ReadToEnd();
+        //    using StreamReader stream2 = new($"{targetPath}/song.json");
+        //    _current_resourse.Song = _song_json = stream2.ReadToEnd();
+        //    using StreamReader stream3 = new($"{targetPath}/phrase.json");
+        //    _current_resourse.Phrase = _phrase_json = stream3.ReadToEnd();
+        //    using StreamReader stream4 = new($"{targetPath}/player.json");
+        //    _current_resourse.Player = _player_json = stream4.ReadToEnd();
+        //}
+
+        //public static void LoadAfterSecondTime(string targetPath) {
+        //    _current_resourse.Pattern = _patter_json;
+        //    _current_resourse.Song = _song_json;
+        //    _current_resourse.Phrase = _phrase_json;
+        //    _current_resourse.Player = _player_json;
+        //}
 
         /// <summary>
         /// updates as the latest resourse that has passed validation.

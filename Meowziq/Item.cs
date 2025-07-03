@@ -35,6 +35,7 @@ namespace Meowziq {
             Name = name;
         }
         public string Name { get; }
+        public string? Value { get; set; }
     }
 
     /// <summary>

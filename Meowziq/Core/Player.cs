@@ -139,7 +139,7 @@ namespace Meowziq.Core {
                         } else if (locate.NeedPhraseBuild) { // needs to build a Phrase object.
                             phrase.Build(tick: locate.HeadTick, pattern: pattern); // creates Note objects.
                             processed_pattern_name_hashset.Add(item: pattern.Name); // holds processed pattern names.
-                            Log.Info($"Build: tick: {tick} head: {locate.HeadTick} to end: {locate.endTick} {pattern.Name} {_type}");
+                            Log.Debug($"Build: tick: {tick} head: {locate.HeadTick} to end: {locate.endTick} {pattern.Name} {_type}");
                             if (locate.HeadTick == State.Repeat.BeginTick && State.Repeat.BeginTick is not 0) {
                                 State.Repeat.BeginPatternName = pattern.Name; // holds the pattern name of repeat begins.
                             }
@@ -148,7 +148,7 @@ namespace Meowziq.Core {
                         if (pattern.Name == begin_pattern_name && processed_pattern_name_hashset.Add(item: begin_pattern_name) && State.Repeat.BeginTick is not 0) {
                             Pattern repeat_begin_pattern = section.AllPattern.Where(predicate: x => x.Name == State.Repeat.BeginPatternName).First();
                             phrase.Build(tick: State.Repeat.BeginTick, pattern: repeat_begin_pattern); // builds the pattern of repeat begins.
-                            Log.Info($"■■■ Build: tick: {State.Repeat.BeginTick} {pattern.Name} {_type}");
+                            Log.Debug($"■■■ Build: tick: {State.Repeat.BeginTick} {pattern.Name} {_type}");
                         }
                         Mixer<T>.ApplyVaule(tick: locate.HeadTick, midi_ch: _midi_ch, type: Type, name: pattern.Name, program_num: _program_num); // applies value changes to Mixer: to set it before Note.
                     }
