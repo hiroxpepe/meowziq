@@ -20,7 +20,7 @@ using Meowziq.Value;
 
 namespace Meowziq.Core {
     /// <summary>
-    /// phrase class
+    /// Represents a phrase.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Phrase {
@@ -45,7 +45,7 @@ namespace Meowziq.Core {
         // Properties [noun, adjective] 
 
         /// <summary>
-        /// provides the phrase type.
+        /// Gets or sets the phrase type.
         /// </summary>
         public string Type {
             get => _type;
@@ -58,22 +58,22 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// provides the phrase name.
+        /// Gets or sets the phrase name.
         /// </summary>
         public string Name { get => _name; set => _name = value; }
 
         /// <summary>
-        /// provides the Data object.
+        /// Gets or sets the Data object.
         /// </summary>
         public Data Data { get => _data; set => _data = value; }
 
         /// <summary>
-        /// provides the name of the base phrase.
+        /// Gets or sets the name of the base phrase.
         /// </summary>
         public string Base { get => _base; set => _base = value; }
 
         /// <summary>
-        /// sets the range.
+        /// Sets the range.
         /// </summary>
         public string Range {
             set {
@@ -101,7 +101,7 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// sets the Item<Note> object.
+        /// Sets the Item<Note> object.
         /// </summary>
         public Item<Note> NoteItem { set => _note_item = value; }
 
@@ -109,7 +109,7 @@ namespace Meowziq.Core {
         // public Methods [verb]
 
         /// <summary>
-        /// creates Note objects.
+        /// Creates Note objects.
         /// </summary>
         public void Build(int tick, Pattern pattern) {
             onBuild(tick, pattern);
@@ -119,7 +119,7 @@ namespace Meowziq.Core {
         // protected Methods [verb]
 
         /// <summary>
-        /// creates Note objects by executing the appropriate method of the Generator object.
+        /// Creates Note objects by executing the appropriate method of the Generator object.
         /// </summary>
         protected void onBuild(int tick, Pattern pattern) {
             Generator generator = Generator.GetInstance(note_item: _note_item);
@@ -151,7 +151,7 @@ namespace Meowziq.Core {
                     break;
                 case DataType.Drum:
                     _data.BeatArray.ToList().Select(selector: (x, idx) => new Param(
-                        note: new Value.Note(text: x, oct: 0), // octave is always 0.
+                        note: new Value.Note(text: x, oct: 0), // Octave is always 0.
                         percussion_note_num: (int) _data.PercussionArray[idx],
                         exp: new Value.Exp(pre: _data.PreArray[idx], post: string.Empty),
                         type: data_type
@@ -164,7 +164,7 @@ namespace Meowziq.Core {
                     }
                     break;
             }
-            // creates UI display information.
+            // Creates UI display information.
             generator.ApplyInfo(start_tick: tick, beat_count: pattern.BeatCount, span_list: pattern.AllSpan);
         }
 
@@ -172,7 +172,7 @@ namespace Meowziq.Core {
         // private Methods [verb]
 
         /// <summary>
-        /// determines the type of data written in json.
+        /// Determines the type of data written in json.
         /// </summary>
         DataType defineDataType() {
             if (!_data.HasMulti && (_data.HasNote || _data.HasAuto)) { return DataType.Mono; }
@@ -180,7 +180,7 @@ namespace Meowziq.Core {
             if (_data.HasChord) { return DataType.Chord; }
             if (_data.HasBeat) { return DataType.Drum; }
             if (_data.HasSeque) { return DataType.Seque; }
-            throw new ArgumentException("not understandable DataType.");
+            throw new ArgumentException("Not understandable DataType.");
         }
     }
 }

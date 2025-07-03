@@ -17,7 +17,7 @@ using System.IO;
 
 namespace Meowziq.IO {
     /// <summary>
-    /// cache class
+    /// Provides caching for JSON resources used in the application.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Cache {
@@ -25,6 +25,9 @@ namespace Meowziq.IO {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Fields
 
+        /// <summary>
+        /// Holds the current resource data for this tick.
+        /// </summary>
         static Resourse _current_resourse, _valid_resourse;
 
         //static string _patter_json = string.Empty;
@@ -38,6 +41,9 @@ namespace Meowziq.IO {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Constructor
 
+        /// <summary>
+        /// Initializes static members of the <see cref="Cache"/> class.
+        /// </summary>
         static Cache() {
             _current_resourse = new();
             _valid_resourse = new();
@@ -47,12 +53,12 @@ namespace Meowziq.IO {
         // static Properties [noun, adjective] 
 
         /// <summary>
-        /// gets the contents of the json data read in this tick.
+        /// Gets the contents of the JSON data read in this tick.
         /// </summary>
         public static Resourse Current { get => _current_resourse; }
 
         /// <summary>
-        /// gets the final contents of json data that passed all validations.
+        /// Gets the final contents of JSON data that passed all validations.
         /// </summary>
         public static Resourse Valid { get => _valid_resourse; }
 
@@ -60,8 +66,9 @@ namespace Meowziq.IO {
         // public static Methods [verb]
 
         /// <summary>
-        /// reads json files as strings.
+        /// Reads JSON files as strings and stores them in the current resource.
         /// </summary>
+        /// <param name="targetPath">The directory path containing the JSON files.</param>
         public static void Load(string targetPath) {
             using StreamReader stream1 = new($"{targetPath}/pattern.json");
             _current_resourse.Pattern = stream1.ReadToEnd();
@@ -78,28 +85,7 @@ namespace Meowziq.IO {
         }
 
         /// <summary>
-        /// reads json files as strings.
-        /// </summary>
-        //public static void LoadOnlyOnce(string targetPath) {
-        //    using StreamReader stream1 = new($"{targetPath}/pattern.json");
-        //    _current_resourse.Pattern = _patter_json = stream1.ReadToEnd();
-        //    using StreamReader stream2 = new($"{targetPath}/song.json");
-        //    _current_resourse.Song = _song_json = stream2.ReadToEnd();
-        //    using StreamReader stream3 = new($"{targetPath}/phrase.json");
-        //    _current_resourse.Phrase = _phrase_json = stream3.ReadToEnd();
-        //    using StreamReader stream4 = new($"{targetPath}/player.json");
-        //    _current_resourse.Player = _player_json = stream4.ReadToEnd();
-        //}
-
-        //public static void LoadAfterSecondTime(string targetPath) {
-        //    _current_resourse.Pattern = _patter_json;
-        //    _current_resourse.Song = _song_json;
-        //    _current_resourse.Phrase = _phrase_json;
-        //    _current_resourse.Player = _player_json;
-        //}
-
-        /// <summary>
-        /// updates as the latest resourse that has passed validation.
+        /// Updates the valid resource with the latest data that has passed validation.
         /// </summary>
         public static void Update() {
             _valid_resourse.Pattern = _current_resourse.Pattern;
@@ -110,7 +96,7 @@ namespace Meowziq.IO {
         }
 
         /// <summary>
-        /// initializes the resourses.
+        /// Initializes the resources by clearing their contents.
         /// </summary>
         public static void Clear() {
             _current_resourse.Clear();
@@ -121,39 +107,72 @@ namespace Meowziq.IO {
         // inner Classes
 
         /// <summary>
-        /// class for holding the contents of json files as strings.
+        /// Holds the contents of JSON files as strings and provides memory streams for each.
         /// </summary>
         public class Resourse {
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // public Properties [noun, adjective] 
 
+            /// <summary>
+            /// Gets a memory stream of the pattern JSON data.
+            /// </summary>
             public Stream PatternStream { get => Pattern.ToMemoryStream(); }
 
+            /// <summary>
+            /// Gets a memory stream of the song JSON data.
+            /// </summary>
             public Stream SongStream { get => Song.ToMemoryStream(); }
 
+            /// <summary>
+            /// Gets a memory stream of the phrase JSON data.
+            /// </summary>
             public Stream PhraseStream { get => Phrase.ToMemoryStream(); }
 
+            /// <summary>
+            /// Gets a memory stream of the player JSON data.
+            /// </summary>
             public Stream PlayerStream { get => Player.ToMemoryStream(); }
 
+            /// <summary>
+            /// Gets a memory stream of the mixer JSON data, or null if not available.
+            /// </summary>
             public Stream MixerStream { get => Mixer is null ? null : Mixer.ToMemoryStream(); }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // internal Properties [noun, adjective] 
 
+            /// <summary>
+            /// Gets or sets the pattern JSON data as a string.
+            /// </summary>
             internal string Pattern { get; set; }
 
+            /// <summary>
+            /// Gets or sets the song JSON data as a string.
+            /// </summary>
             internal string Song { get; set; }
 
+            /// <summary>
+            /// Gets or sets the phrase JSON data as a string.
+            /// </summary>
             internal string Phrase { get; set; }
 
+            /// <summary>
+            /// Gets or sets the player JSON data as a string.
+            /// </summary>
             internal string Player { get; set; }
 
+            /// <summary>
+            /// Gets or sets the mixer JSON data as a string.
+            /// </summary>
             internal string Mixer { get; set; }
 
             ///////////////////////////////////////////////////////////////////////////////////////////////
             // internal Methods [verb]
 
+            /// <summary>
+            /// Clears all JSON data fields in this resource.
+            /// </summary>
             internal void Clear() {
                 Pattern = Song = Phrase = Player = Mixer = null;
             }

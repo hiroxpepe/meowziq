@@ -15,39 +15,50 @@
 
 namespace Meowziq {
     /// <summary>
-    /// envelope class
+    /// Provides environment constants for the sequencer and MIDI system.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Env {
 #nullable enable
-
-        public static readonly int MIDI_TRACK_BASE = 0;
-        public static readonly int MIDI_TRACK_COUNT = 16;
-        public static readonly int MIDI_CH_DRUM = 9;
-
         /// <summary>
-        /// tick interval of the sequencer.
+        /// The base index for MIDI tracks.
+        /// </summary>
+        public static readonly int MIDI_TRACK_BASE = 0;
+        /// <summary>
+        /// The total number of MIDI tracks.
+        /// </summary>
+        public static readonly int MIDI_TRACK_COUNT = 16;
+        /// <summary>
+        /// The MIDI channel number used for drums (10th channel, zero-based).
+        /// </summary>
+        public static readonly int MIDI_CH_DRUM = 9;
+        /// <summary>
+        /// The tick interval of the sequencer.
         /// </summary>
         public static readonly int TICK_INTERVAL = 30;
         /// <summary>
-        /// note resolution of the sequencer.
+        /// The note resolution of the sequencer (ticks per quarter note).
         /// </summary>
         public static readonly int NOTE_RESOLUTION = 480;
         /// <summary>
-        /// beat count in 1 measure.
+        /// The number of beats in one measure.
         /// </summary>
         public static readonly int BEAT_COUNT_IN_MEASURE = 4;
         /// <summary>
-        /// 1 measure consists of 4 beats.
+        /// The number of beats that make up one measure.
         /// </summary>
         public static readonly int TIMES_TO_MEASURE = 4;
         /// <summary>
-        /// set it to 4 can change every 1 measure. <br/>
-        /// also set it to 1 can change every 1 beat. 
+        /// The interval for loading data. Set to 4 to change every measure, or 1 to change every beat.
         /// </summary>
-        public static readonly int LOAD_EVERY_BEAT = 4;
-
+        public static readonly int LOAD_EVERY_BEAT = 1;
+        /// <summary>
+        /// The name of the count pattern.
+        /// </summary>
         public static readonly string COUNT_PATTERN = "count";
+        /// <summary>
+        /// The path to the conductor MIDI file.
+        /// </summary>
         public static readonly string CONDUCTOR_MIDI = "./data/conductor.mid";
     }
 }

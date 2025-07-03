@@ -19,23 +19,28 @@ using System.Text.RegularExpressions;
 
 namespace Meowziq {
     /// <summary>
-    /// common extension methods.
+    /// Provides common extension methods for character and string operations.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Extensions {
         /// <summary>
-        /// converts a character to a number.
+        /// Converts a numeric character to its integer value.
         /// </summary>
+        /// <param name="source">The character to convert (must be '0'-'9').</param>
+        /// <returns>The integer value of the character.</returns>
+        /// <exception cref="FormatException">Thrown if the character is not a digit.</exception>
         public static int Int32(this char source) {
-            if (!Regex.IsMatch(input: source.ToString(), pattern: @"^[0-9]+$")) { // only 0 to 9 are valid.
+            if (!Regex.IsMatch(input: source.ToString(), pattern: @"^[0-9]+$")) { // Only 0 to 9 are valid.
                 throw new FormatException("a char value must be 0～9.");
             }
             return int.Parse(s: source.ToString());
         }
 
         /// <summary>
-        /// returns true if the string is not a null or empty string.
+        /// Determines whether the string is not null or empty.
         /// </summary>
+        /// <param name="source">The string to check.</param>
+        /// <returns><c>true</c> if the string is not null or empty; otherwise, <c>false</c>.</returns>
         public static bool HasValue(this string source) {
             return !(source is null || source.Equals(string.Empty));
         }

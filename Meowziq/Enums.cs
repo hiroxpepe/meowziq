@@ -21,35 +21,38 @@ namespace Meowziq {
     // public Enums [noun]
 
     /// <summary>
-    /// measure type.
+    /// Specifies the type of measure.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public enum Measure {
+        /// <summary>
+        /// The maximum number of measures.
+        /// </summary>
         Max = 12,
     }
 
     /// <summary>
-    /// type of data written in json.
+    /// Specifies the type of data written in JSON.
     /// </summary>
     public enum DataType {
         /// <summary>
-        /// mono "note" or "auto" notated data.
+        /// Mono "note" or "auto" notated data.
         /// </summary>
         Mono = 0,
         /// <summary>
-        /// poly "note" or "auto" notated data.
+        /// Poly "note" or "auto" notated data.
         /// </summary>
         Multi = 1,
         /// <summary>
-        /// "chord" notated data.
+        /// "Chord" notated data.
         /// </summary>
         Chord = 2,
         /// <summary>
-        /// "beat" notated data.
+        /// "Beat" notated data.
         /// </summary>
         Drum = 3,
         /// <summary>
-        /// "seque" notated data.
+        /// "Seque" notated data.
         /// </summary>
         Seque = 4,
     }

@@ -18,50 +18,59 @@ using System.Collections.Generic;
 
 namespace Meowziq {
     /// <summary>
-    /// name of Dictionary is too long, it be named Map.
+    /// A shorter alias for Dictionary, used as Map in the Meowziq namespace.
     /// </summary>
-    /// <note>
-    /// + used in the Meowziq namespace. <br/>
-    /// </note>
+    /// <remarks>
+    /// Used throughout the Meowziq namespace as a convenient replacement for Dictionary.
+    /// </remarks>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Map<K, V> : Dictionary<K, V> {
     }
 
     /// <summary>
-    /// changed event args.
+    /// Provides event data for change notifications.
     /// </summary>
     public class EvtArgs : EventArgs {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EvtArgs"/> class with the specified name.
+        /// </summary>
+        /// <param name="name">The name associated with the event.</param>
         public EvtArgs(string name) {
             Name = name;
         }
+        /// <summary>
+        /// Gets the name associated with the event.
+        /// </summary>
         public string Name { get; }
         public string? Value { get; set; }
     }
 
     /// <summary>
-    /// changed event handler.
+    /// Represents a delegate for change event handlers.
     /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The event data.</param>
     public delegate void Changed(object sender, EvtArgs e);
 
     /// <summary>
-    /// item class.
+    /// Represents a map that allows retrieving values by key only once, with change tracking.
     /// </summary>
-    /// <note>
-    /// + Map(Dictionary) class that can take out from the key of the value only once. <br/>
-    /// + used in the Meowziq namespace. <br/>
-    /// </note>
+    /// <remarks>
+    /// A Map (Dictionary) class that allows retrieving the value for a key only once.<br/>
+    /// Used in the Meowziq namespace.
+    /// </remarks>
     public class Item<T> : Map<int, List<T>> {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
         /// <summary>
-        /// hasset for whether the key was added.
+        /// Tracks which keys have been added.
         /// </summary>
         HashSet<int> _to_add_hashset;
 
         /// <summary>
-        /// hasset for whether the key was taken out.
+        /// Tracks which keys have been taken out.
         /// </summary>
         HashSet<int> _take_out_hashset;
 
@@ -77,22 +86,18 @@ namespace Meowziq {
         // public Methods [verb]
 
         /// <summary>
-        /// adds the value of the key to list.
+        /// Adds a value to the list for the specified key. Creates a new list if the key does not exist.
         /// </summary>
+        /// <param name="key">The key to add the value to.</param>
+        /// <param name="value">The value to add.</param>
         public void Add(int key, T value) {
-            /// <note>
-            /// creates a new list if this does not have a key. <br/>
-            /// adds the value to the list and adds as new to this.
-            /// </note>
+            // Creates a new list if the key does not exist, then adds the value.
             if (!ContainsKey(key)) {
                 List<T> new_list = new();
                 new_list.Add(value);
                 Add(key, new_list);
             }
-            /// <note>
-            /// gets the list of the key from this. <br/>
-            /// adds the value to list.
-            /// </note>
+            // Adds the value to the existing list for the key.
             else {
                 List<T> list = this[key];
                 list.Add(value);
@@ -100,81 +105,71 @@ namespace Meowziq {
         }
 
         /// <summary>
-        /// returns the value of the key.
+        /// Gets the list of values for the specified key.
         /// </summary>
+        /// <param name="key">The key to retrieve.</param>
+        /// <returns>The list of values for the key, or <c>null</c> if the key does not exist.</returns>
         public List<T> Get(int key) {
-            /// <note>
-            /// returns null if the key does not exist.
-            /// </note>
             if (!ContainsKey(key)) {
                 return null;
             }
-            /// <note>
-            /// returns the value of the key.
-            /// </note>
             return this[key];
         }
 
         /// <summary>
-        /// returns the value of the key only once.
+        /// Gets the list of values for the specified key only once. Returns null on subsequent calls for the same key.
         /// </summary>
+        /// <param name="key">The key to retrieve.</param>
+        /// <returns>The list of values for the key, or <c>null</c> if already taken or the key does not exist.</returns>
         public List<T> GetOnce(int key) {
-            /// <note>
-            /// adds the key to hashset for whether the key was taken out. <br/>
-            /// if the return value is false, already being taken out once, so return null.
-            /// </note>
+            // Adds the key to the taken-out hash set. If already present, return null.
             if (!_take_out_hashset.Add(key)) {
                 return null;
             }
-            /// <note>
-            /// returns null if the key does not exist.
-            /// </note>
             if (!ContainsKey(key)) {
                 return null;
             }
-            /// <note>
-            /// first time returns the value of the key.
-            /// </note>
-            /// <todo>
-            /// needs a sorting parameter, such as drums first and melody later?
-            /// </todo>
+            // Returns the value for the key the first time.
             return this[key];
         }
 
         /// <summary>
-        /// replaces the value in key.
+        /// Replaces the value list for the specified key.
         /// </summary>
+        /// <param name="key">The key to replace.</param>
+        /// <param name="value">The new list of values.</param>
         public void SetBy(int key, List<T> value) {
             Remove(key);
             Add(key, value);
         }
 
         /// <summary>
-        /// adds key and value.
+        /// Adds a key and value list to the map, tracking the added key.
         /// </summary>
-        /// <todo>
-        /// what about duplicate keys?
-        /// </todo>
+        /// <param name="key">The key to add.</param>
+        /// <param name="value">The list of values to associate with the key.</param>
+        /// <remarks>
+        /// Adds the key to the internal hash set for fast existence checks.
+        /// </remarks>
         public new void Add(int key, List<T> value) {
-            /// <note>
-            /// adds the added key to hashset.
-            /// </note>
             _to_add_hashset.Add(key);
             base.Add(key, value);
         }
 
         /// <summary>
-        /// returns true if the key exists, false otherwise.
+        /// Determines whether the specified key exists in the map.
         /// </summary>
+        /// <param name="key">The key to check for existence.</param>
+        /// <returns><c>true</c> if the key exists; otherwise, <c>false</c>.</returns>
+        /// <remarks>
+        /// Uses <see cref="HashSet{T}.Contains"/> for fast lookup.
+        /// </remarks>
         public new bool ContainsKey(int key) {
-            /// <note>
-            /// HashSet.Contains() is fast.
-            /// </note>
             return _to_add_hashset.Contains(key);
         }
 
         /// <summary>
-        /// initializes the contents.
+        /// Clears all contents and resets the internal state.
         /// </summary>
         public new void Clear() {
             _to_add_hashset.Clear();

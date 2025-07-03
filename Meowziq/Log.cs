@@ -17,11 +17,11 @@ using NLog;
 
 namespace Meowziq {
     /// <summary>
-    /// facade class for logging.
+    /// Provides a facade for logging using NLog.
     /// </summary>
-    /// <note>
-    /// use NLog.
-    /// </note>
+    /// <remarks>
+    /// Uses NLog for all logging operations.
+    /// </remarks>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Log {
 #nullable enable
@@ -29,6 +29,9 @@ namespace Meowziq {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Fields
 
+        /// <summary>
+        /// The NLog logger instance for this class.
+        /// </summary>
         static Logger _logger = LogManager.GetCurrentClassLogger();
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -49,30 +52,50 @@ namespace Meowziq {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]
 
+        /// <summary>
+        /// Logs a fatal error message.
+        /// </summary>
+        /// <param name="target">The message to log.</param>
         public static void Fatal(string target) {
             LogEventInfo log_event = new(level: LogLevel.Fatal, loggerName: _logger.Name, message: target);
             _logger.Log(wrapperType: typeof(Log), logEvent: log_event);
             OnFatal?.Invoke(sender: null, e: new EvtArgs("Fatal") { Value = target });
         }
 
+        /// <summary>
+        /// Logs an error message.
+        /// </summary>
+        /// <param name="target">The message to log.</param>
         public static void Error(string target) {
             LogEventInfo log_event = new(level: LogLevel.Error, loggerName: _logger.Name, message: target);
             _logger.Log(wrapperType: typeof(Log), logEvent: log_event);
             OnError?.Invoke(sender: null, e: new EvtArgs("Error") { Value = target });
         }
 
+        /// <summary>
+        /// Logs a warning message.
+        /// </summary>
+        /// <param name="target">The message to log.</param>
         public static void Warn(string target) {
             LogEventInfo log_event = new(level: LogLevel.Warn, loggerName: _logger.Name, message: target);
             _logger.Log(wrapperType: typeof(Log), logEvent: log_event);
             OnWarn?.Invoke(sender: null, e: new EvtArgs("Warn") { Value = target });
         }
 
+        /// <summary>
+        /// Logs an informational message.
+        /// </summary>
+        /// <param name="target">The message to log.</param>
         public static void Info(string target) {
             LogEventInfo log_event = new(level: LogLevel.Info, loggerName: _logger.Name, message: target);
             _logger.Log(wrapperType: typeof(Log), logEvent: log_event);
             OnInfo?.Invoke(sender: null, e: new EvtArgs("Info") { Value = target });
         }
 
+        /// <summary>
+        /// Logs a debug message (only in DEBUG builds).
+        /// </summary>
+        /// <param name="target">The message to log.</param>
         public static void Debug(string target) {
 #if DEBUG
             LogEventInfo log_event = new(level: LogLevel.Debug, loggerName: _logger.Name, message: target);
@@ -81,6 +104,10 @@ namespace Meowziq {
 #endif
         }
 
+        /// <summary>
+        /// Logs a trace message (only in DEBUG builds).
+        /// </summary>
+        /// <param name="target">The message to log.</param>
         public static void Trace(string target) {
 #if DEBUG
             LogEventInfo log_event = new(level: LogLevel.Trace, loggerName: _logger.Name, message: target);

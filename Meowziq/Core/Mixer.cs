@@ -17,7 +17,7 @@ using System;
 
 namespace Meowziq.Core {
     /// <summary>
-    /// mixer class
+    /// Provides mixer functionality.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Mixer<T> {
@@ -27,9 +27,9 @@ namespace Meowziq.Core {
 
         static bool _use;
 
-        static Map<string, Fader> _previous_fader_map; // key should be of the form "type".
+        static Map<string, Fader> _previous_fader_map; // Key should be of the form "type".
 
-        static Map<string, Fader> _current_fader_map; // key should be of the form "type:name".
+        static Map<string, Fader> _current_fader_map; // Key should be of the form "type:name".
 
         static IMessage<T, Note> _message;
 
@@ -46,22 +46,22 @@ namespace Meowziq.Core {
         // static Properties [noun, adjective] 
 
         /// <summary>
-        /// adds a Fader object.
+        /// Adds a Fader object.
         /// </summary>
         /// <fixme>
-        /// FIXME: bug in SMF output. <br/>
+        /// FIXME: Bug in SMF output.<br/>
         /// </fixme>
         public static Fader AddFader {
             set {
                 if (value is null) { return; }
                 _current_fader_map[$"{value.Type}:{value.Name}"] = value;
                 _previous_fader_map[value.Type] = Fader.NoVaule(type: value.Type);
-                _use = true; // added Fader, so mixier.json exists.
+                _use = true; // Added Fader, so mixier.json exists.
             }
         }
 
         /// <summary>
-        /// sets the Message object.
+        /// Sets the Message object.
         /// </summary>
         public static IMessage<T, Note> Message { set => _message = value; }
 
@@ -69,10 +69,10 @@ namespace Meowziq.Core {
         // public static Methods [verb]
 
         /// <summary>
-        /// initializes the state.
+        /// Clears the state.
         /// </summary>
         /// <note>
-        /// + runs only once the first time. <br/>
+        /// Runs only once the first time.<br/>
         /// </note>
         public static void Clear() {
             _previous_fader_map.Clear();
@@ -81,25 +81,25 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// applies the Note object to the Message object.
+        /// Applies the Note object to the Message object.
         /// </summary>
         public static void ApplyNote(int tick, int midi_ch, Note note) {
             _message.ApplyNote(tick, midi_ch, note);
         }
 
         /// <summary>
-        /// applies the program change, volume, pan, and other parameters to the Message object.
+        /// Applies the program change, volume, pan, and other parameters to the Message object.
         /// </summary>
         /// <note>
-        /// + applying values is only executed at pattern changes. <br/>
+        /// Applying values is only executed at pattern changes.<br/>
         /// </note>
         public static void ApplyVaule(int tick, int midi_ch, string type, string name, int program_num) {
             if (!_use && !_current_fader_map.ContainsKey(key: $"{type}:default")) {
                 _previous_fader_map[type] = Fader.NoVaule(type);
-                _current_fader_map[$"{type}:default"] = Fader.Default(type: type); // first time without mixer.json.
+                _current_fader_map[$"{type}:default"] = Fader.Default(type: type); // First time without mixer.json.
             }
             if (_use && !_current_fader_map.ContainsKey(key: $"{type}:{name}")) {
-                return; // missing key when using mixer.json.
+                return; // Missing key when using mixer.json.
             }
             playerProgramNum = (programNum: program_num, type: type, name: name);
             applyValueBy(tick, midi_ch, type, name);
@@ -109,11 +109,11 @@ namespace Meowziq.Core {
         // private Properties [noun, adjective] 
 
         /// <summary>
-        /// sets the instrument name in player.json.
+        /// Sets the instrument name in player.json.
         /// </summary>
         static (int programNum, string type, string name) playerProgramNum {
             set {
-                if (!_use) { value.name = "default"; } // no mixer.json is always "default".
+                if (!_use) { value.name = "default"; } // No mixer.json is always "default".
                 _current_fader_map[$"{value.type}:{value.name}"].PlayerProgramNum = value.programNum;
             }
         }
@@ -129,7 +129,7 @@ namespace Meowziq.Core {
         }
 
         static void applyProgramChangeBy(int tick, int midi_ch, string type, string name) {
-            if (!_use) { name = "default"; } // no mixer.json is always "default".
+            if (!_use) { name = "default"; } // No mixer.json is always "default".
             if (changedProgramNum(type, name)) {
                 int program_num = _use ? _current_fader_map[$"{type}:{name}"].ProgramNum : _current_fader_map[$"{type}:{name}"].PlayerProgramNum;
                 _message.ApplyProgramChange(tick, midi_ch, program_num);
@@ -137,65 +137,65 @@ namespace Meowziq.Core {
         }
 
         static void applyVolumeBy(int tick, int midi_ch, string type, string name) {
-            if (!_use) { name = "default"; } // no mixer.json is always "default".
+            if (!_use) { name = "default"; } // No mixer.json is always "default".
             if (changedVol(type, name)) {
                 _message.ApplyVolume(tick, midi_ch, volume: _current_fader_map[$"{type}:{name}"].Vol);
             }
         }
 
         static void applyPanBy(int tick, int midi_ch, string type, string name) {
-            if (!_use) { name = "default"; } // no mixer.json is always "default".
+            if (!_use) { name = "default"; } // No mixer.json is always "default".
             if (changedPan(type, name)) {
                 _message.ApplyPan(tick, midi_ch, pan: _current_fader_map[$"{type}:{name}"].Pan);
             }
         }
 
         static void applyMuteBy(int tick, int midi_ch, string type, string name) {
-            if (!_use) { name = "default"; } // no mixer.json is always "default".
+            if (!_use) { name = "default"; } // No mixer.json is always "default".
             _message.ApplyMute(tick, midi_ch, mute: _current_fader_map[$"{type}:{name}"].Mute);
         }
 
         /// <summary>
-        /// gets whether the program number has changed.
+        /// Gets a value indicating whether the program number has changed.
         /// </summary>
         static bool changedProgramNum(string type, string name) {
             int program_num = _use ? _current_fader_map[$"{type}:{name}"].ProgramNum : _current_fader_map[$"{type}:{name}"].PlayerProgramNum;
             if (_previous_fader_map[type].ProgramNum != program_num) {
                 _previous_fader_map[type].ProgramNum = program_num;
-                return true; // with value update.
+                return true; // With value update.
             } 
             else if (_previous_fader_map[type].ProgramNum == program_num) {
-                return false; // no value update.
+                return false; // No value update.
             }
-            throw new ArgumentException("not ProgramNum.");
+            throw new ArgumentException("Not ProgramNum.");
         }
 
         /// <summary>
-        /// gets whether the volume has changed.
+        /// Gets a value indicating whether the volume has changed.
         /// </summary>
         static bool changedVol(string type, string name) {
             int vol = _current_fader_map[$"{type}:{name}"].Vol;
             if (_previous_fader_map[type].Vol != vol) {
                 _previous_fader_map[type].Vol = vol;
-                return true; // with value update.
+                return true; // With value update.
             } else if (_previous_fader_map[type].Vol == vol) {
-                return false; // no value update.
+                return false; // No value update.
             }
-            throw new ArgumentException("not Vol.");
+            throw new ArgumentException("Not Vol.");
         }
 
         /// <summary>
-        /// gets whether the pan has changed.
+        /// Gets a value indicating whether the pan has changed.
         /// </summary>
         static bool changedPan(string type, string name) {
             Pan pan = _current_fader_map[$"{type}:{name}"].Pan;
             if (_previous_fader_map[type].Pan != pan) {
                 _previous_fader_map[type].Pan = pan;
-                return true; // with value update.
+                return true; // With value update.
             } else if (_previous_fader_map[type].Pan == pan) {
-                return false; // no value update.
+                return false; // No value update.
             }
-            throw new ArgumentException("not Pan.");
+            throw new ArgumentException("Not Pan.");
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -218,43 +218,43 @@ namespace Meowziq.Core {
             // Properties [noun, adjective]
 
             /// <summary>
-            /// provides the type name.
+            /// Gets the type name.
             /// </summary>
             /// <note>
-            /// + associates with the Player object. <br/>
+            /// Associates with the Player object.<br/>
             /// </note>
             public string Type { get => _type; set => _type = value; }
 
             /// <summary>
-            /// provides the name.
+            /// Gets the name.
             /// </summary>
             /// <note>
-            /// + associates with the Pattern object. <br/>
+            /// Associates with the Pattern object.<br/>
             /// </note>
             public string Name { get => _name; set => _name = value; }
 
             /// <summary>
-            /// provides the program number set in mixer.json.
+            /// Gets the program number set in mixer.json.
             /// </summary>
             public int ProgramNum { get => _program_num; set => _program_num = value; }
 
             /// <summary>
-            /// provides the program number set in player.json.
+            /// Gets the program number set in player.json.
             /// </summary>
             public int PlayerProgramNum { get => _player_program_num; set => _player_program_num = value; }
 
             /// <summary>
-            /// provides the volume set in mixer.json.
+            /// Gets the volume set in mixer.json.
             /// </summary>
             public int Vol { get => _vol; set => _vol = value; }
 
             /// <summary>
-            /// provides the pan value set in mixer.json.
+            /// Gets the pan value set in mixer.json.
             /// </summary>
             public Pan Pan { get => _pan; set => _pan = value; }
 
             /// <summary>
-            /// provides the mute value set in mixer.json.
+            /// Gets the mute value set in mixer.json.
             /// </summary>
             public bool Mute { get => _mute; set => _mute = value; }
 
