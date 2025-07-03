@@ -30,6 +30,14 @@ namespace Meowziq.IO {
         /// </summary>
         static Resourse _current_resourse, _valid_resourse;
 
+        //static string _patter_json = string.Empty;
+
+        //static string _song_json = string.Empty;
+
+        //static string _phrase_json = string.Empty;
+
+        //static string _player_json = string.Empty;
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Constructor
 
