@@ -42,6 +42,7 @@ namespace Meowziq {
         /// Gets the name associated with the event.
         /// </summary>
         public string Name { get; }
+        public string? Value { get; set; }
     }
 
     /// <summary>
