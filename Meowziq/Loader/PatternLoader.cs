@@ -188,6 +188,7 @@ namespace Meowziq.Loader {
             /// </summary>
             [DataMember(Name = "name")]
             public string Name { get; set; }
+
             /// <summary>
             /// Gets or sets the pattern data string.
             /// </summary>

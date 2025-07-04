@@ -19,19 +19,44 @@ using static Meowziq.Env;
 
 namespace Meowziq.Core {
     /// <summary>
-    /// Represents a note.
+    /// Represents a note with tick, pitch, gate, velocity, and syncopation information.
     /// </summary>
-    /// <note>
-    /// Converts to ChannelMessage.<br/>
-    /// Does not provide modify operations.<br/>
-    /// </note>
+    /// <remarks>
+    /// <list type="bullet">
+    /// <item>Converts to ChannelMessage.</item>
+    /// <item>Does not provide modify operations.</item>
+    /// </list>
+    /// </remarks>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Note {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        int _tick, _num, _gate, _velo, _pre_count;
+        /// <summary>
+        /// The tick value of the note (absolute position in sequencer).
+        /// </summary>
+        int _tick;
+
+        /// <summary>
+        /// The MIDI note number.
+        /// </summary>
+        int _num;
+
+        /// <summary>
+        /// The length from note on to note off in MIDI.
+        /// </summary>
+        int _gate;
+
+        /// <summary>
+        /// The MIDI note velocity.
+        /// </summary>
+        int _velo;
+
+        /// <summary>
+        /// The syncopation parameter (pre-count).
+        /// </summary>
+        int _pre_count;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
@@ -39,6 +64,19 @@ namespace Meowziq.Core {
         /// <note>
         /// States cannot be changed once created.<br/>
         /// </note>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Note"/> class.
+        /// </summary>
+        /// <param name="tick">Tick value of the note.</param>
+        /// <param name="num">MIDI note number.</param>
+        /// <param name="gate">Length from note on to note off in MIDI.</param>
+        /// <param name="velo">MIDI note velocity.</param>
+        /// <param name="pre_count">Syncopation parameter (optional).</param>
+        /// <remarks>
+        /// <list type="bullet">
+        /// <item>States cannot be changed once created.</item>
+        /// </list>
+        /// </remarks>
         public Note(int tick, int num, int gate, int velo, int pre_count = 0) {
             _tick = tick;
             _num = num;
@@ -53,9 +91,11 @@ namespace Meowziq.Core {
         /// <summary>
         /// Gets the tick value of the quarter note (480 resolution sequencer).
         /// </summary>
-        /// <note>
-        /// Always an absolute value.<br/>
-        /// </note>
+        /// <remarks>
+        /// <list type="bullet">
+        /// <item>Always an absolute value.</item>
+        /// </list>
+        /// </remarks>
         public int Tick { get => _tick; }
 
         /// <summary>
@@ -76,6 +116,7 @@ namespace Meowziq.Core {
         /// <summary>
         /// Gets a value indicating whether there is a syncopation parameter.
         /// </summary>
+        /// <returns>True if syncopation parameter is present; otherwise, false.</returns>
         public bool HasPre { get => _pre_count > 0; }
 
         /// <summary>
@@ -89,6 +130,13 @@ namespace Meowziq.Core {
         /// <summary>
         /// Checks the length of the gate.
         /// </summary>
+        /// <param name="target">Gate length to check.</param>
+        /// <returns>Validated gate length.</returns>
+        /// <remarks>
+        /// <list type="bullet">
+        /// <item>Throws <see cref="FormatException"/> if not divisible by TICK_INTERVAL.</item>
+        /// </list>
+        /// </remarks>
         static int gateValue(int target) {
             if (target is 0) { return target; } // No value, return as is.
             // Check if the gate length is divisible by the tick interval.

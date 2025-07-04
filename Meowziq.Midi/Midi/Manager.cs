@@ -19,7 +19,7 @@ using Sanford.Multimedia.Midi;
 
 namespace Meowziq.Midi {
     /// <summary>
-    /// MIDI class using Sanford.Multimedia.Midi
+    /// Represents the MIDI manager class using Sanford.Multimedia.Midi.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Manager {
@@ -27,22 +27,34 @@ namespace Meowziq.Midi {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
+        /// <summary>
+        /// Stores the output device instance.
+        /// </summary>
         OutputDevice _out_device;
 
+        /// <summary>
+        /// Stores the output device ID.
+        /// </summary>
         int _out_device_id = 0;
 
+        /// <summary>
+        /// Stores the list of output device names.
+        /// </summary>
         List<string> _out_device_name_list;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
+        /// <summary>
+        /// Initializes a new instance of the Manager class.
+        /// </summary>
         Manager() {
             _out_device_name_list = MidiDevice.GetOutDeviceName();
             loadDevice();
         }
 
         /// <summary>
-        /// returns an initialized instance.
+        /// Gets an initialized instance.
         /// </summary>
         public static Manager GetInstance() {
             return new Manager();
@@ -51,10 +63,19 @@ namespace Meowziq.Midi {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjective] 
 
+        /// <summary>
+        /// Gets the output device.
+        /// </summary>
         public OutputDevice OutDevice { get => _out_device; }
 
+        /// <summary>
+        /// Gets the list of output device names.
+        /// </summary>
         public List<string> OutDeviceName { get => _out_device_name_list; }
 
+        /// <summary>
+        /// Sets the output device ID and loads the device.
+        /// </summary>
         public int OutDeviceId {
             set { 
                 _out_device_id = value;
@@ -66,6 +87,9 @@ namespace Meowziq.Midi {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private Methods [verb]
 
+        /// <summary>
+        /// Loads the output device by ID.
+        /// </summary>
         void loadDevice() {
             if (_out_device is not null) {
                 _out_device.Reset();
@@ -77,7 +101,7 @@ namespace Meowziq.Midi {
     }
 
     /// <summary>
-    /// Midi device class.
+    /// Represents the MIDI device utility class.
     /// </summary>
     public static class MidiDevice {
 
@@ -85,9 +109,9 @@ namespace Meowziq.Midi {
         // public static Methods [verb]
 
         /// <summary>
-        /// gets MIDI out device names.
+        /// Gets the list of MIDI output device names.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The list of output device names.</returns>
         public static List<string> GetOutDeviceName() {
             List<string> out_device_name_list = new();
             uint midi_out_num_devs = midiOutGetNumDevs();
@@ -104,6 +128,9 @@ namespace Meowziq.Midi {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Win32API
 
+        /// <summary>
+        /// Represents the MIDI input device capabilities structure.
+        /// </summary>
         [StructLayout(LayoutKind.Sequential)]
         public struct MidiInCaps {
             public ushort wMid;
@@ -114,6 +141,9 @@ namespace Meowziq.Midi {
             public uint dwSupport;
         }
 
+        /// <summary>
+        /// Represents the MIDI output device capabilities structure.
+        /// </summary>
         [StructLayout(LayoutKind.Sequential)]
         public struct MidiOutCaps {
             public ushort wMid;
@@ -124,15 +154,33 @@ namespace Meowziq.Midi {
             public uint dwSupport;
         }
 
+        /// <summary>
+        /// Gets the number of MIDI input devices.
+        /// </summary>
         [DllImport("winmm.dll")]
         extern static uint midiInGetNumDevs();
 
+        /// <summary>
+        /// Gets the number of MIDI output devices.
+        /// </summary>
         [DllImport("winmm.dll")]
         extern static uint midiOutGetNumDevs();
 
+        /// <summary>
+        /// Gets the capabilities of a MIDI input device.
+        /// </summary>
+        /// <param name="uDevID">The device ID.</param>
+        /// <param name="pmic">The MIDI input device capabilities structure.</param>
+        /// <param name="cbmic">The size of the structure.</param>
         [DllImport("winmm.dll")]
         extern static uint midiInGetDevCaps(uint uDevID, out MidiInCaps pmic, int cbmic);
 
+        /// <summary>
+        /// Gets the capabilities of a MIDI output device.
+        /// </summary>
+        /// <param name="uDevID">The device ID.</param>
+        /// <param name="pmic">The MIDI output device capabilities structure.</param>
+        /// <param name="cbmic">The size of the structure.</param>
         [DllImport("winmm.dll")]
         extern static uint midiOutGetDevCaps(uint uDevID, out MidiOutCaps pmic, int cbmic);
     }

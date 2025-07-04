@@ -19,17 +19,24 @@ using static System.Math;
 
 namespace Meowziq.Value {
     /// <summary>
-    /// conversion class.
+    /// Provides conversion utilities for tempo and byte array operations.
     /// </summary>
+    /// <remarks>
+    /// <list type="bullet">
+    /// <item>All methods are static and stateless.</item>
+    /// <item>Intended for use in SMF (Standard MIDI File) and string/byte conversions.</item>
+    /// </list>
+    /// </remarks>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     /// <todo>
-    /// are extension methods enough?
+    /// Consider whether extension methods are sufficient for all use cases.
     /// </todo>
     public static class Converter {
         /// <summary>
-        /// converts numeric BPM to tempo information for SMF.
+        /// Converts a numeric BPM value to a 3-byte tempo array for SMF (Standard MIDI File).
         /// </summary>
-        /// <summary_jp>
+        /// <param name="tempo">BPM value to convert.</param>
+        /// <returns>3-byte array representing the tempo for SMF.</returns>
         public static byte[] ToByteTempo(int tempo) {
             double double_value = 60 * Pow(x: 10, y: 6) / tempo;
             string hex = int.Parse(s: Round(a: double_value).ToString()).ToString("X6"); // hexadecimal 6-digit conversion.
@@ -42,8 +49,10 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// converts string to byte array.
+        /// Converts a string to a byte array using character codes.
         /// </summary>
+        /// <param name="target">String to convert.</param>
+        /// <returns>Byte array representing the character codes of the input string.</returns>
         public static byte[] ToByteArray(string target) {
             return target.ToCharArray().Select(selector: x => ToByte(value: x)).ToArray();
         }

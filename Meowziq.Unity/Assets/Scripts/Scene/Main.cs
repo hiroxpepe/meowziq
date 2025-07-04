@@ -19,8 +19,14 @@ using static Meowziq.FluidSynth.Synth;
 namespace Meowziq.Unity.Scene
 {
     /// <summary>
-    /// Represents the main scene.
+    /// Represents the main scene for song playback and UI control.
     /// </summary>
+    /// <remarks>
+    /// <list type="bullet">
+    /// <item>Handles MIDI playback, UI updates, and user interaction for the main scene.</item>
+    /// <item>Coordinates soundfont, project, and state management.</item>
+    /// </list>
+    /// </remarks>
     public class Main : Base
     {
 #nullable enable
@@ -29,12 +35,12 @@ namespace Meowziq.Unity.Scene
         // serialize Fields
 
         /// <summary>
-        /// The play, stop, and load button UI elements.
+        /// The play, stop, and load button UI elements for user interaction.
         /// </summary>
         [SerializeField] Button _button_play, _button_stop, _button_load;
 
         /// <summary>
-        /// The play and modulation text UI elements.
+        /// The play and modulation text UI elements for status display.
         /// </summary>
         [SerializeField] Text _text_play, _text_modulation;
 
@@ -47,22 +53,22 @@ namespace Meowziq.Unity.Scene
         // Fields
 
         /// <summary>
-        /// Stores the current tick value.
+        /// Stores the current tick value for playback position.
         /// </summary>
         static int _tick = 0;
 
         /// <summary>
-        /// Stores the set of processed tick values.
+        /// Stores the set of processed tick values for duplicate prevention.
         /// </summary>
         static HashSet<int> _tick_hashset = new();
 
         /// <summary>
-        /// Stores the playback callback function.
+        /// Stores the playback callback function for MIDI events.
         /// </summary>
         static Func<IntPtr, IntPtr, int>? _playbacking;
 
         /// <summary>
-        /// Stores the end flag value.
+        /// Stores the end flag value for playback completion.
         /// </summary>
         static int _end_flag;
 
@@ -70,41 +76,34 @@ namespace Meowziq.Unity.Scene
         // update Methods
 
         /// <summary>
-        /// Initializes the main scene and sets up event handlers.
+        /// Initializes the main scene and sets up event handlers for UI controls.
         /// </summary>
-        new void Awake()
-        {
+        new void Awake() {
             base.Awake();
-            try
-            {
+            try {
                 // Sets event handlers to UI controls.
                 _button_play.onClick.RemoveAllListeners();
                 _button_play.onClick.AddListener(() => buttonPlay_click());
                 _button_stop.onClick.AddListener(() => buttonStop_click());
                 _button_load.onClick.AddListener(() => buttonLoad_click());
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 Log.Error(ex.Message);
             }
         }
 
         /// <summary>
-        /// Starts the main scene and loads initial data.
+        /// Starts the main scene and loads initial data for playback and UI.
         /// </summary>
-        new void Start()
-        {
+        new void Start() {
             base.Start();
-            try
-            {
-                if (Data.HasSoundFont)
-                {
+            try {
+                if (Data.HasSoundFont) {
                     SoundFontPath = Data.SoundFontPath;
                 }
                 MidiFilePath = $"{MUSIC_DIR}/{MIDI_FOLDER}/{CONDUCTOR_SMF}";
                 Log.Info($"Main: project path. {Data.ProjectPath}");
-                if (Data.HasProject)
-                {
+                if (Data.HasProject) {
                     _field_song.text = Data.ProjectName;
                 }
                 Sound.Stopping = false;
@@ -114,53 +113,42 @@ namespace Meowziq.Unity.Scene
                 /// </summary>
                 _end_flag = 0;
                 Playbacking -= _playbacking;
-                _playbacking += (IntPtr data, IntPtr evt) =>
-                {
+                _playbacking += (IntPtr data, IntPtr evt) => {
                     _tick = PlayerCurrentTick;
-                    if (_tick_hashset.Add(item: _tick))
-                    {
+                    if (_tick_hashset.Add(item: _tick)) {
                         State.Tick = _tick;
                         // MIDI message processing.
                         List<ChannelMessage> list = Message.GetBy(tick: State.Repeat.Tick); // gets the list of midi messages.
-                        if (list is not null)
-                        {
-                            list.ForEach(action: x =>
-                            {
+                        if (list is not null) {
+                            list.ForEach(action: x => {
                                 // Note on
-                                if (x.Command == ChannelCommand.NoteOn)
-                                {
+                                if (x.Command == ChannelCommand.NoteOn) {
                                     NoteOn(chan: x.MidiChannel, key: x.Data1, vel: x.Data2);
                                 }
                                 // Note off
-                                else if (x.Command == ChannelCommand.NoteOff)
-                                {
+                                else if (x.Command == ChannelCommand.NoteOff) {
                                     NoteOff(chan: x.MidiChannel, key: x.Data1);
                                 }
                                 // Program change
-                                else if (x.Command == ChannelCommand.ProgramChange)
-                                {
+                                else if (x.Command == ChannelCommand.ProgramChange) {
                                     ProgramChange(chan: x.MidiChannel, program: x.Data1);
                                 }
                                 // Volume
-                                else if (x.Command == ChannelCommand.Controller && x.Data1 == VOLUME_MSB)
-                                {
+                                else if (x.Command == ChannelCommand.Controller && x.Data1 == VOLUME_MSB) {
                                     ControlChange(chan: x.MidiChannel, ctrl: VOLUME_MSB, val: x.Data2);
                                 }
                                 // Pan
-                                else if (x.Command == ChannelCommand.Controller && x.Data1 == PAN_MSB)
-                                {
+                                else if (x.Command == ChannelCommand.Controller && x.Data1 == PAN_MSB) {
                                     ControlChange(chan: x.MidiChannel, ctrl: PAN_MSB, val: x.Data2);
                                 }
                                 // All sound off
-                                else if (x.Command == ChannelCommand.Controller && x.Data1 == 120)
-                                {
+                                else if (x.Command == ChannelCommand.Controller && x.Data1 == 120) {
                                     // FluidSynth_all_sounds_off
                                 }
                             });
                             _end_flag = 0;
                         }
-                        else
-                        {
+                        else {
                             _end_flag += 30;
                         }
                     }
@@ -168,33 +156,27 @@ namespace Meowziq.Unity.Scene
                 };
                 Playbacking += _playbacking;
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 Log.Error(ex.Message);
             }
         }
 
         /// <summary>
-        /// Updates the main scene every frame.
+        /// Updates the main scene every frame and handles UI and playback state.
         /// </summary>
-        new void Update()
-        {
+        new void Update() {
             base.Update();
-            try
-            {
+            try {
                 // Updates UI information.
-                if (State.Has)
-                {
+                if (State.Has) {
                     updateDisplay(item: State.CurrentItem);
                 }
                 // Stop a song.
-                if (_end_flag == 3840)
-                {
+                if (_end_flag == 3840) {
                     buttonStop_click();
                 }
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 Log.Error(ex.Message);
             }
         }
@@ -203,21 +185,21 @@ namespace Meowziq.Unity.Scene
         // EventHandler
 
         /// <summary>
-        /// Starts playing.
+        /// Starts playing the song when the play button is clicked.
         /// </summary>
-        async void buttonPlay_click()
-        {
-            try
-            {
-                if (_field_song.text.Equals("------------"))
-                {
+        /// <remarks>
+        /// <item>Checks for valid song selection and playback state.</item>
+        /// <item>Updates UI and state before starting playback.</item>
+        /// </remarks>
+        async void buttonPlay_click() {
+            try {
+                if (_field_song.text.Equals("------------")) {
                     string message = "please load a song.";
                     _text_message.text = $"[Error] {message}";
                     Log.Error(message);
                     return;
                 }
-                if (Sound.Playing || Sound.Stopping)
-                {
+                if (Sound.Playing || Sound.Stopping) {
                     Log.Warn($"sound playing or stopping.");
                     return;
                 }
@@ -229,20 +211,20 @@ namespace Meowziq.Unity.Scene
                 _text_play.color = Color.green; // Lime;
                 await startSound();
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 Log.Error(ex.Message);
                 await stopSound();
             }
         }
 
         /// <summary>
-        /// Stops playing.
+        /// Stops playing the song when the stop button is clicked.
         /// </summary>
-        async void buttonStop_click()
-        {
-            try
-            {
+        /// <remarks>
+        /// <item>Resets UI and state after stopping playback.</item>
+        /// </remarks>
+        async void buttonStop_click() {
+            try {
                 if (Sound.Stopping) { return; }
                 resetDisplay();
                 Sound.Stopping = true;
@@ -254,31 +236,29 @@ namespace Meowziq.Unity.Scene
                 Sound.Playing = false;
 
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 _text_message.text = $"[Error] {ex.Message}";
                 Log.Error(ex.Message);
                 await stopSound();
             }
-            finally
-            {
+            finally {
                 _end_flag = 0;
             }
         }
 
         /// <summary>
-        /// Handles the load button click event.
+        /// Handles the load button click event and loads the select scene.
         /// </summary>
-        async void buttonLoad_click()
-        {
-            try
-            {
+        /// <remarks>
+        /// <item>Stops playback before loading the select scene.</item>
+        /// </remarks>
+        async void buttonLoad_click() {
+            try {
                 Log.Info("Main: go to select scene.");
                 await stopSound();
                 LoadScene(sceneName: SCENE_SELECT);
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 _text_message.text = $"[Error] {ex.Message}";
                 Log.Error(ex.Message);
             }
@@ -290,15 +270,14 @@ namespace Meowziq.Unity.Scene
         /// <summary>
         /// Loads a song data fully while stopped.
         /// </summary>
-        /// <remarks>
-        /// Also called from SMF output.
-        /// </remarks>
         /// <param name="smf">Whether to build SMF data.</param>
-        async Task<string> buildSong(bool smf = true)
-        {
+        /// <returns>The name of the loaded song.</returns>
+        /// <remarks>
+        /// <item>Also called from SMF output.</item>
+        /// </remarks>
+        async Task<string> buildSong(bool smf = true) {
             string name = "------------";
-            await Task.Run(action: () =>
-            {
+            await Task.Run(action: () => {
                 Mixer<ChannelMessage>.Clear(); // TODO: check if this process is ok here.
                 IO.Cache.Clear();
                 IO.Cache.Load(targetPath: Data.ProjectPath);
@@ -310,32 +289,29 @@ namespace Meowziq.Unity.Scene
         }
 
         /// <summary>
-        /// Loads the resource's json files into memory.
+        /// Loads the resource's json files into memory for playback.
         /// </summary>
-        /// <param name="tick">The tick value.</param>
+        /// <param name="tick">The tick value for resource loading.</param>
         /// <param name="current">Whether to use the current stream.</param>
         /// <param name="smf">Whether to build SMF data.</param>
-        void buildResourse(int tick, bool current = true, bool smf = false)
-        {
+        void buildResourse(int tick, bool current = true, bool smf = false) {
             MixerLoader<ChannelMessage>.Build(target: current ? IO.Cache.Current.MixerStream : IO.Cache.Valid.MixerStream);
             Mixer<ChannelMessage>.Message = MessageFactory.CreateMessage();
             SongLoader.PatternList = PatternLoader.Build(target: current ? IO.Cache.Current.PatternStream : IO.Cache.Valid.PatternStream);
             Song song = SongLoader.Build(target: current ? IO.Cache.Current.SongStream : IO.Cache.Valid.SongStream);
             PlayerLoader<ChannelMessage>.PhraseList = PhraseLoader.Build(target: current ? IO.Cache.Current.PhraseStream : IO.Cache.Valid.PhraseStream);
-            PlayerLoader<ChannelMessage>.Build(target: current ? IO.Cache.Current.PlayerStream : IO.Cache.Valid.PlayerStream).ForEach(action: x =>
-            {
+            PlayerLoader<ChannelMessage>.Build(target: current ? IO.Cache.Current.PlayerStream : IO.Cache.Valid.PlayerStream).ForEach(action: x =>{
                 x.Song = song; // Sets song data.
                 x.Build(tick: tick, smf: smf); // Builds MIDI data.
             });
         }
 
         /// <summary>
-        /// Starts to play a song.
+        /// Starts to play a song asynchronously.
         /// </summary>
-        async Task<bool> startSound()
-        {
-            return await Task.Run(function: async () =>
-            {
+        /// <returns>True if playback started successfully; otherwise, false.</returns>
+        async Task<bool> startSound() {
+            return await Task.Run(function: async () => {
                 Log.Info("Main: start :D");
                 Message.Clear();
                 _field_song.text = await buildSong();
@@ -346,12 +322,11 @@ namespace Meowziq.Unity.Scene
         }
 
         /// <summary>
-        /// Stops playing a song.
+        /// Stops playing a song asynchronously.
         /// </summary>
-        async Task<bool> stopSound()
-        {
-            return await Task.Run(function: () =>
-            {
+        /// <returns>True if playback stopped successfully; otherwise, false.</returns>
+        async Task<bool> stopSound() {
+            return await Task.Run(function: () => {
                 Log.Info("Main: stop :|");
                 PlayerStop();
                 _tick = 0;
@@ -361,11 +336,11 @@ namespace Meowziq.Unity.Scene
         }
 
         /// <summary>
-        /// Updates the UI display.
+        /// Updates the UI display with the current item information.
         /// </summary>
         /// <param name="item">The item to display.</param>
-        bool updateDisplay(State.Item16beat item)
-        {
+        /// <returns>True if the display was updated successfully; otherwise, false.</returns>
+        bool updateDisplay(State.Item16beat item) {
             _field_beat.text = State.Beat.ToString();
             _field_meas.text = State.Meas.ToString();
             _field_key.text = item.Key.ToString();
@@ -381,8 +356,7 @@ namespace Meowziq.Unity.Scene
             /// <remarks>
             /// Using the auto mode.
             /// </remarks>
-            if (item.AutoMode)
-            {
+            if (item.AutoMode) {
                 Mode auto_mode = ToSpanMode(
                     degree: item.Degree,
                     key_mode: item.KeyMode
@@ -393,8 +367,7 @@ namespace Meowziq.Unity.Scene
             /// <remarks>
             /// Using the span mode.
             /// </remarks>
-            else
-            {
+            else {
                 _field_mode.text = item.SpanMode.ToString();
                 Mode key_mode = ToKeyMode(
                     key: item.Key,
@@ -409,10 +382,10 @@ namespace Meowziq.Unity.Scene
         }
 
         /// <summary>
-        /// Initializes the UI display.
+        /// Initializes the UI display to default values.
         /// </summary>
-        bool resetDisplay()
-        {
+        /// <returns>True if the display was reset successfully; otherwise, false.</returns>
+        bool resetDisplay() {
             _text_play.color = _text_modulation.color = Color.gray; //DimGray;
             _field_beat.text = _field_meas.text = "0";
             _field_key.text = _field_degree.text = _field_key_mode.text = _field_mode.text = _field_code.text = "---";

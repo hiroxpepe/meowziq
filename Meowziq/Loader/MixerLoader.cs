@@ -20,7 +20,7 @@ using System.Runtime.Serialization.Json;
 
 namespace Meowziq.Loader {
     /// <summary>
-    /// loader class for Mixer object.
+    /// Provides loader functionality for the Mixer object.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class MixerLoader<T> {
@@ -29,8 +29,9 @@ namespace Meowziq.Loader {
         // public static Methods [verb]
 
         /// <summary>
-        /// creates a Mixer object.
+        /// Creates a Mixer object from the specified stream.
         /// </summary>
+        /// <param name="target">The stream containing the mixer JSON data.</param>
         public static void Build(Stream target) {
             if (target is null) { return; }
             loadJson(target).Mixer.Fader.ToList().Select(selector: x =>
@@ -106,26 +107,31 @@ namespace Meowziq.Loader {
             /// </summary>
             [DataMember(Name = "type")]
             public string Type { get; set; }
+
             /// <summary>
             /// Gets or sets the fader name.
             /// </summary>
             [DataMember(Name = "name")]
             public string Name { get; set; }
+
             /// <summary>
             /// Gets or sets the instrument name.
             /// </summary>
             [DataMember(Name = "inst")]
             public string Inst { get; set; }
+
             /// <summary>
             /// Gets or sets the volume value.
             /// </summary>
             [DataMember(Name = "vol")]
             public int Vol { get; set; }
+
             /// <summary>
             /// Gets or sets the pan value.
             /// </summary>
             [DataMember(Name = "pan")]
             public string Pan { get; set; }
+
             /// <summary>
             /// Gets or sets a value indicating whether the fader is muted.
             /// </summary>
