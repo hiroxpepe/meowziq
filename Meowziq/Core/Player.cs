@@ -18,7 +18,7 @@ using System.Linq;
 
 namespace Meowziq.Core {
     /// <summary>
-    /// Represents a player.
+    /// Represents a player that manages phrases, tracks, and MIDI channel information for a song.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Player<T> {
@@ -26,19 +26,47 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        string _instrument_name, _type;
+        /// <summary>
+        /// Holds the instrument name for this player.
+        /// </summary>
+        string _instrument_name;
 
-        int _midi_ch, _program_num;
+        /// <summary>
+        /// Holds the player type.
+        /// </summary>
+        string _type;
 
+        /// <summary>
+        /// Holds the MIDI channel number.
+        /// </summary>
+        int _midi_ch;
+
+        /// <summary>
+        /// Holds the program number for the instrument or drum kit.
+        /// </summary>
+        int _program_num;
+
+        /// <summary>
+        /// Holds the song object associated with this player.
+        /// </summary>
         Song _song;
 
+        /// <summary>
+        /// Holds the list of phrases managed by this player.
+        /// </summary>
         List<Phrase> _phrase_list;
 
+        /// <summary>
+        /// Holds the track object associated with this player.
+        /// </summary>
         Track _track;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Player{T}"/> class.
+        /// </summary>
         public Player() {
             _phrase_list = new();
         }
@@ -58,41 +86,41 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// Sets the MidiChannel value.
+        /// Sets the MIDI channel value.
         /// </summary>
-        public MidiChannel MidiCh { set => _midi_ch = (int) value; }
+        public MidiChannel MidiCh { set => _midi_ch = (int)value; }
 
         /// <summary>
-        /// Sets the Instrument value.
+        /// Sets the instrument value and updates the instrument name.
         /// </summary>
         public Instrument Instrument {
             set {
-                _program_num = (int) value;
+                _program_num = (int)value;
                 _instrument_name = value.ToString();
             }
         }
 
         /// <summary>
-        /// Sets the DrumKit value.
+        /// Sets the drum kit value and updates the instrument name.
         /// </summary>
         public DrumKit DrumKit {
             set {
-                _program_num = (int) value;
+                _program_num = (int)value;
                 _instrument_name = value.ToString();
             }
         }
 
         /// <summary>
-        /// Sets the Song object.
+        /// Sets the song object for this player.
         /// </summary>
         public Song Song { set => _song = value; }
 
         /// <summary>
-        /// Gets or sets all phrase lists.
+        /// Gets or sets the list of phrases managed by this player.
         /// </summary>
         public List<Phrase> PhraseList {
             get => _phrase_list;
-            set { 
+            set {
                 _phrase_list = value;
                 _phrase_list.ForEach(action: x => x.NoteItem = _track.NoteItem);
             }
@@ -102,21 +130,19 @@ namespace Meowziq.Core {
         // public Methods [verb]
 
         /// <summary>
-        /// Builds Phrase objects.
+        /// Builds phrase objects for the player and applies mixer and note information.
         /// </summary>
-        /// <note>
-        /// Used for SMF output, called only once.<br/>
-        /// </note>
+        /// <param name="tick">The current tick value for building phrases.</param>
+        /// <param name="smf">If true, builds for SMF output; otherwise, builds for playback.</param>
+        /// <remarks>
+        /// <item>Used for SMF output, called only once per export.</item>
+        /// </remarks>
         public void Build(int tick, bool smf = false) {
             // Sets the tempo and song name.
             State.TempoAndName = (tempo: _song.Tempo, name: _song.Name); // FIXME: Looks like all players have it set up?
 
-            /// <summary>
-            /// Adds initial parameters for Mixer object.
-            /// </summary>
-            /// <note>
-            /// Sets instrument name in player.json.
-            /// </note>
+            // Adds initial parameters for Mixer object.
+            // Sets instrument name in player.json.
             if (tick is 0) {
                 string first_pattern_name = _song.AllSection.SelectMany(selector: x => x.AllPattern).ToList().Where(predicate: x => x.Name is not "count").First().Name;
                 Mixer<T>.ApplyVaule(tick: 0, midi_ch: _midi_ch, type: Type, name: first_pattern_name, program_num: _program_num);
@@ -164,7 +190,7 @@ namespace Meowziq.Core {
             /// Information for SMF output, called only once.
             /// </summary>
             if (smf) {
-                State.TrackMap.Add(key: _midi_ch, value: new State.Track(){ MidiCh = _midi_ch, Name = _type, Instrument = _instrument_name });
+                State.TrackMap.Add(key: _midi_ch, value: new State.Track() { MidiCh = _midi_ch, Name = _type, Instrument = _instrument_name });
             }
         }
 
@@ -172,7 +198,7 @@ namespace Meowziq.Core {
         // inner Classes
 
         /// <summary>
-        /// Holds state about the start tick, end tick, and maximum tick of the Pattern.
+        /// Holds state about the start tick, end tick, and maximum tick of the pattern during playback or export.
         /// </summary>
         class Locate {
 
@@ -185,33 +211,38 @@ namespace Meowziq.Core {
             int _current_tick;
 
             /// <summary>
-            /// Gets or sets the head tick of the Pattern in processing (absolute value).
+            /// Gets or sets the head tick of the pattern in processing (absolute value).
             /// </summary>
             int _head_tick;
 
             /// <summary>
-            /// Gets or sets the length of the Pattern in processing.
+            /// Gets or sets the length of the pattern in processing.
             /// </summary>
             int _length;
 
             /// <summary>
-            /// Gets or sets the maximum expected length of the Pattern in processing.
+            /// Gets or sets the maximum expected length of the pattern in processing.
             /// </summary>
             int _max;
 
             /// <summary>
-            /// Gets or sets the name of the Pattern that was last processed.
+            /// Gets or sets the name of the pattern that was last processed.
             /// </summary>
             string _previous_name;
 
             /// <summary>
-            /// Gets a value indicating whether in SMF export mode.
+            /// Gets or sets a value indicating whether in SMF export mode.
             /// </summary>
             bool _smf;
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Constructor
 
+            /// <summary>
+            /// Initializes a new instance of the <see cref="Locate"/> class.
+            /// </summary>
+            /// <param name="tick">The starting tick value.</param>
+            /// <param name="smf">If true, enables SMF export mode.</param>
             public Locate(int tick, bool smf = false) {
                 _current_tick = tick;
                 _head_tick = 0;
@@ -225,27 +256,27 @@ namespace Meowziq.Core {
             // Properties [noun, adjective] 
 
             /// <summary>
-            /// Gets or sets the head tick of the Pattern in processing.
+            /// Gets or sets the head tick of the pattern in processing.
             /// </summary>
             public int HeadTick { get => _head_tick; set => _head_tick = value; }
 
             /// <summary>
-            /// Sets the number of beats in the Pattern in processing.
+            /// Sets the number of beats in the pattern in processing.
             /// </summary>
             public int BeatCount { set => _length = value * Length.Of4beat.Int32(); }
 
             /// <summary>
-            /// Gets or sets the previous phrase name.
+            /// Gets or sets the previous pattern name.
             /// </summary>
             public string PreviousPatternName { get => _previous_name; set => _previous_name = value; }
 
             /// <summary>
-            /// Gets a value indicating whether the pattern has changed.
+            /// Gets a value indicating whether the pattern has changed at the current tick (not in SMF mode).
             /// </summary>
             public bool ChangedPattarn { get => _current_tick == HeadTick && !_smf; }
 
             /// <summary>
-            /// Gets a value indicating whether a Phrase build is needed.
+            /// Gets a value indicating whether a phrase build is needed (current tick is before end tick and before max).
             /// </summary>
             public bool NeedPhraseBuild { get => _current_tick <= endTick && beforeMax; }
 
@@ -253,22 +284,22 @@ namespace Meowziq.Core {
             // public Methods [verb]
 
             /// <summary>
-            /// Moves the head tick by the length of this Pattern.
+            /// Moves the head tick by the length of this pattern.
             /// </summary>
             public void NextHeadTick() {
-                _head_tick += _length; // Moves the Pattern start tick by the length of the Pattern.
+                _head_tick += _length; // moves the Pattern start tick by the length of the Pattern.
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // private Properties [noun, adjective] 
 
             /// <summary>
-            /// Gets the end tick of the Pattern in processing.
+            /// Gets the end tick of the pattern in processing.
             /// </summary>
-            public int endTick {  get => _head_tick + _length; }
+            public int endTick { get => _head_tick + _length; }
 
             /// <summary>
-            /// Gets a value indicating whether before the maximum value.
+            /// Gets a value indicating whether the head tick is before the maximum value.
             /// </summary>
             public bool beforeMax { get => _head_tick < _max; }
         }

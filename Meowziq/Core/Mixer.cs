@@ -17,25 +17,41 @@ using System;
 
 namespace Meowziq.Core {
     /// <summary>
-    /// Provides mixer functionality.
+    /// Provides mixer functionality for handling faders, program changes, volume, pan, and mute operations.
     /// </summary>
+    /// <typeparam name="T">Type of the message element.</typeparam>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Mixer<T> {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Fields
 
+        /// <summary>
+        /// Indicates whether the mixer is in use.
+        /// </summary>
         static bool _use;
 
-        static Map<string, Fader> _previous_fader_map; // Key should be of the form "type".
+        /// <summary>
+        /// Stores the previous fader map (key: "type").
+        /// </summary>
+        static Map<string, Fader> _previous_fader_map;
 
-        static Map<string, Fader> _current_fader_map; // Key should be of the form "type:name".
+        /// <summary>
+        /// Stores the current fader map (key: "type:name").
+        /// </summary>
+        static Map<string, Fader> _current_fader_map;
 
+        /// <summary>
+        /// Stores the message object for note and control changes.
+        /// </summary>
         static IMessage<T, Note> _message;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Constructor
 
+        /// <summary>
+        /// Initializes static members of the <see cref="Mixer{T}"/> class.
+        /// </summary>
         static Mixer() {
             _use = false;
             _previous_fader_map = new();
@@ -46,11 +62,19 @@ namespace Meowziq.Core {
         // static Properties [noun, adjective] 
 
         /// <summary>
-        /// Adds a Fader object.
+        /// Adds a Fader object to the current fader map and updates the previous fader map.
         /// </summary>
-        /// <fixme>
-        /// FIXME: Bug in SMF output.<br/>
-        /// </fixme>
+        /// <value>Fader object to add.</value>
+        /// <remarks>
+        /// <list type="bullet">
+        /// <item>Key for current map: "type:name"</item>
+        /// <item>Key for previous map: "type"</item>
+        /// <item>Sets _use to true when a Fader is added.</item>
+        /// </list>
+        /// </remarks>
+        /// <todo>
+        /// Fix bug in SMF output.
+        /// </todo>
         public static Fader AddFader {
             set {
                 if (value is null) { return; }
@@ -61,19 +85,22 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// Sets the Message object.
+        /// Sets the Message object for the mixer.
         /// </summary>
+        /// <value>Message object for note and control changes.</value>
         public static IMessage<T, Note> Message { set => _message = value; }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]
 
         /// <summary>
-        /// Clears the state.
+        /// Clears all fader maps and resets the mixer state.
         /// </summary>
-        /// <note>
-        /// Runs only once the first time.<br/>
-        /// </note>
+        /// <remarks>
+        /// <list type="bullet">
+        /// <item>Runs only once the first time.</item>
+        /// </list>
+        /// </remarks>
         public static void Clear() {
             _previous_fader_map.Clear();
             _current_fader_map.Clear();
@@ -81,18 +108,28 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// Applies the Note object to the Message object.
+        /// Applies the Note object to the Message object at the specified tick and MIDI channel.
         /// </summary>
+        /// <param name="tick">Tick position to apply the note.</param>
+        /// <param name="midi_ch">MIDI channel.</param>
+        /// <param name="note">Note object to apply.</param>
         public static void ApplyNote(int tick, int midi_ch, Note note) {
             _message.ApplyNote(tick, midi_ch, note);
         }
 
         /// <summary>
-        /// Applies the program change, volume, pan, and other parameters to the Message object.
+        /// Applies program change, volume, pan, and other parameters to the Message object.
         /// </summary>
-        /// <note>
-        /// Applying values is only executed at pattern changes.<br/>
-        /// </note>
+        /// <param name="tick">Tick position to apply the value.</param>
+        /// <param name="midi_ch">MIDI channel.</param>
+        /// <param name="type">Instrument type.</param>
+        /// <param name="name">Instrument name.</param>
+        /// <param name="program_num">Program number (timbre).</param>
+        /// <remarks>
+        /// <list type="bullet">
+        /// <item>Applying values is only executed at pattern changes.</item>
+        /// </list>
+        /// </remarks>
         public static void ApplyVaule(int tick, int midi_ch, string type, string name, int program_num) {
             if (!_use && !_current_fader_map.ContainsKey(key: $"{type}:default")) {
                 _previous_fader_map[type] = Fader.NoVaule(type);
@@ -109,8 +146,9 @@ namespace Meowziq.Core {
         // private Properties [noun, adjective] 
 
         /// <summary>
-        /// Sets the instrument name in player.json.
+        /// Sets the instrument name and program number in player.json.
         /// </summary>
+        /// <value>Tuple of program number, type, and name.</value>
         static (int programNum, string type, string name) playerProgramNum {
             set {
                 if (!_use) { value.name = "default"; } // No mixer.json is always "default".
@@ -121,6 +159,13 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private static Methods [verb]
 
+        /// <summary>
+        /// Applies all value changes (program, volume, pan, mute) for the specified instrument.
+        /// </summary>
+        /// <param name="tick">Tick position to apply the values.</param>
+        /// <param name="midi_ch">MIDI channel.</param>
+        /// <param name="type">Instrument type.</param>
+        /// <param name="name">Instrument name.</param>
         static void applyValueBy(int tick, int midi_ch, string type, string name) {
             applyProgramChangeBy(tick, midi_ch, type, name);
             applyVolumeBy(tick, midi_ch, type, name);
@@ -128,6 +173,13 @@ namespace Meowziq.Core {
             applyMuteBy(tick, midi_ch, type, name);
         }
 
+        /// <summary>
+        /// Applies program change for the specified instrument if changed.
+        /// </summary>
+        /// <param name="tick">Tick position to apply the program change.</param>
+        /// <param name="midi_ch">MIDI channel.</param>
+        /// <param name="type">Instrument type.</param>
+        /// <param name="name">Instrument name.</param>
         static void applyProgramChangeBy(int tick, int midi_ch, string type, string name) {
             if (!_use) { name = "default"; } // No mixer.json is always "default".
             if (changedProgramNum(type, name)) {
@@ -136,6 +188,13 @@ namespace Meowziq.Core {
             }
         }
 
+        /// <summary>
+        /// Applies volume for the specified instrument if changed.
+        /// </summary>
+        /// <param name="tick">Tick position to apply the volume.</param>
+        /// <param name="midi_ch">MIDI channel.</param>
+        /// <param name="type">Instrument type.</param>
+        /// <param name="name">Instrument name.</param>
         static void applyVolumeBy(int tick, int midi_ch, string type, string name) {
             if (!_use) { name = "default"; } // No mixer.json is always "default".
             if (changedVol(type, name)) {
@@ -143,6 +202,13 @@ namespace Meowziq.Core {
             }
         }
 
+        /// <summary>
+        /// Applies pan for the specified instrument if changed.
+        /// </summary>
+        /// <param name="tick">Tick position to apply the pan.</param>
+        /// <param name="midi_ch">MIDI channel.</param>
+        /// <param name="type">Instrument type.</param>
+        /// <param name="name">Instrument name.</param>
         static void applyPanBy(int tick, int midi_ch, string type, string name) {
             if (!_use) { name = "default"; } // No mixer.json is always "default".
             if (changedPan(type, name)) {
@@ -150,14 +216,24 @@ namespace Meowziq.Core {
             }
         }
 
+        /// <summary>
+        /// Applies mute for the specified instrument.
+        /// </summary>
+        /// <param name="tick">Tick position to apply mute.</param>
+        /// <param name="midi_ch">MIDI channel.</param>
+        /// <param name="type">Instrument type.</param>
+        /// <param name="name">Instrument name.</param>
         static void applyMuteBy(int tick, int midi_ch, string type, string name) {
             if (!_use) { name = "default"; } // No mixer.json is always "default".
             _message.ApplyMute(tick, midi_ch, mute: _current_fader_map[$"{type}:{name}"].Mute);
         }
 
         /// <summary>
-        /// Gets a value indicating whether the program number has changed.
+        /// Gets a value indicating whether the program number has changed for the specified instrument.
         /// </summary>
+        /// <param name="type">Instrument type.</param>
+        /// <param name="name">Instrument name.</param>
+        /// <returns>True if the program number has changed; otherwise, false.</returns>
         static bool changedProgramNum(string type, string name) {
             int program_num = _use ? _current_fader_map[$"{type}:{name}"].ProgramNum : _current_fader_map[$"{type}:{name}"].PlayerProgramNum;
             if (_previous_fader_map[type].ProgramNum != program_num) {
@@ -171,8 +247,11 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// Gets a value indicating whether the volume has changed.
+        /// Gets a value indicating whether the volume has changed for the specified instrument.
         /// </summary>
+        /// <param name="type">Instrument type.</param>
+        /// <param name="name">Instrument name.</param>
+        /// <returns>True if the volume has changed; otherwise, false.</returns>
         static bool changedVol(string type, string name) {
             int vol = _current_fader_map[$"{type}:{name}"].Vol;
             if (_previous_fader_map[type].Vol != vol) {
@@ -185,8 +264,11 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// Gets a value indicating whether the pan has changed.
+        /// Gets a value indicating whether the pan has changed for the specified instrument.
         /// </summary>
+        /// <param name="type">Instrument type.</param>
+        /// <param name="name">Instrument name.</param>
+        /// <returns>True if the pan has changed; otherwise, false.</returns>
         static bool changedPan(string type, string name) {
             Pan pan = _current_fader_map[$"{type}:{name}"].Pan;
             if (_previous_fader_map[type].Pan != pan) {
@@ -201,66 +283,90 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // inner Classes
 
+        /// <summary>
+        /// Represents a fader for instrument settings such as program, volume, pan, and mute.
+        /// </summary>
         public class Fader {
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Fields
 
+            /// <summary>
+            /// The instrument type name (associated with Player object).
+            /// </summary>
             string _type, _name;
 
-            int _program_num, _player_program_num, _vol;
+            /// <summary>
+            /// The program number set in mixer.json.
+            /// </summary>
+            int _program_num;
 
+            /// <summary>
+            /// The program number set in player.json.
+            /// </summary>
+            int _player_program_num;
+
+            /// <summary>
+            /// The volume set in mixer.json.
+            /// </summary>
+            int _vol;
+
+            /// <summary>
+            /// The pan value set in mixer.json.
+            /// </summary>
             Pan _pan;
 
+            /// <summary>
+            /// The mute value set in mixer.json.
+            /// </summary>
             bool _mute = false;
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Properties [noun, adjective]
 
             /// <summary>
-            /// Gets the type name.
+            /// Gets or sets the instrument type name (associated with Player object).
             /// </summary>
-            /// <note>
-            /// Associates with the Player object.<br/>
-            /// </note>
             public string Type { get => _type; set => _type = value; }
 
             /// <summary>
-            /// Gets the name.
+            /// Gets or sets the instrument name (associated with Pattern object).
             /// </summary>
-            /// <note>
-            /// Associates with the Pattern object.<br/>
-            /// </note>
             public string Name { get => _name; set => _name = value; }
 
             /// <summary>
-            /// Gets the program number set in mixer.json.
+            /// Gets or sets the program number set in mixer.json.
             /// </summary>
             public int ProgramNum { get => _program_num; set => _program_num = value; }
 
             /// <summary>
-            /// Gets the program number set in player.json.
+            /// Gets or sets the program number set in player.json.
             /// </summary>
             public int PlayerProgramNum { get => _player_program_num; set => _player_program_num = value; }
 
             /// <summary>
-            /// Gets the volume set in mixer.json.
+            /// Gets or sets the volume set in mixer.json.
             /// </summary>
             public int Vol { get => _vol; set => _vol = value; }
 
             /// <summary>
-            /// Gets the pan value set in mixer.json.
+            /// Gets or sets the pan value set in mixer.json.
             /// </summary>
             public Pan Pan { get => _pan; set => _pan = value; }
 
             /// <summary>
-            /// Gets the mute value set in mixer.json.
+            /// Gets or sets the mute value set in mixer.json.
             /// </summary>
             public bool Mute { get => _mute; set => _mute = value; }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // private static Properties [noun, adjective] 
 
+            /// <summary>
+            /// Creates a Fader object with undefined values (used for missing keys).
+            /// </summary>
+            /// <param name="type">Instrument type.</param>
+            /// <returns>Fader object with undefined values.</returns>
             public static Fader NoVaule(string type) {
                 return new Fader() {
                     _type = type,
@@ -273,6 +379,11 @@ namespace Meowziq.Core {
                 };
             }
 
+            /// <summary>
+            /// Creates a default Fader object (used when no mixer.json is present).
+            /// </summary>
+            /// <param name="type">Instrument type.</param>
+            /// <returns>Default Fader object.</returns>
             public static Fader Default(string type) {
                 return new Fader() {
                     _type = type,

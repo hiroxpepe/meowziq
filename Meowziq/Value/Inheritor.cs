@@ -18,8 +18,14 @@ using System.Linq;
 
 namespace Meowziq.Value {
     /// <summary>
-    /// class for inheriting Phrase data.
+    /// Provides static methods to inherit and merge Phrase data by replacing wildcard entries with base data.
     /// </summary>
+    /// <remarks>
+    /// <list type="bullet">
+    /// <item><description>All methods are static and thread-safe.</description></item>
+    /// <item><description>Used for phrase inheritance and data merging in Meowziq.</description></item>
+    /// </list>
+    /// </remarks>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Inheritor {
 
@@ -27,8 +33,21 @@ namespace Meowziq.Value {
         // public Methods [verb]
 
         /// <summary>
-        /// replaces '*' in the target data with the baze data.
+        /// Replaces wildcard ('*') entries in the target Phrase data with values from the base Phrase data.
         /// </summary>
+        /// <param name="target">Target Phrase object to be modified.</param>
+        /// <param name="baze">Base Phrase object to inherit values from.</param>
+        /// <returns>The modified target Phrase object with inherited values.</returns>
+        /// <remarks>
+        /// <list type="bullet">
+        /// <item><description>Modifies the target object in place.</description></item>
+        /// <item><description>Wildcard replacement is performed for Note, Chord, Seque, Exp, and array fields.</description></item>
+        /// </list>
+        /// </remarks>
+        /// <todo>
+        /// Implement inheritance for the remaining Seque fields if needed.
+        /// </todo>
+        /// <author>h.adachi (STUDIO MeowToon)</author>
         public static Core.Phrase Apply(Core.Phrase target, Core.Phrase baze) {
             target.Data.Note.Text = applyString(target.Data.Note.Text, baze.Data.Note.Text);
             target.Data.Note.Oct = baze.Data.Note.Oct; // inherits the base.
@@ -58,13 +77,20 @@ namespace Meowziq.Value {
         // private Methods [verb]
 
         /// <summary>
-        /// if the target data is '*', replace it with the baze data.
+        /// Replaces all wildcard ('*') characters in the target string with corresponding characters from the base string.
         /// </summary>
+        /// <param name="target">Target string to be processed.</param>
+        /// <param name="baze">Base string to inherit values from.</param>
+        /// <returns>Processed string with wildcards replaced by base values.</returns>
+        /// <remarks>
+        /// <item>Throws if the string lengths do not match.</item>
+        /// </remarks>
+        /// <exception cref="FormatException">Thrown if the target and base strings have different lengths.</exception>
         static string applyString(string target, string baze) {
-            if (target is null || target.Equals(string.Empty)) { // returns baze if the target is an empty string or null.
+            if (target is null || target.Equals(string.Empty)) { // Returns baze if the target is an empty string or null.
                 return baze;
             }
-            if (target.Count() != baze.Count()) { // target and baze data should be the same number.
+            if (target.Count() != baze.Count()) { // Target and baze data should be the same number.
                 throw new FormatException("inherited data count must be the same as the base.");
             }
             char[] result = target.Select(selector: (x, index) => x.Equals('*') ? baze.ToArray()[index] : x).ToArray();
@@ -72,13 +98,20 @@ namespace Meowziq.Value {
         }
 
         /// <summary>
-        /// if the target data in the string array is '*', replace it with the baze data in the string array.
+        /// Replaces all wildcard ('*') entries in the target string array with corresponding entries from the base string array.
         /// </summary>
+        /// <param name="target">Target string array to be processed.</param>
+        /// <param name="baze">Base string array to inherit values from.</param>
+        /// <returns>Processed string array with wildcards replaced by base values.</returns>
+        /// <remarks>
+        /// <item>Throws if the array lengths do not match.</item>
+        /// </remarks>
+        /// <exception cref="FormatException">Thrown if the target and base arrays have different lengths.</exception>
         static string[] applyArray(string[] target, string[] baze) {
             if (target is null) { // returns baze if the target is null.
                 return baze;
             }
-            if (target.Count() != baze.Count()) { // target and baze data should be the same number.
+            if (target.Count() != baze.Count()) { // Target and baze data should be the same number.
                 throw new FormatException("inherited arrray count must be the same as the base.");
             }
             string[] result = target.Select(selector: (x, index) => applyString(target: x, baze: baze[index])).ToArray();

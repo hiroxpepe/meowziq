@@ -135,56 +135,67 @@ namespace Meowziq.Loader {
             /// </summary>
             [DataMember(Name = "type")]
             public string Type { get; set; }
+
             /// <summary>
             /// Gets or sets the phrase name.
             /// </summary>
             [DataMember(Name = "name")]
             public string Name { get; set; }
+
             /// <summary>
             /// Gets or sets the base phrase name for inheritance.
             /// </summary>
             [DataMember(Name = "base")]
             public string Base { get; set; }
+
             /// <summary>
             /// Gets or sets the phrase data object.
             /// </summary>
             [DataMember(Name = "data")]
             public Data Data { get; set; }
+
             /// <summary>
             /// Gets or sets the note string.
             /// </summary>
             [DataMember(Name = "note")]
             public string Note { get; set; }
+
             /// <summary>
             /// Gets or sets the auto string.
             /// </summary>
             [DataMember(Name = "auto")]
             public string Auto { get; set; }
+
             /// <summary>
             /// Gets or sets the octave value.
             /// </summary>
             [DataMember(Name = "oct")]
             public int Oct { get; set; }
+
             /// <summary>
             /// Gets or sets the chord string.
             /// </summary>
             [DataMember(Name = "chord")]
             public string Chord { get; set; }
+
             /// <summary>
             /// Gets or sets the gate string.
             /// </summary>
             [DataMember(Name = "gate")]
             public string Gate { get; set; }
+
             /// <summary>
             /// Gets or sets the range string.
             /// </summary>
             [DataMember(Name = "range")]
             public string Range { get; set; }
+
             /// <summary>
             /// Gets or sets the pre-expression string.
             /// </summary>
             [DataMember(Name = "pre")]
             public string Pre { get; set; }
+
             /// <summary>
             /// Gets or sets the post-expression string.
             /// </summary>
@@ -202,31 +213,37 @@ namespace Meowziq.Loader {
             /// </summary>
             [DataMember(Name = "inst")]
             public string[] InstArray { get; set; }
+
             /// <summary>
             /// Gets or sets the beat array.
             /// </summary>
             [DataMember(Name = "beat")]
             public string[] BeatArray { get; set; }
+
             /// <summary>
             /// Gets or sets the note array.
             /// </summary>
             [DataMember(Name = "note")]
             public string[] NoteArray { get; set; }
+
             /// <summary>
             /// Gets or sets the auto array.
             /// </summary>
             [DataMember(Name = "auto")]
             public string[] AutoArray { get; set; }
+
             /// <summary>
             /// Gets or sets the octave array.
             /// </summary>
             [DataMember(Name = "oct")]
             public int[] OctArray { get; set; }
+
             /// <summary>
             /// Gets or sets the pre-expression array.
             /// </summary>
             [DataMember(Name = "pre")]
             public string[] PreArray { get; set; }
+
             /// <summary>
             /// Gets or sets the post-expression array.
             /// </summary>

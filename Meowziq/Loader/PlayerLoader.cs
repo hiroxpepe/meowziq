@@ -25,7 +25,7 @@ using static Meowziq.Env;
 
 namespace Meowziq.Loader {
     /// <summary>
-    /// Loader class for creating and managing Player objects.
+    /// Provides loader functionality for creating and managing Player objects.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class PlayerLoader<T> {
@@ -33,6 +33,9 @@ namespace Meowziq.Loader {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Fields
 
+        /// <summary>
+        /// Stores the list of phrases used to create Player objects.
+        /// </summary>
         static List<Phrase> _phrase_list;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -114,11 +117,13 @@ namespace Meowziq.Loader {
             /// </summary>
             [DataMember(Name = "type")]
             public string Type { get; set; }
+
             /// <summary>
             /// Gets or sets the MIDI channel as a string.
             /// </summary>
             [DataMember(Name = "midi")]
             public string Midi { get; set; }
+
             /// <summary>
             /// Gets or sets the instrument name.
             /// </summary>

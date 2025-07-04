@@ -14,8 +14,14 @@ using static Meowziq.Unity.Env;
 
 namespace Meowziq.Unity.Scene {
     /// <summary>
-    /// Represents the select scene.
+    /// Represents the select scene for choosing soundfonts and projects.
     /// </summary>
+    /// <remarks>
+    /// <list type="bullet">
+    /// <item>Provides UI event handling and dropdown population for soundfont and project selection.</item>
+    /// <item>Handles Android permission requests for external storage access.</item>
+    /// </list>
+    /// </remarks>
     public class Select : Base {
 #nullable enable
 
@@ -23,12 +29,12 @@ namespace Meowziq.Unity.Scene {
         // serialize Fields
 
         /// <summary>
-        /// The back button UI element.
+        /// The back button UI element for returning to the main scene.
         /// </summary>
         [SerializeField] Button _button_back;
 
         /// <summary>
-        /// The soundfont and project dropdown UI elements.
+        /// The dropdown UI elements for soundfont and project selection.
         /// </summary>
         [SerializeField] Dropdown _dropdown_soundfont_list, _dropdown_project_list;
 
@@ -39,12 +45,12 @@ namespace Meowziq.Unity.Scene {
         // update Methods
 
         /// <summary>
-        /// Initializes the select scene and sets up event handlers.
+        /// Initializes the select scene and sets up event handlers for UI controls and permissions.
         /// </summary>
         new void Awake() {
             base.Awake();
-            try {                
-                // set event handlers to UI controls.
+            try {
+                // Sets event handlers to UI controls.
                 _button_back.onClick.AddListener(() => buttonBack_click());
                 _dropdown_soundfont_list.onValueChanged.AddListener(delegate { _dropdownSoundfontList_valueChanged(_dropdown_soundfont_list); });
                 _dropdown_project_list.onValueChanged.AddListener(delegate { _dropdownProjectList_valueChanged(_dropdown_project_list); });
@@ -62,7 +68,7 @@ namespace Meowziq.Unity.Scene {
         }
 
         /// <summary>
-        /// Starts the select scene and loads initial data.
+        /// Starts the select scene and loads initial soundfont and project data.
         /// </summary>
         new void Start() {
             base.Start();
@@ -79,8 +85,11 @@ namespace Meowziq.Unity.Scene {
         // EventHandler
 
         /// <summary>
-        /// Handles the back button click event.
+        /// Handles the back button click event and loads the main scene.
         /// </summary>
+        /// <remarks>
+        /// <item>Logs navigation and project path information.</item>
+        /// </remarks>
         async void buttonBack_click() {
             try {
                 Log.Info("go to select main.");
@@ -94,9 +103,12 @@ namespace Meowziq.Unity.Scene {
         }
 
         /// <summary>
-        /// Handles the soundfont dropdown value changed event.
+        /// Handles the soundfont dropdown value changed event and updates the selected soundfont.
         /// </summary>
-        /// <param name="change">The dropdown control.</param>
+        /// <param name="change">The dropdown control for soundfont selection.</param>
+        /// <remarks>
+        /// <item>Updates Data.SoundFontName and logs the selection.</item>
+        /// </remarks>
         async void _dropdownSoundfontList_valueChanged(Dropdown change) {
             try {
                 await Task.Run(function: () => {
@@ -113,9 +125,12 @@ namespace Meowziq.Unity.Scene {
         }
 
         /// <summary>
-        /// Handles the project dropdown value changed event.
+        /// Handles the project dropdown value changed event and updates the selected project.
         /// </summary>
-        /// <param name="change">The dropdown control.</param>
+        /// <param name="change">The dropdown control for project selection.</param>
+        /// <remarks>
+        /// <item>Updates Data.ProjectName and logs the selection.</item>
+        /// </remarks>
         async void _dropdownProjectList_valueChanged(Dropdown change) {
             try {
                 await Task.Run(function: () => {
@@ -135,8 +150,12 @@ namespace Meowziq.Unity.Scene {
         // private Methods [verb]
 
         /// <summary>
-        /// Gets and populates the soundfont names in the dropdown.
+        /// Gets and populates the soundfont names in the dropdown UI element.
         /// </summary>
+        /// <remarks>
+        /// <item>Filters out meta files and sets Data.SoundFontDir if found.</item>
+        /// <item>Logs the number of soundfonts found.</item>
+        /// </remarks>
         void getSoundFontNames() {
             if (Directory.Exists(SOUNDFONT_DIR)) {
                 Log.Info($"find the soundfont directory. {SOUNDFONT_DIR}");
@@ -162,8 +181,11 @@ namespace Meowziq.Unity.Scene {
         }
 
         /// <summary>
-        /// Gets and populates the project names in the dropdown.
+        /// Gets and populates the project names in the dropdown UI element.
         /// </summary>
+        /// <remarks>
+        /// <item>Sets Data.ProjectDir if found and logs the number of projects.</item>
+        /// </remarks>
         void getProjectNames() {
             if (Directory.Exists(PROJECT_DIR)) {
                 Log.Info($"find the projects directory. {PROJECT_DIR}");

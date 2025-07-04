@@ -18,13 +18,24 @@ using System.Linq;
 
 namespace Meowziq.Value {
     /// <summary>
-    /// validation class for input values.
+    /// Provides static methods for validating input values.
     /// </summary>
+    /// <remarks>
+    /// <item>All methods are static and stateless.</item>
+    /// <item>Used for phrase and beat data validation in Meowziq.</item>
+    /// </remarks>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Validater {
         /// <summary>
-        /// checks the letters of the phrase
+        /// Validates that each beat segment in the phrase string consists of exactly four characters.
         /// </summary>
+        /// <param name="target">Target phrase string to validate.</param>
+        /// <returns>The original string if validation passes; otherwise, throws an exception.</returns>
+        /// <remarks>
+        /// <item>Replaces '[' and ']' with '|' as delimiters before validation.</item>
+        /// <item>Throws if any beat segment is not four characters long.</item>
+        /// </remarks>
+        /// <exception cref="FormatException">Thrown if a beat data segment is not four characters long.</exception>
         public static string PhraseValue(string target) {
             if (target is null) {
                 return target; // no value, return as is.

@@ -10,8 +10,14 @@ using static Meowziq.FluidSynth.Fluidsynth;
 
 namespace Meowziq.FluidSynth {
     /// <summary>
-    /// Represents the synth class.
+    /// Represents the synth class for MIDI playback and sound font management.
     /// </summary>
+    /// <remarks>
+    /// <list type="bullet">
+    /// <item>Provides static methods and events for controlling MIDI playback using FluidSynth.</item>
+    /// <item>Handles sound font and MIDI file loading, playback control, and event notification.</item>
+    /// </list>
+    /// </remarks>
     public static class Synth {
 #nullable enable
 
@@ -19,7 +25,7 @@ namespace Meowziq.FluidSynth {
         // Const [nouns]
 
         /// <summary>
-        /// The synth gain value.
+        /// The synth gain value used for volume control.
         /// </summary>
         const float SYNTH_GAIN = 0.5f;
 
@@ -27,72 +33,72 @@ namespace Meowziq.FluidSynth {
         // static Fields [nouns, noun phrases]
 
         /// <summary>
-        /// Stores the fluid settings pointer.
+        /// Stores the FluidSynth settings pointer.
         /// </summary>
         static fluid_settings_t _setting = IntPtr.Zero;
 
         /// <summary>
-        /// Stores the synth pointer.
+        /// Stores the FluidSynth synth pointer.
         /// </summary>
         static fluid_synth_t _synth = IntPtr.Zero;
 
         /// <summary>
-        /// Stores the player pointer.
+        /// Stores the FluidSynth player pointer.
         /// </summary>
         static fluid_player_t _player = IntPtr.Zero;
 
         /// <summary>
-        /// Stores the audio driver pointer.
+        /// Stores the FluidSynth audio driver pointer.
         /// </summary>
         static fluid_audio_driver_t _adriver = IntPtr.Zero;
 
         /// <summary>
-        /// Stores the MIDI event callback.
+        /// Stores the MIDI event callback delegate.
         /// </summary>
         static handle_midi_event_func_t? _event_callback;
 
         /// <summary>
-        /// Stores the playbacking event handler.
+        /// Stores the playbacking event handler delegate.
         /// </summary>
         static Func<IntPtr, IntPtr, int>? _on_playbacking;
 
         /// <summary>
-        /// Stores the started event handler.
+        /// Stores the started event handler delegate.
         /// </summary>
         static Action? _on_started;
 
         /// <summary>
-        /// Stores the ended event handler.
+        /// Stores the ended event handler delegate.
         /// </summary>
         static Action? _on_ended;
 
         /// <summary>
-        /// Stores the updated event handler.
+        /// Stores the updated event handler delegate for property changes.
         /// </summary>
         static PropertyChangedEventHandler? _on_updated;
 
         /// <summary>
-        /// Stores the sound font file path.
+        /// Stores the sound font file path for the synth.
         /// </summary>
         static string _sound_font_path = string.Empty;
 
         /// <summary>
-        /// Stores the MIDI file path.
+        /// Stores the MIDI file path for playback.
         /// </summary>
         static string _midi_file_path = string.Empty;
 
         /// <summary>
-        /// Stores the sound font ID.
+        /// Stores the sound font ID loaded into the synth.
         /// </summary>
         static int _sfont_id = 0;
 
         /// <summary>
-        /// Indicates whether the synth is ready.
+        /// Indicates whether the synth is ready for playback.
         /// </summary>
         static bool _ready = false;
 
         /// <summary>
-        /// Indicates whether the synth is stopping.
+        /// Indicates whether the synth is currently stopping playback.
         /// </summary>
         static bool _stopping = false;
 
@@ -100,7 +106,7 @@ namespace Meowziq.FluidSynth {
         // static Constructor
 
         /// <summary>
-        /// Initializes static fields of the Synth class.
+        /// Initializes static fields of the <see cref="Synth"/> class.
         /// </summary>
         static Synth() {
         }
@@ -129,18 +135,19 @@ namespace Meowziq.FluidSynth {
         }
 
         /// <summary>
-        /// Gets or sets the MIDI file path.
+        /// Gets or sets the MIDI file path for playback.
         /// </summary>
         public static string MidiFilePath { get => _midi_file_path; set => _midi_file_path = value; }
 
         /// <summary>
-        /// Gets whether the synth is playing.
+        /// Gets a value indicating whether the synth is currently playing.
         /// </summary>
         public static bool Playing { get => _ready; }
 
         /// <summary>
         /// Gets the current tick of the player, rounded to the nearest increment.
         /// </summary>
+        /// <value>Current tick of the MIDI player, rounded to the nearest increment.</value>
         public static int PlayerCurrentTick {
             get {
                 const int INCREMENT = 30;
@@ -176,8 +183,11 @@ namespace Meowziq.FluidSynth {
         // public static Methods [verb, verb phrases]
 
         /// <summary>
-        /// Initializes the synth and loads the sound font and MIDI file.
+        /// Initializes the synth and loads the sound font and MIDI file for playback.
         /// </summary>
+        /// <remarks>
+        /// <item>Throws and logs errors if sound font or MIDI file is missing or invalid.</item>
+        /// </remarks>
         public static void Init() {
             try {
                 if (!SoundFontPath.HasValue() || !MidiFilePath.HasValue()) {
@@ -235,8 +245,12 @@ namespace Meowziq.FluidSynth {
         }
 
         /// <summary>
-        /// Starts MIDI playback.
+        /// Starts MIDI playback from the beginning of the loaded file.
         /// </summary>
+        /// <remarks>
+        /// <item>Initializes the synth if not already ready.</item>
+        /// <item>Raises Started and Ended events as appropriate.</item>
+        /// </remarks>
         public static void PlayerStart() {
             try {
                 if (!_ready) {
@@ -267,8 +281,11 @@ namespace Meowziq.FluidSynth {
         }
 
         /// <summary>
-        /// Stops MIDI playback.
+        /// Stops MIDI playback and releases resources.
         /// </summary>
+        /// <remarks>
+        /// <item>Performs garbage collection after stopping.</item>
+        /// </remarks>
         public static void PlayerStop() {
             try {
                 if (!_player.IsZero()) {
@@ -285,8 +302,11 @@ namespace Meowziq.FluidSynth {
         }
 
         /// <summary>
-        /// Deletes and cleans up synth resources.
+        /// Deletes and cleans up synth resources, unloading sound font and MIDI file.
         /// </summary>
+        /// <remarks>
+        /// <item>Sets all internal pointers to IntPtr.Zero after cleanup.</item>
+        /// </remarks>
         public static void Delete() {
             try {
                 if (_synth == IntPtr.Zero) { return; }
@@ -308,7 +328,7 @@ namespace Meowziq.FluidSynth {
         }
 
         /// <summary>
-        /// Handles a MIDI event.
+        /// Handles a MIDI event by passing it to the FluidSynth handler.
         /// </summary>
         /// <param name="data">The synth pointer.</param>
         /// <param name="evt">The MIDI event pointer.</param>
@@ -319,35 +339,35 @@ namespace Meowziq.FluidSynth {
         /// Gets the type of a MIDI event.
         /// </summary>
         /// <param name="evt">The MIDI event pointer.</param>
-        /// <returns>The event type.</returns>
+        /// <returns>The event type as an integer.</returns>
         public static int EventGetType(IntPtr evt) { return fluid_midi_event_get_type(evt); }
 
         /// <summary>
         /// Gets the channel of a MIDI event.
         /// </summary>
         /// <param name="evt">The MIDI event pointer.</param>
-        /// <returns>The channel number.</returns>
+        /// <returns>The channel number as an integer.</returns>
         public static int EventGetChannel(IntPtr evt) {  return fluid_midi_event_get_channel(evt); }
 
         /// <summary>
         /// Gets the control value of a MIDI event.
         /// </summary>
         /// <param name="evt">The MIDI event pointer.</param>
-        /// <returns>The control value.</returns>
+        /// <returns>The control value as an integer.</returns>
         public static int EventGetControl(IntPtr evt) { return fluid_midi_event_get_control(evt); }
 
         /// <summary>
         /// Gets the value of a MIDI event.
         /// </summary>
         /// <param name="evt">The MIDI event pointer.</param>
-        /// <returns>The value.</returns>
+        /// <returns>The value as an integer.</returns>
         public static int EventGetValue(IntPtr evt) { return fluid_midi_event_get_value(evt); }
 
         /// <summary>
         /// Gets the program value of a MIDI event.
         /// </summary>
         /// <param name="evt">The MIDI event pointer.</param>
-        /// <returns>The program value.</returns>
+        /// <returns>The program value as an integer.</returns>
         public static int EventGetProgram(IntPtr evt) { return fluid_midi_event_get_program(evt); }
 
         /// <summary>
@@ -356,7 +376,7 @@ namespace Meowziq.FluidSynth {
         /// <param name="chan">The MIDI channel.</param>
         /// <param name="key">The note key.</param>
         /// <param name="vel">The velocity.</param>
-        /// <returns>The result of the operation.</returns>
+        /// <returns>The result of the operation as an integer.</returns>
         public static int NoteOn(int chan, int key, int vel) { return fluid_synth_noteon(_synth, chan, key, vel); }
 
         /// <summary>
@@ -364,7 +384,7 @@ namespace Meowziq.FluidSynth {
         /// </summary>
         /// <param name="chan">The MIDI channel.</param>
         /// <param name="key">The note key.</param>
-        /// <returns>The result of the operation.</returns>
+        /// <returns>The result of the operation as an integer.</returns>
         public static int NoteOff(int chan, int key) { return fluid_synth_noteoff(_synth, chan, key); }
 
         /// <summary>
@@ -372,7 +392,7 @@ namespace Meowziq.FluidSynth {
         /// </summary>
         /// <param name="chan">The MIDI channel.</param>
         /// <param name="program">The program number.</param>
-        /// <returns>The result of the operation.</returns>
+        /// <returns>The result of the operation as an integer.</returns>
         public static int ProgramChange(int chan, int program) { return fluid_synth_program_change(_synth, chan, program); }
 
         /// <summary>
@@ -381,23 +401,27 @@ namespace Meowziq.FluidSynth {
         /// <param name="chan">The MIDI channel.</param>
         /// <param name="ctrl">The control number.</param>
         /// <param name="val">The value.</param>
-        /// <returns>The result of the operation.</returns>
+        /// <returns>The result of the operation as an integer.</returns>
         public static int ControlChange(int chan, int ctrl, int val) { return fluid_synth_cc(_synth, chan, ctrl, val); }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private static Methods [verb, verb phrases]
 
         /// <summary>
-        /// Raises the property changed event.
+        /// Raises the property changed event for UI updates.
         /// </summary>
         /// <param name="sender">The sender object.</param>
         /// <param name="e">The event arguments.</param>
         static void onPropertyChanged(object sender, PropertyChangedEventArgs e) { _on_updated?.Invoke(sender, e); }
 
         /// <summary>
-        /// Loads the sound font file.
+        /// Loads the sound font file into the synth.
         /// </summary>
-        /// <returns>1 if successful, -1 if failed.</returns>
+        /// <returns>1 if successful; -1 if failed.</returns>
+        /// <remarks>
+        /// <item>Unloads the previous sound font before loading a new one.</item>
+        /// <item>Logs errors if loading fails.</item>
+        /// </remarks>
         static int loadSoundFont() {
             if (fluid_is_soundfont(SoundFontPath) != 1) {
                 Log.Error("Synth: not a sound font.");
@@ -421,6 +445,9 @@ namespace Meowziq.FluidSynth {
     /// <summary>
     /// Provides private extension methods for IntPtr.
     /// </summary>
+    /// <remarks>
+    /// <item>Used internally for pointer checks.</item>
+    /// </remarks>
     static class Extensions {
         /// <summary>
         /// Returns true if IntPtr is IntPtr.Zero.

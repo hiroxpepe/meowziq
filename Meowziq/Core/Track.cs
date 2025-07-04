@@ -18,7 +18,7 @@ using System.Linq;
 
 namespace Meowziq.Core {
     /// <summary>
-    /// Represents a track containing note items and related operations.
+    /// Represents a musical track that manages note items and their operations.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Track {
@@ -27,7 +27,7 @@ namespace Meowziq.Core {
         // static Fields
 
         /// <summary>
-        /// Holds a map of note items for all track types.
+        /// Stores the mapping from track type to its corresponding note item.
         /// </summary>
         static Map<string, Item<Note>> _note_item_map = new();
 
@@ -35,12 +35,12 @@ namespace Meowziq.Core {
         // Fields
 
         /// <summary>
-        /// Holds the type of this track.
+        /// Stores the type of the track.
         /// </summary>
         string _type;
 
         /// <summary>
-        /// Holds the note item for this track.
+        /// Stores the note item associated with this track.
         /// </summary>
         Item<Note> _note_item;
 
@@ -67,7 +67,7 @@ namespace Meowziq.Core {
         /// Gets all <see cref="Note"/> objects of this song.
         /// </summary>
         /// <remarks>
-        /// Not used yet.
+        /// <item>Not used yet.</item>
         /// </remarks>
         public static List<Note> AllNote {
             get => _note_item_map.SelectMany(selector: x => x.Value).SelectMany(selector: x => x.Value).ToList();
@@ -77,7 +77,7 @@ namespace Meowziq.Core {
         // Properties [noun, adjective] 
 
         /// <summary>
-        /// Gets the <see cref="Item{Note}"/> object for this track.
+        /// Gets the <see cref="Item{Note}"/> object associated with this track.
         /// </summary>
         public Item<Note> NoteItem {
             get {
@@ -90,10 +90,10 @@ namespace Meowziq.Core {
         // public Methods [verb]
 
         /// <summary>
-        /// Clears the contents of all note items and the note item map.
+        /// Initializes the contents of all note items and clears the note item map.
         /// </summary>
         /// <remarks>
-        /// Not used yet.
+        /// <item>Not used yet.</item>
         /// </remarks>
         public void Clear() {
             foreach (Item<Note> value in _note_item_map.Values) { value.Clear(); }
@@ -118,9 +118,9 @@ namespace Meowziq.Core {
         }
 
         /// <summary>
-        /// Removes notes that overlap with the specified syncopation note.
+        /// Removes notes that overlap with syncopation for the specified target note.
         /// </summary>
-        /// <param name="target">The syncopation note to use for removal.</param>
+        /// <param name="target">The target note to use for overlap removal.</param>
         public void removeBy(Note target) {
             int tick1 = target.Tick;
             List<Note> note_list1 = _note_item.Get(key: tick1);

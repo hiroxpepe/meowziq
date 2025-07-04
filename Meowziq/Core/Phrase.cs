@@ -28,15 +28,37 @@ namespace Meowziq.Core {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        string _type, _name, _base;
+        /// <summary>
+        /// Phrase type (e.g., mono, chord, seque).
+        /// </summary>
+        string _type;
 
+        /// <summary>
+        /// Phrase name.
+        /// </summary>
+        string _name;
+
+        /// <summary>
+        /// Name of the base phrase.
+        /// </summary>
+        string _base;
+
+        /// <summary>
+        /// Data object containing all phrase data.
+        /// </summary>
         Data _data;
 
+        /// <summary>
+        /// Item object containing Note objects for this phrase.
+        /// </summary>
         Item<Note> _note_item;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Phrase"/> class.
+        /// </summary>
         public Phrase() {
             _data = new();
         }
@@ -111,6 +133,8 @@ namespace Meowziq.Core {
         /// <summary>
         /// Creates Note objects.
         /// </summary>
+        /// <param name="tick">Start tick for note placement.</param>
+        /// <param name="pattern">Pattern object containing measures and spans.</param>
         public void Build(int tick, Pattern pattern) {
             onBuild(tick, pattern);
         }
@@ -121,6 +145,8 @@ namespace Meowziq.Core {
         /// <summary>
         /// Creates Note objects by executing the appropriate method of the Generator object.
         /// </summary>
+        /// <param name="tick">Start tick for note placement.</param>
+        /// <param name="pattern">Pattern object containing measures and spans.</param>
         protected void onBuild(int tick, Pattern pattern) {
             Generator generator = Generator.GetInstance(note_item: _note_item);
             DataType data_type = defineDataType();
@@ -172,8 +198,10 @@ namespace Meowziq.Core {
         // private Methods [verb]
 
         /// <summary>
-        /// Determines the type of data written in json.
+        /// Determines the type of data written in the JSON.
         /// </summary>
+        /// <returns>Data type as a <see cref="DataType"/> value.</returns>
+        /// <exception cref="ArgumentException">Thrown if the data type cannot be determined from the current data fields.</exception>
         DataType defineDataType() {
             if (!_data.HasMulti && (_data.HasNote || _data.HasAuto)) { return DataType.Mono; }
             if (_data.HasMulti && (_data.HasNote || _data.HasAuto)) { return DataType.Multi; }

@@ -121,11 +121,13 @@ namespace Meowziq.Loader {
             /// </summary>
             [DataMember(Name = "name")]
             public string Name { get; set; }
+
             /// <summary>
             /// Gets or sets the song tempo as a string.
             /// </summary>
             [DataMember(Name = "tempo")]
             public string Tempo { get; set; }
+
             /// <summary>
             /// Gets or sets the array of song sections.
             /// </summary>
@@ -143,11 +145,13 @@ namespace Meowziq.Loader {
             /// </summary>
             [DataMember(Name = "key")]
             public string Key { get; set; }
+
             /// <summary>
             /// Gets or sets the mode for the section.
             /// </summary>
             [DataMember(Name = "mode")]
             public string Mode { get; set; }
+
             /// <summary>
             /// Gets or sets the array of pattern names for the section.
             /// </summary>

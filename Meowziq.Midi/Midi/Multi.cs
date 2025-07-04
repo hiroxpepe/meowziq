@@ -21,23 +21,30 @@ using static Meowziq.Env;
 
 namespace Meowziq.Midi {
     /// <summary>
-    /// class that holds Sanford.Multimedia.Midi.Track objects for smf output.
+    /// Provides static methods and storage for managing Sanford.Multimedia.Midi.Track objects for SMF output.
     /// </summary>
+    /// <remarks>
+    /// <item>Manages a map of Track objects by index for MIDI file generation.</item>
+    /// <item>All methods and fields are static and thread-safe.</item>
+    /// </remarks>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Multi {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Fields
 
+        /// <summary>
+        /// Track map for managing Track objects by index.
+        /// </summary>
         static Map<int, Track> _track_map;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Constructor
 
+        /// <summary>
+        /// Initializes the static Track map and fills it with Track objects for each MIDI track index.
+        /// </summary>
         static Multi() {
-            /// <summary>
-            /// initializes track map.
-            /// </summary>
             _track_map = new();
             Enumerable.Range(start: MIDI_TRACK_BASE, count: MIDI_TRACK_COUNT).ToList().ForEach(
                 action: x => _track_map.Add(key: x, value: new Track())
@@ -48,16 +55,19 @@ namespace Meowziq.Midi {
         // static Properties [noun, adjective]
 
         /// <summary>
-        /// gets the Track list.
+        /// Gets the list of Track objects managed by this class.
         /// </summary>
+        /// <returns>List of Track objects for all MIDI tracks.</returns>
         public static List<Track> List { get => _track_map.Select(selector: x => x.Value).ToList(); }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]
 
         /// <summary>
-        /// gets a Track by index.
+        /// Gets a Track object by its index.
         /// </summary>
+        /// <param name="index">Track index.</param>
+        /// <returns>Track object at the specified index.</returns>
         public static Track Get(int index) {
             return _track_map[index];
         }

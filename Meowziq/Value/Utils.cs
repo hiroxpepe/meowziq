@@ -15,13 +15,22 @@
 
 namespace Meowziq.Value {
     /// <summary>
-    /// utils class for input values.
+    /// Provides utility methods for processing input values.
     /// </summary>
+    /// <remarks>
+    /// <item>All methods are static and stateless.</item>
+    /// <item>Used for string preprocessing in value handling.</item>
+    /// </remarks>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     internal static class Utils {
         /// <summary>
-        /// removes unnecessary characters "[", "]", "|".
+        /// Removes unnecessary characters '[', ']', and '|'.
         /// </summary>
+        /// <param name="target">Target string to be filtered.</param>
+        /// <returns>Filtered string with specified characters removed.</returns>
+        /// <remarks>
+        /// <item>Used for cleaning up input strings before further processing.</item>
+        /// </remarks>
         internal static string Filter(string target) {
             return target.Replace(oldValue: "|", newValue: string.Empty).Replace(oldValue: "[", newValue: string.Empty).Replace(oldValue: "]", newValue: string.Empty); // removes unnecessary characters.
         }

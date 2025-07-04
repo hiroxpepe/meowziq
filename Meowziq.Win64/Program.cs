@@ -18,13 +18,19 @@ using System.Windows.Forms;
 
 namespace Meowziq.Win64 {
     /// <summary>
-    /// the application.
+    /// Provides the main entry point and application context for Meowziq.Win64.
     /// </summary>
+    /// <remarks>
+    /// <item>This static class is responsible for application startup and context initialization.</item>
+    /// </remarks>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     static class Program {
         /// <summary>
-        /// the main entry point of the application.
+        /// Starts the Meowziq.Win64 application.
         /// </summary>
+        /// <remarks>
+        /// <item>Enables visual styles, sets compatible text rendering, and launches the main form.</item>
+        /// </remarks>
         [STAThread]
         static void Main() {
             Application.EnableVisualStyles();
