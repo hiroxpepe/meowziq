@@ -349,9 +349,11 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 
-# Unity user settings
+# Unity generated files
 UserSettings
+*.utmp
 
+# Visual Studio Code workspace settings file
 *vs.code-workspace
 data
 tmp
